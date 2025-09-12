@@ -1,0 +1,73 @@
+# Root .gitignore for /hexoo
+# Covers common Node.js, React/Vite, and TypeScript ignores
+
+##### OS / Editor #####
+.DS_Store
+Thumbs.db
+Desktop.ini
+.idea/
+.vscode/
+*.swp
+*.swo
+
+##### General Node #####
+node_modules/
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+*.pid
+*.pid.lock
+
+##### TypeScript #####
+*.tsbuildinfo
+
+##### Coverage / Caches #####
+coverage/
+.nyc_output/
+.eslintcache
+.stylelintcache
+.cache/
+.parcel-cache/
+
+
+#############################
+# Project structure specific #
+#############################
+
+# Ignore entire cytadela project
+/cytadela/
+
+# Client: React/Vite app
+/client/node_modules/
+/client/build/
+/client/dist/
+/client/.vite/
+/client/coverage/
+/client/.eslintcache
+
+# CRA/Vite env files (keep only non-local if explicitly needed)
+/client/.env.local
+/client/.env.development.local
+/client/.env.test.local
+/client/.env.production.local
+
+# Node API: Node.js + TypeScript app
+/node_api/node_modules/
+/node_api/dist/
+/node_api/coverage/
+/node_api/.nyc_output/
+/node_api/.ts-node/
+/node_api/logs/
+/node_api/*.log
+
+# Env files for server (do not commit secrets)
+/node_api/.env
+/node_api/.env.local
+/node_api/.env.*
+
+# TS build artifacts
+/node_api/*.tsbuildinfo
