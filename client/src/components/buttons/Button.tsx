@@ -1,0 +1,36 @@
+import type { ButtonProps, ButtonSize } from "@/types/button.type";
+
+const sizeClasses: Record<ButtonSize, string> = {
+  sm: "h-9 min-w-[36px] px-3 text-sm rounded-xl",
+  md: "h-11 min-w-[110px] px-4 text-base rounded-3xl",
+  lg: "h-11 min-w-[250px] px-5 text-base rounded-xl",
+  xl: "h-13 min-w-[350px] px-3 text-base rounded-xl",
+};
+
+const variantClasses: Record<string, string> = {
+  "gradient-fuchsia":
+    "bg-gradient-to-b from-fuchsia-600 to-fuchsia-800 hover:from-fuchsia-700 hover:to-fuchsia-900 outline outline-[0.75px] outline-offset-[-0.75px] outline-fuchsia-400 text-white",
+};
+
+export const Button = ({
+  text,
+  leftIcon,
+  rightIcon,
+  size = "md",
+  variant = "gradient-fuchsia",
+  className = "",
+  onClick,
+}: ButtonProps) => {
+  const baseClasses =
+    "flex justify-center items-center gap-1 font-bold font-Plus_Jakarta_Sans leading-tight shrink-0 whitespace-nowrap cursor-pointer overflow-hidden transition-colors duration-300 ease-out shadow-sm hover:brightness-95";
+
+  const combinedClasses = `${baseClasses} ${sizeClasses[size]} ${variantClasses[variant]} ${className}`;
+
+  return (
+    <button onClick={onClick} className={combinedClasses}>
+      {leftIcon && <span className="size-2.5">{leftIcon}</span>}
+      {text && <span>{text}</span>}
+      {rightIcon && <span className="size-2.5">{rightIcon}</span>}
+    </button>
+  );
+};
