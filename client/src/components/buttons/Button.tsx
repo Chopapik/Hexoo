@@ -9,7 +9,7 @@ const sizeClasses: Record<ButtonSize, string> = {
 
 const variantClasses: Record<string, string> = {
   "gradient-fuchsia":
-    "bg-gradient-to-b from-fuchsia-600 to-fuchsia-800 hover:from-fuchsia-700 hover:to-fuchsia-900 outline outline-[0.75px] outline-offset-[-0.75px] outline-fuchsia-400 text-white",
+    "text-white [--btn-fill:linear-gradient(180deg,#C026D3_0%,#86198F_100%)] hover:[--btn-fill:linear-gradient(180deg,#A21CAF_0%,#7E22CE_100%)]",
 };
 
 export const Button = ({
@@ -22,7 +22,7 @@ export const Button = ({
   onClick,
 }: ButtonProps) => {
   const baseClasses =
-    "flex justify-center items-center gap-1 font-bold font-Plus_Jakarta_Sans leading-tight shrink-0 whitespace-nowrap cursor-pointer overflow-hidden transition-colors duration-300 ease-out shadow-sm hover:brightness-95";
+    "relative flex justify-center items-center gap-1 font-bold font-Plus_Jakarta_Sans leading-tight shrink-0 whitespace-nowrap cursor-pointer overflow-hidden transition-colors duration-300 ease-out shadow-sm hover:brightness-95 border-[0.75px] border-transparent [background:var(--btn-fill,_linear-gradient(180deg,#C026D3_0%,#86198F_100%))_padding-box,linear-gradient(180deg,#EF72FF_3%,#61006E_100%)_border-box]";
 
   const combinedClasses = `${baseClasses} ${sizeClasses[size]} ${variantClasses[variant]} ${className}`;
 
