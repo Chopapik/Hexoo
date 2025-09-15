@@ -1,7 +1,98 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 @import "tailwindcss";
 
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
-
+/* Default theme = dark mode */
 @theme {
     --font-Plus_Jakarta_Sans: "Plus Jakarta Sans", sans-serif;
+
+    --color-text-main: #ffffff;
+    --color-text-neutral: #737373;
+    --color-text-neutral-secondary: #262626;
+    --color-text-neutral-tertiary: #171717;
+
+    --color-primary-neutral-background-default: #171717;
+    --color-primary-neutral-background-hover: #262626;
+    --color-primary-neutral-stroke-default: #262626;
+    --color-primary-neutral-stroke-hover: #404040;
+
+    --color-primary-fuchsia-background-default: #a21caf;
+    --color-primary-fuchsia-background-hover: #bf26d3;
+    --color-primary-fuchsia-stroke-default: #bf26d3;
+    --color-primary-fuchsia-stroke-hover: #d94dff;
+
+    --color-secondary-neutral-background-default: #262626;
+    --color-secondary-neutral-background-hover: #404040;
+    --color-secondary-neutral-stroke-default: #404040;
+    --color-secondary-neutral-stroke-hover: #525252;
+
+    --color-secondary-fuchsia-background-default: #bf26d3;
+    --color-secondary-fuchsia-background-hover: #d94dff;
+    --color-secondary-fuchsia-stroke-default: #d94dff;
+    --color-secondary-fuchsia-stroke-hover: #e87aff;
+
+    --color-tertiary-neutral-background-default: #404040;
+    --color-tertiary-neutral-background-hover: #525252;
+
+    --color-page-background: #000000;
+}
+
+@layer theme {
+    [data-theme="light"] {
+        --color-text-main: #000000;
+        --color-text-neutral: #737373;
+        --color-text-neutral-secondary: #d4d4d4;
+        --color-text-neutral-tertiary: #e5e5e5;
+
+        --color-primary-neutral-background-default: #f5f5f5;
+        --color-primary-neutral-background-hover: #e5e5e5;
+        --color-primary-neutral-stroke-default: #ffffff;
+        --color-primary-neutral-stroke-hover: #d4d4d4;
+
+        --color-primary-fuchsia-background-default: #bf26d3;
+        --color-primary-fuchsia-background-hover: #d94dff;
+        --color-primary-fuchsia-stroke-default: #d94dff;
+        --color-primary-fuchsia-stroke-hover: #e87aff;
+
+        --color-secondary-neutral-background-default: #e5e5e5;
+        --color-secondary-neutral-background-hover: #d4d4d4;
+        --color-secondary-neutral-stroke-default: #d4d4d4;
+        --color-secondary-neutral-stroke-hover: #a3a3a3;
+
+        --color-secondary-fuchsia-background-default: #d94dff;
+        --color-secondary-fuchsia-background-hover: #e87aff;
+        --color-secondary-fuchsia-stroke-default: #e87aff;
+        --color-secondary-fuchsia-stroke-hover: #f19aff;
+
+        --color-tertiary-neutral-background-default: #d4d4d4;
+        --color-tertiary-neutral-background-hover: #a3a3a3;
+
+        --color-page-background: #E5E5E5;
+    }
+}
+
+/* Desktop-like minimal scrollbar for scrollable containers */
+@layer utilities {
+  .pretty-scrollbar {
+    /* Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-secondary-neutral-stroke-default) transparent;
+  }
+
+  /* Chromium/WebKit */
+  .pretty-scrollbar::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .pretty-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .pretty-scrollbar::-webkit-scrollbar-thumb {
+    background-color: var(--color-secondary-neutral-stroke-default);
+    border-radius: 9999px;
+    border: 2px solid transparent; /* adds inner padding for a thinner look */
+    background-clip: content-box;
+  }
+  .pretty-scrollbar:hover::-webkit-scrollbar-thumb {
+    background-color: var(--color-secondary-neutral-stroke-hover);
+  }
 }
