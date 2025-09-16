@@ -1,10 +1,14 @@
-import React from 'react';
-import { createRoot } from 'react-dom/client';
-import { App } from './modules/App';
-import './index.css';
+import React from "react";
+import { createRoot } from "react-dom/client";
+import { App } from "./modules/App";
+import "./index.css";
+import { initTheme, setTheme } from "./utils/theme";
 
-const rootEl = document.getElementById('root');
-if (!rootEl) throw new Error('Root element #root not found');
+// Initialize theme before React mounts to avoid FOUC
+initTheme();
+
+const rootEl = document.getElementById("root");
+if (!rootEl) throw new Error("Root element #root not found");
 
 createRoot(rootEl).render(
   <React.StrictMode>
