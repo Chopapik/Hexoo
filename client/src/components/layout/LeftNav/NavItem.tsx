@@ -1,6 +1,5 @@
 export function NavItem({
   label,
-  active = false,
   hasNotification = false,
 }: {
   label: string;
@@ -8,27 +7,30 @@ export function NavItem({
   hasNotification?: boolean;
 }) {
   return (
-    <></>
-    // <div
-    //   className={`
-    //     flex items-center gap-3 p-2 rounded-xl
-    //     ${active ? "bg-primary-neutral-background-hover" : ""}
-    //   `}
-    // >
-    //   <div className="relative size-6">
-    //     <div className="size-4 bg-text-neutral absolute left-1 top-1" />
-    //     {hasNotification && (
-    //       <div className="size-2 bg-yellow-500 rounded-full absolute right-0 top-0" />
-    //     )}
-    //   </div>
-    //   <span
-    //     className={`
-    //       text-text-neutral text-lg font-semibold
-    //       hidden ${showLabel}:inline
-    //     `}
-    //   >
-    //     {label}
-    //   </span>
-    // </div>
+    <div
+      className="rounded-xl inline-flex justify-start items-center gap-5 group/item cursor-pointer"
+      // onClick={() => ()}
+    >
+      <div className="w-0.5 h-12 bg-text-neutral group-hover/item:bg-text-main" />
+      <div className="flex justify-start items-center gap-1 overflow-hidden">
+        <div className="relative inline-flex flex-col justify-start items-start overflow-hidden">
+          <div className="size-6 relative overflow-hidden">
+            <div className="size-4 left-[4px] top-[3px] absolute bg-text-neutral group-hover/item:bg-text-main" />
+          </div>
+
+          <div className="size-2 left-[16px] top-0 absolute">
+            {hasNotification && (
+              <div className="size-2 left-0 top-0 absolute bg-yellow-500 rounded-full" />
+            )}
+          </div>
+        </div>
+
+        <div className="flex justify-start items-start overflow-hidden">
+          <div className="text-text-neutral group-hover/item:text-text-main text-lg font-semibold font-Albert_Sans">
+            {label}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
