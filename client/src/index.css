@@ -34,10 +34,20 @@
   --color-tertiary-neutral-background-hover: #525252;
 
   --color-page-background: #000000;
+
+  /* Scrollbar colors (dark mode default) */
+  --color-scrollbar-thumb: #404040;
+  /* dark */
+  --color-scrollbar-thumb-hover: #525252;
 }
 
 @layer theme {
+  [data-theme="dark"] {
+    /* Ensure UA widgets (scrollbars, inputs) use dark palette */
+    color-scheme: dark;
+  }
   [data-theme="light"] {
+    color-scheme: light;
     --color-text-main: #000000;
     --color-text-neutral: #737373;
     --color-text-neutral-secondary: #d4d4d4;
@@ -67,6 +77,48 @@
     --color-tertiary-neutral-background-hover: #a3a3a3;
 
     --color-page-background: #E5E5E5;
+
+    /* Scrollbar colors (light mode) */
+    --color-scrollbar-thumb: #ffffff;
+    /* white */
+    --color-scrollbar-thumb-hover: #d4d4d4;
+  }
+}
+
+/* Always show a vertical scrollbar on the viewport */
+@layer base {
+  html {
+    /* Reserve space for the scrollbar and force it visible */
+    overflow-y: scroll;
+    scrollbar-gutter: stable;
+    /* Firefox scrollbar styling */
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-scrollbar-thumb) transparent;
+  }
+  /* Ensure body does not create a second scroller */
+  body {
+    overflow-y: visible;
+  }
+
+  /* Chromium/WebKit scrollbar styling on the viewport */
+  html::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  html::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  html::-webkit-scrollbar-thumb {
+    background-color: var(--color-scrollbar-thumb);
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+
+  html:hover::-webkit-scrollbar-thumb {
+    background-color: var(--color-scrollbar-thumb-hover);
   }
 }
 
@@ -75,7 +127,7 @@
   .pretty-scrollbar {
     /* Firefox */
     scrollbar-width: thin;
-    scrollbar-color: var(--color-secondary-neutral-stroke-default) transparent;
+    scrollbar-color: var(--color-scrollbar-thumb) transparent;
   }
 
   /* Chromium/WebKit */
@@ -89,7 +141,7 @@
   }
 
   .pretty-scrollbar::-webkit-scrollbar-thumb {
-    background-color: var(--color-secondary-neutral-stroke-default);
+    background-color: var(--color-scrollbar-thumb);
     border-radius: 9999px;
     border: 2px solid transparent;
     /* adds inner padding for a thinner look */
@@ -97,6 +149,6 @@
   }
 
   .pretty-scrollbar:hover::-webkit-scrollbar-thumb {
-    background-color: var(--color-secondary-neutral-stroke-hover);
+    background-color: var(--color-scrollbar-thumb-hover);
   }
 }

@@ -1,21 +1,42 @@
+import { Link, useRouterState } from "@tanstack/react-router";
+
 export function NavItem({
   label,
+  to,
   hasNotification = false,
 }: {
   label: string;
-  active?: boolean;
+  to: string;
   hasNotification?: boolean;
 }) {
+  const { location } = useRouterState();
+  const isActive = location.pathname === to;
+
   return (
-    <div
+    <Link
+      to={to}
       className="rounded-xl inline-flex justify-start items-center gap-5 group/item cursor-pointer"
-      // onClick={() => ()}
+      aria-current={isActive ? "page" : undefined}
     >
-      <div className="w-0.5 h-12 bg-text-neutral group-hover/item:bg-text-main" />
+      <div
+        className={
+          "hidden xl:block w-0.5 h-12 " +
+          (isActive
+            ? "bg-text-main"
+            : "bg-text-neutral group-hover/item:bg-text-main")
+        }
+      />
       <div className="flex justify-start items-center gap-1 overflow-hidden">
         <div className="relative inline-flex flex-col justify-start items-start overflow-hidden">
           <div className="size-6 relative overflow-hidden">
-            <div className="size-4 left-[4px] top-[3px] absolute bg-text-neutral group-hover/item:bg-text-main" />
+            <div
+              className={
+                "size-4 left-[4px] top-[3px] absolute " +
+                (isActive
+                  ? "bg-text-main"
+                  : "bg-text-neutral group-hover/item:bg-text-main")
+              }
+            />
           </div>
 
           <div className="size-2 left-[16px] top-0 absolute">
@@ -26,11 +47,18 @@ export function NavItem({
         </div>
 
         <div className="flex justify-start items-start overflow-hidden">
-          <div className="text-text-neutral group-hover/item:text-text-main text-lg font-semibold font-Albert_Sans">
+          <div
+            className={
+              "hidden xl:block text-lg font-semibold font-Albert_Sans " +
+              (isActive
+                ? "text-text-main"
+                : "text-text-neutral group-hover/item:text-text-main")
+            }
+          >
             {label}
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }

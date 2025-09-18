@@ -17,7 +17,7 @@ export const Layout: React.FC<LayoutProps> = ({ main }) => {
   const closeRight = () => setIsRightNavOpen(false);
 
   return (
-    <div className="flex justify-center bg-page-background w-full ">
+    <div className="flex justify-center bg-page-background w-full min-h-screen">
       <div className="flex flex-col w-full max-w-[1440px]">
         {/* Header pinned to top */}
         <header className="sticky top-0 z-50 bg-page-background px-2 py-2 md:px-4 md:py-4">

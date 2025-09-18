@@ -7,6 +7,8 @@ import { initTheme, setTheme } from "./utils/theme";
 // Initialize theme before React mounts to avoid FOUC
 initTheme();
 
+setTheme("dark");
+
 const rootEl = document.getElementById("root");
 if (!rootEl) throw new Error("Root element #root not found");
 
