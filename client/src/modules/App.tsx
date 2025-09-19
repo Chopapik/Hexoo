@@ -1,6 +1,5 @@
 import React from "react";
 import { Layout } from "@/components/layout/Layout";
-import { PostsList } from "@/components/layout/MainComponents/PostsList";
 import {
   Outlet,
   RouterProvider,
@@ -8,6 +7,7 @@ import {
   createRoute,
   createRouter,
 } from "@tanstack/react-router";
+import { HomePage } from "@/pages/HomePage";
 
 function Root() {
   return <Layout main={<Outlet />} />;
@@ -18,7 +18,7 @@ const rootRoute = createRootRoute({ component: Root });
 const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/",
-  component: PostsList,
+  component: HomePage,
 });
 
 const messagesRoute = createRoute({
