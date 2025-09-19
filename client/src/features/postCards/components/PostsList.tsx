@@ -1,5 +1,5 @@
 import React from "react";
-import { PostCard, type Post } from "@/components/ui/PostCard";
+import { PostCard, type Post } from "./PostCard";
 
 type MainProps = {
   className?: string;
@@ -10,7 +10,7 @@ const lorem =
 
 const posts: Post[] = Array.from({ length: 20 }).map((_, i) => ({
   id: i + 1,
-  user: `User_${i + 1}`,
+  userName: `User_${i + 1}`,
   date: new Date(2024, 0, (i % 28) + 1).toLocaleDateString(),
   device: ["device_name", "iPhone", "Android", "Web"][i % 4],
   body: lorem,
