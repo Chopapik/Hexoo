@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 
 export type Post = {
   id: string | number;
@@ -49,10 +49,11 @@ export const PostCard: React.FC<{ post: Post }> = ({ post }) => {
       </div>
       <div className="self-stretch inline-flex justify-center items-start overflow-hidden">
         <img
-          className="w-[500px] h-96 max-w-[500px] min-w-72 max-h-96 min-h-64 relative rounded-xl"
+          className="w-[500px] h-96 max-w-[500px] min-w-72 max-h-96 min-h-64 object-cover rounded-xl"
           src="https://placehold.co/500x426"
         />
       </div>
+
       <div
         data-property-1="Default"
         className="w-24 px-2 bg-white/0 inline-flex justify-start items-start gap-2 overflow-hidden"
@@ -74,7 +75,7 @@ export const PostCard: React.FC<{ post: Post }> = ({ post }) => {
           className="h-6 flex justify-start items-center gap-2"
         >
           <div className="size-6 relative overflow-hidden">
-            <div className="size-4 left-[3px] top-[3px] absolute outline outline-[2.50px] outline-offset-[-1.25px] outline-text-neutral" />
+            <div className="size-4 left-[3px] top-[3px] absolute outline-[2.50px] outline-offset-[-1.25px] outline-text-neutral" />
           </div>
           <div className="justify-start text-text-neutral text-base font-semibold font-['Albert_Sans']">
             1
@@ -82,22 +83,5 @@ export const PostCard: React.FC<{ post: Post }> = ({ post }) => {
         </div>
       </div>
     </div>
-
-    // <article className="w-full rounded-xl border-t border-primary-neutral-stroke-default bg-primary-neutral-background-default p-4">
-    //   <header className="flex items-start gap-3">
-    //     <div className="shrink-0 size-10 rounded-full bg-text-neutral/20 inline-flex items-center justify-center">
-    //       <span className="text-text-neutral text-xl">@</span>
-    //     </div>
-    //     <div className="flex flex-col">
-    //       <div className="text-text-neutral font-semibold">{post.user}</div>
-    //       <div className="text-text-neutral/60 text-xs">
-    //         {post.date} • Upload from {post.device}
-    //       </div>
-    //     </div>
-    //   </header>
-    //   <p className="mt-4 text-text-neutral leading-relaxed">
-    //     {post.body}
-    //   </p>
-    // </article>
   );
 };
