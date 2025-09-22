@@ -1,5 +1,5 @@
-import { PostsList } from "@/features/postCards/components/PostsList";
+﻿import { PostList } from "@/features/posts/components/PostList";
 
 export function HomePage() {
-  return <PostsList />;
+  return <PostList />;
 }
