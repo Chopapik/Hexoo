@@ -1,4 +1,4 @@
-﻿import DefaultAvatar from "@/assets/defaultAvatar.svg?react";
+import DefaultAvatar from "@/assets/defaultAvatar.svg?react";
 
 const avatarClass = "size-10 rounded-[10px] border border-neutral-800";
 

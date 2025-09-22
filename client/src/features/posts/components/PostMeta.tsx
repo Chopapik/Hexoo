@@ -7,8 +7,8 @@ type PostMetaProps = {
 
 export const PostMeta = ({ post }: PostMetaProps) => {
   return (
-    <div className="w-72 inline-flex justify-start items-center gap-2">
-      <div className="size-10 rounded-[10px] border border-neutral-800">
+    <div className="w-72 inline-flex justify-start items-center gap-2  ">
+      <div className="size-10">
         <Avatar src={post.userAvatarUrl} alt={post.userName} />
       </div>
 
