@@ -8,8 +8,8 @@ export const mockPosts: Post[] = [
     date: "04/12/2024",
     device: "iPhone",
     text: "Quick update: deployed the streaming fix tonight! 🚀",
-    likes: 0,
-    comments: 0,
+    likesCount: 0,
+    commentsCount: 0,
   },
   {
     id: "post-002",
@@ -18,9 +18,10 @@ export const mockPosts: Post[] = [
     date: "04/08/2024",
     device: "Android",
     text: "Weekly ship: launched analytics filters, redesigned board icons, and tuned search previews for speed. Rollout finished ahead of schedule and beta teams already reported faster audits heading into tomorrow's demo.",
-    imageUrl: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1080&h=1080&q=80",
-    likes: 8,
-    comments: 3,
+    imageUrl:
+      "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1080&h=1080&q=80",
+    likesCount: 8,
+    commentsCount: 3,
   },
   {
     id: "post-003",
@@ -33,9 +34,10 @@ export const mockPosts: Post[] = [
 We also rewrote the notification pipeline so it batches updates per workspace instead of per user. The new scheduler handled 3x the traffic in staging without breaking a sweat, and the ops team reported zero dropped messages.
 
 Seeing everyone respond in the pilot group has been both humbling and energizing. Keep sharing screenshots, edge cases, and the "wish we had this earlier" stories - those bits keep the roadmap honest and grounded in real-world use.`,
-    imageUrl: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1080&h=1350&q=80",
-    likes: 87,
-    comments: 42,
+    imageUrl:
+      "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1080&h=1350&q=80",
+    likesCount: 87,
+    commentsCount: 42,
   },
   {
     id: "post-004",
@@ -44,9 +46,10 @@ Seeing everyone respond in the pilot group has been both humbling and energizing
     date: "12/02/2023",
     device: "Tablet",
     text: "Sunset sync from the retreat: we mapped the Q3 OKRs, swapped strategy notes, and still found time for board games & matcha. Remote weeks like this keep the culture sharp.",
-    imageUrl: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1600&h=900&q=80",
-    likes: 2405,
-    comments: 1189,
+    imageUrl:
+      "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1600&h=900&q=80",
+    likesCount: 2405,
+    commentsCount: 1189,
   },
   {
     id: "post-005",
@@ -56,8 +59,8 @@ Seeing everyone respond in the pilot group has been both humbling and energizing
     device: "Web",
     text: "Turned on dark mode for staging so QA can finally test the new contrast tokens after hours without eye strain. Thanks to everyone who reviewed the patch between stand-up and lunch.",
     imageUrl: "https://via.placeholder.com/1080x608.png?text=Dark+Mode",
-    likes: 152,
-    comments: 18,
+    likesCount: 152,
+    commentsCount: 18,
   },
   {
     id: "post-006",
@@ -65,8 +68,8 @@ Seeing everyone respond in the pilot group has been both humbling and energizing
     date: "09/10/2023",
     device: "Android",
     text: "Patch notes: #shipit for offline caching and comment syncing. Added retry logic, crushed the Pixel login bug, and cleaned up stale data jobs. Ping me if any edge cases remain.",
-    likes: 4,
-    comments: 1,
+    likesCount: 4,
+    commentsCount: 1,
   },
   {
     id: "post-007",
@@ -75,8 +78,9 @@ Seeing everyone respond in the pilot group has been both humbling and energizing
     date: "07/04/2022",
     device: "Web",
     text: "Throwback to our first fully async launch. Different time zones, same energy - grateful for how far the platform and team have come since then. Celebrating with a tiny 🎉 before diving into the next milestone.",
-    imageUrl: "https://images.unsplash.com/photo-1492724441997-5dc865305da7?auto=format&fit=crop&w=1080&h=1080&q=80",
-    likes: 65,
-    comments: 7,
+    imageUrl:
+      "https://images.unsplash.com/photo-1492724441997-5dc865305da7?auto=format&fit=crop&w=1080&h=1080&q=80",
+    likesCount: 65,
+    commentsCount: 7,
   },
 ];
