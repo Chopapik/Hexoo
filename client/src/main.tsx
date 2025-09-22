@@ -1,7 +1,8 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { App } from "./modules/App";
-import "./index.css";
+import "./styles/index.css";
+import "./styles/scrollbar.css";
 import { initTheme, setTheme } from "./utils/theme";
 
 // Initialize theme before React mounts to avoid FOUC

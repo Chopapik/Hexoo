@@ -46,6 +46,7 @@
     /* Ensure UA widgets (scrollbars, inputs) use dark palette */
     color-scheme: dark;
   }
+
   [data-theme="light"] {
     color-scheme: light;
     --color-text-main: #000000;
@@ -82,73 +83,5 @@
     --color-scrollbar-thumb: #ffffff;
     /* white */
     --color-scrollbar-thumb-hover: #d4d4d4;
-  }
-}
-
-/* Always show a vertical scrollbar on the viewport */
-@layer base {
-  html {
-    /* Reserve space for the scrollbar and force it visible */
-    overflow-y: scroll;
-    scrollbar-gutter: stable;
-    /* Firefox scrollbar styling */
-    scrollbar-width: thin;
-    scrollbar-color: var(--color-scrollbar-thumb) transparent;
-  }
-  /* Ensure body does not create a second scroller */
-  body {
-    overflow-y: visible;
-  }
-
-  /* Chromium/WebKit scrollbar styling on the viewport */
-  html::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
-
-  html::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  html::-webkit-scrollbar-thumb {
-    background-color: var(--color-scrollbar-thumb);
-    border-radius: 9999px;
-    border: 2px solid transparent;
-    background-clip: content-box;
-  }
-
-  html:hover::-webkit-scrollbar-thumb {
-    background-color: var(--color-scrollbar-thumb-hover);
-  }
-}
-
-/* Desktop-like minimal scrollbar for scrollable containers */
-@layer utilities {
-  .pretty-scrollbar {
-    /* Firefox */
-    scrollbar-width: thin;
-    scrollbar-color: var(--color-scrollbar-thumb) transparent;
-  }
-
-  /* Chromium/WebKit */
-  .pretty-scrollbar::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
-
-  .pretty-scrollbar::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  .pretty-scrollbar::-webkit-scrollbar-thumb {
-    background-color: var(--color-scrollbar-thumb);
-    border-radius: 9999px;
-    border: 2px solid transparent;
-    /* adds inner padding for a thinner look */
-    background-clip: content-box;
-  }
-
-  .pretty-scrollbar:hover::-webkit-scrollbar-thumb {
-    background-color: var(--color-scrollbar-thumb-hover);
   }
 }
