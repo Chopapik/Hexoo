@@ -10,7 +10,7 @@ function RightNavContent() {
 
 export function RightNavSidebar() {
   return (
-    <div className="hidden md:flex md:sticky md:top-4 self-start bg-primary-neutral-background-default border-t border-primary-neutral-stroke-default rounded-xl overflow-hidden md:w-20 lg:w-[244px] xl:w-72 h-full">
+    <div className="hidden md:flex md:sticky md:top-4 self-start bg-primary-neutral-background-default border-t-2 border-primary-neutral-stroke-default rounded-xl overflow-hidden md:w-20 lg:w-[244px] xl:w-72 h-full">
       <RightNavContent />
     </div>
   );
