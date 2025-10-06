@@ -5,7 +5,7 @@ import React from "react";
 
 export const Header: React.FC = () => {
   return (
-    <div className="h-14 w-full px-4 bg-primary-neutral-background-default rounded-[10px] border-t-2 border-primary-neutral-stroke-default inline-flex justify-between items-center">
+    <div className="h-14 w-full px-4 bg-primary-neutral-background-default rounded-xl border-t-2 border-primary-neutral-stroke-default inline-flex justify-between items-center">
       <div className="h-fit w-fit relative overflow-hidden">
         <Logo />
       </div>

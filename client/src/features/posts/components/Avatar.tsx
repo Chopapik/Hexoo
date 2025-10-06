@@ -1,6 +1,6 @@
 import DefaultAvatar from "@/assets/defaultAvatar.svg?react";
 
-const avatarClass = "size-10 rounded-[10px] border border-neutral-800";
+const avatarClass = "size-10 rounded-xl border border-neutral-800";
 
 type AvatarProps = {
   src?: string;
