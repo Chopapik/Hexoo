@@ -4,11 +4,14 @@ import { App } from "./modules/App";
 import "./styles/index.css";
 import "./styles/scrollbar.css";
 import { initTheme, setTheme } from "./utils/theme";
+import dayjs from "dayjs";
+import "dayjs/locale/pl";
 
-// Initialize theme before React mounts to avoid FOUC
 initTheme();
 
 setTheme("dark");
+
+dayjs.locale("pl");
 
 const rootEl = document.getElementById("root");
 if (!rootEl) throw new Error("Root element #root not found");
