@@ -8,6 +8,7 @@ import {
   createRouter,
 } from "@tanstack/react-router";
 import { HomePage } from "@/pages/HomePage";
+import { UserPage } from "@/features/users/pages/UserPage/UserPage";
 
 function Root() {
   return <Layout main={<Outlet />} />;
@@ -38,7 +39,7 @@ const notificationsRoute = createRoute({
 const profileRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/profile",
-  component: () => <div className="p-6 text-2xl font-semibold">Profile</div>,
+  component: () => <UserPage />,
 });
 
 const routeTree = rootRoute.addChildren([
