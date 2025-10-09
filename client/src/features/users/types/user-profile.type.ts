@@ -1,5 +1,5 @@
 export interface UserProfile {
-  nickname: string;
+  username: string;
   joinedAt: Date;
   lastOnline: Date;
   postsCount: number;
