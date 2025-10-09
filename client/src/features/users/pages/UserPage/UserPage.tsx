@@ -3,7 +3,7 @@ import { UserProfileCard } from "./components/UserProfileCard";
 import { PostList } from "@/features/posts/components/PostList";
 
 const userMockData: UserProfile = {
-  nickname: "Test",
+  username: "Test",
   joinedAt: new Date("2024-10-01T00:00:00"),
   lastOnline: new Date("2024-11-11T15:34:00"),
   postsCount: 12,
