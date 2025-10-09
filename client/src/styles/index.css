@@ -5,6 +5,10 @@
 @theme {
   --font-Plus_Jakarta_Sans: "Plus Jakarta Sans", sans-serif;
   --font-Albert_Sans: "Albert Sans", sans-serif;
+
+  /* Custom breakpoint for Tailwind `xs:` utilities */
+  --breakpoint-xs: 30rem;
+
   --color-text-main: #ffffff;
   --color-text-neutral: #737373;
   --color-text-neutral-secondary: #262626;
