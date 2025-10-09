@@ -70,7 +70,7 @@ export const UserProfileCard = ({
             data-status={status}
             className="h-8 flex justify-center items-center overflow-hidden md:ml-auto"
           >
-            <div className="justify-start text-text-neutral-secondary text-lg font-medium font-['Roboto'] italic">
+            <div className="justify-start text-text-neutral text-lg font-medium font-['Roboto'] italic">
               {status}
             </div>
           </div>
