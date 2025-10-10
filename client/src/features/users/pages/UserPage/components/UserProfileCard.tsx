@@ -21,13 +21,13 @@ export const UserProfileCard = ({
       className="self-stretch w-full p-4 md:px-6 md:py-5 bg-primary-neutral-background-default rounded-[10px] border-t border-primary-neutral-stroke-default inline-flex flex-col md:flex-row justify-start items-center gap-3"
     >
       <img
-        className="w-16 h-16 md:w-24 md:h-24 rounded-[10px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] border border-secondary-neutral-background-default object-cover"
+        className="w-16 h-16 xs:w-24 xs:h-24 rounded-[10px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] border border-secondary-neutral-background-default object-cover"
         src={avatarUrl}
         alt={`${username}'s avatar`}
       />
 
       <div className="flex-1 w-full max-w-[460px] inline-flex flex-col md:justify-center items-start gap-1 overflow-hidden">
-        <div className="justify-center md:justify-start text-center md:text-left w-full text-text-main text-base md:text-2xl font-bold font-['Roboto'] truncate">
+        <div className="justify-center md:justify-start text-center md:text-left w-full text-text-main text-base xs:text-2xl font-bold font-['Roboto'] truncate">
           {username}
         </div>
 
@@ -54,9 +54,9 @@ export const UserProfileCard = ({
               </div>
             </div>
 
-            <span className="hidden md:inline-block w-px h-[20px] bg-neutral-500" />
+            <span className="hidden xs:inline-block w-px h-[20px] bg-neutral-500" />
 
-            <div className="hidden md:inline-flex w-24 flex-col justify-start items-start gap-0.5">
+            <div className="hidden xs:inline-flex w-24 flex-col justify-start items-start gap-0.5">
               <div className="self-stretch justify-start text-text-neutral text-xs font-bold font-['Roboto']">
                 liczba postów
               </div>
