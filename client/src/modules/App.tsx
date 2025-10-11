@@ -9,27 +9,44 @@ import {
 } from "@tanstack/react-router";
 import { HomePage } from "@/pages/HomePage";
 import { UserPage } from "@/features/users/pages/UserPage/UserPage";
+import { LoginPage } from "@/features/auth/login/LoginPage";
 
-function Root() {
+function RootWithLayout() {
   return <Layout main={<Outlet />} />;
 }
 
-const rootRoute = createRootRoute({ component: Root });
+function BlankRoot() {
+  return <Outlet />;
+}
+
+const rootRoute = createRootRoute({ component: () => <Outlet /> });
+
+const appLayoutRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  id: "app",
+  component: RootWithLayout,
+});
+
+const authBlankRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  id: "auth",
+  component: BlankRoot,
+});
 
 const indexRoute = createRoute({
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => appLayoutRoute,
   path: "/",
   component: HomePage,
 });
 
 const messagesRoute = createRoute({
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => appLayoutRoute,
   path: "/messages",
   component: () => <div className="p-6 text-2xl font-semibold">Messages</div>,
 });
 
 const notificationsRoute = createRoute({
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => appLayoutRoute,
   path: "/notifications",
   component: () => (
     <div className="p-6 text-2xl font-semibold">Notifications</div>
@@ -37,16 +54,25 @@ const notificationsRoute = createRoute({
 });
 
 const profileRoute = createRoute({
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => appLayoutRoute,
   path: "/profile",
   component: () => <UserPage />,
 });
 
+const loginRoute = createRoute({
+  getParentRoute: () => authBlankRoute,
+  path: "/login",
+  component: () => <LoginPage />,
+});
+
 const routeTree = rootRoute.addChildren([
-  indexRoute,
-  messagesRoute,
-  notificationsRoute,
-  profileRoute,
+  appLayoutRoute.addChildren([
+    indexRoute,
+    messagesRoute,
+    notificationsRoute,
+    profileRoute,
+  ]),
+  authBlankRoute.addChildren([loginRoute]),
 ]);
 
 const router = createRouter({ routeTree });
