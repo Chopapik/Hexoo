@@ -41,19 +41,30 @@ coverage/
 # Ignore entire cytadela project
 /cytadela/
 
-# Client: React/Vite app
+# Client: Next.js app
 /client/node_modules/
-/client/build/
-/client/dist/
-/client/.vite/
-/client/coverage/
+/client/.next/
+/client/out/
 /client/.eslintcache
-
-# CRA/Vite env files (keep only non-local if explicitly needed)
+/client/coverage/
 /client/.env.local
 /client/.env.development.local
 /client/.env.test.local
 /client/.env.production.local
+
+# client_old: legacy React/Vite app
+/client_old/node_modules/
+/client_old/build/
+/client_old/dist/
+/client_old/.vite/
+/client_old/coverage/
+/client_old/.eslintcache
+
+# CRA/Vite env files for client_old
+/client_old/.env.local
+/client_old/.env.development.local
+/client_old/.env.test.local
+/client_old/.env.production.local
 
 # Node API: Node.js + TypeScript app
 /node_api/node_modules/
