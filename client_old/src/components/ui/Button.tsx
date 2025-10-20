@@ -7,7 +7,7 @@ const sizeClasses: Record<ButtonSize, string> = {
   xl: "h-13 min-w-[250px] px-3 text-base rounded-xl",
   // Icon-only sizes
   icon: "h-9 min-w-9 rounded-xl",
-  "icon-sm": "size-7 rounded-xl",
+  iconSm: "size-7 rounded-xl",
 };
 
 // Variants control visual style only; base keeps layout/interaction.
