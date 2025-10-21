@@ -16,7 +16,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pl">
+    <html lang="pl" nighteye="disabled">
       <body>
         <Layout>{children}</Layout>
       </body>

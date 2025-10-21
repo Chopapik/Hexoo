@@ -1,4 +1,5 @@
 import type { ButtonProps, ButtonSize } from "@/types/button.type";
+import Image from "next/image";
 
 const sizeClasses: Record<ButtonSize, string> = {
   sm: "h-9 min-w-9 px-3 text-sm rounded-xl",
@@ -7,7 +8,7 @@ const sizeClasses: Record<ButtonSize, string> = {
   xl: "h-13 min-w-[250px] px-3 text-base rounded-xl",
   // Icon-only sizes
   icon: "h-9 min-w-9 rounded-xl",
-  "icon-sm": "size-7 rounded-xl",
+  iconSm: "size-7 rounded-xl",
 };
 
 // Variants control visual style only; base keeps layout/interaction.
@@ -24,6 +25,8 @@ const variantClasses: Record<string, string> = {
 
 export const Button = ({
   text,
+  leftIconUrl,
+  rightIconUrl,
   leftIcon,
   rightIcon,
   size = "md",
@@ -39,9 +42,15 @@ export const Button = ({
 
   return (
     <button onClick={onClick} className={combinedClasses}>
-      {leftIcon && <span className="size-2.5">{leftIcon}</span>}
+      {leftIcon ||
+        (leftIconUrl && (
+          <Image src={leftIconUrl} alt="" className="w-2.5 h-2.5" />
+        ))}
       {text && <span>{text}</span>}
-      {rightIcon && <span className="size-2.5">{rightIcon}</span>}
+      {rightIcon ||
+        (rightIconUrl && (
+          <Image src={rightIconUrl} alt="" className="w-2.5 h-2.5" />
+        ))}
     </button>
   );
 };

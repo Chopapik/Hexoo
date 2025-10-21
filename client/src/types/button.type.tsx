@@ -8,6 +8,8 @@ export type ButtonSize = "sm" | "md" | "lg" | "xl" | "icon" | "iconSm";
 
 export interface ButtonProps {
   text?: string;
+  leftIconUrl?: string;
+  rightIconUrl?: string;
   leftIcon?: ReactNode;
   rightIcon?: ReactNode;
   icon?: ReactNode;
