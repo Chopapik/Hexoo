@@ -1,3 +1,4 @@
+import Image from "next/image";
 import type { ButtonProps, ButtonSize } from "@/types/button.type";
 
 const sizeClasses: Record<ButtonSize, string> = {
@@ -31,7 +32,6 @@ export const Button = ({
   className = "",
   onClick,
 }: ButtonProps) => {
-  // Keep base layout/interaction minimal so variants can fully style background/borders.
   const baseClasses =
     "relative inline-flex justify-center items-center gap-2 font-bold font-Plus_Jakarta_Sans leading-tight shrink-0 cursor-pointer overflow-hidden transition-all duration-300 ease-out";
 
@@ -39,9 +39,17 @@ export const Button = ({
 
   return (
     <button onClick={onClick} className={combinedClasses}>
-      {leftIcon && <span className="size-2.5">{leftIcon}</span>}
+      {leftIcon && (
+        <span className="relative w-5 h-5">
+          <Image src={leftIcon} alt="" width={20} height={20} />
+        </span>
+      )}
       {text && <span>{text}</span>}
-      {rightIcon && <span className="size-2.5">{rightIcon}</span>}
+      {rightIcon && (
+        <span className="relative w-5 h-5">
+          <Image src={rightIcon} alt="" width={20} height={20} />
+        </span>
+      )}
     </button>
   );
 };
