@@ -1,5 +1,6 @@
-import type { UserProfile } from "@/features/users/types/user-profile.type";
+import type { UserProfile } from "@/features/users/types/userProfile.type";
 import dayjs from "dayjs";
+import Image from "next/image";
 
 const formatJoinDate = (joinDate: Date) => dayjs(joinDate).format("MMMM YYYY");
 
@@ -20,7 +21,7 @@ export const UserProfileCard = ({
       data-type="Default"
       className="self-stretch w-full p-4 md:px-6 md:py-5 bg-primary-neutral-background-default rounded-[10px] border-t border-primary-neutral-stroke-default inline-flex flex-col md:flex-row justify-start items-center gap-3"
     >
-      <img
+      <Image
         className="w-16 h-16 xs:w-24 xs:h-24 rounded-[10px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] border border-secondary-neutral-background-default object-cover"
         src={avatarUrl}
         alt={`${username}'s avatar`}
