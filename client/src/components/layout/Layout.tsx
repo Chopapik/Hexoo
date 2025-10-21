@@ -1,17 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { Header } from "@/components/layout/Header";
-import { LeftNav } from "@/components/layout/LeftNav/LeftNav";
-import { BottomNav } from "@/components/layout/LeftNav/BottomNav";
+'use client';
+
+import { useState } from "react";
+import { Header } from "./Header";
+import { LeftNav } from "./LeftNav/LeftNav";
+import { BottomNav } from "./LeftNav/BottomNav";
 import {
   RightNavSidebar,
   RightNavOverlay,
-} from "@/components/layout/RightNav/RightNav";
+} from "./RightNav/RightNav";
 
-type LayoutProps = {
-  main: React.ReactNode;
-};
-
-export const Layout: React.FC<LayoutProps> = ({ main }) => {
+export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isRightNavOpen, setIsRightNavOpen] = useState(false);
   const openRight = () => setIsRightNavOpen(true);
   const closeRight = () => setIsRightNavOpen(false);
@@ -35,10 +33,10 @@ export const Layout: React.FC<LayoutProps> = ({ main }) => {
             </aside>
 
             {/* Center */}
-            <main className="flex-1 min-w-0">{main}</main>
+            <main className="flex-1 min-w-0">{children}</main>
 
             {/* RightNav sticky */}
-            <aside className="hidden lg:block sticky top-[calc(56.6px+16px+16px)]  h-[calc(100vh-56.6px-16px-16px-16px)]">
+            <aside className="hidden lg:block sticky top-[calc(56.6px+16px+16px)] h-[calc(100vh-56.6px-16px-16px-16px)]">
               <RightNavSidebar />
             </aside>
           </div>

@@ -1,7 +1,8 @@
-import ChevronRight from "@/assets/icons/ChevronRight.svg?react";
+import chevronRightUrl from "@/assets/icons/chevronRight.svg?url";
 import { Button } from "../ui/Button";
 import { Logo } from "../ui/Logo";
 import React from "react";
+import Image from "next/image";
 
 export const Header: React.FC = () => {
   return (
@@ -9,7 +10,7 @@ export const Header: React.FC = () => {
       <div className="h-fit w-fit relative overflow-hidden">
         <Logo />
       </div>
-      <Button text="Zaloguj się" rightIcon={<ChevronRight />} />
+      <Button text="Zaloguj się" rightIconUrl={chevronRightUrl} />
     </div>
   );
 };
