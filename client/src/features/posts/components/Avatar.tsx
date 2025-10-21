@@ -1,6 +1,9 @@
-import DefaultAvatar from "@/assets/defaultAvatar.svg?react";
-
-const avatarClass = "size-10 rounded-xl border border-neutral-800";
+// src/features/posts/components/Avatar.tsx
+import React from "react";
+import Image from "next/image";
+import defaultAvatarUrl from "@/assets/defaultAvatar.svg?url";
+const avatarClass =
+  "w-10 h-10 rounded-xl border border-neutral-800 object-cover";
 
 type AvatarProps = {
   src?: string;
@@ -8,9 +11,13 @@ type AvatarProps = {
 };
 
 export const Avatar = ({ src, alt }: AvatarProps) => {
-  if (src) {
-    return <img className={avatarClass} src={src} alt={alt ?? "User avatar"} />;
-  }
-
-  return <DefaultAvatar className={avatarClass} />;
+  return (
+    <Image
+      className={avatarClass}
+      src={src ?? defaultAvatarUrl}
+      alt={alt ?? "User avatar"}
+      width={40}
+      height={40}
+    />
+  );
 };
