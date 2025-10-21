@@ -1,7 +1,7 @@
 // src/features/posts/components/Avatar.tsx
+import React from "react";
 import Image from "next/image";
-import DefaultAvatar from "@/assets/defaultAvatar.svg"; // upewnij się, że SVG jest w folderze assets
-
+import defaultAvatarUrl from "@/assets/defaultAvatar.svg?url";
 const avatarClass =
   "w-10 h-10 rounded-xl border border-neutral-800 object-cover";
 
@@ -11,19 +11,13 @@ type AvatarProps = {
 };
 
 export const Avatar = ({ src, alt }: AvatarProps) => {
-  // jeśli podano src, użyj <Image>
-  if (src) {
-    return (
-      <Image
-        className={avatarClass}
-        src={src}
-        alt={alt ?? "User avatar"}
-        width={40}
-        height={40}
-      />
-    );
-  }
-
-  // fallback na domyślny SVG avatar
-  return <DefaultAvatar className={avatarClass} />;
+  return (
+    <Image
+      className={avatarClass}
+      src={src ?? defaultAvatarUrl}
+      alt={alt ?? "User avatar"}
+      width={40}
+      height={40}
+    />
+  );
 };
