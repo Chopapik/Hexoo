@@ -1,4 +1,4 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+import React from "react";
 
 export function NavItem({
   label,
@@ -9,12 +9,10 @@ export function NavItem({
   to: string;
   hasNotification?: boolean;
 }) {
-  const { location } = useRouterState();
-  const isActive = location.pathname === to;
+  const isActive = false; // neutral placeholder, no routing logic
 
   return (
-    <Link
-      to={to}
+    <div
       className="rounded-xl inline-flex justify-start items-center gap-5 group/item cursor-pointer"
       aria-current={isActive ? "page" : undefined}
     >
@@ -59,6 +57,6 @@ export function NavItem({
           </div>
         </div>
       </div>
-    </Link>
+    </div>
   );
 }
