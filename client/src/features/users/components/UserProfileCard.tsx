@@ -1,20 +1,27 @@
+"use client";
+
 import type { UserProfile } from "@/features/users/types/userProfile.type";
 import dayjs from "dayjs";
 import Image from "next/image";
+import useProfile from "../hooks/profile/useProfile";
+import defaultAvatarUrl from "@/assets/defaultAvatar.svg?url";
+
+const status = "Offline";
 
 const formatJoinDate = (joinDate: Date) => dayjs(joinDate).format("MMMM YYYY");
 
 const formatLastOnlineDate = (date: Date) =>
   dayjs(date).format("DD.MM.YYYY HH:mm");
 
-export const UserProfileCard = ({
-  username,
-  avatarUrl,
-  joinedAt,
-  lastOnline,
-  postsCount,
-}: UserProfile) => {
-  const status = "offline";
+export const UserProfileCard = () => {
+  const { userData } = useProfile();
+
+  if (!userData) {
+    return <div>Loading...</div>;
+  }
+
+  const { avatarUrl, username, joinedAt, lastOnline, postsCount } =
+    userData as UserProfile;
 
   return (
     <div
@@ -23,8 +30,10 @@ export const UserProfileCard = ({
     >
       <Image
         className="w-16 h-16 xs:w-24 xs:h-24 rounded-[10px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] border border-secondary-neutral-background-default object-cover"
-        src={avatarUrl}
+        src={avatarUrl ?? defaultAvatarUrl}
         alt={`${username}'s avatar`}
+        width={96}
+        height={96}
       />
 
       <div className="flex-1 w-full max-w-[460px] inline-flex flex-col md:justify-center items-start gap-1 overflow-hidden">
