@@ -1,8 +1,9 @@
 import chevronRightUrl from "@/assets/icons/chevronRight.svg?url";
-import { Button } from "../ui/Button";
+import Button from "../ui/Button";
 import { Logo } from "../ui/Logo";
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 export const Header: React.FC = () => {
   return (
@@ -10,7 +11,9 @@ export const Header: React.FC = () => {
       <div className="h-fit w-fit relative overflow-hidden">
         <Logo />
       </div>
-      <Button text="Zaloguj się" rightIconUrl={chevronRightUrl} />
+      <Link href="/login">
+        <Button text="Zaloguj się" rightIconUrl={chevronRightUrl} />
+      </Link>
     </div>
   );
 };
