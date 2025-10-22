@@ -13,15 +13,15 @@ export const PostMeta = ({ post }: PostMetaProps) => {
       </div>
 
       <div className="self-stretch inline-flex flex-col justify-center items-start">
-        <div className="justify-start text-text-main text-sm font-medium font-['Roboto']">
+        <div className="justify-start text-text-main text-sm font-medium font-Roboto">
           {post.userName}
         </div>
         <div className="size- inline-flex justify-center items-center gap-1">
-          <div className="justify-start text-text-neutral text-xs font-normal font-['Roboto']">
+          <div className="justify-start text-text-neutral text-xs font-normal font-Roboto">
             {post.date}
           </div>
           <div className="size-1 bg-text-neutral rounded-full" />
-          <div className="justify-start text-text-neutral text-xs font-normal font-['Roboto']">
+          <div className="justify-start text-text-neutral text-xs font-normal font-Roboto">
             {post.device}
           </div>
         </div>

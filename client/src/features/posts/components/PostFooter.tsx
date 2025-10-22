@@ -16,7 +16,7 @@ export const PostFooter = ({ post }: PostFooterProps) => {
         <div data-svg-wrapper>
           <LikeIcon />
         </div>
-        <div className="justify-start text-text-neutral text-base font-semibold font-['Albert_Sans']">
+        <div className="justify-start text-text-neutral text-base font-semibold font-Albert_Sans">
           1
         </div>
       </div>
@@ -24,7 +24,7 @@ export const PostFooter = ({ post }: PostFooterProps) => {
         <div data-svg-wrapper>
           <CommentIcon />
         </div>
-        <div className="justify-start text-text-neutral text-base font-semibold font-['Albert_Sans']">
+        <div className="justify-start text-text-neutral text-base font-semibold font-Albert_Sans">
           1
         </div>
       </div>

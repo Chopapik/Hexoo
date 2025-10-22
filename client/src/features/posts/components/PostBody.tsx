@@ -1,4 +1,5 @@
-﻿import type { Post } from "../types/post.type";
+﻿import Image from "next/image";
+import type { Post } from "../types/post.type";
 
 type PostBodyProps = {
   post: Post;
@@ -12,10 +13,16 @@ export const PostBody = ({ post }: PostBodyProps) => {
   return (
     <>
       <div className="self-stretch inline-flex flex-col justify-center items-center gap-4 overflow-hidden">
-        <div className="self-stretch justify-start text-text-main text-base font-normal font-['Roboto']">
+        <div className="self-stretch justify-start text-text-main text-base font-normal font-Roboto">
           {post.text}
         </div>
-        <img className="w-auto max-h-96 relative rounded-xl " src={imageSrc} />
+        <Image
+          className="w-auto max-h-96 relative rounded-xl "
+          src={imageSrc}
+          alt="Post image"
+          width={500}
+          height={426}
+        />
       </div>
     </>
   );

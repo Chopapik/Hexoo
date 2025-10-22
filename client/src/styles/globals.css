@@ -47,6 +47,8 @@ body {
   --color-scrollbar-thumb: #404040;
   /* dark */
   --color-scrollbar-thumb-hover: #525252;
+
+  --font-roboto: "Roboto", sans-serif;
 }
 
 @layer theme {
@@ -91,5 +93,6 @@ body {
     --color-scrollbar-thumb: #ffffff;
     /* white */
     --color-scrollbar-thumb-hover: #d4d4d4;
+
   }
 }
