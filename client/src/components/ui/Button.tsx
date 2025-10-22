@@ -23,7 +23,7 @@ const variantClasses: Record<string, string> = {
   "icon-fuchsia-ghost": "text-white bg-fuchsia-700/20",
 };
 
-export const Button = ({
+export default function Button({
   text,
   leftIconUrl,
   rightIconUrl,
@@ -33,7 +33,7 @@ export const Button = ({
   variant = "gradient-fuchsia",
   className = "",
   onClick,
-}: ButtonProps) => {
+}: ButtonProps) {
   // Keep base layout/interaction minimal so variants can fully style background/borders.
   const baseClasses =
     "relative inline-flex justify-center items-center gap-2 font-bold font-Plus_Jakarta_Sans leading-tight shrink-0 cursor-pointer overflow-hidden transition-all duration-300 ease-out";
@@ -53,4 +53,4 @@ export const Button = ({
         ))}
     </button>
   );
-};
+}

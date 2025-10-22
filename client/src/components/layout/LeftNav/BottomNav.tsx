@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "@/components/ui/Button";
+import Button from "@/components/ui/Button";
 import { NavItem } from "./NavItem";
 
 type BottomNavProps = {
@@ -19,4 +19,3 @@ export function BottomNav({ onOpenRight }: BottomNavProps) {
     </div>
   );
 }
-
