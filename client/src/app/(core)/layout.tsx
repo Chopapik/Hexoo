@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 
-import "@/styles/globals.css";
-import "@/styles/scrollbar.css";
+import { Layout } from "@/components/layout/Layout";
 
 export const metadata: Metadata = {
   title: "Hexoo",
@@ -12,9 +11,5 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <html lang="pl" nighteye="disabled">
-      <body>{children}</body>
-    </html>
-  );
+  return <Layout>{children}</Layout>;
 }
