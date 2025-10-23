@@ -11,13 +11,13 @@ export interface Message {
 }
 
 interface InputProps {
-  title?: string;
+  label?: string;
   type?: "text" | "password";
-  placeholder: string;
+  placeholder?: string;
   messages?: Message[];
   status?: Status;
-  value: string;
-  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  value?: string;
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   showButton?: boolean;
 }
 
@@ -28,8 +28,8 @@ const borderClasses: Record<Status, string> = {
   Success: "bg-white rounded-lg",
 };
 
-export default function Input({
-  title = "",
+export default function TextInput({
+  label = "",
   type = "text",
   placeholder,
   messages = [],
@@ -86,11 +86,11 @@ export default function Input({
   };
 
   return (
-    <div className="w-80 min-w-64 min-h-24 inline-flex flex-col justify-start items-start gap-2">
-      {title && (
+    <div className="w-full min-w-64 min-h-24 inline-flex flex-col justify-start items-start gap-2">
+      {label && (
         <div className="self-stretch h-5 relative">
           <div className="w-80 h-5 left-0 top-0 absolute justify-start text-text-neutral text-sm font-semibold font-Plus_Jakarta_Sans">
-            {title}
+            {label}
           </div>
         </div>
       )}
@@ -103,7 +103,7 @@ export default function Input({
         <input
           type={type === "password" && showPassword ? "text" : type}
           placeholder={placeholder}
-          className="flex-1 h-5 justify-start text-text-neutral text-base font-semibold font-Plus_Jakarta_Sans bg-transparent outline-none"
+          className="flex-1 h-5 justify-start text-black placeholder:text-text-neutral text-base font-semibold font-Plus_Jakarta_Sans bg-transparent outline-none"
           value={value}
           onChange={onChange}
         />
@@ -116,7 +116,7 @@ export default function Input({
             <Image
               src={showPassword ? eyeOffIcon : eyeIcon}
               alt={showPassword ? "Ukryj hasło" : "Pokaż hasło"}
-              className="w-5 h-3.5"
+              className="w-5 h-5"
             />
           </button>
         )}
