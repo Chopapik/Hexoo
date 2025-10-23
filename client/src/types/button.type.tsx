@@ -3,7 +3,8 @@ import type { MouseEventHandler, ReactNode } from "react";
 export type ButtonVariant =
   | "gradient-fuchsia"
   | "icon-fuchsia-solid"
-  | "icon-fuchsia-ghost";
+  | "icon-fuchsia-ghost"
+  | "glass-card";
 export type ButtonSize = "sm" | "md" | "lg" | "xl" | "icon" | "iconSm";
 
 export interface ButtonProps {
@@ -17,4 +18,6 @@ export interface ButtonProps {
   variant?: ButtonVariant;
   className?: string;
   onClick?: MouseEventHandler<HTMLButtonElement>;
+  leftIconClassName?: string;
+  rightIconClassName?: string;
 }

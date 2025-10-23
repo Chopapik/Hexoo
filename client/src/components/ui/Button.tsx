@@ -5,7 +5,7 @@ const sizeClasses: Record<ButtonSize, string> = {
   sm: "h-9 min-w-9 px-3 text-sm rounded-xl",
   md: "h-9 min-w-[110px] px-4 text-base rounded-3xl",
   lg: "h-11 min-w-[190px] px-5 text-base rounded-xl",
-  xl: "h-13 min-w-[250px] px-3 text-base rounded-xl",
+  xl: "h-13 w-full px-3 text-base rounded-xl",
   // Icon-only sizes
   icon: "h-9 min-w-9 rounded-xl",
   iconSm: "size-7 rounded-xl",
@@ -21,6 +21,7 @@ const variantClasses: Record<string, string> = {
     "text-white bg-gradient-to-b from-fuchsia-600 to-fuchsia-800 outline outline-[0.75px] outline-offset-[-0.75px] outline-fuchsia-400",
   // Icon-only ghost magenta
   "icon-fuchsia-ghost": "text-white bg-fuchsia-700/20",
+  "glass-card": "text-white glass-card",
 };
 
 export default function Button({
@@ -32,6 +33,8 @@ export default function Button({
   size = "md",
   variant = "gradient-fuchsia",
   className = "",
+  leftIconClassName = "",
+  rightIconClassName = "",
   onClick,
 }: ButtonProps) {
   // Keep base layout/interaction minimal so variants can fully style background/borders.
@@ -44,12 +47,12 @@ export default function Button({
     <button onClick={onClick} className={combinedClasses}>
       {leftIcon ||
         (leftIconUrl && (
-          <Image src={leftIconUrl} alt="" className="w-2.5 h-2.5" />
+          <Image src={leftIconUrl} alt="" className={leftIconClassName} />
         ))}
       {text && <span>{text}</span>}
       {rightIcon ||
         (rightIconUrl && (
-          <Image src={rightIconUrl} alt="" className="w-2.5 h-2.5" />
+          <Image src={rightIconUrl} alt="" className={rightIconClassName} />
         ))}
     </button>
   );
