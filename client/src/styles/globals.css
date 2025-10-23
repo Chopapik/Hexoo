@@ -3,6 +3,8 @@
 
 body {
   background-color: var(--color-page-background);
+  padding: 0;
+  margin: 0;
 }
 
 /* Default theme = dark mode */
