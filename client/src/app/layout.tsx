@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import "@/styles/globals.css";
 import "@/styles/scrollbar.css";
+import "@/styles/glassmorphism.css";
 
 export const metadata: Metadata = {
   title: "Hexoo",
