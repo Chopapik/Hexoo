@@ -12,7 +12,8 @@ export interface Message {
 
 interface InputProps {
   label?: string;
-  type?: "text" | "password";
+  name: string;
+  type?: "text" | "password" | "email";
   placeholder?: string;
   messages?: Message[];
   status?: Status;
@@ -102,6 +103,7 @@ export default function TextInput({
       >
         <input
           type={type === "password" && showPassword ? "text" : type}
+          name={name}
           placeholder={placeholder}
           className="flex-1 h-5 justify-start text-black placeholder:text-text-neutral text-base font-semibold font-Plus_Jakarta_Sans bg-transparent outline-none"
           value={value}

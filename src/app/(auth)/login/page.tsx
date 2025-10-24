@@ -6,7 +6,7 @@ export default function LoginPage() {
     <>
       <Background1 />
       <div className="w-full h-full overflow-auto flex justify-center">
-        <div className="relative lg:top-[15vh] xs:top-[5vh] w-full max-w-[653px]">
+        <div className="relative lg:top-[5vh] xd:top-[15vh] xs:top-[5vh] w-full max-w-[653px]">
           <LoginForm />
         </div>
       </div>

@@ -1,84 +1,42 @@
-# Root .gitignore for /hexoo
-# Covers common Node.js, React/Vite, and TypeScript ignores
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-##### OS / Editor #####
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
 .DS_Store
-Thumbs.db
-Desktop.ini
-.idea/
-.vscode/
-*.swp
-*.swo
+*.pem
 
-##### General Node #####
-node_modules/
-logs/
-*.log
+# debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
-*.pid
-*.pid.lock
+.pnpm-debug.log*
 
-##### TypeScript #####
+# env files (can opt-in for committing if needed)
+.env*
+!.env.sample
+
+# vercel
+.vercel
+
+# typescript
 *.tsbuildinfo
-
-##### Coverage / Caches #####
-coverage/
-.nyc_output/
-.eslintcache
-.stylelintcache
-.cache/
-.parcel-cache/
-
-
-#############################
-# Project structure specific #
-#############################
-
-# Ignore entire cytadela project
-/cytadela/
-
-# Client: Next.js app
-/client/node_modules/
-/client/.next/
-/client/out/
-/client/.eslintcache
-/client/coverage/
-/client/.env.local
-/client/.env.development.local
-/client/.env.test.local
-/client/.env.production.local
-
-# client_old: legacy React/Vite app
-/client_old/node_modules/
-/client_old/build/
-/client_old/dist/
-/client_old/.vite/
-/client_old/coverage/
-/client_old/.eslintcache
-
-# CRA/Vite env files for client_old
-/client_old/.env.local
-/client_old/.env.development.local
-/client_old/.env.test.local
-/client_old/.env.production.local
-
-# Node API: Node.js + TypeScript app
-/node_api/node_modules/
-/node_api/dist/
-/node_api/coverage/
-/node_api/.nyc_output/
-/node_api/.ts-node/
-/node_api/logs/
-/node_api/*.log
-
-# Env files for server (do not commit secrets)
-/node_api/.env
-/node_api/.env.local
-/node_api/.env.*
-
-# TS build artifacts
-/node_api/*.tsbuildinfo
+next-env.d.ts
