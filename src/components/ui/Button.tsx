@@ -35,6 +35,7 @@ export default function Button({
   className = "",
   leftIconClassName = "",
   rightIconClassName = "",
+  type = "button",
   onClick,
 }: ButtonProps) {
   // Keep base layout/interaction minimal so variants can fully style background/borders.
@@ -44,7 +45,7 @@ export default function Button({
   const combinedClasses = `${baseClasses} ${sizeClasses[size]} ${variantClasses[variant]} ${className}`;
 
   return (
-    <button onClick={onClick} className={combinedClasses}>
+    <button onClick={onClick} className={combinedClasses} type={type}>
       {leftIcon ||
         (leftIconUrl && (
           <Image src={leftIconUrl} alt="" className={leftIconClassName} />
