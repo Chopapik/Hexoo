@@ -20,4 +20,5 @@ export interface ButtonProps {
   onClick?: MouseEventHandler<HTMLButtonElement>;
   leftIconClassName?: string;
   rightIconClassName?: string;
+  type?: "submit" | "reset" | "button";
 }
