@@ -1,6 +1,5 @@
 import Background1 from "@/components/backgrounds/Background1";
-import RegisterForm from "@/features/auth/RegisterForm";
-
+import RegisterForm from "@/features/auth/register/RegisterForm";
 export default function LoginPage() {
   return (
     <>
