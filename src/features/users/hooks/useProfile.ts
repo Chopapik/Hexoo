@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import type { UserProfile } from "firebase/auth";
+import { UserProfile } from "../types/user.type";
 
 export default function useProfile() {
   const [userData, setUserData] = useState<UserProfile | null>(null);
@@ -9,7 +9,7 @@ export default function useProfile() {
   useEffect(() => {
     // mock data
     const mockUser: UserProfile = {
-      username: "john_doe",
+      name: "john_doe",
       joinedAt: new Date("2023-01-15T10:20:30Z"),
       lastOnline: new Date(),
       postsCount: 42,
