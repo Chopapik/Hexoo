@@ -1,6 +1,6 @@
 import Image from "next/image";
-import LogoSvg from "@/assets/Logo.svg?url";
-import LogoSmSvg from "@/assets/LogoSm.svg?url";
+import LogoSvg from "@/features/shared/assets/Logo.svg?url";
+import LogoSmSvg from "@/features/shared/assets/LogoSm.svg?url";
 
 export function Logo() {
   return (

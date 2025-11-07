@@ -1,7 +1,7 @@
 import React, { useState, ChangeEvent } from "react";
-import eyeIconUrl from "@/assets/icons/eye.svg?url";
-import eyeOffIconUrl from "@/assets/icons/eye-off.svg?url";
-import warningIcoUrl from "@/assets/icons/warning.svg?url";
+import eyeIconUrl from "../../assets/icons/eye-off.svg?url";
+import eyeOffIconUrl from "../../assets/icons/eye-off.svg?url";
+import warningIcoUrl from "../../assets/icons/warning.svg?url";
 import Image from "next/image";
 
 export type Status = "Default" | "Warning" | "Dismiss" | "Success";
@@ -18,6 +18,7 @@ interface InputProps {
   placeholder?: string;
   messages?: Message[];
   status?: Status;
+  defaultValue?: string;
   value?: string;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   showButton?: boolean;
@@ -38,6 +39,7 @@ export default function TextInput({
   type = "text",
   placeholder,
   messages = [],
+  defaultValue,
   value,
   onChange,
   showButton = true,
@@ -154,6 +156,7 @@ export default function TextInput({
           name={name}
           placeholder={placeholder}
           className="flex-1 h-5 justify-start text-black placeholder:text-text-neutral text-base font-semibold font-Plus_Jakarta_Sans bg-transparent outline-none"
+          defaultValue={defaultValue}
           value={value}
           onChange={onChange}
           ref={ref}

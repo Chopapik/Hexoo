@@ -21,5 +21,5 @@ export interface ButtonProps {
   leftIconClassName?: string;
   rightIconClassName?: string;
   type?: "submit" | "reset" | "button";
-  disabled: boolean;
+  disabled?: boolean;
 }
