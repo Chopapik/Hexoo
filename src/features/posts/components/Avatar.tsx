@@ -1,7 +1,6 @@
-// src/features/posts/components/Avatar.tsx
 import React from "react";
 import Image from "next/image";
-import defaultAvatarUrl from "@/assets/defaultAvatar.svg?url";
+import defaultAvatarUrl from "@/features/shared/assets/defaultAvatar.svg?url";
 const avatarClass =
   "w-10 h-10 rounded-xl border border-neutral-800 object-cover";
 

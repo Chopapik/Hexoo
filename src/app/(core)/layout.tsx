@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { Layout } from "@/components/layout/Layout";
+import { Layout } from "@/features/shared/components/layout/Layout";
 
 export const metadata: Metadata = {
   title: "Hexoo",

@@ -1,10 +1,10 @@
 "use client";
 
-import type { UserProfile } from "@/features/users/types/userProfile.type";
+import type { UserProfile } from "../types/user.type";
 import dayjs from "dayjs";
 import Image from "next/image";
-import useProfile from "../hooks/profile/useProfile";
-import defaultAvatarUrl from "@/assets/defaultAvatar.svg?url";
+import useProfile from "../hooks/useProfile";
+import defaultAvatarUrl from "@/features/shared/assets/defaultAvatar.svg?url";
 
 const status = "Offline";
 
@@ -20,8 +20,7 @@ export const UserProfileCard = () => {
     return <div>Loading...</div>;
   }
 
-  const { avatarUrl, username, joinedAt, lastOnline, postsCount } =
-    userData as UserProfile;
+  const { avatarUrl, name, joinedAt, lastOnline, postsCount } = userData;
 
   return (
     <div
@@ -31,14 +30,14 @@ export const UserProfileCard = () => {
       <Image
         className="w-16 h-16 xs:w-24 xs:h-24 rounded-[10px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] border border-secondary-neutral-background-default object-cover"
         src={avatarUrl ?? defaultAvatarUrl}
-        alt={`${username}'s avatar`}
+        alt={`${name}'s avatar`}
         width={96}
         height={96}
       />
 
       <div className="flex-1 w-full max-w-[460px] inline-flex flex-col md:justify-center items-start gap-1 overflow-hidden">
         <div className="justify-center md:justify-start text-center md:text-left w-full text-text-main text-base xs:text-2xl font-bold font-['Roboto'] truncate">
-          {username}
+          {name}
         </div>
 
         {/* Info bar */}
