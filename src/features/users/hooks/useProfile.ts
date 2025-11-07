@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { UserProfile } from "../../types/userProfile.type";
+import type { UserProfile } from "firebase/auth";
 
 export default function useProfile() {
   const [userData, setUserData] = useState<UserProfile | null>(null);

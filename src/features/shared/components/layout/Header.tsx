@@ -1,4 +1,4 @@
-import chevronRightUrl from "@/assets/icons/chevronRight.svg?url";
+import chevronRightUrl from "@/features/shared/assets/icons/chevronRight.svg?url";
 import Button from "../ui/Button";
 import { Logo } from "../ui/Logo";
 import React from "react";

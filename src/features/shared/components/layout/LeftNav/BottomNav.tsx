@@ -1,5 +1,5 @@
 import React from "react";
-import Button from "@/components/ui/Button";
+import Button from "@/features/shared/components/ui/Button";
 import { NavItem } from "./NavItem";
 
 type BottomNavProps = {
