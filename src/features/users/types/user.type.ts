@@ -1,7 +1,7 @@
 export type UserRole = "admin" | "user" | "moderator";
 
 export interface User {
-  id: string;
+  uid: string;
   name: string;
   email: string;
   role: UserRole;
@@ -10,14 +10,6 @@ export interface User {
   updatedAt?: Date;
   lastOnline?: Date;
   isActive?: boolean;
-}
-
-export interface UserProfile {
-  name: string;
-  joinedAt: Date;
-  lastOnline: Date;
-  postsCount: number;
-  avatarUrl: string;
 }
 
 export interface UserDataUpdate {

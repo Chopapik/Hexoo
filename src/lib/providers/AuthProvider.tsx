@@ -16,7 +16,7 @@ export default function AuthProvider({
 }) {
   const dispatch = useAppDispatch();
   const { handleCriticalError } = useCriticalError();
-  const { getUserById } = useUsers();
+  const { getUserByUid } = useUsers();
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (fbUser) => {
@@ -24,7 +24,8 @@ export default function AuthProvider({
         if (fbUser) {
           let profile = null;
           try {
-            profile = await getUserById(fbUser.uid);
+            profile = await getUserByUid(fbUser.uid);
+            // console.log("pobrany profil:", profile);
           } catch (error) {
             const profileError = new Error(
               `Failed to fetch user profile: ${
