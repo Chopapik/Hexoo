@@ -1,6 +1,5 @@
 "use client";
 
-import type { UserProfile } from "../types/user.type";
 import dayjs from "dayjs";
 import Image from "next/image";
 import useProfile from "../hooks/useProfile";
@@ -13,14 +12,16 @@ const formatJoinDate = (joinDate: Date) => dayjs(joinDate).format("MMMM YYYY");
 const formatLastOnlineDate = (date: Date) =>
   dayjs(date).format("DD.MM.YYYY HH:mm");
 
-export const UserProfileCard = () => {
-  const { userData } = useProfile();
+export const UserProfileCard = ({ username }: { username: string }) => {
+  const { userProfileData } = useProfile(username);
 
-  if (!userData) {
+  console.log("test:", username);
+
+  if (!userProfileData) {
     return <div>Loading...</div>;
   }
 
-  const { avatarUrl, name, joinedAt, lastOnline, postsCount } = userData;
+  const { avatarUrl, name, createdAt, lastOnline } = userProfileData;
 
   return (
     <div
@@ -48,7 +49,7 @@ export const UserProfileCard = () => {
                 dołączył
               </div>
               <div className="self-stretch h-3.5 justify-start text-text-main text-xs font-normal font-['Roboto']">
-                {formatJoinDate(joinedAt)}
+                {/* {formatJoinDate(createdAt)} */}
               </div>
             </div>
 
@@ -59,7 +60,7 @@ export const UserProfileCard = () => {
                 ostatnio online
               </div>
               <div className="self-stretch h-3.5 justify-start text-text-main text-xs font-normal font-['Roboto']">
-                {formatLastOnlineDate(lastOnline)}
+                {/* {formatLastOnlineDate(lastOnline)} */}
               </div>
             </div>
 
@@ -69,9 +70,7 @@ export const UserProfileCard = () => {
               <div className="self-stretch justify-start text-text-neutral text-xs font-bold font-['Roboto']">
                 liczba postów
               </div>
-              <div className="self-stretch justify-start text-text-main text-xs font-normal font-['Roboto']">
-                {postsCount}
-              </div>
+              <div className="self-stretch justify-start text-text-main text-xs font-normal font-['Roboto']"></div>
             </div>
           </div>
 

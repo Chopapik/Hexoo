@@ -1,24 +1,25 @@
 "use client";
 import { useState, useEffect } from "react";
-import { UserProfile } from "../types/user.type";
+import { User } from "../types/user.type";
+import { useUsers } from "./useUsers";
 
-export default function useProfile() {
-  const [userData, setUserData] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(true);
+export default function useProfile(username: string) {
+  const { getUserByName, loading } = useUsers();
+  const [userProfileData, setUserProfileData] = useState<User | null>(null);
 
   useEffect(() => {
-    // mock data
-    const mockUser: UserProfile = {
-      name: "john_doe",
-      joinedAt: new Date("2023-01-15T10:20:30Z"),
-      lastOnline: new Date(),
-      postsCount: 42,
-      avatarUrl: "https://randomuser.me/api/portraits/men/1.jpg",
+    const fetchUser = async () => {
+      console.log("pobieram dane");
+      const user = await getUserByName(username);
+      console.log("porałem dane", user);
+
+      if (user) {
+        setUserProfileData(user);
+      }
     };
 
-    setUserData(mockUser);
-    setLoading(false);
-  }, []);
+    if (username) fetchUser();
+  }, [username]);
 
-  return { userData, loading };
+  return { userProfileData, loading };
 }

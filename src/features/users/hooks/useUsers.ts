@@ -8,6 +8,7 @@ import {
   where,
   getDocs,
   collection,
+  limit,
 } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
 import { deleteUser as deleteAuthUser } from "firebase/auth";
@@ -31,7 +32,7 @@ export function useUsers() {
       const usersData = snapshot.docs.map((docSnap) => {
         const data = docSnap.data();
         return {
-          id: docSnap.id,
+          uid: data.uid,
           name: data.name,
           email: data.email,
           role: data.role,
@@ -54,25 +55,38 @@ export function useUsers() {
     }
   };
 
-  const getUserById = async (uid: string): Promise<User | null> => {
-    setLoading(true);
-    setError(null);
+  const getUserByUid = async (uid: string): Promise<User | null> => {
+    if (!uid) return null;
 
     try {
-      const userDocRef = doc(db, "users", uid);
-      const docSnap = await getDoc(userDocRef);
+      const q = query(
+        collection(db, "users"),
+        where("uid", "==", uid),
+        limit(1)
+      );
+      const snap = await getDocs(q);
 
-      if (!docSnap.exists()) return null;
+      if (snap.empty) {
+        console.warn("Nie znaleziono użytkownika o uid:", uid);
+        return null;
+      }
 
-      const userData = { id: docSnap.id, ...docSnap.data() } as User;
+      const doc = snap.docs[0];
+      const data = doc.data();
+
+      const userData: User = {
+        uid: data.uid,
+        name: data.name,
+        email: data.email,
+        role: data.role,
+        createdAt: data.createdAt,
+      };
+
+      console.log(userData);
       return userData;
-    } catch (error) {
-      const errorMsg = "Error fetching user";
-      setError(errorMsg);
-      console.error(errorMsg, error);
-      throw error;
-    } finally {
-      setLoading(false);
+    } catch (err) {
+      console.error("Błąd przy pobieraniu użytkownika:", err);
+      return null;
     }
   };
 
@@ -166,6 +180,43 @@ export function useUsers() {
     }
   };
 
+  const getUserByName = async (name: string): Promise<User | null> => {
+    setLoading(true);
+    setError(null);
+
+    console.log("name", name);
+    try {
+      const q = query(collection(db, "users"), where("name", "==", name));
+      const snapshot = await getDocs(q);
+
+      // if (snapshot.empty) return null;
+
+      const doc = snapshot.docs[0];
+      const data = doc.data();
+
+      console.log("stado: ", data);
+
+      return {
+        uid: data.id,
+        name: data.name,
+        email: data.email,
+        role: data.role,
+        lastOnline: data.lastOnline,
+        avatarUrl: data.avatarUrl,
+        createdAt: data.createdAt,
+        updatedAt: data.updatedAt,
+        isActive: data.isActive,
+      } as User;
+    } catch (error) {
+      const errorMsg = "Error fetching user by name";
+      setError(errorMsg);
+      console.error(errorMsg, error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const searchUsers = async (
     field: keyof Omit<User, "uid">,
     value: string
@@ -196,10 +247,11 @@ export function useUsers() {
     error,
 
     getAllUsers,
-    getUserById,
+    getUserByUid,
     updateCurrentUser,
     deleteCurrentUser,
     searchUsers,
     clearError,
+    getUserByName,
   };
 }
