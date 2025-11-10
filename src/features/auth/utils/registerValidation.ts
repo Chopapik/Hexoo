@@ -1,119 +1,163 @@
-import { FirebaseError } from "firebase/app";
-
-export interface Message {
-  type: "Dismiss" | "Warning" | "Success";
-  text: string;
-}
+import type { ValidationMessage } from "@/features/shared/types/validation.type";
 
 export interface FieldErrors {
-  name: Message[];
-  email: Message[];
-  password: Message[];
+  name: ValidationMessage[];
+  email: ValidationMessage[];
+  password: ValidationMessage[];
   root?: string;
 }
 
-// Check password strength and rules
-export const checkPasswordQuality = (password: string): Message[] => {
-  const messages: Message[] = [];
+type FieldName = "name" | "email" | "password";
 
-  if (password.length < 8)
-    messages.push({
+const NAME_MIN = 3;
+const NAME_MAX = 30;
+const EMAIL_MAX = 254;
+const PASSWORD_MIN = 8;
+const PASSWORD_MAX = 128;
+
+export const checkPasswordQuality = (value: string): ValidationMessage[] => {
+  const msgs: ValidationMessage[] = [];
+
+  if (value.length < PASSWORD_MIN) {
+    msgs.push({
       type: "Dismiss",
-      text: "Password must be at least 8 characters",
+      text: `Hasło musi mieć co najmniej ${PASSWORD_MIN} znaków`,
     });
-  else {
-    if (!/[A-Z]/.test(password))
-      messages.push({
-        type: "Warning",
-        text: "Add at least one uppercase letter",
-      });
-    if (!/[a-z]/.test(password))
-      messages.push({
-        type: "Warning",
-        text: "Add at least one lowercase letter",
-      });
-    if (!/[0-9]/.test(password))
-      messages.push({ type: "Warning", text: "Add at least one number" });
-    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password))
-      messages.push({
-        type: "Warning",
-        text: "Add at least one special character",
-      });
-
-    const isStrong =
-      /[A-Z]/.test(password) &&
-      /[a-z]/.test(password) &&
-      /[0-9]/.test(password) &&
-      /[!@#$%^&*(),.?":{}|<>]/.test(password);
-
-    if (isStrong)
-      messages.push({ type: "Success", text: "Password is strong" });
   }
 
-  return messages;
+  if (value.length > PASSWORD_MAX) {
+    msgs.push({
+      type: "Dismiss",
+      text: `Hasło nie może przekraczać ${PASSWORD_MAX} znaków`,
+    });
+  }
+
+  if (/\s/.test(value)) {
+    msgs.push({
+      type: "Dismiss",
+      text: "Hasło nie może zawierać spacji ani innych białych znaków",
+    });
+  }
+
+  if (!/[a-z]/.test(value)) {
+    msgs.push({
+      type: "Dismiss",
+      text: "Hasło musi zawierać przynajmniej jedną małą literę",
+    });
+  }
+
+  if (!/[A-Z]/.test(value)) {
+    msgs.push({
+      type: "Warning",
+      text: "Hasło musi zawierać przynajmniej jedną wielką literę",
+    });
+  }
+
+  if (!/[0-9]/.test(value)) {
+    msgs.push({
+      type: "Warning",
+      text: "Hasło musi zawierać przynajmniej jedną cyfrę",
+    });
+  }
+
+  if (!/[!@#$%^&*(),.?\":{}|<>_\-\\[\];'`~+/=]/.test(value)) {
+    msgs.push({
+      type: "Warning",
+      text: "Hasło musi zawierać przynajmniej jeden znak specjalny",
+    });
+  }
+
+  return msgs;
 };
 
-// Validate single field
 export const validateField = (
-  field: "name" | "email" | "password",
-  value: string,
+  field: FieldName,
+  rawValue: string,
   isSubmit = false
-): Message[] => {
-  const messages: Message[] = [];
+): ValidationMessage[] => {
+  const messages: ValidationMessage[] = [];
+  const value = rawValue == null ? "" : rawValue.trim();
 
   switch (field) {
-    case "name":
-      if (!value) messages.push({ type: "Dismiss", text: "Name is required" });
-      if (value.length < 3 && isSubmit)
+    // ===== NAME =====
+    case "name": {
+      if (!value) {
+        messages.push({ type: "Dismiss", text: "Imię jest wymagane" });
+        break;
+      }
+
+      if (value.length < NAME_MIN && isSubmit) {
         messages.push({
           type: "Dismiss",
-          text: "Name must be at least 3 characters",
+          text: `Imię musi mieć co najmniej ${NAME_MIN} znaki`,
         });
+      }
+
+      if (value.length > NAME_MAX) {
+        messages.push({
+          type: "Dismiss",
+          text: `Imię nie może przekraczać ${NAME_MAX} znaków`,
+        });
+      }
+
+      if (!/^[A-Za-z0-9_-]+$/.test(value)) {
+        messages.push({
+          type: "Dismiss",
+          text: "Imię może zawierać tylko litery, cyfry, myślnik (-) i podkreślenie (_)",
+        });
+      }
+
       break;
-    case "email":
-      if (!value) messages.push({ type: "Dismiss", text: "Email is required" });
-      if (isSubmit && !/^\S+@\S+\.\S+$/.test(value))
-        messages.push({ type: "Dismiss", text: "Email format is invalid" });
+    }
+
+    // ===== EMAIL =====
+    case "email": {
+      if (!value) {
+        messages.push({ type: "Dismiss", text: "Email jest wymagany" });
+        break;
+      }
+
+      if (value.length > EMAIL_MAX) {
+        messages.push({
+          type: "Dismiss",
+          text: "Email jest za długi",
+        });
+      }
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (isSubmit && !emailRegex.test(value)) {
+        messages.push({
+          type: "Dismiss",
+          text: "Format adresu email jest nieprawidłowy",
+        });
+      }
+
       break;
-    case "password":
-      if (!value)
-        messages.push({ type: "Dismiss", text: "Password is required" });
-      else messages.push(...checkPasswordQuality(value));
+    }
+
+    // ===== PASSWORD =====
+    case "password": {
+      if (!rawValue) {
+        messages.push({ type: "Dismiss", text: "Hasło jest wymagane" });
+        break;
+      }
+
+      messages.push(...checkPasswordQuality(rawValue));
       break;
+    }
   }
 
   return messages;
 };
 
-// Map Firebase errors to readable messages
-export const handleFirebaseError = (error: FirebaseError): FieldErrors => {
-  const fieldErrors: FieldErrors = { name: [], email: [], password: [] };
-
-  switch (error.code) {
-    case "auth/email-already-in-use":
-      fieldErrors.email.push({
-        type: "Dismiss",
-        text: "Email is already in use",
-      });
-      break;
-    case "auth/invalid-email":
-      fieldErrors.email.push({
-        type: "Dismiss",
-        text: "Invalid email address",
-      });
-      break;
-    case "auth/weak-password":
-      fieldErrors.password.push({
-        type: "Dismiss",
-        text: "Password is too weak",
-      });
-      break;
-    case "auth/too-many-requests":
-      fieldErrors.root = "Too many requests. Try later.";
-      break;
-    default:
-      fieldErrors.root = "An unknown error occurred";
-  }
-
-  return fieldErrors;
+export const validateAllFields = (inputs: {
+  name: string;
+  email: string;
+  password: string;
+}): Record<FieldName, ValidationMessage[]> => {
+  return {
+    name: validateField("name", inputs.name, true),
+    email: validateField("email", inputs.email, true),
+    password: validateField("password", inputs.password, true),
+  };
 };

@@ -1,26 +1,22 @@
 import { useState } from "react";
-import { FirebaseError } from "firebase/app";
 import { useCriticalError } from "@/features/shared/hooks/useCriticalError";
 import {
   validateField,
-  handleFirebaseError,
   type FieldErrors,
 } from "@/features/auth/utils/registerValidation";
-import { auth, db } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { addDoc, collection } from "firebase/firestore";
-import { useActionLogger } from "@/features/actions/useActions";
-import type { RegisterInputs } from "../types/auth.types";
+import type { RegisterData } from "../types/auth.types";
+import axiosInstance from "@/lib/axiosInstance";
+import { useMutation } from "@tanstack/react-query";
+import { signInWithCustomToken } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 
 export default function useRegister() {
-  const [registerData, setRegisterData] = useState<RegisterInputs>({
+  const [registerData, setRegisterData] = useState<RegisterData>({
     name: "",
     email: "",
     password: "",
   });
-
-  const { logAction } = useActionLogger(db);
 
   const router = useRouter();
 
@@ -33,82 +29,80 @@ export default function useRegister() {
 
   const { handleCriticalError } = useCriticalError();
 
+  const registerMutation = useMutation({
+    mutationFn: (userData: RegisterData) =>
+      axiosInstance.post(`/api/user/create`, userData),
+    onMutate: () => {
+      setErrors({
+        name: [],
+        email: [],
+        password: [],
+      });
+    },
+    onSuccess: async (response) => {
+      setIsLoading(false);
+
+      const { token } = response.data;
+
+      if (token) {
+        try {
+          await signInWithCustomToken(auth, token);
+          router.push("/");
+        } catch (error) {
+          handleCriticalError(`Błąd podczas logowania`);
+        }
+      } else {
+        handleCriticalError("Brak tokena w odpowiedzi");
+      }
+    },
+    onError: (error: any) => {
+      setIsLoading(false);
+      if (error.response?.data) {
+        const serverError = error.response.data;
+
+        if (serverError.type === "validation" && serverError.data) {
+          const { field, message } = serverError.data;
+          setErrors((prev: any) => ({
+            ...prev,
+            [field]: [
+              {
+                text: message,
+                type: "Dismiss",
+              },
+            ],
+          }));
+        } else if (serverError.type === "critical") {
+          handleCriticalError(serverError.message);
+        }
+      } else {
+        handleCriticalError("Wystąpił nieoczekiwany błąd");
+      }
+    },
+  });
+
   const validateForm = (): boolean => {
     let isValid = true;
     (["name", "email", "password"] as const).forEach((field) => {
       const messages = validateField(field, registerData[field]);
       if (messages.some((m) => m.type === "Dismiss")) isValid = false;
-      setErrors((prev) => ({ ...prev, [field]: messages }));
+      setErrors((prev: any) => ({ ...prev, [field]: messages }));
     });
     return isValid;
   };
 
-  const updateField = (field: keyof RegisterInputs, value: string) => {
+  const updateField = (field: keyof RegisterData, value: string) => {
     setRegisterData((prev) => ({ ...prev, [field]: value }));
 
     const messages = validateField(field, value, false);
-    setErrors((prev) => ({ ...prev, [field]: messages }));
+    setErrors((prev: any) => ({ ...prev, [field]: messages }));
   };
 
-  const handleRegister = async (): Promise<boolean> => {
-    const { name, email, password } = registerData;
-
+  const handleRegister = async (): Promise<void> => {
     const isValid = validateForm();
-    if (!isValid) return false;
 
-    setIsLoading(true);
-
-    try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      const firebaseUser = userCredential.user;
-
-      if (
-        firebaseUser &&
-        firebaseUser.email &&
-        firebaseUser.metadata.creationTime
-      ) {
-        const doc = {
-          uid: firebaseUser.uid,
-          name: name,
-          email: firebaseUser.email,
-          createdAt: firebaseUser.metadata.creationTime,
-          role: "user",
-        };
-
-        await addDoc(collection(db, "users"), doc);
-      }
-
-      await logAction({
-        actionType: "user.create",
-        userId: firebaseUser.uid,
-        username: registerData.name ?? firebaseUser.displayName ?? null,
-        status: "success",
-        message: "User successfully registered",
-        meta: {
-          email: registerData.email,
-          registrationTime: new Date().toISOString(),
-        },
-      });
-
-      router.push("/");
-      return true;
-    } catch (error) {
-      if (error instanceof FirebaseError) {
-        const firebaseErrors = handleFirebaseError(error);
-        setErrors(firebaseErrors);
-      } else if (error instanceof Error) {
-        handleCriticalError(error);
-      } else {
-        const unknownError = new Error("Wystąpił nieznany błąd");
-        handleCriticalError(unknownError);
-      }
-      return false;
-    } finally {
-      setIsLoading(false);
+    if (isValid) {
+      setIsLoading(true);
+      registerMutation.mutate(registerData);
     }
   };
 
