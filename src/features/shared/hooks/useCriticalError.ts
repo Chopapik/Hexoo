@@ -13,16 +13,16 @@ export function useCriticalError() {
   const handleCriticalError = useCallback(
     (error: Error | FirebaseError | unknown) => {
       if (error instanceof FirebaseError) {
-        console.error("Critical Firebase error:", error);
+        console.log("Critical Firebase error:", error);
         return;
       }
 
       if (error instanceof Error) {
-        console.error("Critical error:", error);
+        console.log("Critical error:", error);
         return;
       }
 
-      console.error("Unknown error appeared:", error);
+      console.log("Unknown error appeared:", error);
 
       // TODO: in the future, redirect user to a generic error page
     },

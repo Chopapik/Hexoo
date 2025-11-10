@@ -8,12 +8,12 @@ export interface AuthUser {
   avatarUrl?: string;
 }
 
-export interface LoginInputs {
+export interface LoginData {
   email: string;
   password: string;
 }
 
-export interface RegisterInputs {
+export interface RegisterData {
   name: string;
   email: string;
   password: string;
