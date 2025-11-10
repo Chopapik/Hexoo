@@ -31,7 +31,7 @@ export default function useRegister() {
 
   const registerMutation = useMutation({
     mutationFn: (userData: RegisterData) =>
-      axiosInstance.post(`/api/user/create`, userData),
+      axiosInstance.post(`/api/user/register`, userData),
     onMutate: () => {
       setErrors({
         name: [],
@@ -40,14 +40,13 @@ export default function useRegister() {
       });
     },
     onSuccess: async (response) => {
-      setIsLoading(false);
-
       const { token } = response.data;
 
       if (token) {
         try {
           await signInWithCustomToken(auth, token);
           router.push("/");
+          setIsLoading(false);
         } catch (error) {
           handleCriticalError(`Błąd podczas logowania`);
         }
