@@ -5,6 +5,7 @@ import "@/styles/scrollbar.css";
 import "@/styles/glassmorphism.css";
 import AuthProvider from "@/lib/providers/AuthProvider";
 import ReduxProvider from "@/lib/providers/ReduxProvider";
+import QueryProvider from "@/lib/providers/QueryProvider";
 export const metadata: Metadata = {
   title: "Hexoo",
 };
@@ -17,9 +18,11 @@ export default function RootLayout({
   return (
     <html lang="pl">
       <body>
-        <ReduxProvider>
-          <AuthProvider>{children}</AuthProvider>
-        </ReduxProvider>
+        <QueryProvider>
+          <ReduxProvider>
+            <AuthProvider>{children}</AuthProvider>
+          </ReduxProvider>
+        </QueryProvider>
       </body>
     </html>
   );
