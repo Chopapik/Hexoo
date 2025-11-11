@@ -1,8 +1,7 @@
 import { FirebaseAuthError } from "firebase-admin/auth";
 
-export default function handleRegisterError(error: FirebaseAuthError) {
+export default function formatRegistrationError(error: FirebaseAuthError) {
   const errorCode = error.code;
-
   switch (errorCode) {
     // Email-related
     case "auth/email-already-exists":

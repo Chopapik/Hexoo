@@ -1,9 +1,9 @@
 import { adminAuth } from "@/lib/firebaseAdmin";
 import { FirebaseAuthError } from "firebase-admin/auth";
-import handleRegisterError from "./formatRegistrationError";
-import { AuthError } from "./errors/AuthError";
+import formatRegistrationError from "./formatRegistrationError";
+import { AuthError } from "./AuthError";
 
-export async function handleRegistrationError(error: any, uid: string | null) {
+export async function processRegistrationError(error: any, uid: string | null) {
   if (uid) {
     try {
       await adminAuth.deleteUser(uid);
@@ -14,7 +14,7 @@ export async function handleRegistrationError(error: any, uid: string | null) {
   }
 
   if (error instanceof FirebaseAuthError) {
-    const data = handleRegisterError(error);
+    const data = formatRegistrationError(error);
     throw new AuthError(data.message ?? "Błąd walidacji", {
       code: 400,
       type: "validation",
