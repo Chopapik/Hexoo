@@ -1,5 +1,6 @@
 import { adminDb } from "@/lib/firebaseAdmin";
 import admin from "firebase-admin";
+import type { User } from "../types/user.type";
 
 export async function createUserDocument(
   uid: string,
@@ -17,6 +18,6 @@ export async function createUserDocument(
     createdAt: admin.firestore.FieldValue.serverTimestamp(),
   };
 
-  adminDb.doc(`users/${uid}`).set(userDoc, { merge: true });
+  await adminDb.doc(`users/${uid}`).set(userDoc, { merge: true });
   return userDoc;
 }
