@@ -31,7 +31,7 @@ export default function useRegister() {
 
   const registerMutation = useMutation({
     mutationFn: (userData: RegisterData) =>
-      axiosInstance.post(`/api/user/register`, userData),
+      axiosInstance.post(`/auth/register`, userData),
     onMutate: () => {
       setErrors({
         name: [],
