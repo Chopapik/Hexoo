@@ -1,4 +1,4 @@
-import { adminAuth } from "@/lib/firebaseAdmin";
+import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
 import { LoginData, RegisterData } from "../types/auth.types";
 import { createUserDocument } from "@/features/users/api/userService";
 import { processRegistrationError } from "./errors/processRegistrationError";
@@ -21,13 +21,22 @@ export async function loginUser(userLoginData: LoginData) {
       expiresIn: SESSION_EXPIRES_MS,
     });
 
-    const user = {
-      uid: resp.uid,
-      email: resp.email,
-      displayName: resp.displayName,
-    };
+    const userDoc = await adminDb.collection("users").doc(resp.localId).get();
 
-    return { ok: true, user, sessionCookie };
+    if (!userDoc.exists) {
+      throw new Error("Nie znaleziono usera");
+    }
+    const userSnap = userDoc.data();
+
+    if (userSnap) {
+      const user = {
+        uid: userSnap.uid,
+        email: resp.email,
+        name: userSnap.name,
+        role: userSnap.role,
+      };
+      return { ok: true, user, sessionCookie };
+    }
   } catch (error) {
     await processLoginError(error);
   }

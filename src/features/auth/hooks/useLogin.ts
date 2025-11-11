@@ -3,9 +3,10 @@ import { useMutation } from "@tanstack/react-query";
 import { useCriticalError } from "@/features/shared/hooks/useCriticalError";
 import { validateField, type FieldErrors } from "../utils/loginValidation";
 import { useRouter } from "next/navigation";
-
+import { setUser } from "../store/authSlice";
 import { LoginData } from "../types/auth.types";
 import axiosInstance from "@/lib/axiosInstance";
+import { useAppDispatch } from "@/lib/store/hooks";
 
 export default function useLogin() {
   const [loginData, setLoginData] = useState<LoginData>({
@@ -21,6 +22,8 @@ export default function useLogin() {
   });
 
   const { handleCriticalError } = useCriticalError();
+
+  const dispatch = useAppDispatch();
 
   const updateField = (field: keyof LoginData, value: string) => {
     setLoginData((prev: any) => ({
@@ -52,13 +55,22 @@ export default function useLogin() {
       setIsLoading(true);
       setErrors((prev) => ({ ...prev, root: undefined }));
     },
-    onSuccess: () => {
+    onSuccess: (response) => {
+      const user = response.data.user;
+      dispatch(
+        setUser({
+          id: user.uid,
+          name: user.name,
+          email: user.email,
+          role: user?.role,
+          avatarUrl: user?.avatarUrl,
+        })
+      );
       router.push("/");
     },
     onError: (error: any) => {
       setIsLoading(false);
       if (error.response?.data) {
-        // console.log("error.response.data", error.response.data);
         const serverError = error.response.data;
         console.log("serverError", serverError.data);
 
