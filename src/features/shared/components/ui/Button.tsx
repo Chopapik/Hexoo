@@ -1,4 +1,4 @@
-import type { ButtonProps, ButtonSize } from "@/types/button.type";
+import type { ButtonProps, ButtonSize } from "../../types/button.type";
 import Image from "next/image";
 
 const sizeClasses: Record<ButtonSize, string> = {
