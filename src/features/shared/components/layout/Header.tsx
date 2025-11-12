@@ -6,9 +6,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { useAppSelector } from "@/lib/store/hooks";
 import useLogout from "@/features/auth/hooks/useLogout";
+import { UserSessionData } from "@/features/users/types/user.type";
 
-export const Header: React.FC = () => {
-  const user = useAppSelector((state) => state.auth.user);
+export const Header = ({ user }: { user: UserSessionData | null }) => {
   const { handleLogout } = useLogout();
 
   return (
@@ -19,7 +19,7 @@ export const Header: React.FC = () => {
       <div>
         {user ? (
           <>
-            <span className="text-white">{user.email}</span>
+            <span className="text-white">{user.name}</span>
             <button onClick={handleLogout}> wyloguj</button>
           </>
         ) : (

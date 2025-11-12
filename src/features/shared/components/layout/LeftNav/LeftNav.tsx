@@ -2,18 +2,14 @@ import React, { useEffect } from "react";
 import Link from "next/link";
 import { NavItem } from "./NavItem";
 import { useAppSelector } from "@/lib/store/hooks";
+import { UserSessionData } from "@/features/users/types/user.type";
 
 type LeftNavProps = {
   onOpenRight?: () => void;
+  user: UserSessionData | null;
 };
 
-export function LeftNav({ onOpenRight }: LeftNavProps) {
-  const user = useAppSelector((state) => state.auth.user);
-
-  // useEffect(() => {
-  //   console.log("u: ", user);
-  // }, [user]);
-
+export function LeftNav({ onOpenRight, user }: LeftNavProps) {
   return (
     <div className="hidden md:flex md:sticky md:top-[88px] self-start bg-primary-neutral-background-default border-t-2 border-primary-neutral-stroke-default rounded-xl overflow-hidden md:w-20 xl:w-72 px-3 py-3 lg:px-4 lg:py-8 flex-col items-center h-full">
       {user ? (

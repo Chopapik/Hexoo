@@ -1,13 +1,28 @@
-import { adminAuth } from "@/lib/firebaseAdmin";
+import { cookies } from "next/headers";
+import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
+import type { UserSessionData } from "@/features/users/types/user.type";
 
-export async function verifySession(req: Request) {
-  const cookieHeader = req.headers.get("cookie");
-  if (!cookieHeader) throw new Error("Brak ciasteczka sesji");
+export async function getUserFromSession(): Promise<UserSessionData | null> {
+  const cookieStore = await cookies();
+  const session = cookieStore.get("session")?.value;
+  if (!session) return null;
 
-  const match = cookieHeader.match(/session=([^;]+)/);
-  if (!match) throw new Error("Nie znaleziono ciasteczka session");
+  try {
+    const decoded = await adminAuth.verifySessionCookie(session, true);
+    const userDoc = await adminDb.collection("users").doc(decoded.uid).get();
+    const userData = userDoc.data();
 
-  const sessionCookie = match[1];
-  const decoded = await adminAuth.verifySessionCookie(sessionCookie, true);
-  return decoded;
+    if (!userData) {
+      throw new Error("Nie znaleziono usera w verifySession");
+    }
+
+    return {
+      name: userData.name,
+      role: userData.role,
+      avatarUrl: userData.avatarUrl,
+    };
+  } catch (err) {
+    console.error("verifySessionCookie failed", err);
+    return null;
+  }
 }
