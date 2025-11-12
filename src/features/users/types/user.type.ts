@@ -23,3 +23,9 @@ export interface UserPasswordUpdate {
   oldPassword: string;
   newPassword: string;
 }
+
+export interface UserSessionData {
+  name: string;
+  role: UserRole;
+  avatarUrl?: string;
+}

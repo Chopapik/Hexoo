@@ -1,32 +1,49 @@
-import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
-import { verifySession } from "@/features/auth/api/utils/verifySession";
+// import { NextResponse } from "next/server";
+// import { adminDb } from "@/lib/firebaseAdmin";
+// import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
 
-export async function GET(req: Request) {
-  try {
-    const decoded = await verifySession(req);
+// export async function GET(req: Request) {
+//   try {
+//     const decoded = await getUserFromSession();
 
-    const uid = decoded.uid;
-    const userDoc = await adminDb.collection("users").doc(uid).get();
-    if (!userDoc.exists) {
-      return NextResponse.json({ ok: false }, { status: 401 });
-    }
+//     if (!decoded) {
+//       console.warn("Brak decoded token w auth/me");
+//       return NextResponse.json({ ok: false }, { status: 401 });
+//     }
 
-    const userSnap = userDoc.data();
+//     const { name, email } = decoded;
 
-    return NextResponse.json({
-      ok: true,
-      user: {
-        uid,
-        email: decoded.email ?? null,
-        name: userSnap?.name ?? null,
-        role: userSnap?.role ?? "user",
-      },
-      expiresAt: decoded.exp ? decoded.exp * 1000 : undefined,
-    });
-  } catch (error: any) {
-    console.warn("auth/me verify failed:", error?.message ?? error);
-    return NextResponse.json({ ok: false }, { status: 401 });
-  }
-}
+//     if (!uid) {
+//       console.warn("Brak UID w decoded token");
+//       return NextResponse.json({ ok: false }, { status: 401 });
+//     }
+
+//     const userDoc = await adminDb.collection("users").doc(uid).get();
+
+//     if (!userDoc.exists) {
+//       console.warn(`Użytkownik nie istnieje w Firestore: ${uid}`);
+//       return NextResponse.json({ ok: false }, { status: 401 });
+//     }
+
+//     const userData = userDoc.data();
+
+//     const responseData = {
+//       ok: true,
+//       user: {
+//         uid,
+//         email: email ?? null,
+//         name: userData?.name ?? null,
+//         role: userData?.role ?? "user",
+//       },
+//       expiresAt: decoded.exp ? decoded.exp * 1000 : undefined,
+//     };
+
+//     return NextResponse.json(responseData);
+//   } catch (error: unknown) {
+//     const errorMessage =
+//       error instanceof Error ? error.message : "Unknown error";
+//     console.warn("auth/me verify failed:", errorMessage);
+
+//     return NextResponse.json({ ok: false }, { status: 401 });
+//   }
+// }

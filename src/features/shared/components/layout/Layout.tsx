@@ -1,15 +1,16 @@
-'use client';
+"use client";
 
 import { useState } from "react";
 import { Header } from "./Header";
 import { LeftNav } from "./LeftNav/LeftNav";
 import { BottomNav } from "./LeftNav/BottomNav";
-import {
-  RightNavSidebar,
-  RightNavOverlay,
-} from "./RightNav/RightNav";
+import { RightNavSidebar, RightNavOverlay } from "./RightNav/RightNav";
+import { UserSessionData } from "@/features/users/types/user.type";
 
-export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const Layout: React.FC<{
+  children: React.ReactNode;
+  user: UserSessionData | null;
+}> = ({ children, user }) => {
   const [isRightNavOpen, setIsRightNavOpen] = useState(false);
   const openRight = () => setIsRightNavOpen(true);
   const closeRight = () => setIsRightNavOpen(false);
@@ -20,7 +21,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
         {/* Header pinned to top */}
         <header className="sticky top-0 z-50 bg-page-background px-2 py-2 md:px-4 md:py-4">
           <div className="mx-auto w-full">
-            <Header />
+            <Header user={user} />
           </div>
         </header>
 
@@ -29,7 +30,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
           <div className="flex gap-4 items-start">
             {/* LeftNav sticky */}
             <aside className="hidden md:block sticky top-[calc(56.6px+16px+16px)] h-[calc(100vh-56.6px-16px-16px-16px)]">
-              <LeftNav onOpenRight={openRight} />
+              <LeftNav onOpenRight={openRight} user={user} />
             </aside>
 
             {/* Center */}
