@@ -6,11 +6,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useAppSelector } from "@/lib/store/hooks";
 import { UserSessionData } from "@/features/users/types/user.type";
-import { useLogout } from "@/features/auth/hooks/useLogout";
 
 export const Header = ({ user }: { user: UserSessionData | null }) => {
-  const { logout } = useLogout();
-
   return (
     <div className="h-14 w-full px-4 bg-primary-neutral-background-default rounded-xl border-t-2 border-primary-neutral-stroke-default inline-flex justify-between items-center">
       <div className="h-fit w-fit relative overflow-hidden">
@@ -20,7 +17,6 @@ export const Header = ({ user }: { user: UserSessionData | null }) => {
         {user ? (
           <>
             <span className="text-white">{user.name}</span>
-            <button onClick={() => logout()}> wyloguj</button>
           </>
         ) : (
           <>

@@ -14,7 +14,5 @@ export default async function RootLayout({
 }) {
   const sessionUserData = await getUserFromSession();
 
-  console.log(sessionUserData);
-
   return <Layout user={sessionUserData}>{children}</Layout>;
 }

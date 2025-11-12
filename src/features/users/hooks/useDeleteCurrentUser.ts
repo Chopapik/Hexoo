@@ -1,26 +1,28 @@
 import { useMutation } from "@tanstack/react-query";
 import axiosInstance from "@/lib/axiosInstance";
+import { useCriticalError } from "@/features/shared/hooks/useCriticalError";
 import { useRouter } from "next/navigation";
 
-export function useLogout() {
+export const useDeleteCurrentUser = () => {
+  const { handleCriticalError } = useCriticalError();
   const router = useRouter();
 
   const mutation = useMutation({
     mutationFn: async () => {
-      const res = await axiosInstance.post("/auth/logout");
-      return res.data;
+      console.log("robie");
+      const response = await axiosInstance.delete(`/user/deleteCurrentUser`);
+      return response.data;
     },
     onSuccess: () => {
       router.push("/login");
-      ć;
     },
     onError: (error) => {
-      console.error("Logout failed", error);
+      handleCriticalError(error);
     },
   });
 
   return {
-    logout: mutation.mutate,
+    deleteCurrentUser: mutation.mutate,
     isLoading: mutation.isPending,
   };
-}
+};
