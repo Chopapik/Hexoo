@@ -4,12 +4,10 @@ import {
   validateField,
   type FieldErrors,
 } from "@/features/auth/utils/registerValidation";
-import { useRouter } from "next/navigation";
 import type { RegisterData } from "../types/auth.types";
 import axiosInstance from "@/lib/axiosInstance";
 import { useMutation } from "@tanstack/react-query";
-import { signInWithCustomToken } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { useRouter } from "next/navigation";
 
 export default function useRegister() {
   const [registerData, setRegisterData] = useState<RegisterData>({
@@ -39,20 +37,8 @@ export default function useRegister() {
         password: [],
       });
     },
-    onSuccess: async (response) => {
-      const { token } = response.data;
-
-      if (token) {
-        try {
-          await signInWithCustomToken(auth, token);
-          router.push("/");
-          setIsLoading(false);
-        } catch (error) {
-          handleCriticalError(`Błąd podczas logowania`);
-        }
-      } else {
-        handleCriticalError("Brak tokena w odpowiedzi");
-      }
+    onSuccess: async () => {
+      router.push("/");
     },
     onError: (error: any) => {
       setIsLoading(false);

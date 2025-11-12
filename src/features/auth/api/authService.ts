@@ -86,8 +86,19 @@ export async function registerUser(userRegisterData: RegisterData) {
       role: "user",
     });
 
+    const resp = await signInWithPassword(
+      userRegisterData.email,
+      userRegisterData.password
+    );
+    const idToken = resp?.idToken;
+    if (!idToken) throw new Error("Brak idToken od Firebase");
+
+    const sessionCookie = await adminAuth.createSessionCookie(idToken, {
+      expiresIn: SESSION_EXPIRES_MS,
+    });
+
     const token = await adminAuth.createCustomToken(uid);
-    return { ok: true, token };
+    return { ok: true, user, sessionCookie };
   } catch (error) {
     await processRegistrationError(error, uid);
   }
