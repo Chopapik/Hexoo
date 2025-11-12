@@ -5,11 +5,11 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useAppSelector } from "@/lib/store/hooks";
-import useLogout from "@/features/auth/hooks/useLogout";
 import { UserSessionData } from "@/features/users/types/user.type";
+import { useLogout } from "@/features/auth/hooks/useLogout";
 
 export const Header = ({ user }: { user: UserSessionData | null }) => {
-  const { handleLogout } = useLogout();
+  const { logout } = useLogout();
 
   return (
     <div className="h-14 w-full px-4 bg-primary-neutral-background-default rounded-xl border-t-2 border-primary-neutral-stroke-default inline-flex justify-between items-center">
@@ -20,7 +20,7 @@ export const Header = ({ user }: { user: UserSessionData | null }) => {
         {user ? (
           <>
             <span className="text-white">{user.name}</span>
-            <button onClick={handleLogout}> wyloguj</button>
+            <button onClick={() => logout()}> wyloguj</button>
           </>
         ) : (
           <>

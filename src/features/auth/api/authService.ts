@@ -5,8 +5,22 @@ import { processRegistrationError } from "./errors/processRegistrationError";
 import { processLoginError } from "./errors/processLoginError";
 import { AuthError } from "./errors/AuthError";
 import { signInWithPassword } from "./utils/firebaseAuthAPI";
+import { cookies } from "next/headers";
 
 const SESSION_EXPIRES_MS = 5 * 24 * 60 * 60 * 1000;
+
+export async function logoutUser() {
+  try {
+    const cookieStore = await cookies();
+    cookieStore.delete("session");
+  } catch (error) {
+    console.error(error);
+    throw new AuthError("Wystąpił krytyczny błąd podczas wylogowania", {
+      code: 500,
+      type: "critical",
+    });
+  }
+}
 
 export async function loginUser(userLoginData: LoginData) {
   try {
