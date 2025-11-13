@@ -25,6 +25,7 @@ export interface UserPasswordUpdate {
 }
 
 export interface UserSessionData {
+  uid: string;
   name: string;
   role: UserRole;
   avatarUrl?: string;
