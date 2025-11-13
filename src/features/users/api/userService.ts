@@ -2,13 +2,13 @@ import { adminDb, adminAuth } from "@/lib/firebaseAdmin";
 import admin from "firebase-admin";
 import type { User } from "../types/user.type";
 import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
-import { AuthError } from "@/features/auth/api/errors/AuthError";
 import { cookies } from "next/headers";
+import { UserError } from "@/features/users/api/errors/UserError";
 
 function createCriticalError() {
-  return new AuthError("Nie udało się wykonać operacji — spróbuj ponownie.", {
-    code: 400,
-    type: "validation",
+  return new UserError("Nie udało się wykonać operacji — spróbuj ponownie.", {
+    code: 500,
+    type: "critical",
   });
 }
 
@@ -21,20 +21,18 @@ export async function deleteCurrentUser(): Promise<{ ok: true } | never> {
     }
 
     await adminDb.collection("users").doc(decoded.uid).delete();
-
     await adminAuth.deleteUser(decoded.uid);
 
     const cookieStore = await cookies();
     cookieStore.delete("session");
+
     return { ok: true };
   } catch (error) {
-    console.error(
-      "Błąd krytyczy podczas wykonywania deleteCurrentUser: ",
-      error
-    );
+    console.error("Błąd krytyczny przy deleteCurrentUser:", error);
     throw createCriticalError();
   }
 }
+
 export async function createUserDocument(
   uid: string,
   userData: {
@@ -43,16 +41,21 @@ export async function createUserDocument(
     role: string;
   }
 ) {
-  const userDoc = {
-    uid,
-    name: userData.name,
-    email: userData.email,
-    role: userData.role,
-    createdAt: admin.firestore.FieldValue.serverTimestamp(),
-  };
+  try {
+    const userDoc = {
+      uid,
+      name: userData.name,
+      email: userData.email,
+      role: userData.role,
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    };
 
-  await adminDb.doc(`users/${uid}`).set(userDoc, { merge: true });
-  return userDoc;
+    await adminDb.doc(`users/${uid}`).set(userDoc, { merge: true });
+    return userDoc;
+  } catch (err) {
+    console.error("Błąd podczas tworzenia usera:", err);
+    throw createCriticalError();
+  }
 }
 
 export async function getUserByUid(uid: string) {
@@ -60,17 +63,15 @@ export async function getUserByUid(uid: string) {
     const userDoc = await adminDb.collection("users").doc(uid).get();
 
     if (!userDoc.exists) {
-      console.error(`Brak uzytkownika o id ${uid}`);
       return null;
     }
-    const userData = userDoc.data() as User;
-    return userData;
+
+    return userDoc.data() as User;
   } catch (error) {
-    console.error("Error fetching user with admin:", error);
-    throw new Error(
-      `Failed to fetch user data: ${
-        error instanceof Error ? error.message : "Unknown error"
-      }`
-    );
+    console.error("Błąd podczas pobierania usera:", error);
+    throw new UserError("Nie udało się pobrać danych użytkownika.", {
+      code: 500,
+      type: "fetch",
+    });
   }
 }
