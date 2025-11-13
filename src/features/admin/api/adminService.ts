@@ -44,17 +44,21 @@ export const updateUserData = async (
       updatedAt: new Date(),
     });
   } catch (error) {
-    console.error("Bład podczas wkonywania admin:getAllUsers: ", error);
+    console.error("Bład podczas wkonywania admin:updateUserData: ", error);
     throw error;
   }
 };
 
-// export const updateUserPassword = async (uid: string, newPassword: string) => {
-//   const updatedAuth = await adminAuth.updateUser(uid, {
-//     displayName: data.name,
-//     email: data.email,
-//   });
-// };
+export const updateUserPassword = async (uid: string, newPassword: string) => {
+  try {
+    await adminAuth.updateUser(uid, {
+      password: newPassword,
+    });
+  } catch (error) {
+    console.error("Bład podczas wkonywania admin:updateUserPassword: ", error);
+    throw error;
+  }
+};
 
 // export const deleteUser = async (uid: string) => {
 //   await adminAuth.deleteUser(uid);
