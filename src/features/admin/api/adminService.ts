@@ -21,8 +21,9 @@ export const getAllUsers = async () => {
         uid: doc.id,
         name: data.name,
         email: maskEmail(data?.email),
-        role: data.role ?? null,
+        role: data.role,
         createdAt: data.createdAt?.toDate(),
+        isBanned: data.isBanned,
       };
     });
 
@@ -60,9 +61,26 @@ export const updateUserPassword = async (uid: string, newPassword: string) => {
   }
 };
 
-// export const deleteUser = async (uid: string) => {
-//   await adminAuth.deleteUser(uid);
-//   await adminDb.collection("users").doc(uid).delete();
+export const blockUser = async (uid: string) => {
+  try {
+    await adminAuth.updateUser(uid, { disabled: true });
+    await adminDb.collection("users").doc(uid).update({
+      isBanned: true,
+      updatedAt: new Date(),
+    });
+  } catch (error) {
+    throw error;
+  }
+};
 
-//   return { message: `User ${uid} deleted from Auth and Firestore.` };
-// };
+export const unblockUser = async (uid: string) => {
+  try {
+    await adminAuth.updateUser(uid, { disabled: false });
+    await adminDb.collection("users").doc(uid).update({
+      isBanned: false,
+      updatedAt: new Date(),
+    });
+  } catch (error) {
+    throw error;
+  }
+};
