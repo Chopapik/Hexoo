@@ -10,6 +10,8 @@ import type {
 } from "@/features/users/types/user.type";
 import useUpdateUserData from "../hooks/useUpdateUserData";
 import useUpdateUserPassword from "../hooks/useUpdateUserPassword";
+import useBlockUser from "../hooks/useBlockUser";
+import useUnblockUser from "../hooks/useUnblockUser";
 
 export default function UserEditModal({
   user,
@@ -28,7 +30,11 @@ export default function UserEditModal({
   const { updateUserPassword, isPending: isUpdatingPassword } =
     useUpdateUserPassword();
 
+  const { blockUser, isPending: isBlockingUser } = useBlockUser();
+  const { unBlockUser, isPending: isUnblockingUser } = useUnblockUser();
+
   useEffect(() => {
+    console.log(user);
     if (user) {
       setNewUserData({
         name: user.name,
@@ -135,6 +141,41 @@ export default function UserEditModal({
               </div>
             </div>
           </div>
+          <div className="flex w-full gap-2">
+            <Button
+              onClick={onClose}
+              text="Usuń"
+              size="sm"
+              variant="icon-fuchsia-ghost"
+              className="bg-red-700 flex-1"
+              disabled={isUpdatingData || isUpdatingPassword}
+            />
+
+            {user.isBanned ? (
+              <>
+                <Button
+                  onClick={() => unBlockUser({ uid: user.uid })}
+                  text={isUnblockingUser ? "Przetwarzanie..." : "Odblokuj"}
+                  size="sm"
+                  variant="icon-fuchsia-ghost"
+                  className="bg-neutral-600 flex-1"
+                  disabled={isUnblockingUser}
+                />
+              </>
+            ) : (
+              <>
+                <Button
+                  onClick={() => blockUser({ uid: user.uid })}
+                  size="sm"
+                  text={isBlockingUser ? "Przetwarzanie..." : "Zablokuj"}
+                  variant="icon-fuchsia-ghost"
+                  className="bg-red-700 flex-1"
+                  disabled={isBlockingUser}
+                />
+              </>
+            )}
+          </div>
+
           <Button
             onClick={onClose}
             text="Anuluj"
