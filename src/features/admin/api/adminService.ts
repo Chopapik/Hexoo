@@ -33,27 +33,32 @@ export const getAllUsers = async () => {
   }
 };
 
+export const updateUserData = async (
+  uid: string,
+  data: { name?: string; email?: string; role?: string }
+) => {
+  try {
+    await adminDb.collection("users").doc(uid).update({
+      name: data.name,
+      role: data.role,
+      updatedAt: new Date(),
+    });
+  } catch (error) {
+    console.error("Bład podczas wkonywania admin:getAllUsers: ", error);
+    throw error;
+  }
+};
+
+// export const updateUserPassword = async (uid: string, newPassword: string) => {
+//   const updatedAuth = await adminAuth.updateUser(uid, {
+//     displayName: data.name,
+//     email: data.email,
+//   });
+// };
+
 // export const deleteUser = async (uid: string) => {
 //   await adminAuth.deleteUser(uid);
 //   await adminDb.collection("users").doc(uid).delete();
 
 //   return { message: `User ${uid} deleted from Auth and Firestore.` };
-// };
-
-// export const updateUser = async (
-//   uid: string,
-//   data: { name?: string; email?: string; role?: string }
-// ) => {
-//   const updatedAuth = await adminAuth.updateUser(uid, {
-//     displayName: data.name,
-//     email: data.email,
-//   });
-
-//   await adminDb.collection("users").doc(uid).update({
-//     displayName: data.name,
-//     email: data.email,
-//     role: data.role,
-//     updatedAt: new Date(),
-//   });
-//   return { message: `User ${uid} updated successfully.`, updatedAuth };
 // };
