@@ -6,6 +6,8 @@ import axiosInstance from "@/lib/axiosInstance";
 import Button from "@/features/shared/components/ui/Button";
 import type { User } from "@/features/users/types/user.type";
 import AdminUserEditModal from "./AdminUserEditModal";
+import AdminUserCreateModal from "./AdminUserCreateModal";
+
 type GetUsersResponse = {
   users: User[];
 };
@@ -20,8 +22,30 @@ function formatDate(iso?: string | Date | null) {
   }
 }
 
+enum AdminModal {
+  NONE,
+  EDIT,
+  CREATE,
+}
+
 export default function AllUsersList() {
-  const [currentUserModal, setCurrentUserModal] = useState<User | null>(null);
+  const [modal, setModal] = useState<AdminModal>(AdminModal.NONE);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+
+  const openEditModal = (user: User) => {
+    setSelectedUser(user);
+    setModal(AdminModal.EDIT);
+  };
+
+  const openCreateModal = () => {
+    setSelectedUser(null);
+    setModal(AdminModal.CREATE);
+  };
+
+  const closeModal = () => {
+    setSelectedUser(null);
+    setModal(AdminModal.NONE);
+  };
 
   const {
     data: users,
@@ -42,10 +66,22 @@ export default function AllUsersList() {
 
   return (
     <>
-      {currentUserModal && (
+      {modal === AdminModal.EDIT && selectedUser && (
         <AdminUserEditModal
-          user={currentUserModal}
-          onClose={() => setCurrentUserModal(null)}
+          user={selectedUser}
+          onClose={() => {
+            closeModal();
+            refetch();
+          }}
+        />
+      )}
+
+      {modal === AdminModal.CREATE && (
+        <AdminUserCreateModal
+          onClose={() => {
+            closeModal();
+            refetch();
+          }}
         />
       )}
 
@@ -60,11 +96,19 @@ export default function AllUsersList() {
             </div>
           </div>
 
-          <Button
-            onClick={() => refetch()}
-            text={isFetching ? "Odświeżanie..." : "Odśwież"}
-            size="sm"
-          />
+          <div className="flex items-center gap-3">
+            <Button
+              onClick={() => refetch()}
+              text={isFetching ? "Odświeżanie..." : "Odśwież"}
+              size="sm"
+            />
+            <Button
+              onClick={openCreateModal}
+              text="+ Dodaj użytkownika"
+              size="sm"
+              variant="gradient-fuchsia"
+            />
+          </div>
         </div>
 
         {isLoading ? (
@@ -141,7 +185,7 @@ export default function AllUsersList() {
 
                         <td className="px-3 py-2">
                           <Button
-                            onClick={() => setCurrentUserModal(u)}
+                            onClick={() => openEditModal(u)}
                             variant="glass-card"
                             text="edytuj"
                             size="sm"
