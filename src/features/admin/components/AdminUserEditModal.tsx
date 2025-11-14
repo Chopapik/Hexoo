@@ -13,7 +13,7 @@ import useUpdateUserPassword from "../hooks/useUpdateUserPassword";
 import useBlockUser from "../hooks/useBlockUser";
 import useUnblockUser from "../hooks/useUnblockUser";
 
-export default function UserEditModal({
+export default function AdminUserEditModal({
   user,
   onClose,
 }: {
