@@ -6,7 +6,7 @@ type Args = { uid: string };
 export default function useUnblockUser() {
   const m = useMutation({
     mutationFn: async ({ uid }: Args) => {
-      const res = await axiosInstance.put(`/admin/unblockUser/${uid}`);
+      const res = await axiosInstance.put(`/admin/user/${uid}/unblock`);
       return res.data;
     },
   });

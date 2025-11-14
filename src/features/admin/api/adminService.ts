@@ -34,7 +34,7 @@ export const getAllUsers = async () => {
   }
 };
 
-export const updateUserData = async (
+export const updateUserProfile = async (
   uid: string,
   data: { name?: string; email?: string; role?: string }
 ) => {
@@ -45,7 +45,7 @@ export const updateUserData = async (
       updatedAt: new Date(),
     });
   } catch (error) {
-    console.error("Bład podczas wkonywania admin:updateUserData: ", error);
+    console.error("Bład podczas wkonywania admin:updateUserProfile: ", error);
     throw error;
   }
 };

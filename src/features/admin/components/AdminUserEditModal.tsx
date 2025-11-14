@@ -8,10 +8,10 @@ import type {
   UserRole,
   UserDataUpdate,
 } from "@/features/users/types/user.type";
-import useUpdateUserData from "../hooks/useUpdateUserData";
-import useUpdateUserPassword from "../hooks/useUpdateUserPassword";
-import useBlockUser from "../hooks/useBlockUser";
-import useUnblockUser from "../hooks/useUnblockUser";
+import useUpdateUserProfile from "../hooks/user/useUpdateUserProfile";
+import useUpdateUserPassword from "../hooks/user/useUpdateUserPassword";
+import useBlockUser from "../hooks/user/useBlockUser";
+import useUnblockUser from "../hooks/user/useUnblockUser";
 
 export default function AdminUserEditModal({
   user,
@@ -26,7 +26,8 @@ export default function AdminUserEditModal({
   });
 
   const [newPassword, setNewPassword] = useState<string>("");
-  const { updateUserData, isPending: isUpdatingData } = useUpdateUserData();
+  const { updateUserProfile, isPending: isUpdatingData } =
+    useUpdateUserProfile();
   const { updateUserPassword, isPending: isUpdatingPassword } =
     useUpdateUserPassword();
 
@@ -97,7 +98,7 @@ export default function AdminUserEditModal({
               <div className="flex justify-end gap-3 mt-4">
                 <Button
                   onClick={() =>
-                    updateUserData({ uid: user.uid, data: newUserData })
+                    updateUserProfile({ uid: user.uid, data: newUserData })
                   }
                   text={isUpdatingData ? "Zapisywanie..." : "Zapisz"}
                   size="sm"

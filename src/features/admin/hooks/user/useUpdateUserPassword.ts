@@ -9,7 +9,7 @@ type UpdatePasswordArgs = {
 export default function useUpdateUserPassword() {
   const passwordMutation = useMutation({
     mutationFn: async ({ uid, newPassword }: UpdatePasswordArgs) => {
-      const res = await axiosInstance.put(`/admin/updateUserPassword/${uid}`, {
+      const res = await axiosInstance.put(`/admin/user/${uid}/password`, {
         newPassword,
       });
       return res.data;

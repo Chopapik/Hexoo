@@ -10,6 +10,7 @@ export interface User {
   updatedAt?: Date;
   lastOnline?: Date;
   isActive?: boolean;
+  isBanned?: boolean;
 }
 
 export interface UserDataUpdate {

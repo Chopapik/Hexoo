@@ -1,4 +1,4 @@
-import { updateUserData } from "@/features/admin/api/adminService";
+import { updateUserProfile } from "@/features/admin/api/adminService";
 
 export async function PUT(
   req: Request,
@@ -7,7 +7,7 @@ export async function PUT(
   try {
     const body = await req.json();
     const { uid } = await context.params;
-    const result = await updateUserData(uid, body);
+    const result = await updateUserProfile(uid, body);
 
     return Response.json({ ok: true, user: result }, { status: 200 });
   } catch (error) {
