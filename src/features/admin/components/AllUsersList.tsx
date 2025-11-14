@@ -5,8 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "@/lib/axiosInstance";
 import Button from "@/features/shared/components/ui/Button";
 import type { User } from "@/features/users/types/user.type";
-import UserEditModal from "./UserEditModal";
-
+import AdminUserEditModal from "./AdminUserEditModal";
 type GetUsersResponse = {
   users: User[];
 };
@@ -46,7 +45,7 @@ export default function AllUsersList() {
   return (
     <>
       {currentUserModal && (
-        <UserEditModal
+        <AdminUserEditModal
           user={currentUserModal}
           onClose={() => setCurrentUserModal(null)}
         />
