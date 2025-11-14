@@ -33,9 +33,7 @@ export default function AllUsersList() {
   } = useQuery<User[], Error>({
     queryKey: ["admin", "allUsers"],
     queryFn: async () => {
-      const res = await axiosInstance.get<GetUsersResponse>(
-        "/admin/getAllUsers"
-      );
+      const res = await axiosInstance.get<GetUsersResponse>("/admin/users");
       return res.data.users;
     },
     staleTime: 1000 * 60 * 30,

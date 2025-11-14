@@ -6,7 +6,7 @@ type Args = { uid: string };
 export default function useBlockUser() {
   const m = useMutation({
     mutationFn: async ({ uid }: Args) => {
-      const res = await axiosInstance.put(`/admin/blockUser/${uid}`);
+      const res = await axiosInstance.put(`/admin/user/${uid}/block`);
       return res.data;
     },
   });
