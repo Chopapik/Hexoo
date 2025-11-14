@@ -3,14 +3,13 @@ import axiosInstance from "@/lib/axiosInstance";
 import { useCriticalError } from "@/features/shared/hooks/useCriticalError";
 import { useRouter } from "next/navigation";
 
-export const useDeleteCurrentUser = () => {
+export const useDeleteAccount = () => {
   const { handleCriticalError } = useCriticalError();
   const router = useRouter();
 
   const mutation = useMutation({
     mutationFn: async () => {
-      console.log("robie");
-      const response = await axiosInstance.delete(`/user/deleteCurrentUser`);
+      const response = await axiosInstance.delete(`/me`);
       return response.data;
     },
     onSuccess: () => {
@@ -22,7 +21,7 @@ export const useDeleteCurrentUser = () => {
   });
 
   return {
-    deleteCurrentUser: mutation.mutate,
+    deleteAccount: mutation.mutate,
     isLoading: mutation.isPending,
   };
 };

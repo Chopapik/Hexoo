@@ -1,3 +1,18 @@
+import { NextResponse } from "next/server";
+import { deleteAccount } from "@/features/me/api/meService";
+export async function DELETE(req: Request) {
+  try {
+    await deleteAccount();
+    return NextResponse.json(
+      { ok: true, message: "Konto usunięte" },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("deleteCurrentUser error:", error);
+    return NextResponse.json(error, { status: 500 });
+  }
+}
+
 // import { NextResponse } from "next/server";
 // import { adminDb } from "@/lib/firebaseAdmin";
 // import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
