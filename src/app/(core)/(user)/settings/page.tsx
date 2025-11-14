@@ -1,11 +1,10 @@
 "use client";
 import Button from "@/features/shared/components/ui/Button";
 import { useLogout } from "@/features/auth/hooks/useLogout";
-import { useDeleteCurrentUser } from "@/features/users/hooks/useDeleteCurrentUser";
-
+import { useDeleteAccount } from "@/features/me/hooks/useDeleteAccount";
 export default function UserSettingsPage() {
   const { logout } = useLogout();
-  const { deleteCurrentUser } = useDeleteCurrentUser();
+  const { deleteAccount } = useDeleteAccount();
 
   return (
     <>
@@ -18,7 +17,7 @@ export default function UserSettingsPage() {
       <Button
         variant="glass-card"
         text={"usun konto"}
-        onClick={() => deleteCurrentUser()}
+        onClick={() => deleteAccount()}
       />
     </>
   );
