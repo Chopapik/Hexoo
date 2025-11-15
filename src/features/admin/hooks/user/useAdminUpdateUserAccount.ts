@@ -7,7 +7,7 @@ type UpdateUserArgs = {
   data: UserDataUpdate;
 };
 
-export default function useUpdateUserProfile() {
+export default function useAdminUpdateUserAccount() {
   const updateMutation = useMutation({
     mutationFn: async ({ uid, data }: UpdateUserArgs) => {
       const res = await axiosInstance.put(`/admin/user/${uid}/profile`, data);
@@ -17,7 +17,7 @@ export default function useUpdateUserProfile() {
   });
 
   return {
-    updateUserProfile: updateMutation.mutate,
+    adminUpdateUserAccount: updateMutation.mutate,
     isPending: updateMutation.isPending,
   };
 }

@@ -13,7 +13,7 @@ const checkIsAdmin = async () => {
   }
 };
 
-export const createUser = async (data: AdminUserCreate) => {
+export const adminCreateUserAccount = async (data: AdminUserCreate) => {
   try {
     await checkIsAdmin();
 
@@ -51,7 +51,7 @@ export const createUser = async (data: AdminUserCreate) => {
   }
 };
 
-export const getAllUsers = async () => {
+export const adminGetAllUsers = async () => {
   try {
     await checkIsAdmin();
     const snapshot = await adminDb.collection("users").get();
@@ -76,7 +76,7 @@ export const getAllUsers = async () => {
   }
 };
 
-export const updateUserProfile = async (
+export const adminUpdateUserAccount = async (
   uid: string,
   data: { name?: string; email?: string; role?: string }
 ) => {
@@ -88,12 +88,15 @@ export const updateUserProfile = async (
       updatedAt: new Date(),
     });
   } catch (error) {
-    console.error("Bład podczas wkonywania admin:updateUserProfile: ", error);
+    console.error("Bład podczas wkonywania admin:updateUserAccount: ", error);
     throw error;
   }
 };
 
-export const updateUserPassword = async (uid: string, newPassword: string) => {
+export const adminUpdateUserPassword = async (
+  uid: string,
+  newPassword: string
+) => {
   try {
     await checkIsAdmin();
     await adminAuth.updateUser(uid, {

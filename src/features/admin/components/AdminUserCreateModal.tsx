@@ -3,7 +3,7 @@
 import { useState } from "react";
 import TextInput from "@/features/shared/components/ui/TextInput";
 import Button from "@/features/shared/components/ui/Button";
-import useCreateUser from "../hooks/user/useCreateUser";
+import useCreateUser from "../hooks/user/useAdminCreateUser";
 import type { UserRole } from "@/features/users/types/user.type";
 
 export default function AdminUserCreateModal({
