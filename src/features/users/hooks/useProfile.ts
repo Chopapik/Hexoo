@@ -1,25 +1,23 @@
-"use client";
-import { useState, useEffect } from "react";
-import { User } from "../types/user.type";
-import { useUsers } from "./useUsers";
+import { useQuery } from "@tanstack/react-query";
+import type { UserProfile } from "@/features/users/types/user.type";
+import axiosInstance from "@/lib/axiosInstance";
 
-export default function useProfile(username: string) {
-  const { getUserByName, loading } = useUsers();
-  const [userProfileData, setUserProfileData] = useState<User | null>(null);
+export default function useProfile(name: string) {
+  const query = useQuery<UserProfile | null, Error>({
+    queryKey: ["profile", name],
+    // enabled: !!name && name.trim() !== "",
+    retry: false,
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      console.log("pobieram dane");
-      const user = await getUserByName(username);
-      console.log("porałem dane", user);
+    queryFn: async ({ signal }) => {
+      const response = await axiosInstance.get(`/user/profile/${name}`, {
+        signal,
+      });
 
-      if (user) {
-        setUserProfileData(user);
-      }
-    };
+      return response.data;
+    },
+  });
 
-    if (username) fetchUser();
-  }, [username]);
-
-  return { userProfileData, loading };
+  return {
+    userProfileData: query.data,
+  };
 }
