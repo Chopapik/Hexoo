@@ -1,5 +1,6 @@
 import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
 import { UserError } from "@/features/users/api/errors/UserError";
+import { UserProfileUpdate } from "@/features/users/types/user.type";
 import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
 import { cookies } from "next/headers";
 
@@ -27,6 +28,42 @@ export async function deleteAccount(): Promise<{ ok: true } | never> {
     return { ok: true };
   } catch (error) {
     console.error("Błąd krytyczny przy deleteCurrentUser:", error);
+    throw createCriticalError();
+  }
+}
+
+export async function updateProfile(data: UserProfileUpdate) {
+  try {
+    const decoded = await getUserFromSession();
+    if (!decoded) {
+      console.error("Nie udało się uzyskać UID użytkownika");
+      throw createCriticalError();
+    }
+
+    const uid = decoded.uid;
+
+    const authUpdate: { displayName?: string; photoURL?: string } = {};
+    if (typeof data.name === "string" && data.name.trim() !== "") {
+      authUpdate.displayName = data.name.trim();
+    }
+    if (typeof data.avatarUrl === "string" && data.avatarUrl.trim() !== "") {
+      authUpdate.photoURL = data.avatarUrl.trim();
+    }
+
+    await adminAuth.updateUser(uid, authUpdate);
+
+    const dbUpdate: Record<string, any> = {
+      name: data.name.trim(),
+      updatedAt: new Date(),
+    };
+    if (data.avatarUrl) dbUpdate.avatarUrl = data.avatarUrl.trim();
+
+    const userRef = adminDb.collection("users").doc(uid);
+    await userRef.set(dbUpdate, { merge: true });
+
+    return data;
+  } catch (error) {
+    console.error("Błąd krytyczny przy updateProfile:", error);
     throw createCriticalError();
   }
 }

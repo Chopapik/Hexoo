@@ -20,9 +20,16 @@ export interface UserDataUpdate {
   avatarUrl?: string;
 }
 
+export interface UserEmailUpdate {}
+
 export interface UserPasswordUpdate {
   oldPassword: string;
   newPassword: string;
+}
+
+export interface UserProfileUpdate {
+  name: string;
+  avatarUrl?: string;
 }
 
 export interface UserSessionData {
