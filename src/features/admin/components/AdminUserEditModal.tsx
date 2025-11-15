@@ -8,8 +8,8 @@ import type {
   UserRole,
   UserDataUpdate,
 } from "@/features/users/types/user.type";
-import useUpdateUserProfile from "../hooks/user/useUpdateUserProfile";
-import useUpdateUserPassword from "../hooks/user/useUpdateUserPassword";
+import useAdminUpdateUserAccount from "../hooks/user/useAdminUpdateUserAccount";
+import useAdminUpdateUserPassword from "../hooks/user/useAdminUpdateUserPassword";
 import useBlockUser from "../hooks/user/useBlockUser";
 import useUnblockUser from "../hooks/user/useUnblockUser";
 
@@ -26,10 +26,10 @@ export default function AdminUserEditModal({
   });
 
   const [newPassword, setNewPassword] = useState<string>("");
-  const { updateUserProfile, isPending: isUpdatingData } =
-    useUpdateUserProfile();
-  const { updateUserPassword, isPending: isUpdatingPassword } =
-    useUpdateUserPassword();
+  const { adminUpdateUserAccount, isPending: isUpdatingData } =
+    useAdminUpdateUserAccount();
+  const { adminUpdateUserPassword, isPending: isUpdatingPassword } =
+    useAdminUpdateUserPassword();
 
   const { blockUser, isPending: isBlockingUser } = useBlockUser();
   const { unBlockUser, isPending: isUnblockingUser } = useUnblockUser();
@@ -98,7 +98,7 @@ export default function AdminUserEditModal({
               <div className="flex justify-end gap-3 mt-4">
                 <Button
                   onClick={() =>
-                    updateUserProfile({ uid: user.uid, data: newUserData })
+                    adminUpdateUserAccount({ uid: user.uid, data: newUserData })
                   }
                   text={isUpdatingData ? "Zapisywanie..." : "Zapisz"}
                   size="sm"
@@ -127,7 +127,7 @@ export default function AdminUserEditModal({
               <div className="flex justify-end gap-3 mt-4">
                 <Button
                   onClick={() =>
-                    updateUserPassword({
+                    adminUpdateUserPassword({
                       uid: user.uid,
                       newPassword: newPassword,
                     })

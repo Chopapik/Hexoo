@@ -1,4 +1,4 @@
-import { updateUserPassword } from "@/features/admin/api/adminService";
+import { adminUpdateUserPassword } from "@/features/admin/api/adminService";
 
 export async function PUT(
   req: Request,
@@ -10,7 +10,7 @@ export async function PUT(
 
     const { newPassword } = body;
 
-    const result = await updateUserPassword(uid, newPassword);
+    const result = await adminUpdateUserPassword(uid, newPassword);
 
     return Response.json({ ok: true }, { status: 200 });
   } catch (error) {

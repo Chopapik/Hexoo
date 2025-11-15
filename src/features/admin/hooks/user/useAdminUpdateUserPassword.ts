@@ -6,7 +6,7 @@ type UpdatePasswordArgs = {
   newPassword: string;
 };
 
-export default function useUpdateUserPassword() {
+export default function useAdminUpdateUserPassword() {
   const passwordMutation = useMutation({
     mutationFn: async ({ uid, newPassword }: UpdatePasswordArgs) => {
       const res = await axiosInstance.put(`/admin/user/${uid}/password`, {
@@ -17,7 +17,7 @@ export default function useUpdateUserPassword() {
   });
 
   return {
-    updateUserPassword: passwordMutation.mutate,
+    adminUpdateUserPassword: passwordMutation.mutate,
     isPending: passwordMutation.isPending,
   };
 }
