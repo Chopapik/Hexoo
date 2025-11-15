@@ -6,9 +6,9 @@ export interface User {
   email: string;
   role: UserRole;
   avatarUrl?: string;
-  createdAt: string;
+  createdAt: Date;
   updatedAt?: Date;
-  lastOnline?: Date;
+  lastOnline: Date;
   isActive?: boolean;
   isBanned?: boolean;
 }
@@ -30,4 +30,11 @@ export interface UserSessionData {
   name: string;
   role: UserRole;
   avatarUrl?: string;
+}
+export interface UserProfile {
+  uid: string;
+  name: string;
+  avatarUrl?: string;
+  lastOnline?: Date;
+  createdAt: Date;
 }

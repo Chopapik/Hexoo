@@ -2,7 +2,7 @@ import type { ButtonProps, ButtonSize } from "../../types/button.type";
 import Image from "next/image";
 
 const sizeClasses: Record<ButtonSize, string> = {
-  sm: "h-9 min-w-9 px-3 text-sm rounded-xl",
+  sm: "h-7 min-w-9 px-3 text-xs rounded-xl",
   md: "h-9 min-w-[110px] px-4 text-base rounded-3xl",
   lg: "h-11 min-w-[190px] px-5 text-base rounded-xl",
   xl: "h-13 w-full px-3 text-base rounded-xl",
