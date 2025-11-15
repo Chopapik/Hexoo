@@ -6,8 +6,7 @@ import useProfile from "../hooks/useProfile";
 import defaultAvatarUrl from "@/features/shared/assets/defaultAvatar.svg?url";
 import { useEffect, useState } from "react";
 import Button from "@/features/shared/components/ui/Button";
-import UserEditModal from "@/features/admin/components/AdminUserEditModal";
-import UserEditProfileModal from "./UserEditProfileModal";
+import EditProfileModal from "../../me/components/EditProfileModal";
 import "dayjs/locale/pl";
 
 dayjs.locale("pl");
@@ -57,7 +56,12 @@ export const UserProfileCard = ({
 
   return (
     <>
-      {/* {showEditProfileModal && <UserEditProfileModal user={userProfileData} />} */}
+      {showEditProfileModal && (
+        <EditProfileModal
+          user={userProfileData}
+          onClose={() => setShowEditProfileModal(false)}
+        />
+      )}
       <div
         data-type="Default"
         className="self-stretch w-full p-4 md:px-6 md:py-5 bg-primary-neutral-background-default rounded-[10px] border-t border-primary-neutral-stroke-default inline-flex flex-col md:flex-row justify-start items-center gap-3 relative"
