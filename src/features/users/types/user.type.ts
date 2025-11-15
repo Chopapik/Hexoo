@@ -34,6 +34,7 @@ export interface UserProfileUpdate {
 
 export interface UserSessionData {
   uid: string;
+  email: string;
   name: string;
   role: UserRole;
   avatarUrl?: string;

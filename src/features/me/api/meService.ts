@@ -3,6 +3,10 @@ import { UserError } from "@/features/users/api/errors/UserError";
 import { UserProfileUpdate } from "@/features/users/types/user.type";
 import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
 import { cookies } from "next/headers";
+import { PasswordUpdate } from "../me.type";
+import { loginUser } from "@/features/auth/api/authService";
+
+const SESSION_EXPIRES_MS = 5 * 24 * 60 * 60 * 1000;
 
 function createCriticalError() {
   return new UserError("Nie udało się wykonać operacji — spróbuj ponownie.", {
@@ -67,3 +71,29 @@ export async function updateProfile(data: UserProfileUpdate) {
     throw createCriticalError();
   }
 }
+export const updatePassword = async (passwordData: PasswordUpdate) => {
+  try {
+    const decoded = await getUserFromSession();
+    if (!decoded) {
+      console.error("Nie udało się uzyskać UID użytkownika");
+      throw createCriticalError();
+    }
+
+    await adminAuth.updateUser(decoded.uid, {
+      password: passwordData.newPassword,
+    });
+    const dbUpdate: Record<string, any> = {
+      updatedAt: new Date(),
+    };
+    const userRef = adminDb.collection("users").doc(decoded.uid);
+    await userRef.set(dbUpdate, { merge: true });
+
+    return await loginUser({
+      email: decoded.email,
+      password: passwordData.newPassword,
+    });
+  } catch (error) {
+    console.error("Bład podczas wkonywania me:updatePassword: ", error);
+    throw error;
+  }
+};

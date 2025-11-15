@@ -18,6 +18,7 @@ export async function getUserFromSession(): Promise<UserSessionData | null> {
 
     return {
       uid: userData.uid,
+      email: userData.email,
       name: userData.name,
       role: userData.role,
       avatarUrl: userData.avatarUrl,
