@@ -1,22 +1,18 @@
 import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
 import { LoginData, RegisterData } from "../types/auth.types";
 import { createUserDocument } from "@/features/users/api/userService";
-import { processRegistrationError } from "./errors/processRegistrationError";
 import { signInWithPassword } from "./utils/firebaseAuthAPI";
 import { cookies } from "next/headers";
 import { createAppError } from "@/lib/ApiError";
 import { validateAuthData } from "./utils/validateAuthData";
+import { processRegistrationError } from "./errors/processRegistrationError";
 
 const SESSION_EXPIRES_MS = 5 * 24 * 60 * 60 * 1000;
 
 export async function logoutUser() {
-  try {
-    const cookieStore = await cookies();
-    cookieStore.delete("session");
-    return { ok: true, message: "Session cleared" };
-  } catch (error) {
-    throw error;
-  }
+  const cookieStore = await cookies();
+  cookieStore.delete("session");
+  return { ok: true, message: "Session cleared" };
 }
 
 export async function loginUser(userLoginData: LoginData) {
@@ -24,122 +20,77 @@ export async function loginUser(userLoginData: LoginData) {
     throw createAppError({
       message: "Missing fields in loginUser()",
       code: "VALIDATION_ERROR",
-      details: {
-        code: "auth/missing_fields",
-        field: "root",
-      },
+      details: { code: "auth/missing_fields", field: "root" },
     });
   }
 
-  try {
-    const resp = await signInWithPassword(
-      userLoginData.email,
-      userLoginData.password
-    );
-    const idToken = resp?.idToken;
-    if (!idToken)
-      throw createAppError({
-        message: "Missing idToken in loginUser() within authService",
-      });
+  const resp = await signInWithPassword(
+    userLoginData.email,
+    userLoginData.password
+  );
 
-    const sessionCookie = await adminAuth.createSessionCookie(idToken, {
-      expiresIn: SESSION_EXPIRES_MS,
-    });
-
-    if (!sessionCookie) {
-      throw createAppError({
-        message:
-          "sessionCookie does not exist in loginUser() within authService",
-      });
-    }
-
-    const userDoc = await adminDb.collection("users").doc(resp.localId).get();
-
-    if (!userDoc.exists) {
-      throw createAppError({
-        message: "User does not exist in loginUser() within authService",
-      });
-    }
-    const userSnap = userDoc.data();
-
-    if (userSnap) {
-      const user = {
-        uid: userSnap.uid,
-        email: resp.email,
-        name: userSnap.name,
-        role: userSnap.role,
-      };
-      return { ok: true, user, sessionCookie };
-    }
-  } catch (error) {
-    throw error;
-  }
-}
-
-export async function createAuthUser(userData: {
-  email: string;
-  password: string;
-  displayName: string;
-}) {
-  return adminAuth.createUser({
-    email: userData.email,
-    password: userData.password,
-    displayName: userData.displayName,
+  const sessionCookie = await adminAuth.createSessionCookie(resp.idToken!, {
+    expiresIn: SESSION_EXPIRES_MS,
   });
+
+  const userDoc = await adminDb.collection("users").doc(resp.localId).get();
+
+  if (!userDoc.exists) {
+    throw createAppError({
+      code: "USER_NOT_FOUND",
+      message: "User does not exist",
+      status: 404,
+    });
+  }
+
+  const userSnap = userDoc.data()!;
+  const user = {
+    uid: userSnap.uid,
+    email: resp.email,
+    name: userSnap.name,
+    role: userSnap.role,
+  };
+
+  return { ok: true, user, sessionCookie };
 }
 
 export async function registerUser(userRegisterData: RegisterData) {
-  let uid: string | null = null;
-
-  if (!validateAuthData<LoginData>(userRegisterData)) {
+  if (!validateAuthData<RegisterData>(userRegisterData)) {
     throw createAppError({
       message: "Missing fields in registerUser()",
       code: "VALIDATION_ERROR",
-      details: {
-        code: "auth/missing_fields",
-        field: "root",
-      },
+      details: { code: "auth/missing_fields", field: "root" },
     });
   }
 
-  try {
-    const user = await createAuthUser({
+  const authUser = await adminAuth
+    .createUser({
       email: userRegisterData.email,
       password: userRegisterData.password,
       displayName: userRegisterData.name,
-    });
+    })
+    .catch(processRegistrationError);
 
-    uid = user.uid;
+  const dbUser = await createUserDocument(authUser.uid, {
+    name: userRegisterData.name,
+    email: userRegisterData.email,
+    role: "user",
+  });
 
-    await createUserDocument(uid, {
-      name: userRegisterData.name,
-      email: userRegisterData.email,
-      role: "user",
-    });
+  const resp = await signInWithPassword(
+    userRegisterData.email,
+    userRegisterData.password
+  );
 
-    const resp = await signInWithPassword(
-      userRegisterData.email,
-      userRegisterData.password
-    );
-    const idToken = resp?.idToken;
-    if (!idToken)
-      throw createAppError({
-        message: "Missing idToken in registerUser() within authService",
-      });
-    const sessionCookie = await adminAuth.createSessionCookie(idToken, {
-      expiresIn: SESSION_EXPIRES_MS,
-    });
+  const sessionCookie = await adminAuth.createSessionCookie(resp.idToken!, {
+    expiresIn: SESSION_EXPIRES_MS,
+  });
 
-    if (!sessionCookie) {
-      throw createAppError({
-        message:
-          "sessionCookie does not exist in registerUser() within authService",
-      });
-    }
+  const user = {
+    uid: dbUser.uid,
+    name: dbUser.name,
+    role: dbUser.role,
+  };
 
-    return { ok: true, user, sessionCookie };
-  } catch (error) {
-    await processRegistrationError(error, uid);
-    throw error;
-  }
+  return { ok: true, user, sessionCookie };
 }

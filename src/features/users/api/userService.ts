@@ -1,15 +1,7 @@
-import { adminDb, adminAuth } from "@/lib/firebaseAdmin";
+import { adminDb } from "@/lib/firebaseAdmin";
 import admin from "firebase-admin";
-import type { User } from "../types/user.type";
-import { UserError } from "@/features/users/api/errors/UserError";
-import type { UserProfile } from "../types/user.type";
-
-function createCriticalError() {
-  return new UserError("Nie udało się wykonać operacji — spróbuj ponownie.", {
-    code: 500,
-    type: "critical",
-  });
-}
+import type { User, UserProfile } from "../types/user.type";
+import { createAppError } from "@/lib/ApiError";
 
 export async function createUserDocument(
   uid: string,
@@ -19,69 +11,59 @@ export async function createUserDocument(
     role: string;
   }
 ) {
-  try {
-    const userDoc = {
-      uid,
-      name: userData.name,
-      email: userData.email,
-      role: userData.role,
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
-    };
+  const userDoc = {
+    uid,
+    name: userData.name,
+    email: userData.email,
+    role: userData.role,
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+  };
 
-    await adminDb.doc(`users/${uid}`).set(userDoc, { merge: true });
-    return userDoc;
-  } catch (error) {
-    throw error;
+  await adminDb.doc(`users/${uid}`).set(userDoc, { merge: true });
+
+  const snap = await adminDb.doc(`users/${uid}`).get();
+  const data = snap.data();
+
+  if (!data) {
+    throw createAppError({
+      message: "Missing user data in createUserDocument()",
+    });
   }
+
+  return data;
 }
 
-export async function getUserByUid(uid: string) {
-  try {
-    const userDoc = await adminDb.collection("users").doc(uid).get();
+export async function getUserByUid(uid: string): Promise<User | null> {
+  const userDoc = await adminDb.collection("users").doc(uid).get();
 
-    if (!userDoc.exists) {
-      return null;
-    }
+  if (!userDoc.exists) return null;
 
-    return userDoc.data() as User;
-  } catch (error) {
-    throw error;
-  }
+  return userDoc.data() as User;
 }
 
-export async function getUserProfile(name: string) {
-  try {
-    if (!name) return null;
+export async function getUserProfile(
+  name: string
+): Promise<UserProfile | null> {
+  if (!name) return null;
 
-    let cleaned = name.trim();
-    cleaned = cleaned.replace(/\s+/g, "");
+  const cleaned = name.trim().replace(/\s+/g, "");
+  if (!cleaned) return null;
 
-    if (!cleaned) {
-      return null;
-    }
+  const snapshot = await adminDb
+    .collection("users")
+    .where("name", "==", cleaned)
+    .limit(1)
+    .get();
 
-    const snapshot = await adminDb
-      .collection("users")
-      .where("name", "==", cleaned)
-      .limit(1)
-      .get();
+  if (snapshot.empty) return null;
 
-    if (snapshot.empty) {
-      return null;
-    }
+  const userData = snapshot.docs[0].data() as User;
 
-    const userData = snapshot.docs[0].data() as User;
-
-    if (userData) {
-      return {
-        uid: userData.uid,
-        name: userData.name,
-        avatarUrl: userData.avatarUrl,
-        lastOnline: userData.lastOnline,
-        createdAt: userData.createdAt,
-      };
-    }
-  } catch (error) {
-    throw error;
-  }
+  return {
+    uid: userData.uid,
+    name: userData.name,
+    avatarUrl: userData.avatarUrl,
+    lastOnline: userData.lastOnline,
+    createdAt: userData.createdAt,
+  };
 }

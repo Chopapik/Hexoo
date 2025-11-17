@@ -5,7 +5,10 @@ import { AuthError } from "./AuthError";
 import { createAppError } from "@/lib/ApiError";
 import { FirebaseError } from "firebase/app";
 
-export async function processRegistrationError(error: any, uid: string | null) {
+export async function processRegistrationError(
+  error: any,
+  uid?: string
+): Promise<never> {
   if (uid) {
     try {
       await adminAuth.deleteUser(uid);

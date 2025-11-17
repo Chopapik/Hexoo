@@ -15,7 +15,15 @@ export async function getUserFromSession(): Promise<UserSessionData> {
     });
   }
 
-  const decoded = await adminAuth.verifySessionCookie(session, true);
+  const decoded = await adminAuth
+    .verifySessionCookie(session, true)
+    .catch(() => {
+      throw createAppError({
+        message: "Invalid or expired session",
+        code: "INVALID_SESSION",
+        status: 401,
+      });
+    });
 
   const snap = await adminDb.collection("users").doc(decoded.uid).get();
   if (!snap.exists) {

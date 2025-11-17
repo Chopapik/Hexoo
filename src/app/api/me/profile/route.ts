@@ -1,22 +1,11 @@
-import { NextResponse } from "next/server";
 import { updateProfile } from "@/features/me/api/meService";
+import { withErrorHandling } from "@/lib/http/routeWrapper";
+import { sendSuccess } from "@/lib/http/responseHelpers";
 
-export async function PUT(req: Request) {
-  try {
-    const data = await req.json();
+export const PUT = withErrorHandling(async (req: Request) => {
+  const body = await req.json();
 
-    if (!data) {
-      console.warn("Brak data w updateProfile ");
-      return NextResponse.json({ status: 500 });
-    }
-    const newData = await updateProfile(data);
+  const updated = await updateProfile(body);
 
-    return NextResponse.json(
-      { ok: true, message: "Profil zaktualozwany", newData: newData },
-      { status: 200 }
-    );
-  } catch (error) {
-    console.error("deleteCurrentUser error:", error);
-    return NextResponse.json(error, { status: 500 });
-  }
-}
+  return sendSuccess({ message: "Profile updated", data: updated });
+});

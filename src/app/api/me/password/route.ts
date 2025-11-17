@@ -1,35 +1,25 @@
-import { NextResponse } from "next/server";
+// app/api/me/password/route.ts
 import { updatePassword } from "@/features/me/api/meService";
-export async function PUT(req: Request) {
-  try {
-    const data = await req.json();
+import { withErrorHandling } from "@/lib/http/routeWrapper";
+import { sendSuccess } from "@/lib/http/responseHelpers";
+import { createAppError } from "@/lib/ApiError";
 
-    if (!data) {
-      console.warn("Brak data w updatePassword ");
-      return NextResponse.json({ status: 500 });
-    }
+export const PUT = withErrorHandling(async (req: Request) => {
+  const body = await req.json();
 
-    const result = await updatePassword(data);
+  const result = await updatePassword(body);
 
-    if (result) {
-      const response = NextResponse.json({ user: result.user });
-      response.cookies.set({
-        name: "session",
-        value: result.sessionCookie,
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        maxAge: 60 * 60 * 24 * 5,
-        path: "/",
-      });
-      return response;
-    }
-    console.warn("Blad w uzyskiwaniu result w updatePassword ");
+  const response = sendSuccess({ user: result.user });
 
-    NextResponse.json({ status: 500 });
-    console.warn("");
-  } catch (error) {
-    console.error("deleteCurrentUser error:", error);
-    return NextResponse.json(error, { status: 500 });
-  }
-}
+  response.cookies.set({
+    name: "session",
+    value: result.sessionCookie,
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 60 * 60 * 24 * 5,
+    path: "/",
+  });
+
+  return response;
+});
