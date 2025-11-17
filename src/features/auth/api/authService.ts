@@ -6,6 +6,7 @@ import { AuthError } from "./errors/AuthError";
 import { signInWithPassword } from "./utils/firebaseAuthAPI";
 import { cookies } from "next/headers";
 import { createAppError } from "@/lib/ApiError";
+import { validateAuthData } from "./utils/validateAuthData";
 
 const SESSION_EXPIRES_MS = 5 * 24 * 60 * 60 * 1000;
 
@@ -23,6 +24,17 @@ export async function logoutUser() {
 }
 
 export async function loginUser(userLoginData: LoginData) {
+  if (!validateAuthData<LoginData>(userLoginData)) {
+    throw createAppError({
+      message: "Missing fields in loginUser()",
+      code: "VALIDATION_ERROR",
+      details: {
+        code: "auth/missing_fields",
+        field: "root",
+      },
+    });
+  }
+
   try {
     const resp = await signInWithPassword(
       userLoginData.email,
@@ -83,6 +95,17 @@ export async function createAuthUser(userData: {
 export async function registerUser(userRegisterData: RegisterData) {
   let uid: string | null = null;
 
+  if (!validateAuthData<LoginData>(userRegisterData)) {
+    throw createAppError({
+      message: "Missing fields in registerUser()",
+      code: "VALIDATION_ERROR",
+      details: {
+        code: "auth/missing_fields",
+        field: "root",
+      },
+    });
+  }
+
   try {
     const user = await createAuthUser({
       email: userRegisterData.email,
@@ -91,6 +114,7 @@ export async function registerUser(userRegisterData: RegisterData) {
     });
 
     uid = user.uid;
+    console.log("siema", uid);
 
     await createUserDocument(uid, {
       name: userRegisterData.name,
@@ -103,15 +127,24 @@ export async function registerUser(userRegisterData: RegisterData) {
       userRegisterData.password
     );
     const idToken = resp?.idToken;
-    if (!idToken) throw new Error("Brak idToken od Firebase");
-
+    if (!idToken)
+      throw createAppError({
+        message: "Missing idToken in registerUser() within authService",
+      });
     const sessionCookie = await adminAuth.createSessionCookie(idToken, {
       expiresIn: SESSION_EXPIRES_MS,
     });
 
-    const token = await adminAuth.createCustomToken(uid);
+    if (!sessionCookie) {
+      throw createAppError({
+        message:
+          "sessionCookie does not exist in registerUser() within authService",
+      });
+    }
+
     return { ok: true, user, sessionCookie };
   } catch (error) {
     await processRegistrationError(error, uid);
+    throw error;
   }
 }

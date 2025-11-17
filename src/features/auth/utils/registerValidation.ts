@@ -60,7 +60,7 @@ export const checkPasswordQuality = (value: string): ValidationMessage[] => {
     });
   }
 
-  if (!/[!@#$%^&*(),.?\":{}|<>_\-\\[\];'`~+/=]/.test(value)) {
+  if (!/[!@#$%^&*(),.?":{}|<>_\-\\[\];'`~+/=]/.test(value)) {
     msgs.push({
       type: "Warning",
       text: "Hasło musi zawierać przynajmniej jeden znak specjalny",
@@ -76,11 +76,20 @@ export const validateField = (
   isSubmit = false
 ): ValidationMessage[] => {
   const messages: ValidationMessage[] = [];
-  const value = rawValue == null ? "" : rawValue.trim();
+  const raw = rawValue == null ? "" : rawValue;
+  const value = raw.trim();
 
   switch (field) {
     // ===== NAME =====
     case "name": {
+      // wykrywamy spacje na początku/końcu
+      if (raw !== value) {
+        messages.push({
+          type: "Dismiss",
+          text: "Nie używaj spacji na początku ani na końcu imienia",
+        });
+      }
+
       if (!value) {
         messages.push({ type: "Dismiss", text: "Imię jest wymagane" });
         break;
@@ -112,6 +121,14 @@ export const validateField = (
 
     // ===== EMAIL =====
     case "email": {
+      // wykrywamy spacje na początku/końcu
+      if (raw !== value) {
+        messages.push({
+          type: "Dismiss",
+          text: "Nie używaj spacji na początku ani na końcu adresu email",
+        });
+      }
+
       if (!value) {
         messages.push({ type: "Dismiss", text: "Email jest wymagany" });
         break;
@@ -137,6 +154,7 @@ export const validateField = (
 
     // ===== PASSWORD =====
     case "password": {
+      // dla hasła zostawiamy sprawdzenie białych znaków w checkPasswordQuality
       if (!rawValue) {
         messages.push({ type: "Dismiss", text: "Hasło jest wymagane" });
         break;

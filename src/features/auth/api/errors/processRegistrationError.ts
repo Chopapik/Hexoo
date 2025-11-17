@@ -2,6 +2,8 @@ import { adminAuth } from "@/lib/firebaseAdmin";
 import { FirebaseAuthError } from "firebase-admin/auth";
 import formatRegistrationError from "./formatRegistrationError";
 import { AuthError } from "./AuthError";
+import { createAppError } from "@/lib/ApiError";
+import { FirebaseError } from "firebase/app";
 
 export async function processRegistrationError(error: any, uid: string | null) {
   if (uid) {
@@ -9,22 +11,40 @@ export async function processRegistrationError(error: any, uid: string | null) {
       await adminAuth.deleteUser(uid);
       console.warn(`Rollback: użytkownik ${uid} został usunięty po błędzie.`);
     } catch (rollbackError) {
-      console.error("Błąd podczas rollbacku użytkownika:", rollbackError);
+      if (rollbackError instanceof FirebaseError) {
+        throw createAppError({
+          message: rollbackError.message,
+        });
+      }
     }
   }
 
   if (error instanceof FirebaseAuthError) {
-    const data = formatRegistrationError(error);
-    throw new AuthError(data.message ?? "Błąd walidacji", {
-      code: 400,
-      type: "validation",
-      data,
+    const errorFormatted = formatRegistrationError(error);
+    throw createAppError({
+      code: "VALIDATION_ERROR",
+      message: error.message,
+      details: {
+        field: errorFormatted.field,
+        code: errorFormatted.code,
+        message: errorFormatted.message,
+      },
     });
   }
 
-  console.error("Błąd rejestracji użytkownika:", error);
-  throw new AuthError("Wystąpił błąd serwera", {
-    code: 500,
-    type: "critical",
-  });
+  throw error;
+  // if (error instanceof FirebaseAuthError) {
+  //   const data = formatRegistrationError(error);
+  //   throw new AuthError(data.message ?? "Błąd walidacji", {
+  //     code: 400,
+  //     type: "validation",
+  //     data,
+  //   });
+  // }
+
+  // console.error("Błąd rejestracji użytkownika:", error);
+  // throw new AuthError("Wystąpił błąd serwera", {
+  //   code: 500,
+  //   type: "critical",
+  // });
 }
