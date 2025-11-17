@@ -2,7 +2,6 @@ import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
 import { LoginData, RegisterData } from "../types/auth.types";
 import { createUserDocument } from "@/features/users/api/userService";
 import { processRegistrationError } from "./errors/processRegistrationError";
-import { AuthError } from "./errors/AuthError";
 import { signInWithPassword } from "./utils/firebaseAuthAPI";
 import { cookies } from "next/headers";
 import { createAppError } from "@/lib/ApiError";
@@ -14,12 +13,9 @@ export async function logoutUser() {
   try {
     const cookieStore = await cookies();
     cookieStore.delete("session");
+    return { ok: true, message: "Session cleared" };
   } catch (error) {
-    console.error(error);
-    throw new AuthError("Wystąpił krytyczny błąd podczas wylogowania", {
-      code: 500,
-      type: "critical",
-    });
+    throw error;
   }
 }
 
@@ -114,7 +110,6 @@ export async function registerUser(userRegisterData: RegisterData) {
     });
 
     uid = user.uid;
-    console.log("siema", uid);
 
     await createUserDocument(uid, {
       name: userRegisterData.name,
