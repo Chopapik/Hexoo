@@ -18,10 +18,6 @@ function createCriticalError() {
 export async function deleteAccount(): Promise<{ ok: true } | never> {
   try {
     const decoded = await getUserFromSession();
-    if (!decoded) {
-      console.error("Nie udało się uzyskać UID użytkownika");
-      throw createCriticalError();
-    }
 
     await adminDb.collection("users").doc(decoded.uid).delete();
     await adminAuth.deleteUser(decoded.uid);
@@ -39,10 +35,6 @@ export async function deleteAccount(): Promise<{ ok: true } | never> {
 export async function updateProfile(data: UserProfileUpdate) {
   try {
     const decoded = await getUserFromSession();
-    if (!decoded) {
-      console.error("Nie udało się uzyskać UID użytkownika");
-      throw createCriticalError();
-    }
 
     const uid = decoded.uid;
 
@@ -74,10 +66,6 @@ export async function updateProfile(data: UserProfileUpdate) {
 export const updatePassword = async (passwordData: PasswordUpdate) => {
   try {
     const decoded = await getUserFromSession();
-    if (!decoded) {
-      console.error("Nie udało się uzyskać UID użytkownika");
-      throw createCriticalError();
-    }
 
     await adminAuth.updateUser(decoded.uid, {
       password: passwordData.newPassword,
