@@ -15,7 +15,7 @@ axiosInstance.interceptors.response.use(
     if (body && typeof body === "object") {
       if (body.ok === false && body.error) {
         const {
-          code = "UNKNOWN_ERROR",
+          code = "INTERNAL_ERROR",
           message = "Unknown error",
           details,
         } = body.error;
@@ -43,7 +43,7 @@ axiosInstance.interceptors.response.use(
 
       if (body?.ok === false && body?.error) {
         const {
-          code = "UNKNOWN_ERROR",
+          code = "INTERNAL_ERROR",
           message = "Unknown error",
           details,
         } = body.error;

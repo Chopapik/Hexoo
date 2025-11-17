@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { useCriticalError } from "@/features/shared/hooks/useCriticalError";
+
 import { validateField, type FieldErrors } from "../utils/loginValidation";
 import { useRouter } from "next/navigation";
 import { setUser } from "../store/authSlice";
 import { LoginData } from "../types/auth.types";
 import axiosInstance from "@/lib/axiosInstance";
 import { useAppDispatch } from "@/lib/store/hooks";
+import { ApiError } from "@/lib/ApiError";
 
 export default function useLogin() {
   const [loginData, setLoginData] = useState<LoginData>({
@@ -20,8 +21,6 @@ export default function useLogin() {
     email: [],
     password: [],
   });
-
-  const { handleCriticalError } = useCriticalError();
 
   const dispatch = useAppDispatch();
 
@@ -68,23 +67,22 @@ export default function useLogin() {
       );
       router.push("/");
     },
-    onError: (error: any) => {
+    onError: (error: ApiError) => {
       setIsLoading(false);
-      if (error.response?.data) {
-        const serverError = error.response.data;
-        console.log("serverError", serverError.data);
 
-        if (serverError.type === "validation" && serverError.data) {
-          const { message } = serverError.data;
-          setErrors((prev: any) => ({
-            ...prev,
-            root: message,
-          }));
-        } else if (serverError.type === "critical") {
-          handleCriticalError(serverError.message);
-        }
-      } else {
-        handleCriticalError("Wystąpił nieoczekiwany błąd");
+      if (!error) return;
+
+      if (error.code === "VALIDATION_ERROR") {
+        setErrors((prev: any) => ({
+          ...prev,
+          root: "Niepoprawny email lub hasło",
+        }));
+      }
+      if (error.code === "FORBIDDEN") {
+        setErrors((prev: any) => ({
+          ...prev,
+          root: "Konto zablokowane",
+        }));
       }
     },
 
@@ -96,8 +94,6 @@ export default function useLogin() {
   const handleLogin = async (): Promise<boolean> => {
     const isValid = validateForm();
     if (!isValid) return false;
-
-    // Uruchom mutację
     loginMutate.mutate(loginData);
     return true;
   };
