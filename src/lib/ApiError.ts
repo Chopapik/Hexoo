@@ -11,7 +11,12 @@ export type ErrorCode =
   | "INVALID_INPUT"
   | "CONFLICT"
   | "NETWORK_TIMEOUT"
-  | "NETWORK_ERROR";
+  | "NETWORK_ERROR"
+  | "NO_SESSION"
+  | "USER_NOT_FOUND"
+  | "INVALID_SESSION"
+  | "UNAUTHORIZED_ACTION"
+  | "SERVICE_UNAVAILABLE";
 
 export class ApiError extends Error {
   public status: number;
@@ -21,7 +26,7 @@ export class ApiError extends Error {
   public type: "validation" | undefined;
 
   constructor(
-    message: string, //default Error variable
+    message: string,
     opts?: {
       status?: number;
       code?: ErrorCode;
@@ -48,7 +53,7 @@ type AppErrorArgs = {
 };
 
 export const createAppError = (args: AppErrorArgs) => {
-  const defaultMessages: Record<string, { msg: string; status: number }> = {
+  const defaultMessages: Record<ErrorCode, { msg: string; status: number }> = {
     AUTH_REQUIRED: { msg: "Authentication required", status: 401 },
     INVALID_CREDENTIALS: { msg: "Invalid credentials", status: 401 },
     FORBIDDEN: { msg: "Forbidden", status: 403 },
@@ -60,22 +65,27 @@ export const createAppError = (args: AppErrorArgs) => {
     INTERNAL_ERROR: { msg: "Internal server error", status: 500 },
     INVALID_INPUT: { msg: "Invalid input", status: 400 },
     CONFLICT: { msg: "Conflict", status: 409 },
+    NETWORK_TIMEOUT: { msg: "Network timeout", status: 504 },
+    NETWORK_ERROR: { msg: "Network error", status: 503 },
+    NO_SESSION: { msg: "Session not found", status: 401 },
+    USER_NOT_FOUND: { msg: "User not found", status: 404 },
+    INVALID_SESSION: { msg: "Invalid session token", status: 401 },
+    UNAUTHORIZED_ACTION: { msg: "You cannot perform this action", status: 403 },
+    SERVICE_UNAVAILABLE: { msg: "Service unavailable", status: 503 },
   };
 
-  const { code, message, details } = args;
-  const def =
-    defaultMessages[code ?? "INTERNAL_ERROR"] ?? defaultMessages.INTERNAL_ERROR;
+  const def = defaultMessages[args.code ?? "INTERNAL_ERROR"];
 
   console.warn("[AppError]", {
     code: args.code ?? "INTERNAL_ERROR",
     status: args.status ?? def.status,
-    message: message ?? def.msg,
-    details,
+    message: args.message ?? def.msg,
+    details: args.details,
   });
 
-  return new ApiError(message ?? def.msg, {
+  return new ApiError(args.message ?? def.msg, {
     status: args.status ?? def.status,
     code: args.code ?? "INTERNAL_ERROR",
-    details,
+    details: args.details,
   });
 };
