@@ -2,10 +2,10 @@ import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
 import { LoginData, RegisterData } from "../types/auth.types";
 import { createUserDocument } from "@/features/users/api/userService";
 import { processRegistrationError } from "./errors/processRegistrationError";
-import { processLoginError } from "./errors/processLoginError";
 import { AuthError } from "./errors/AuthError";
 import { signInWithPassword } from "./utils/firebaseAuthAPI";
 import { cookies } from "next/headers";
+import { createAppError } from "@/lib/ApiError";
 
 const SESSION_EXPIRES_MS = 5 * 24 * 60 * 60 * 1000;
 
@@ -29,16 +29,28 @@ export async function loginUser(userLoginData: LoginData) {
       userLoginData.password
     );
     const idToken = resp?.idToken;
-    if (!idToken) throw new Error("Brak idToken od Firebase");
+    if (!idToken)
+      throw createAppError({
+        message: "Missing idToken in loginUser() within authService",
+      });
 
     const sessionCookie = await adminAuth.createSessionCookie(idToken, {
       expiresIn: SESSION_EXPIRES_MS,
     });
 
+    if (!sessionCookie) {
+      throw createAppError({
+        message:
+          "sessionCookie does not exist in loginUser() within authService",
+      });
+    }
+
     const userDoc = await adminDb.collection("users").doc(resp.localId).get();
 
     if (!userDoc.exists) {
-      throw new Error("Nie znaleziono usera");
+      throw createAppError({
+        message: "User does not exist in loginUser() within authService",
+      });
     }
     const userSnap = userDoc.data();
 
@@ -52,7 +64,7 @@ export async function loginUser(userLoginData: LoginData) {
       return { ok: true, user, sessionCookie };
     }
   } catch (error) {
-    await processLoginError(error);
+    throw error;
   }
 }
 

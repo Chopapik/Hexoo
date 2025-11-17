@@ -1,21 +1,21 @@
-// export type ErrorCode =
-//   | "AUTH_REQUIRED"
-//   | "INVALID_CREDENTIALS"
-//   | "FORBIDDEN"
-//   | "NOT_FOUND"
-//   | "VALIDATION_ERROR"
-//   | "RATE_LIMIT"
-//   | "EXTERNAL_SERVICE"
-//   | "DB_ERROR"
-//   | "UNKNOWN_ERROR"
-//   | "INVALID_INPUT"
-//   | "CONFLICT"
-//   | "NETWORK_TIMEOUT"
-//   | "NETWORK_ERROR";
+export type ErrorCode =
+  | "AUTH_REQUIRED"
+  | "INVALID_CREDENTIALS"
+  | "FORBIDDEN"
+  | "NOT_FOUND"
+  | "VALIDATION_ERROR"
+  | "RATE_LIMIT"
+  | "EXTERNAL_SERVICE"
+  | "DB_ERROR"
+  | "INTERNAL_ERROR"
+  | "INVALID_INPUT"
+  | "CONFLICT"
+  | "NETWORK_TIMEOUT"
+  | "NETWORK_ERROR";
 
 export class ApiError extends Error {
   public status: number;
-  public code: string;
+  public code: ErrorCode;
   public details?: Record<string, any>;
   public level: "info" | "warn" | "error" | "critical";
   public type: "validation" | undefined;
@@ -24,7 +24,7 @@ export class ApiError extends Error {
     message: string, //default Error variable
     opts?: {
       status?: number;
-      code?: string;
+      code?: ErrorCode;
       details?: Record<string, any>;
       level?: "info" | "warn" | "error" | "critical";
       type?: "validation";
@@ -33,7 +33,7 @@ export class ApiError extends Error {
     super(message);
     this.name = "ApiError";
     this.status = opts?.status ?? 500;
-    this.code = opts?.code ?? "UNKNOWN_ERROR";
+    this.code = opts?.code ?? "INTERNAL_ERROR";
     this.details = opts?.details;
     this.level = opts?.level ?? "error";
     this.type = opts?.type;
@@ -41,7 +41,7 @@ export class ApiError extends Error {
 }
 
 type AppErrorArgs = {
-  code: string;
+  code?: ErrorCode;
   message?: string;
   status?: number;
   details?: Record<string, any>;
@@ -57,16 +57,17 @@ export const createAppError = (args: AppErrorArgs) => {
     RATE_LIMIT: { msg: "Too many requests", status: 429 },
     EXTERNAL_SERVICE: { msg: "External service error", status: 502 },
     DB_ERROR: { msg: "Database error", status: 500 },
-    UNKNOWN_ERROR: { msg: "Internal server error", status: 500 },
+    INTERNAL_ERROR: { msg: "Internal server error", status: 500 },
     INVALID_INPUT: { msg: "Invalid input", status: 400 },
     CONFLICT: { msg: "Conflict", status: 409 },
   };
 
   const { code, message, details } = args;
-  const def = defaultMessages[code] ?? defaultMessages.UNKNOWN_ERROR;
+  const def =
+    defaultMessages[code ?? "INTERNAL_ERROR"] ?? defaultMessages.INTERNAL_ERROR;
 
   console.warn("[AppError]", {
-    code,
+    code: args.code ?? "INTERNAL_ERROR",
     status: args.status ?? def.status,
     message: message ?? def.msg,
     details,
@@ -74,7 +75,7 @@ export const createAppError = (args: AppErrorArgs) => {
 
   return new ApiError(message ?? def.msg, {
     status: args.status ?? def.status,
-    code,
+    code: args.code ?? "INTERNAL_ERROR",
     details,
   });
 };

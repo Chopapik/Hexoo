@@ -8,7 +8,7 @@ const translations: Record<string, Record<string, string>> = {
     NOT_FOUND: "Nie znaleziono zasobu",
     NETWORK_TIMEOUT: "Przekroczono czas żądania",
     NETWORK_ERROR: "Błąd sieci",
-    UNKNOWN_ERROR: "Wystąpił błąd",
+    INTERNAL_ERROR: "Wystąpił błąd",
   },
   en: {
     AUTH_REQUIRED: "Authentication required",
@@ -17,11 +17,11 @@ const translations: Record<string, Record<string, string>> = {
     NOT_FOUND: "Resource not found",
     NETWORK_TIMEOUT: "Request timed out",
     NETWORK_ERROR: "Network error",
-    UNKNOWN_ERROR: "Unknown error",
+    INTERNAL_ERROR: "Unknown error",
   },
 };
 
 export function translateApiError(err: ApiError, lang = "pl") {
-  const code = err.code ?? "UNKNOWN_ERROR";
+  const code = err.code ?? "INTERNAL_ERROR";
   return translations[lang]?.[code] ?? err.message ?? "Something went wrong";
 }
