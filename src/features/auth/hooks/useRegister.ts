@@ -8,6 +8,7 @@ import type { RegisterData } from "../types/auth.types";
 import axiosInstance from "@/lib/axiosInstance";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import { ApiError } from "@/lib/ApiError";
 
 export default function useRegister() {
   const [registerData, setRegisterData] = useState<RegisterData>({
@@ -40,27 +41,58 @@ export default function useRegister() {
     onSuccess: async () => {
       router.push("/");
     },
-    onError: (error: any) => {
+    onError: (error: ApiError) => {
       setIsLoading(false);
-      if (error.response?.data) {
-        const serverError = error.response.data;
+      if (!error) return;
 
-        if (serverError.type === "validation" && serverError.data) {
-          const { field, message } = serverError.data;
-          setErrors((prev: any) => ({
-            ...prev,
-            [field]: [
-              {
-                text: message,
-                type: "Dismiss",
-              },
-            ],
-          }));
-        } else if (serverError.type === "critical") {
-          handleCriticalError(serverError.message);
+      if (error.code === "VALIDATION_ERROR" && error.details) {
+        const code = error.details.code;
+        const field = error.details.field ?? "root";
+
+        switch (code) {
+          case "auth/missing_fields": {
+            setErrors((prev: any) => ({
+              ...prev,
+              root: [
+                {
+                  text: "Uzupełnij pola",
+                },
+              ],
+            }));
+          }
+          case "auth/email-already-exists": {
+            setErrors((prev: any) => ({
+              ...prev,
+              email: [
+                {
+                  text: "Ten Email jest już zajęty",
+                  type: "Dismiss",
+                },
+              ],
+            }));
+          }
+          case "auth/invalid-email": {
+            setErrors((prev: any) => ({
+              ...prev,
+              email: [
+                {
+                  text: "Nieprawidłowy format adresu email",
+                  type: "Dismiss",
+                },
+              ],
+            }));
+          }
+          default: {
+            setErrors((prev: any) => ({
+              ...prev,
+              root: [
+                {
+                  text: "Wystąpił błąd. Spróbuj ponownie poźniej lub skontaktuj sie z adminem :(",
+                },
+              ],
+            }));
+          }
         }
-      } else {
-        handleCriticalError("Wystąpił nieoczekiwany błąd");
       }
     },
   });

@@ -1,25 +1,30 @@
 import { NextResponse } from "next/server";
 import { registerUser } from "@/features/auth/api/authService";
+import { withErrorHandling } from "@/lib/http/routeWrapper";
+import { sendSuccess } from "@/lib/http/responseHelpers";
+import { createAppError } from "@/lib/ApiError";
 
-export async function POST(req: Request) {
-  try {
-    const body = await req.json();
-    const result = await registerUser(body);
+export const POST = withErrorHandling(async (req) => {
+  const body = await req.json();
+  const result = await registerUser(body);
 
-    if (result?.ok) {
-      const response = NextResponse.json({ user: result.user });
-      response.cookies.set({
-        name: "session",
-        value: result.sessionCookie,
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        maxAge: 60 * 60 * 24 * 5,
-        path: "/",
-      });
-      return response;
-    }
-  } catch (error: any) {
-    return NextResponse.json(error, { status: error.code });
+  if (!result) {
+    throw createAppError({
+      code: "INTERNAL_ERROR",
+      message: "No result in register route",
+    });
+  } else {
+    const response = sendSuccess({ user: result.user });
+
+    response.cookies.set({
+      name: "session",
+      value: result.sessionCookie,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 5,
+      path: "/",
+    });
+    return response;
   }
-}
+});

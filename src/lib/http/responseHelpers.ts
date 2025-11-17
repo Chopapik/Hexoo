@@ -14,7 +14,7 @@ export function sendError(
 ) {
   const payload: ApiResponse = {
     ok: false,
-    error: { code, message, details },
+    error: { code, details },
   };
   return NextResponse.json(payload, { status });
 }

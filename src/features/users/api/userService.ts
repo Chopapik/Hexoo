@@ -30,9 +30,8 @@ export async function createUserDocument(
 
     await adminDb.doc(`users/${uid}`).set(userDoc, { merge: true });
     return userDoc;
-  } catch (err) {
-    console.error("Błąd podczas tworzenia usera:", err);
-    throw createCriticalError();
+  } catch (error) {
+    throw error;
   }
 }
 
@@ -46,11 +45,7 @@ export async function getUserByUid(uid: string) {
 
     return userDoc.data() as User;
   } catch (error) {
-    console.error("Błąd podczas pobierania usera:", error);
-    throw new UserError("Nie udało się pobrać danych użytkownika.", {
-      code: 500,
-      type: "fetch",
-    });
+    throw error;
   }
 }
 
@@ -87,10 +82,6 @@ export async function getUserProfile(name: string) {
       };
     }
   } catch (error) {
-    console.error("Błąd podczas pobierania usera po name:", error);
-    throw new UserError("Nie udało się pobrać danych użytkownika.", {
-      code: 500,
-      type: "fetch",
-    });
+    throw error;
   }
 }

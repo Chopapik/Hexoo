@@ -1,3 +1,4 @@
+import { createAppError, ErrorCode } from "@/lib/ApiError";
 import { FirebaseAuthError } from "firebase-admin/auth";
 
 export default function formatRegistrationError(error: FirebaseAuthError) {
@@ -7,18 +8,20 @@ export default function formatRegistrationError(error: FirebaseAuthError) {
     case "auth/email-already-exists":
     case "auth/email-already-in-use":
       return {
-        message: "Email już zajęty",
+        code: errorCode,
         field: "email",
       };
 
     case "auth/invalid-email":
       return {
+        code: errorCode,
         message: "Nieprawidłowy format adresu email",
         field: "email",
       };
 
     case "auth/missing-email":
       return {
+        code: errorCode,
         message: "Email jest wymagany",
         field: "email",
       };
@@ -26,69 +29,29 @@ export default function formatRegistrationError(error: FirebaseAuthError) {
     // Password-related
     case "auth/weak-password":
       return {
+        code: errorCode,
         message: "Hasło jest zbyt słabe",
         field: "password",
       };
 
     case "auth/invalid-password":
       return {
+        code: errorCode,
         message: "Nieprawidłowe hasło",
         field: "password",
       };
 
     case "auth/missing-password":
       return {
+        code: errorCode,
         message: "Hasło jest wymagane",
         field: "password",
       };
 
-    case "auth/id-token-expired":
-      return {
-        message: "Sesja wygasła. Zaloguj się ponownie.",
-        field: "token",
-      };
-
-    case "auth/id-token-revoked":
-      return {
-        message: "Sesja została unieważniona. Zaloguj się ponownie.",
-        field: "token",
-      };
-
-    case "auth/insufficient-permission":
-      return {
-        message: "Brak uprawnień do wykonania tej operacji",
-        field: "general",
-      };
-
-    case "auth/claims-too-large":
-      return {
-        message: "Zbyt duży rozmiar danych użytkownika (claims)",
-        field: "general",
-      };
-
-    case "auth/internal-error":
-      return {
-        message: "Błąd wewnętrzny serwera Firebase",
-        field: "general",
-      };
-
-    case "auth/invalid-argument":
-      return {
-        message: "Nieprawidłowy argument w żądaniu",
-        field: "general",
-      };
-
-    case "auth/network-request-failed":
-      return {
-        message: "Błąd połączenia z serwerem Firebase",
-        field: "general",
-      };
-
     default:
-      console.error("Nieobsłużony błąd FirebaseAuthError:", error);
       return {
-        message: "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później.",
-        field: "root",
+        code: "INTERNAL_ERROR",
+        message: "Nieobsłużony błąd FirebaseAuthError",
       };
   }
 }
