@@ -2,16 +2,16 @@ import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
 import { LoginData, RegisterData } from "../types/auth.types";
 import { createUserDocument } from "@/features/users/api/userService";
 import { signInWithPassword } from "./utils/firebaseAuthAPI";
-import { cookies } from "next/headers";
 import { createAppError } from "@/lib/ApiError";
 import { validateAuthData } from "./utils/validateAuthData";
 import { processRegistrationError } from "./errors/processRegistrationError";
 
+import { setSessionCookie, clearSessionCookie } from "@/lib/session";
+
 const SESSION_EXPIRES_MS = 5 * 24 * 60 * 60 * 1000;
 
 export async function logoutUser() {
-  const cookieStore = await cookies();
-  cookieStore.delete("session");
+  await clearSessionCookie();
   return { ok: true, message: "Session cleared" };
 }
 
@@ -50,6 +50,8 @@ export async function loginUser(userLoginData: LoginData) {
     name: userSnap.name,
     role: userSnap.role,
   };
+
+  await setSessionCookie(sessionCookie);
 
   return { ok: true, user, sessionCookie };
 }
@@ -91,6 +93,8 @@ export async function registerUser(userRegisterData: RegisterData) {
     name: dbUser.name,
     role: dbUser.role,
   };
+
+  await setSessionCookie(sessionCookie);
 
   return { ok: true, user, sessionCookie };
 }

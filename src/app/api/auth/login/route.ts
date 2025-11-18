@@ -6,17 +6,5 @@ export const POST = withErrorHandling(async (req: Request) => {
   const body = await req.json();
   const result = await loginUser(body);
 
-  const response = sendSuccess({ message: "Logged in", user: result.user });
-
-  response.cookies.set({
-    name: "session",
-    value: result.sessionCookie,
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    maxAge: 60 * 60 * 24 * 5,
-    path: "/",
-  });
-
-  return response;
+  return sendSuccess({ message: "Logged in", user: result.user });
 });

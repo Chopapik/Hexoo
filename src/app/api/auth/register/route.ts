@@ -7,20 +7,8 @@ export const POST = withErrorHandling(async (req: Request) => {
 
   const result = await registerUser(body);
 
-  const response = sendSuccess({
+  return sendSuccess({
     message: "Account created",
     user: result.user,
   });
-
-  response.cookies.set({
-    name: "session",
-    value: result.sessionCookie,
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    maxAge: 60 * 60 * 24 * 5,
-    path: "/",
-  });
-
-  return response;
 });
