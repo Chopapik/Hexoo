@@ -1,15 +1,11 @@
 import { blockUser } from "@/features/admin/api/adminService";
+import { withErrorHandling } from "@/lib/http/routeWrapper";
+import { sendSuccess } from "@/lib/http/responseHelpers";
 
-export async function PUT(
-  req: Request,
-  context: { params: Promise<{ uid: string }> }
-) {
-  try {
+export const PUT = withErrorHandling(
+  async (_req: Request, context: { params: Promise<{ uid: string }> }) => {
     const { uid } = await context.params;
     const result = await blockUser(uid);
-    return Response.json({ ok: true, user: result }, { status: 200 });
-  } catch (error) {
-    console.error("PUT /admin/user/blockUser error:", error);
-    return Response.json({ ok: false }, { status: 500 });
+    return sendSuccess(result);
   }
-}
+);

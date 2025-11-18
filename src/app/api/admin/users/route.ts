@@ -1,11 +1,8 @@
-import { NextResponse } from "next/server";
 import { adminGetAllUsers } from "@/features/admin/api/adminService";
+import { withErrorHandling } from "@/lib/http/routeWrapper";
+import { sendSuccess } from "@/lib/http/responseHelpers";
 
-export async function GET() {
-  try {
-    const users = await adminGetAllUsers();
-    return NextResponse.json({ users });
-  } catch (error) {
-    return NextResponse.json({ error: "Internal error" }, { status: 500 });
-  }
-}
+export const GET = withErrorHandling(async () => {
+  const users = await adminGetAllUsers();
+  return sendSuccess({ users });
+});

@@ -8,7 +8,7 @@ export function sendSuccess<T>(data: T, status = 200) {
 
 export function sendError(
   code: string,
-  message: string,
+  // message: string,
   status = 500,
   details?: Record<string, any>
 ) {

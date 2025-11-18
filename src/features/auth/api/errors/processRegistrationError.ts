@@ -1,7 +1,6 @@
 import { adminAuth } from "@/lib/firebaseAdmin";
 import { FirebaseAuthError } from "firebase-admin/auth";
 import formatRegistrationError from "./formatRegistrationError";
-import { AuthError } from "./AuthError";
 import { createAppError } from "@/lib/ApiError";
 import { FirebaseError } from "firebase/app";
 
