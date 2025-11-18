@@ -1,0 +1,12 @@
+import { adminUpdateUserAccount } from "@/features/admin/api/adminService";
+import { sendSuccess } from "@/lib/http/responseHelpers";
+import { withErrorHandling } from "@/lib/http/routeWrapper";
+
+export const PUT = withErrorHandling(
+  async (req: Request, context: { params: Promise<{ uid: string }> }) => {
+    const body = await req.json();
+    const { uid } = await context.params;
+    const result = await adminUpdateUserAccount(uid, body);
+    return sendSuccess(result);
+  }
+);

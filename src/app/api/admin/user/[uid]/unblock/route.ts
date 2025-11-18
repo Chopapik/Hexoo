@@ -1,17 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
 import { unblockUser } from "@/features/admin/api/adminService";
-export async function PUT(
-  req: NextRequest,
-  context: { params: Promise<{ uid: string }> }
-) {
-  try {
+import { withErrorHandling } from "@/lib/http/routeWrapper";
+import { sendSuccess } from "@/lib/http/responseHelpers";
+
+export const PUT = withErrorHandling(
+  async (_req: Request, context: { params: Promise<{ uid: string }> }) => {
     const { uid } = await context.params;
-    await unblockUser(uid);
-    return NextResponse.json({ ok: true });
-  } catch (err) {
-    return NextResponse.json(
-      { ok: false, error: String(err) },
-      { status: 500 }
-    );
+    const result = await unblockUser(uid);
+    return sendSuccess(result);
   }
-}
+);
