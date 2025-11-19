@@ -1,5 +1,13 @@
 import { cookies } from "next/headers";
-import { createAppError } from "./ApiError";
+
+export type Session =
+  | {
+      session: true;
+      value: string;
+    }
+  | {
+      session: false;
+    };
 
 export const SESSION_COOKIE_NAME = "session";
 export const SESSION_COOKIE_OPTS = {
@@ -29,12 +37,16 @@ export async function clearSessionCookie() {
   cookieStore.delete(SESSION_COOKIE_NAME);
 }
 
-export async function getSessionCookie() {
+export async function getSessionCookie(): Promise<Session> {
   const cookieStore = await cookies();
-  const session = cookieStore.get("session")?.value;
+  const sessionValue = cookieStore.get("session")?.value;
 
-  if (!session) {
-    return null;
+  if (!sessionValue) {
+    return { session: false };
   }
-  return session;
+
+  return {
+    session: true,
+    value: sessionValue,
+  };
 }

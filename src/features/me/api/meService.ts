@@ -57,16 +57,14 @@ export const updatePassword = async (passwordData: PasswordUpdate) => {
   ) {
     throw createAppError({
       code: "VALIDATION_ERROR",
-      message: "New password is required.",
-      details: { field: "newPassword", reason: "empty" },
+      data: { field: "newPassword", reason: "empty" },
     });
   }
 
   if (passwordData.newPassword.length < 8) {
     throw createAppError({
       code: "VALIDATION_ERROR",
-      message: "Password must contain at least 8 characters.",
-      details: { field: "newPassword", reason: "too_short" },
+      data: { field: "newPassword", reason: "too_short" },
     });
   }
 

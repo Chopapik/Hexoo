@@ -32,13 +32,14 @@ export interface UserProfileUpdate {
   avatarUrl?: string;
 }
 
-export interface UserSessionData {
+export type UserSessionData = {
   uid: string;
   email: string;
   name: string;
-  role: UserRole;
+  role: string;
   avatarUrl?: string;
-}
+};
+
 export interface UserProfile {
   uid: string;
   name: string;

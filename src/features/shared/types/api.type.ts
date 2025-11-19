@@ -5,8 +5,7 @@ export type SuccessResponse<T = any> = {
 
 export type ErrorPayload = {
   code: string;
-  // message: string;
-  details?: Record<string, any>;
+  data?: Record<string, any>;
 };
 
 export type ErrorResponse = {

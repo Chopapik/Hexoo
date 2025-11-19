@@ -18,39 +18,29 @@ export type ErrorCode =
   | "UNAUTHORIZED_ACTION"
   | "SERVICE_UNAVAILABLE";
 
-export class ApiError extends Error {
-  public status: number;
-  public code: ErrorCode;
-  public details?: Record<string, any>;
-  public level: "info" | "warn" | "error" | "critical";
-  public type: "validation" | undefined;
-
-  constructor(
-    message: string,
-    opts?: {
-      status?: number;
-      code?: ErrorCode;
-      details?: Record<string, any>;
-      level?: "info" | "warn" | "error" | "critical";
-      type?: "validation";
-    }
-  ) {
-    super(message);
-    this.name = "ApiError";
-    this.status = opts?.status ?? 500;
-    this.code = opts?.code ?? "INTERNAL_ERROR";
-    this.details = opts?.details;
-    this.level = opts?.level ?? "error";
-    this.type = opts?.type;
-  }
-}
-
 type AppErrorArgs = {
   code?: ErrorCode;
   message?: string;
   status?: number;
-  details?: Record<string, any>;
+  details?: any;
+  data?: Record<string, any>;
 };
+
+export class ApiError extends Error {
+  public code: ErrorCode;
+  public status: number;
+  public details?: any;
+  public data?: Record<string, any>;
+
+  constructor(opts?: AppErrorArgs) {
+    super(opts?.message ?? "Unknown error appear");
+    this.name = "ApiError";
+    this.code = opts?.code ?? "INTERNAL_ERROR";
+    this.status = opts?.status ?? 500;
+    this.details = opts?.details;
+    this.data = opts?.data;
+  }
+}
 
 export const createAppError = (args: AppErrorArgs) => {
   const defaultMessages: Record<ErrorCode, { msg: string; status: number }> = {
@@ -75,17 +65,15 @@ export const createAppError = (args: AppErrorArgs) => {
   };
 
   const def = defaultMessages[args.code ?? "INTERNAL_ERROR"];
+  const message = args.message ?? def.msg;
+  const status = args.status ?? def.status;
+  const code = args.code ?? "INTERNAL_ERROR";
 
-  console.warn("[AppError]", {
-    code: args.code ?? "INTERNAL_ERROR",
-    status: args.status ?? def.status,
-    message: args.message ?? def.msg,
-    details: args.details,
-  });
-
-  return new ApiError(args.message ?? def.msg, {
-    status: args.status ?? def.status,
-    code: args.code ?? "INTERNAL_ERROR",
+  return new ApiError({
+    message,
+    status,
+    code,
+    data: args.data,
     details: args.details,
   });
 };

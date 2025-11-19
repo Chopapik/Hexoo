@@ -1,26 +1,38 @@
-import { NextResponse } from "next/server";
+import { handleError } from "./responseHelpers";
 import { ApiError } from "../ApiError";
-import { sendError } from "./responseHelpers";
 
 export function withErrorHandling(
-  handler: (req: Request, context?: any) => Promise<Response | NextResponse>
+  handler: (req: Request, context?: any) => Promise<Response | any>
 ) {
   return async (req: Request, context?: any) => {
     try {
       return await handler(req, context);
-    } catch (error) {
-      const e =
-        error instanceof ApiError
-          ? error
-          : new ApiError("Internal server error", {
-              status: 500,
-            });
+    } catch (caught) {
+      let apiError: ApiError;
 
-      if (error instanceof Error && !(error instanceof ApiError)) {
-        console.error(error);
+      if (caught instanceof ApiError) {
+        apiError = caught;
+      } else if (caught instanceof Error) {
+        apiError = new ApiError({
+          message: caught.message || "Unexpected error",
+          details: {
+            message: caught.message,
+            stack: caught.stack ?? undefined,
+          },
+        });
+      } else {
+        apiError = new ApiError({
+          message: typeof caught === "string" ? caught : "Non-error thrown",
+          details: { raw: caught },
+        });
       }
 
-      return sendError(e.code, e.status, e.details);
+      return handleError(
+        apiError.code,
+        apiError.data,
+        apiError.status,
+        apiError.details
+      );
     }
   };
 }
