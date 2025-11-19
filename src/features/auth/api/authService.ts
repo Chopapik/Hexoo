@@ -18,9 +18,8 @@ export async function logoutUser() {
 export async function loginUser(userLoginData: LoginData) {
   if (!validateAuthData<LoginData>(userLoginData)) {
     throw createAppError({
-      message: "Missing fields in loginUser()",
       code: "VALIDATION_ERROR",
-      details: { code: "auth/missing_fields", field: "root" },
+      details: { reason: "missing_fields", field: "root" },
     });
   }
 
@@ -38,8 +37,7 @@ export async function loginUser(userLoginData: LoginData) {
   if (!userDoc.exists) {
     throw createAppError({
       code: "USER_NOT_FOUND",
-      message: "User does not exist",
-      status: 404,
+      message: "User does not exist in loginUser()",
     });
   }
 
@@ -61,7 +59,7 @@ export async function registerUser(userRegisterData: RegisterData) {
     throw createAppError({
       message: "Missing fields in registerUser()",
       code: "VALIDATION_ERROR",
-      details: { code: "auth/missing_fields", field: "root" },
+      data: { code: "auth/missing_fields", field: "root" },
     });
   }
 

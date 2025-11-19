@@ -13,75 +13,104 @@ axiosInstance.interceptors.response.use(
   (res) => {
     const body = res?.data;
     if (body && typeof body === "object") {
+      // Backend returned structured error payload: { ok: false, error: { code, message, data?, details? } }
       if (body.ok === false && body.error) {
         const {
           code = "INTERNAL_ERROR",
           message = "Unknown error",
           details,
+          data,
         } = body.error;
 
-        throw new ApiError(message, {
-          status: res.status ?? 500,
+        // Use HTTP status from the response if present, otherwise fall back to 500
+        const status = res?.status ?? 500;
+
+        throw new ApiError({
           code: code as any,
+          message,
+          status,
           details,
-          level: "error",
+          data,
         });
       }
 
+      // Normalised success shape { ok: true, data: ... } -> return original response but with data replaced
       if (body.ok === true && "data" in body) {
-        // Return the original AxiosResponse, but replace data with body.data
         return { ...res, data: body.data };
       }
     }
+
+    // If response body is not the structured envelope, return it as-is
     return res;
   },
 
   (error) => {
-    // If the server responded with a 4xx/5xx error
-    if (error?.response?.data) {
-      const body = error.response.data;
+    // If the server responded with a structured body (4xx/5xx)
+    const resp = error?.response;
+    const respData = resp?.data;
 
-      if (body?.ok === false && body?.error) {
+    if (respData && typeof respData === "object") {
+      // If backend used the { ok: false, error } envelope
+      if (respData?.ok === false && respData?.error) {
         const {
           code = "INTERNAL_ERROR",
           message = "Unknown error",
           details,
-        } = body.error;
+          data,
+          status: bodyStatus,
+        } = respData.error;
 
-        throw new ApiError(message, {
-          status: 400,
-          code,
+        const status = resp?.status ?? bodyStatus ?? 500;
+
+        throw new ApiError({
+          code: code as any,
+          message,
+          status,
           details,
-          level: "error",
+          data,
         });
       }
 
-      // External service or other structured server error
-      throw new ApiError(error.response.statusText || "External error", {
-        status: error.response.status || 502,
+      // Non-enveloped structured error from upstream/external service
+      throw new ApiError({
         code: "EXTERNAL_SERVICE",
-        details: { raw: body },
-        level: "error",
+        message: resp?.statusText || "External service error",
+        status: resp?.status ?? 502,
+        details: { raw: respData },
       });
     }
 
-    // Timeout / network issue
+    // Timeout / network issue (axios uses code === 'ECONNABORTED' for timeouts)
     const isTimeout = error?.code === "ECONNABORTED";
     if (isTimeout) {
-      throw new ApiError("Request timed out", {
-        status: 408,
+      throw new ApiError({
         code: "NETWORK_TIMEOUT",
-        level: "warn",
+        message: "Request timed out",
+        status: 408,
+        details: { originalError: safeSerialize(error) },
       });
     }
 
-    // Generic network error
-    throw new ApiError(error?.message ?? "Network error", {
-      status: 0,
+    // Generic network error or something else (no response)
+    throw new ApiError({
       code: "NETWORK_ERROR",
-      level: "warn",
+      message: error?.message ?? "Network error",
+      status: 0,
+      details: { originalError: safeSerialize(error) },
     });
   }
 );
+
+function safeSerialize(err: any) {
+  if (!err) return err;
+  try {
+    if (err instanceof Error) {
+      return { message: err.message, name: err.name, stack: err.stack };
+    }
+    return JSON.parse(JSON.stringify(err));
+  } catch {
+    return String(err);
+  }
+}
 
 export default axiosInstance;

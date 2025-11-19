@@ -11,16 +11,14 @@ const ensureAdmin = async () => {
   if (!session) {
     throw createAppError({
       code: "AUTH_REQUIRED",
-      message: "Brak sesji.",
-      status: 401,
+      message: "No session.",
     });
   }
 
   if (session.role !== "admin") {
     throw createAppError({
       code: "FORBIDDEN",
-      message: "Wymagane uprawnienia admin.",
-      status: 403,
+      message: "Admin role required.",
     });
   }
 };
@@ -31,8 +29,8 @@ export const adminCreateUserAccount = async (data: AdminUserCreate) => {
   if (!data?.email || !data?.password || !data?.name) {
     throw createAppError({
       code: "VALIDATION_ERROR",
-      message: "Brak wymaganych pól.",
-      status: 400,
+      message: "Empty create user credentials",
+      data: { code: "admin/empty_create_user_account_credentials" },
     });
   }
 
@@ -94,9 +92,7 @@ export const adminUpdateUserAccount = async (
 
   if (!uid) {
     throw createAppError({
-      code: "VALIDATION_ERROR",
-      message: "UID wymagany.",
-      status: 400,
+      message: "No 'uid' in adminUpdateUserAccount",
     });
   }
 
@@ -130,11 +126,16 @@ export const adminUpdateUserPassword = async (
 ) => {
   await ensureAdmin();
 
+  if (!uid) {
+    throw createAppError({
+      message: "No 'uid' in adminUpdateUserPassword",
+    });
+  }
+
   if (!uid || !newPassword || newPassword.length < 8) {
     throw createAppError({
       code: "VALIDATION_ERROR",
-      message: "Nieprawidłowe dane.",
-      status: 400,
+      data: { code: "admin/empty_create_user_account_credentials" },
     });
   }
 
@@ -156,9 +157,7 @@ export const blockUser = async (uid: string) => {
 
   if (!uid) {
     throw createAppError({
-      code: "VALIDATION_ERROR",
-      message: "UID wymagany.",
-      status: 400,
+      message: "No 'uid' in blockUser()",
     });
   }
 
@@ -177,9 +176,7 @@ export const unblockUser = async (uid: string) => {
 
   if (!uid) {
     throw createAppError({
-      code: "VALIDATION_ERROR",
-      message: "UID wymagany.",
-      status: 400,
+      message: "No 'uid' in unblockUser",
     });
   }
 

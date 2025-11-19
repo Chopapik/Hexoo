@@ -26,10 +26,15 @@ export async function processRegistrationError(
     throw createAppError({
       code: "VALIDATION_ERROR",
       message: error.message,
-      details: {
+      data: {
         field: errorFormatted.field,
-        code: errorFormatted.code,
-        message: errorFormatted.message,
+        reason: errorFormatted.reason,
+      },
+      details: {
+        stack: error.stack,
+        message: error.message,
+        code: error.code,
+        cause: error.cause,
       },
     });
   }

@@ -1,4 +1,3 @@
-import { createAppError, ErrorCode } from "@/lib/ApiError";
 import { FirebaseAuthError } from "firebase-admin/auth";
 
 export default function formatRegistrationError(error: FirebaseAuthError) {
@@ -8,50 +7,44 @@ export default function formatRegistrationError(error: FirebaseAuthError) {
     case "auth/email-already-exists":
     case "auth/email-already-in-use":
       return {
-        code: errorCode,
+        reason: errorCode,
         field: "email",
       };
 
     case "auth/invalid-email":
       return {
-        code: errorCode,
-        message: "Nieprawidłowy format adresu email",
+        reason: errorCode,
         field: "email",
       };
 
     case "auth/missing-email":
       return {
-        code: errorCode,
-        message: "Email jest wymagany",
+        reason: errorCode,
         field: "email",
       };
 
     // Password-related
     case "auth/weak-password":
       return {
-        code: errorCode,
-        message: "Hasło jest zbyt słabe",
+        reason: errorCode,
         field: "password",
       };
 
     case "auth/invalid-password":
       return {
-        code: errorCode,
-        message: "Nieprawidłowe hasło",
+        reason: errorCode,
         field: "password",
       };
 
     case "auth/missing-password":
       return {
-        code: errorCode,
-        message: "Hasło jest wymagane",
+        reason: errorCode,
         field: "password",
       };
 
     default:
       return {
-        code: "INTERNAL_ERROR",
-        message: "Nieobsłużony błąd FirebaseAuthError",
+        field: "root",
       };
   }
 }
