@@ -2,29 +2,40 @@ import { z } from "zod";
 import { UserRole } from "@/features/users/types/user.type";
 
 export const RegisterSchema = z.object({
-  email: z.string().min(1, "email_required").email("email_invalid"),
+  email: z
+    .string()
+    .trim()
+    .min(1, { message: "email_required" })
+    .max(255)
+    .regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, {
+      message: "email_invalid",
+    }),
 
   password: z
     .string()
-    .min(1, "password_required")
-    .min(8, "password_too_short")
-    .regex(/[A-Z]/, "password_missing_uppercase")
-    .regex(/[0-9]/, "password_missing_digit")
-    .regex(/[^A-Za-z0-9]/, "password_missing_special")
-    .max(128, "password_too_long"),
+    .min(8, { message: "password_too_short" })
+    .max(128, { message: "password_too_long" })
+    .regex(/[A-Z]/, { message: "password_missing_uppercase" })
+    .regex(/[0-9]/, { message: "password_missing_digit" })
+    .regex(/[^A-Za-z0-9]/, { message: "password_missing_special" }),
 
   name: z
     .string()
-    .min(1, "name_required")
-    .transform((val) => val.trim())
-    .refine((val) => val.length >= 3, "name_too_short")
-    .refine((val) => val.length <= 30, "name_too_long")
-    .refine((val) => /^[a-zA-Z0-9_]+$/.test(val), "name_invalid_chars"),
+    .trim()
+    .min(3, { message: "name_too_short" })
+    .max(30, { message: "name_too_long" })
+    .regex(/^[a-zA-Z0-9_]+$/, { message: "name_invalid_chars" }),
 });
 
 export const LoginSchema = z.object({
-  email: z.string().min(1, "email_required").email("email_invalid"),
-  password: z.string().min(1, "password_required"),
+  email: z
+    .string()
+    .trim()
+    .min(1, { message: "email_required" })
+    .regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, {
+      message: "email_invalid",
+    }),
+  password: z.string().min(1, { message: "password_required" }),
 });
 
 export type RegisterData = z.infer<typeof RegisterSchema>;
