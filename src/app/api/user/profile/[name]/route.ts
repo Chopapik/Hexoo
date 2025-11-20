@@ -4,7 +4,7 @@ import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 
 export const GET = withErrorHandling(
-  async (request: Request, { params }: { params: { name: string } }) => {
+  async (req: Request, { params }: { params: { name: string } }) => {
     const { name } = await params;
 
     const result = await getUserProfile(name);
