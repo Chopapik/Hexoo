@@ -1,17 +1,14 @@
 import { getUserProfile } from "@/features/users/api/userService";
 import { NextResponse } from "next/server";
+import { withErrorHandling } from "@/lib/http/routeWrapper";
+import { handleSuccess } from "@/lib/http/responseHelpers";
 
-export async function GET(
-  request: Request,
-  { params }: { params: { name: string } }
-) {
-  try {
+export const GET = withErrorHandling(
+  async (request: Request, { params }: { params: { name: string } }) => {
     const { name } = await params;
 
-    const userProfile = await getUserProfile(name);
-    return NextResponse.json(userProfile, { status: 200 });
-  } catch (error) {
-    console.error("getUserProfile error:", error);
-    return NextResponse.json(error, { status: 500 });
+    const result = await getUserProfile(name);
+
+    return handleSuccess(result);
   }
-}
+);
