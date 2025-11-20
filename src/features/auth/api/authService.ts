@@ -1,5 +1,10 @@
 import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
-import { LoginData, RegisterData, RegisterSchema } from "../types/auth.types";
+import {
+  LoginData,
+  LoginSchema,
+  RegisterData,
+  RegisterSchema,
+} from "../types/auth.types";
 import { signInWithPassword } from "./utils/firebaseAuthAPI";
 import { createAppError } from "@/lib/ApiError";
 import { validateAuthData } from "./utils/validateAuthData";
@@ -17,7 +22,7 @@ export async function logoutUser() {
 }
 
 export async function loginUser(userLoginData: LoginData) {
-  const parsed = RegisterSchema.safeParse(userLoginData);
+  const parsed = LoginSchema.safeParse(userLoginData);
 
   if (!parsed.success) {
     throw createAppError({
