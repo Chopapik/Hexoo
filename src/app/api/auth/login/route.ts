@@ -6,5 +6,5 @@ export const POST = withErrorHandling(async (req: Request) => {
   const body = await req.json();
   const result = await loginUser(body);
 
-  return handleSuccess({ message: "Logged in", user: result.user });
+  return handleSuccess(result);
 });
