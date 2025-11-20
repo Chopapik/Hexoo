@@ -5,11 +5,11 @@ import { PasswordUpdate } from "../me.type";
 import { loginUser } from "@/features/auth/api/authService";
 import { createAppError } from "@/lib/ApiError";
 
-export async function deleteAccount(): Promise<{ ok: true }> {
+export async function deleteAccount() {
   const decoded = await getUserFromSession();
   await adminDb.collection("users").doc(decoded.uid).delete();
   await adminAuth.deleteUser(decoded.uid);
-  return { ok: true };
+  return;
 }
 
 export async function updateProfile(data: UserProfileUpdate) {

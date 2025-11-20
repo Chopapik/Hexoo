@@ -41,9 +41,7 @@ export async function getUserByUid(uid: string): Promise<User | null> {
   return userDoc.data() as User;
 }
 
-export async function getUserProfile(
-  name: string
-): Promise<UserProfile | null> {
+export async function getUserProfile(name: string) {
   if (!name) return null;
 
   const cleaned = name.trim().replace(/\s+/g, "");
@@ -59,11 +57,13 @@ export async function getUserProfile(
 
   const userData = snapshot.docs[0].data() as User;
 
-  return {
+  const userProfile = {
     uid: userData.uid,
     name: userData.name,
     avatarUrl: userData.avatarUrl,
     lastOnline: userData.lastOnline,
     createdAt: userData.createdAt,
   };
+
+  return { user: userProfile };
 }
