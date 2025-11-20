@@ -149,7 +149,7 @@ export const adminUpdateUserPassword = async (
       { merge: true }
     );
 
-  return { ok: true };
+  return;
 };
 
 export const blockUser = async (uid: string) => {

@@ -18,7 +18,7 @@ const SESSION_EXPIRES_MS = 5 * 24 * 60 * 60 * 1000;
 
 export async function logoutUser() {
   await clearSessionCookie();
-  return { ok: true, message: "Session cleared" };
+  return { message: "Session cleared" };
 }
 
 export async function loginUser(userLoginData: LoginData) {
@@ -63,7 +63,7 @@ export async function loginUser(userLoginData: LoginData) {
 
   await setSessionCookie(sessionCookie);
 
-  return { ok: true, user, sessionCookie };
+  return { user, sessionCookie };
 }
 
 export async function registerUser(userRegisterData: RegisterData) {
@@ -115,7 +115,6 @@ export async function registerUser(userRegisterData: RegisterData) {
   await setSessionCookie(sessionCookie);
 
   return {
-    ok: true,
     user: {
       uid: authUser.uid,
       name,
