@@ -1,12 +1,13 @@
 import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
-import { LoginData, RegisterData } from "../types/auth.types";
-import { createUserDocument } from "@/features/users/api/userService";
+import { LoginData, RegisterData, RegisterSchema } from "../types/auth.types";
 import { signInWithPassword } from "./utils/firebaseAuthAPI";
 import { createAppError } from "@/lib/ApiError";
 import { validateAuthData } from "./utils/validateAuthData";
-import { processRegistrationError } from "./errors/processRegistrationError";
-
+import admin from "firebase-admin";
 import { setSessionCookie, clearSessionCookie } from "@/lib/session";
+import { isUsernameTaken } from "../utils/checkUsernameUnique";
+import { formatZodErrorFlat } from "@/lib/zod";
+import { processRegistrationError } from "./errors/processRegistrationError";
 
 const SESSION_EXPIRES_MS = 5 * 24 * 60 * 60 * 1000;
 
@@ -16,10 +17,16 @@ export async function logoutUser() {
 }
 
 export async function loginUser(userLoginData: LoginData) {
-  if (!validateAuthData<LoginData>(userLoginData)) {
+  const parsed = RegisterSchema.safeParse(userLoginData);
+
+  if (!parsed.success) {
     throw createAppError({
       code: "VALIDATION_ERROR",
-      details: { reason: "missing_fields", field: "root" },
+      message: "Invalid register credentails",
+      data: {
+        code: "auth/validation_failed",
+        details: formatZodErrorFlat(parsed.error),
+      },
     });
   }
 
@@ -55,44 +62,60 @@ export async function loginUser(userLoginData: LoginData) {
 }
 
 export async function registerUser(userRegisterData: RegisterData) {
-  if (!validateAuthData<RegisterData>(userRegisterData)) {
+  const parsed = RegisterSchema.safeParse(userRegisterData);
+
+  if (!parsed.success) {
     throw createAppError({
-      message: "Missing fields in registerUser()",
       code: "VALIDATION_ERROR",
-      data: { code: "auth/missing_fields", field: "root" },
+      data: {
+        code: "auth/validation_failed",
+        details: formatZodErrorFlat(parsed.error),
+      },
+    });
+  }
+
+  const { email, password, name } = parsed.data;
+
+  if (await isUsernameTaken(name)) {
+    throw createAppError({
+      code: "CONFLICT",
+      data: { code: "username_taken", field: "name" },
     });
   }
 
   const authUser = await adminAuth
     .createUser({
-      email: userRegisterData.email,
-      password: userRegisterData.password,
-      displayName: userRegisterData.name,
+      email,
+      password,
+      displayName: name,
     })
     .catch(processRegistrationError);
 
-  const dbUser = await createUserDocument(authUser.uid, {
-    name: userRegisterData.name,
-    email: userRegisterData.email,
+  await adminDb.collection("users").doc(authUser.uid).set({
+    uid: authUser.uid,
+    email,
+    name,
+    nameLowercase: name.toLowerCase(),
     role: "user",
+    isBanned: false,
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
   });
 
-  const resp = await signInWithPassword(
-    userRegisterData.email,
-    userRegisterData.password
-  );
-
-  const sessionCookie = await adminAuth.createSessionCookie(resp.idToken!, {
-    expiresIn: SESSION_EXPIRES_MS,
+  const { idToken } = await signInWithPassword(email, password);
+  const sessionCookie = await adminAuth.createSessionCookie(idToken, {
+    expiresIn: 60 * 60 * 24 * 7 * 1000,
   });
-
-  const user = {
-    uid: dbUser.uid,
-    name: dbUser.name,
-    role: dbUser.role,
-  };
 
   await setSessionCookie(sessionCookie);
 
-  return { ok: true, user, sessionCookie };
+  return {
+    ok: true,
+    user: {
+      uid: authUser.uid,
+      name,
+      email,
+      role: "user" as const,
+    },
+  };
 }
