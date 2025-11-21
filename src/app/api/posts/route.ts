@@ -7,7 +7,7 @@ export const POST = withErrorHandling(async (req: Request) => {
     const form = await req.formData();
     const text = String(form.get("text") || "");
     const device = String(form.get("device"));
-    const imageFile = form.get("imageFile") as any;
+    const imageFile = form.get("imageFile");
     const result = await createPost({
       text,
       device,
