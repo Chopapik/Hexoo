@@ -141,43 +141,76 @@ export const getPosts = async (
   limit = 20,
   startAfterId?: string
 ): Promise<Post[]> => {
+  // 1. Próbujemy pobrać sesję (żeby wiedzieć, dla kogo sprawdzać "isLikedByMe")
+  let currentUserUid: string | null = null;
+  try {
+    const session = await getUserFromSession();
+    currentUserUid = session.uid;
+  } catch (err) {
+    // Użytkownik niezalogowany - to OK, po prostu nie zobaczy co polubił
+    currentUserUid = null;
+  }
+
   let query: FirebaseFirestore.Query = adminDb
-    .collection(POSTS_COLLECTION)
+    .collection("posts")
     .orderBy("createdAt", "desc")
     .limit(limit);
 
   if (startAfterId) {
-    const startSnap = await adminDb
-      .collection(POSTS_COLLECTION)
-      .doc(startAfterId)
-      .get();
+    const startSnap = await adminDb.collection("posts").doc(startAfterId).get();
     if (startSnap.exists) {
-      query = (query as any).startAfter(startSnap);
+      query = query.startAfter(startSnap);
     }
   }
 
   const snap = await query.get();
-  return snap.docs.map((d) => {
-    const data: any = d.data();
-    const createdAt = data?.createdAt?.toDate
-      ? data.createdAt.toDate()
-      : data.createdAt ?? null;
-    const updatedAt = data?.updatedAt?.toDate
-      ? data.updatedAt.toDate()
-      : data.updatedAt ?? null;
 
-    return {
-      id: d.id,
-      userId: data.userId,
-      userName: data.userName,
-      userAvatarUrl: data.userAvatarUrl ?? null,
-      text: data.text,
-      imageUrl: data.imageUrl ?? null,
-      device: data.device ?? null,
-      likesCount: data.likesCount ?? 0,
-      commentsCount: data.commentsCount ?? 0,
-      createdAt,
-      updatedAt,
-    } as Post;
-  });
+  // 2. Mapujemy posty i równolegle sprawdzamy status lajka (tylko jeśli user zalogowany)
+  const posts = await Promise.all(
+    snap.docs.map(async (d) => {
+      const data = d.data();
+
+      let isLikedByMe = false;
+
+      // Jeśli user jest zalogowany, sprawdzamy czy istnieje dokument w subkolekcji
+      // To kosztuje 1 odczyt na każdy post, ale przy 20 postach to pomijalne,
+      // a daje pełną funkcjonalność.
+      if (currentUserUid) {
+        const likeSnap = await d.ref
+          .collection("likes")
+          .doc(currentUserUid)
+          .get();
+        isLikedByMe = likeSnap.exists;
+      }
+
+      return {
+        id: d.id,
+        userId: data.userId,
+        userName: data.userName,
+        userAvatarUrl: data.userAvatarUrl ?? null,
+        text: data.text,
+        imageUrl: data.imageUrl ?? null,
+        device: data.device ?? null,
+
+        // TERAZ UŻYWAMY LICZNIKA ZAMIAST TABLICY
+        likesCount: data.likesCount ?? 0,
+        commentsCount: data.commentsCount ?? 0,
+
+        // Dodajemy flagę dla frontend'u
+        isLikedByMe,
+
+        // Tablica likes jest teraz pusta lub null w głównym dokumencie
+        likes: null,
+
+        createdAt: data.createdAt?.toDate
+          ? data.createdAt.toDate()
+          : data.createdAt,
+        updatedAt: data.updatedAt?.toDate
+          ? data.updatedAt.toDate()
+          : data.updatedAt,
+      } as Post;
+    })
+  );
+
+  return posts;
 };

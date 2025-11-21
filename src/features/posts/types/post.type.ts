@@ -9,6 +9,7 @@ export interface Post {
   imageUrl?: string | null;
   device?: string | null;
   likesCount: number;
+  isLikedByMe?: boolean;
   commentsCount: number;
   createdAt: any;
   updatedAt?: any;
