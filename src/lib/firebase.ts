@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { getStorage, connectStorageEmulator } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_API_KEY,
@@ -12,5 +13,15 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-export const auth = getAuth();
-export const db = getFirestore();
+export const auth = getAuth(app);
+export const db = getFirestore(app);
+export const storage = getStorage(app);
+
+// connect to emulator in dev
+if (
+  process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATORS === "true" ||
+  process.env.USE_FIREBASE_EMULATORS === "true"
+) {
+  // host i port - podaj host i port osobno
+  connectStorageEmulator(storage, "localhost", 9199);
+}
