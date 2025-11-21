@@ -40,3 +40,17 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Firebase emulator logs
+firebase-debug.log
+firestore-debug.log
+database-debug.log
+pubsub-debug.log
+storage-debug.log
+
+# Local dumps / temp files
+*.json
+!firebase.json
+!firestore.rules
+!firestore.indexes.json
+dump_src.py
