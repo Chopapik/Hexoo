@@ -17,9 +17,6 @@ const ensureBucket = () => {
   }
 };
 
-/**
- * Normalizuje dowolny typ pliku (File, multer, raw Buffer)
- */
 const normalizeFile = async (file: any) => {
   if (!file) {
     throw createAppError({
@@ -68,9 +65,6 @@ const normalizeFile = async (file: any) => {
   });
 };
 
-/**
- * Upload zdjęcia
- */
 export const uploadImage = async (file: any, uid = "anon") => {
   ensureBucket();
 
@@ -143,9 +137,6 @@ export const uploadImage = async (file: any, uid = "anon") => {
   }
 };
 
-/**
- * Usuwanie zdjęcia
- */
 export const deleteImage = async (storagePath: string | null | undefined) => {
   if (!storagePath) return;
 
@@ -166,4 +157,12 @@ export const deleteImage = async (storagePath: string | null | undefined) => {
       details: err,
     });
   }
+};
+
+export const hasFile = (f: any): boolean => {
+  if (!f) return false;
+  if (typeof f.size === "number") return f.size > 0;
+  if (f?.buffer && Buffer.isBuffer(f.buffer)) return f.buffer.length > 0;
+  if (Buffer.isBuffer(f)) return f.length > 0;
+  return false;
 };

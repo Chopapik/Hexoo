@@ -11,7 +11,11 @@ import {
 } from "../types/post.type";
 import { formatZodErrorFlat } from "@/lib/zod";
 
-import { uploadImage, deleteImage } from "@/features/images/api/imageService";
+import {
+  uploadImage,
+  deleteImage,
+  hasFile,
+} from "@/features/images/api/imageService";
 const POSTS_COLLECTION = "posts";
 
 export const createPost = async (postData: CreatePost) => {
@@ -29,7 +33,7 @@ export const createPost = async (postData: CreatePost) => {
   let imageUrl: string | null = null;
   let imageMeta: any = null;
 
-  if (postData.imageFile) {
+  if (hasFile(postData.imageFile)) {
     const upload = await uploadImage(postData.imageFile, user.uid);
     imageUrl = upload.publicUrl;
     imageMeta = {
@@ -90,7 +94,7 @@ export const updatePost = async (postId: string, data: UpdatePost) => {
   let imageUrl = post.imageUrl;
   let imageMeta = post.imageMeta;
 
-  if (data.imageFile) {
+  if (hasFile(data.imageFile)) {
     const upload = await uploadImage(data.imageFile, user.uid);
     imageUrl = upload.publicUrl;
     imageMeta = {
