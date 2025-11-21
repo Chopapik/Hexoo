@@ -63,7 +63,7 @@ export async function loginUser(userLoginData: LoginData) {
 
   await setSessionCookie(sessionCookie);
 
-  return { user, sessionCookie };
+  return { user };
 }
 
 export async function registerUser(userRegisterData: RegisterData) {
