@@ -10,7 +10,7 @@ import { createAppError } from "@/lib/ApiError";
 import { validateAuthData } from "./utils/validateAuthData";
 import admin from "firebase-admin";
 import { setSessionCookie, clearSessionCookie } from "@/lib/session";
-import { isUsernameTaken } from "../utils/checkUsernameUnique";
+import { isUsernameTaken } from "./utils/checkUsernameUnique";
 import { formatZodErrorFlat } from "@/lib/zod";
 import { processRegistrationError } from "./errors/processRegistrationError";
 
