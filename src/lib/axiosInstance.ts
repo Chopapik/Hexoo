@@ -1,5 +1,4 @@
 import axios from "axios";
-import { ApiError } from "./ApiError";
 
 const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -8,71 +7,63 @@ const axiosInstance = axios.create({
   headers: { "Content-Type": "application/json", Accept: "application/json" },
 });
 
-// Success interceptor: converts { ok: true, data } into res.data = data
+// Helper – opakowanie błędu bez tworzenia klas
+function wrapError(payload: any) {
+  return {
+    isApiError: true,
+    ...payload,
+  };
+}
+
+// ---------------------
+//   RESPONSE SUCCESS
+// ---------------------
 axiosInstance.interceptors.response.use(
   (res) => {
     const body = res?.data;
+
     if (body && typeof body === "object") {
-      // Backend returned structured error payload: { ok: false, error: { code, message, data?, details? } }
+      // { ok: false, error: {...} }
       if (body.ok === false && body.error) {
-        const {
-          code = "INTERNAL_ERROR",
-          message = "Unknown error",
-          details,
-          data,
-        } = body.error;
-
-        // Use HTTP status from the response if present, otherwise fall back to 500
-        const status = res?.status ?? 500;
-
-        throw new ApiError({
-          code: code as any,
-          message,
-          status,
-          details,
-          data,
+        throw wrapError({
+          code: body.error.code ?? "INTERNAL_ERROR",
+          message: body.error.message ?? "Unknown error",
+          status: res?.status ?? body.error.status ?? 500,
+          details: body.error.details,
+          data: body.error.data,
         });
       }
 
-      // Normalised success shape { ok: true, data: ... } -> return original response but with data replaced
+      // { ok: true, data: ... }
       if (body.ok === true && "data" in body) {
         return { ...res, data: body.data };
       }
     }
 
-    // If response body is not the structured envelope, return it as-is
     return res;
   },
 
+  // ---------------------
+  //   RESPONSE ERROR
+  // ---------------------
   (error) => {
-    // If the server responded with a structured body (4xx/5xx)
     const resp = error?.response;
     const respData = resp?.data;
 
+    // Jeśli backend zwrócił normalny ApiError JSON
     if (respData && typeof respData === "object") {
-      // If backend used the { ok: false, error } envelope
-      if (respData?.ok === false && respData?.error) {
-        const {
-          code = "INTERNAL_ERROR",
-          message = "Unknown error",
-          details,
-          data,
-          status: bodyStatus,
-        } = respData.error;
-
-        const status = resp?.status ?? bodyStatus ?? 500;
-
-        throw new ApiError({
-          code: code as any,
-          message,
-          status,
-          details,
-          data,
+      if (respData.ok === false && respData.error) {
+        throw wrapError({
+          code: respData.error.code ?? "INTERNAL_ERROR",
+          message: respData.error.message ?? "Unknown error",
+          status: resp?.status ?? respData.error.status ?? 500,
+          details: respData.error.details,
+          data: respData.error.data,
         });
       }
 
-      // Non-enveloped structured error from upstream/external service
-      throw new ApiError({
+      // Jakiś inny structured error
+      throw wrapError({
         code: "EXTERNAL_SERVICE",
         message: resp?.statusText || "External service error",
         status: resp?.status ?? 502,
@@ -80,27 +71,27 @@ axiosInstance.interceptors.response.use(
       });
     }
 
-    // Timeout / network issue (axios uses code === 'ECONNABORTED' for timeouts)
-    const isTimeout = error?.code === "ECONNABORTED";
-    if (isTimeout) {
-      throw new ApiError({
+    // Timeout
+    if (error?.code === "ECONNABORTED") {
+      throw wrapError({
         code: "NETWORK_TIMEOUT",
         message: "Request timed out",
         status: 408,
-        details: { originalError: safeSerialize(error) },
+        details: safeSerialize(error),
       });
     }
 
-    // Generic network error or something else (no response)
-    throw new ApiError({
+    // Zupełnie inny network error
+    throw wrapError({
       code: "NETWORK_ERROR",
       message: error?.message ?? "Network error",
       status: 0,
-      details: { originalError: safeSerialize(error) },
+      details: safeSerialize(error),
     });
   }
 );
 
+// ---------------------
 function safeSerialize(err: any) {
   if (!err) return err;
   try {
