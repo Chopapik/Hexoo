@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, ChangeEvent, FocusEvent } from "react";
 import eyeIconUrl from "../../assets/icons/eye-off.svg?url";
 import eyeOffIconUrl from "../../assets/icons/eye-off.svg?url";
 import warningIcoUrl from "../../assets/icons/warning.svg?url";
@@ -21,6 +21,7 @@ interface InputProps {
   defaultValue?: string;
   value?: string;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: (e: FocusEvent<HTMLInputElement>) => void;
   showButton?: boolean;
   ref?: React.Ref<HTMLInputElement>;
 }
@@ -42,6 +43,7 @@ export default function TextInput({
   defaultValue,
   value,
   onChange,
+  onBlur,
   showButton = true,
 }: InputProps) {
   const [showPassword, setShowPassword] = useState(false);
@@ -159,6 +161,7 @@ export default function TextInput({
           defaultValue={defaultValue}
           value={value}
           onChange={onChange}
+          onBlur={onBlur}
           ref={ref}
         />
         {type === "password" && showButton && (
