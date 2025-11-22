@@ -1,21 +1,21 @@
-"use client";
-
-import { ReactNode, useEffect } from "react";
+import React, { useEffect } from "react";
+import { createPortal } from "react-dom";
 
 interface ModalProps {
   isOpen?: boolean;
   onClose: () => void;
-  title: ReactNode;
-  children: ReactNode;
+  title?: string;
+  children: React.ReactNode;
+  footer?: React.ReactNode;
   className?: string;
 }
 
 export default function Modal({
-  isOpen = true,
   onClose,
   title,
   children,
-  className = "w-[560px]",
+  footer,
+  className = "",
 }: ModalProps) {
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
@@ -25,51 +25,58 @@ export default function Modal({
     return () => window.removeEventListener("keydown", handleEsc);
   }, [onClose]);
 
-  if (!isOpen) return null;
+  const handleModalClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+  };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+  const modalContent = (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
       <div
-        className="absolute inset-0 bg-black/40 backdrop-blur-[2px] transition-opacity"
+        className="absolute inset-0 bg-black/80 backdrop-blur- transition-opacity animate-in fade-in duration-200 "
         onClick={onClose}
+        aria-hidden="true"
       />
 
       <div
+        onClick={handleModalClick}
         className={`
-          relative z-10 flex flex-col rounded-2xl p-6 shadow-lg 
-          border border-primary-neutral-stroke-default
-          glass-card backdrop-blur-md bg-neutral-900/80 
+          relative w-full max-w-2xl rounded-2xl 
+          bg-secondary-neutral-background-default/50 backdrop-blur-xl
+ " text-text-main
+          border border-primary-neutral-stroke-default 
+          shadow-2xl overflow-hidden flex flex-col 
+          animate-in fade-in zoom-in-95 duration-200 
           ${className}
         `}
       >
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-Albert_Sans font-semibold text-text-main">
-            {title}
-          </h2>
-
-          <button
-            onClick={onClose}
-            className="text-text-neutral pointer hover:text-text-main transition-colors p-1 rounded-md hover:bg-white/5"
-            aria-label="Zamknij"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+        {title && (
+          <div className="flex items-center justify-between px-4 py-3 border-b border-primary-neutral-stroke-default bg-primary-neutral-background-default/50 ">
+            <span className="text-sm font-semibold text-text-main font-Albert_Sans">
+              {title}
+            </span>
+            <button
+              onClick={onClose}
+              className="text-text-neutral hover:text-text-main transition-colors p-1"
             >
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
-          </button>
+              ✕
+            </button>
+          </div>
+        )}
+
+        <div className="p-4 overflow-y-auto max-h-[70vh] scrollbar-hide">
+          {children}
         </div>
-        <div className="flex-1">{children}</div>
+
+        {footer && (
+          <div className="px-4 py-3 border-t border-primary-neutral-stroke-default/30 bg-[#212121]">
+            {footer}
+          </div>
+        )}
       </div>
     </div>
   );
+
+  if (typeof document === "undefined") return null;
+
+  return createPortal(modalContent, document.body);
 }

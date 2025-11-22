@@ -1,6 +1,6 @@
 ﻿import type { Post } from "../types/post.type";
-import { CommentIcon } from "./icons/CommentIcon";
-import { LikeIcon } from "./icons/LikeIcon";
+import { CommentIcon } from "../icons/CommentIcon";
+import { LikeIcon } from "../icons/LikeIcon";
 
 type PostFooterProps = {
   post: Post;

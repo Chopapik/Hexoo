@@ -1,5 +1,22 @@
+"use client";
+
+import CreatePostModal from "@/features/posts/components/CreatePostModal";
+import CreatePostButton from "@/features/posts/components/CreatePostButton";
 import { PostList } from "@/features/posts/components/PostList";
+import { useState } from "react";
 
 export default function HomePage() {
-  return <PostList />;
+  const [isCreateModalOpen, setCreateModalOpen] = useState(false);
+
+  return (
+    <div className="relative">
+      <div className="w-full max-w-[920px] mb-6 flex justify-end">
+        <CreatePostButton onClick={() => setCreateModalOpen(true)} />
+      </div>
+      {isCreateModalOpen && (
+        <CreatePostModal onClose={() => setCreateModalOpen(false)} />
+      )}
+      <PostList />
+    </div>
+  );
 }
