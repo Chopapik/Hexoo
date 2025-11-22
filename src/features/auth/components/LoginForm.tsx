@@ -6,15 +6,27 @@ import keyIconUrl from "@/features/shared/assets/icons/key.svg?url";
 import Link from "next/link";
 import warningIconUrl from "@/features/shared/assets/icons/warning.svg?url";
 import Image from "next/image";
+import { useLoginForm } from "../hooks/useLoginForm";
 import useLogin from "../hooks/useLogin";
+import { LoginData } from "../types/auth.types";
+import { ValidationMessage } from "@/features/shared/types/validation.type";
+import { parseErrorMessages } from "../utils/loginFormValidation";
 
 export default function LoginForm() {
-  const { loginData, updateField, handleLogin, errors, isLoading } = useLogin();
+  const { register, handleSubmit, errors, handleServerErrors } = useLoginForm();
 
-  const onSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await handleLogin();
+  const { handleLogin, isLoading } = useLogin(handleServerErrors);
+
+  const onSubmit = async (data: LoginData) => {
+    await handleLogin(data);
   };
+
+  // const getFieldErrors = (errorMessage?: string): ValidationMessage[] => {
+  //   if (errorMessage) {
+  //     return parseErrorMessages(errorMessage);
+  //   }
+  //   return [];
+  // };
 
   return (
     <div className="w-[653px] px-32 py-20 rounded-[20px] inline-flex flex-col justify-center items-center gap-10 overflow-hidden glass-card bg-neutral-500/5">
@@ -28,34 +40,28 @@ export default function LoginForm() {
       </div>
 
       <form
-        onSubmit={onSubmit}
+        onSubmit={handleSubmit(onSubmit)}
         className="self-stretch flex flex-col justify-center items-center gap-2 overflow-hidden"
       >
         <TextInput
           label="Email"
-          name="email"
-          type="email"
-          value={loginData.email}
-          onChange={(e) => updateField("email", e.target.value)}
           placeholder="example@hexoo.com"
-          messages={errors.email}
+          {...register("email")}
+          messages={parseErrorMessages(errors.email?.message)}
         />
         <TextInput
           label="Hasło"
-          name="password"
           type="password"
-          value={loginData.password}
-          onChange={(e) => updateField("password", e.target.value)}
           placeholder="•••••••••"
-          messages={errors.password}
+          {...register("password")}
+          messages={parseErrorMessages(errors.password?.message)}
         />
-
         <div className="inline-flex flex-col justify-start items-start overflow-hidden h-8 min-w-1">
           {errors.root && (
             <div className="min-w-48 px-3 h-full bg-red-600 rounded-lg shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] inline-flex justify-center items-center gap-2 overflow-hidden">
               <Image src={warningIconUrl} alt="warning!" />
               <div className="justify-start text-white text-xs font-semibold font-Plus_Jakarta_Sans">
-                {errors.root}
+                {parseErrorMessages(errors.root?.message)[0]?.text}
               </div>
             </div>
           )}
@@ -63,7 +69,6 @@ export default function LoginForm() {
 
         <div className="self-stretch flex flex-col justify-center items-end gap-1 mt-4">
           <Button
-            onClick={onSubmit}
             text={isLoading ? "Logowanie..." : "Zaloguj się"}
             size="xl"
             rightIconUrl={keyIconUrl}
