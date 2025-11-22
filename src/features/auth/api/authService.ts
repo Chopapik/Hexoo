@@ -84,7 +84,7 @@ export async function registerUser(userRegisterData: RegisterData) {
   if (await isUsernameTaken(name)) {
     throw createAppError({
       code: "CONFLICT",
-      data: { code: "username_taken", field: "name" },
+      data: { code: "auth/username_taken", field: "name" },
     });
   }
 

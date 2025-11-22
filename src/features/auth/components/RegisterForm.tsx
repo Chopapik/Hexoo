@@ -2,18 +2,24 @@
 
 import Button from "@/features/shared/components/ui/Button";
 import TextInput from "@/features/shared/components/ui/TextInput";
-import keyIconUrl from "@/features/shared/assets/icons/key.svg";
-import warningIconUrl from "@/features/shared/assets/icons/warning.svg";
+import keyIconUrl from "@/features/shared/assets/icons/key.svg?url";
+import warningIconUrl from "@/features/shared/assets/icons/warning.svg?url";
 import Image from "next/image";
 import Link from "next/link";
-import useRegister from "../hooks/useRegister";
-export default function RegisterForm() {
-  const { registerData, updateField, handleRegister, isLoading, errors } =
-    useRegister();
 
-  const onSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await handleRegister();
+import useRegister from "../hooks/useRegister";
+import { RegisterData } from "../types/auth.types";
+import { parseRegisterErrorMessages } from "../utils/registerFormValidation";
+import { useRegisterForm } from "../hooks/useRegisterForm";
+
+export default function RegisterForm() {
+  const { register, handleSubmit, errors, handleServerErrors } =
+    useRegisterForm();
+
+  const { handleRegister, isLoading } = useRegister(handleServerErrors);
+
+  const onSubmit = async (data: RegisterData) => {
+    await handleRegister(data);
   };
 
   return (
@@ -28,41 +34,38 @@ export default function RegisterForm() {
       </div>
 
       <form
-        onSubmit={onSubmit}
+        onSubmit={handleSubmit(onSubmit)}
         className="self-stretch flex flex-col justify-center items-center gap-3 overflow-hidden"
       >
         <TextInput
           label="Nazwa użytkownika"
-          placeholder="podaj nową imie"
-          value={registerData.name}
-          onChange={(e) => updateField("name", e.target.value)}
-          messages={errors.name}
+          placeholder="podaj imię"
+          {...register("name")}
+          messages={parseRegisterErrorMessages(errors.name?.message)}
         />
 
         <TextInput
           label="Email"
           placeholder="podaj email"
           type="email"
-          value={registerData.email}
-          onChange={(e) => updateField("email", e.target.value)}
-          messages={errors.email}
+          {...register("email")}
+          messages={parseRegisterErrorMessages(errors.email?.message)}
         />
 
         <TextInput
           label="Hasło"
           type="password"
           placeholder="podaj hasło"
-          value={registerData.password}
-          onChange={(e) => updateField("password", e.target.value)}
-          messages={errors.password}
+          {...register("password")}
+          messages={parseRegisterErrorMessages(errors.password?.message)}
         />
 
-        <div className="h-8">
+        <div className="h-8 min-w-1 inline-flex flex-col justify-start items-start overflow-hidden">
           {errors.root && (
             <div className="min-w-48 px-4 py-2 bg-red-600 rounded-lg shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] inline-flex justify-center items-center gap-2 overflow-hidden">
               <Image src={warningIconUrl} alt="warning!" />
               <div className="justify-start text-white text-xs font-semibold font-Plus_Jakarta_Sans">
-                {errors.root}
+                {parseRegisterErrorMessages(errors.root?.message)[0]?.text}
               </div>
             </div>
           )}
@@ -70,7 +73,6 @@ export default function RegisterForm() {
 
         <div className="self-stretch flex flex-col justify-center items-end gap-1 mt-4">
           <Button
-            onClick={onSubmit}
             text={isLoading ? "Rejestracja..." : "Zarejestruj się"}
             size="xl"
             rightIconUrl={keyIconUrl}

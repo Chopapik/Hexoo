@@ -26,9 +26,10 @@ export async function processRegistrationError(
       /already in use/i.test(error.message)
     ) {
       throw createAppError({
-        code: "VALIDATION_ERROR",
+        code: "CONFLICT",
         data: {
           code: error.code,
+          field: "email",
         },
       });
     }
