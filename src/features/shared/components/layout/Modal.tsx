@@ -41,7 +41,7 @@ export default function Modal({
         onClick={handleModalClick}
         className={`
           relative w-full max-w-2xl rounded-2xl 
-          bg-secondary-neutral-background-default/50 backdrop-blur-xl
+          bg-secondary-neutral-background-default/60 backdrop-blur-xl
  " text-text-main
           border border-primary-neutral-stroke-default 
           shadow-2xl overflow-hidden flex flex-col 
@@ -50,7 +50,7 @@ export default function Modal({
         `}
       >
         {title && (
-          <div className="flex items-center justify-between px-4 py-3 border-b border-primary-neutral-stroke-default bg-primary-neutral-background-default/50 ">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-primary-neutral-stroke-default bg-secondary-neutral-background-default/60 ">
             <span className="text-sm font-semibold text-text-main font-Albert_Sans">
               {title}
             </span>
@@ -68,7 +68,7 @@ export default function Modal({
         </div>
 
         {footer && (
-          <div className="px-4 py-3 border-t border-primary-neutral-stroke-default/30 bg-[#212121]">
+          <div className="px-4 py-3 border-t border-primary-neutral-stroke-default/60 bg-secondary-neutral-background-default/60">
             {footer}
           </div>
         )}
