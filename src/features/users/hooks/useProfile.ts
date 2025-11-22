@@ -3,9 +3,8 @@ import type { UserProfile } from "@/features/users/types/user.type";
 import axiosInstance from "@/lib/axiosInstance";
 
 export default function useProfile(name: string) {
-  const query = useQuery<UserProfile | null, Error>({
+  const query = useQuery({
     queryKey: ["profile", name],
-    // enabled: !!name && name.trim() !== "",
     retry: false,
 
     queryFn: async ({ signal }) => {
@@ -13,7 +12,7 @@ export default function useProfile(name: string) {
         signal,
       });
 
-      return response.data;
+      return response.data.user;
     },
   });
 
