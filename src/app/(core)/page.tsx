@@ -10,7 +10,7 @@ export default function HomePage() {
 
   return (
     <div className="relative">
-      <div className="w-full max-w-[920px] mb-6 flex justify-end">
+      <div className="w-full max-w-[920px] mb-4 flex justify-end">
         <CreatePostButton onClick={() => setCreateModalOpen(true)} />
       </div>
       {isCreateModalOpen && (

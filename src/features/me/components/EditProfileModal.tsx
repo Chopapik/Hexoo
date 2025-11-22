@@ -49,14 +49,27 @@ export default function EditProfileModal({
     }
   };
 
+  const footerContent = (
+    <div className="flex gap-3 justify-end w-full">
+      <Button
+        onClick={onClose}
+        text="Anuluj"
+        size="sm"
+        variant="icon-fuchsia-ghost"
+        disabled={isPending}
+      />
+    </div>
+  );
+
   return (
     <Modal
       isOpen={!!user}
       onClose={onClose}
       title={`Edytuj profil — ${user.name}`}
+      footer={footerContent}
     >
       <div className="flex flex-col gap-5">
-        <div className="bg-white/5 p-4 rounded-lg border border-primary-neutral-background-default/30">
+        <div className=" p-4 rounded-lg border border-primary-neutral-background-default/30">
           <h3 className="text-lg font-medium mb-3 text-text-main">Nazwa</h3>
 
           <div className="flex flex-col gap-3">
@@ -82,16 +95,6 @@ export default function EditProfileModal({
               />
             </div>
           </div>
-        </div>
-
-        <div className="flex gap-3 justify-end w-full">
-          <Button
-            onClick={onClose}
-            text="Anuluj"
-            size="sm"
-            variant="icon-fuchsia-ghost"
-            disabled={isPending}
-          />
         </div>
       </div>
     </Modal>
