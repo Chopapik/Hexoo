@@ -1,71 +1,90 @@
 "use client";
 
-import { useState, useRef, ChangeEvent } from "react";
+import React, { useEffect, useState } from "react";
 import { PaperclipIcon } from "../icons/PaperclipIcon";
 import { SendIcon } from "../icons/SendIcon";
-import useCreatePost from "../hooks/useCreatePost";
 import Image from "next/image";
 import { useAppSelector } from "@/lib/store/hooks";
 import Modal from "@/features/shared/components/layout/Modal";
+import useCreatePostForm from "../hooks/useCreatePostForm";
+import useCreatePost from "../hooks/useCreatePost";
+import type { CreatePost } from "../types/post.type";
+import { parseErrorMessages } from "../utils/postFormValidation";
+
 interface CreatePostModalProps {
   onClose: () => void;
 }
 
+const MAX_CHARS = 1000;
+
 export default function CreatePostModal({ onClose }: CreatePostModalProps) {
-  const [text, setText] = useState("");
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const {
+    register,
+    handleSubmit,
+    fileInputRef,
+    imagePreview,
+    removeImage,
+    handleFileChange,
+    checkFormat,
+    formState,
+    setError,
+    clearErrors,
+    watch,
+  } = useCreatePostForm();
+
+  const [rootError, setRootError] = useState<string | null>(null);
+
+  const validationErrorRaw =
+    formState.errors.text?.message || formState.errors.imageFile?.message || "";
+
+  const clientError = parseErrorMessages(validationErrorRaw)?.text;
+
+  const textValue = watch("text") || "";
+  const currentLength = textValue.length;
+  const isOverLimit = currentLength > MAX_CHARS;
+
+  const { createPost, isPending } = useCreatePost(
+    () => {
+      removeImage();
+      onClose();
+    },
+    (error) => {
+      const parsedError = parseErrorMessages(error);
+      parsedError && setRootError(parsedError.text);
+    }
+  );
+
+  const submit = handleSubmit((data: CreatePost) => {
+    if (isOverLimit) return;
+
+    setRootError(null);
+
+    const formatted = checkFormat(data);
+    createPost(formatted);
+  });
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      submit();
+    }
+  };
 
   const user = useAppSelector((state) => state.auth.user);
 
-  const { createPost, isPending } = useCreatePost(() => {
-    onClose();
-  });
+  const displayError = clientError || rootError;
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setImageFile(file);
-      const url = URL.createObjectURL(file);
-      setImagePreview(url);
-    }
-  };
-
-  const removeImage = () => {
-    setImageFile(null);
-    if (imagePreview) URL.revokeObjectURL(imagePreview);
-    setImagePreview(null);
-    if (fileInputRef.current) fileInputRef.current.value = "";
-  };
-
-  const handleSubmit = () => {
-    if (!text.trim() && !imageFile) return;
-    createPost({
-      text,
-      imageFile: imageFile || undefined,
-      device: "Web",
-    });
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSubmit();
-    }
-  };
-
-  const isSubmitDisabled = isPending || (!text.trim() && !imageFile);
   const footerContent = (
     <div className="flex items-center justify-between w-full">
       <div className="flex items-center">
         <input
           type="file"
           ref={fileInputRef}
-          onChange={handleFileChange}
           accept="image/png, image/jpeg, image/webp"
+          onChange={handleFileChange}
           className="hidden"
         />
+
         <button
           onClick={() => fileInputRef.current?.click()}
           className="text-text-neutral hover:text-text-main p-2 rounded-full hover:bg-white/10 transition-all"
@@ -75,13 +94,17 @@ export default function CreatePostModal({ onClose }: CreatePostModalProps) {
         </button>
       </div>
 
+      <span className="text-red-500 text-sm font-medium animate-pulse">
+        {displayError}
+      </span>
+
       <button
-        onClick={handleSubmit}
-        disabled={isSubmitDisabled}
+        onClick={submit}
+        disabled={isPending || isOverLimit || !!clientError}
         className={`
           p-2 rounded-xl transition-all duration-200 flex items-center justify-center
           ${
-            isSubmitDisabled
+            isPending || isOverLimit || !!clientError
               ? "bg-primary-neutral-stroke-default text-text-neutral cursor-not-allowed opacity-50"
               : "bg-white text-black hover:opacity-90 shadow-[0_0_10px_rgba(255,255,255,0.2)]"
           }
@@ -101,7 +124,7 @@ export default function CreatePostModal({ onClose }: CreatePostModalProps) {
       <div className="flex flex-col gap-4">
         {imagePreview && (
           <div className="relative w-fit group animate-in fade-in zoom-in-95 duration-200">
-            <Image
+            <img
               src={imagePreview}
               alt="Preview"
               width={200}
@@ -127,18 +150,29 @@ export default function CreatePostModal({ onClose }: CreatePostModalProps) {
           </div>
         )}
 
-        {/* Input Area */}
         <div className="relative w-full">
           <textarea
-            value={text}
-            onChange={(e) => setText(e.target.value)}
+            {...register("text")}
             onKeyDown={handleKeyDown}
             placeholder={
               user ? `Co u Ciebie słychać, ${user.name}?` : "Napisz coś..."
             }
-            className="w-full bg-transparent text-text-main placeholder:text-text-neutral/50 text-base resize-none outline-none min-h-[100px] scrollbar-hide leading-relaxed"
+            className="w-full bg-transparent text-text-main placeholder:text-text-neutral/50 text-base resize-none outline-none min-h-[100px] scrollbar-hide leading-relaxed pb-6"
             autoFocus
           />
+
+          <div
+            className={`
+              absolute bottom-0 right-0 text-xs font-medium transition-colors duration-200 pointer-events-none select-none
+              ${
+                isOverLimit
+                  ? "text-red-500"
+                  : "text-text-neutral/40 group-focus-within:text-text-neutral/70"
+              }
+            `}
+          >
+            {currentLength} / {MAX_CHARS}
+          </div>
         </div>
       </div>
     </Modal>
