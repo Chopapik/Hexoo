@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import TextInput from "@/features/shared/components/ui/TextInput";
 import Button from "@/features/shared/components/ui/Button";
 import type {
@@ -12,6 +13,17 @@ import useAdminUpdateUserAccount from "../hooks/user/useAdminUpdateUserAccount";
 import useAdminUpdateUserPassword from "../hooks/user/useAdminUpdateUserPassword";
 import useBlockUser from "../hooks/user/useBlockUser";
 import useUnblockUser from "../hooks/user/useUnblockUser";
+import defaultAvatarUrl from "@/features/shared/assets/defaultAvatar.svg?url";
+import useAdminDeleteUser from "../hooks/user/useAdminDeleteUser";
+
+function formatDate(date?: Date | string | null) {
+  if (!date) return "—";
+  return new Date(date).toLocaleDateString("pl-PL", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
+}
 
 export default function AdminUserEditModal({
   user,
@@ -33,9 +45,9 @@ export default function AdminUserEditModal({
 
   const { blockUser, isPending: isBlockingUser } = useBlockUser();
   const { unBlockUser, isPending: isUnblockingUser } = useUnblockUser();
+  const { adminDeleteUser, isPending: isDeletingUser } = useAdminDeleteUser();
 
   useEffect(() => {
-    console.log(user);
     if (user) {
       setNewUserData({
         name: user.name,
@@ -57,74 +69,160 @@ export default function AdminUserEditModal({
 
   if (!user) return null;
 
+  const displayRole = newUserData.role || user.role || "user";
+  const displayName = newUserData.name || user.name;
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div
-        className="relative w-[640px] rounded-2xl p-6 shadow-lg border border-primary-neutral-stroke-default
-                    glass-card backdrop-blur-md"
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        onClick={onClose}
+      />
+
+      <div
+        className="relative w-full max-w-3xl rounded-2xl p-6 shadow-2xl border border-primary-neutral-stroke-default
+                    glass-card backdrop-blur-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200"
       >
-        <h2 className="text-2xl font-Albert_Sans font-semibold mb-4 text-text-main">
-          Edytuj użytkownika {user.name}
-        </h2>
+        <div className="flex justify-between items-center mb-6 border-b border-white/10 pb-4">
+          <h2 className="text-2xl font-Albert_Sans font-semibold text-text-main">
+            Edycja użytkownika
+          </h2>
+          <button
+            onClick={onClose}
+            className="text-text-neutral hover:text-text-main transition-colors"
+          >
+            ✕
+          </button>
+        </div>
 
-        <div className="flex flex-col gap-5">
-          <div className="col-span-2 md:col-span-1 bg-white/5 p-4 rounded-lg border border-primary-neutral-background-default/30">
-            <h3 className="text-lg font-medium mb-3 text-text-main">Dane</h3>
-
-            <div className="flex flex-col gap-3">
-              <TextInput
-                label="Nazwa"
-                value={newUserData.name ?? ""}
-                placeholder={user.name}
-                onChange={(e) => handleFieldChange("name", e.target.value)}
-                showButton={false}
+        <div className="mb-8 p-5 rounded-xl border border-primary-neutral-stroke-default bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-white/5 via-transparent to-transparent">
+          <div className="flex flex-col sm:flex-row items-center gap-6">
+            <div className="relative shrink-0">
+              <Image
+                src={user.avatarUrl || defaultAvatarUrl}
+                alt={user.name}
+                width={80}
+                height={80}
+                className="rounded-2xl border border-white/10 shadow-lg object-cover w-20 h-20 sm:w-24 sm:h-24"
               />
-
-              <label className="text-sm text-text-neutral">Rola</label>
-              <select
-                className="p-3 rounded-md bg-white w-full"
-                value={newUserData.role ?? ""}
-                onChange={(e) =>
-                  handleFieldChange("role", e.target.value as UserRole)
-                }
+              <div
+                className={`absolute -bottom-2 -right-2 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider shadow-sm border border-black/20 ${
+                  user.isBanned
+                    ? "bg-red-600 text-white"
+                    : "bg-green-600 text-white"
+                }`}
               >
-                <option value="">— Aktualna: {user.role ?? "Brak"} —</option>
-                <option value="admin">Admin</option>
-                <option value="moderator">Moderator</option>
-                <option value="user">Użytkownik</option>
-              </select>
+                {user.isBanned ? "Zbanowany" : "Aktywny"}
+              </div>
+            </div>
 
-              <div className="flex justify-end gap-3 mt-4">
+            <div className="flex-1 text-center sm:text-left w-full overflow-hidden">
+              <div className="flex flex-col sm:flex-row sm:items-end gap-2 mb-1">
+                <h3 className="text-2xl sm:text-3xl font-bold text-text-main font-Albert_Sans truncate">
+                  {displayName}
+                </h3>
+                <span className="px-2 py-1 rounded text-xs font-medium bg-primary-neutral-stroke-default text-text-neutral mb-1.5">
+                  {displayRole}
+                </span>
+              </div>
+
+              <p className="text-text-neutral text-sm mb-3 font-mono">
+                {user.email}
+              </p>
+
+              <div className="flex flex-wrap justify-center sm:justify-start gap-4 text-xs text-text-neutral/70 border-t border-white/5 pt-3">
+                <div className="flex flex-col">
+                  <span className="uppercase text-[10px] font-semibold tracking-wider opacity-50">
+                    ID Użytkownika
+                  </span>
+                  <span className="font-mono text-text-neutral select-all">
+                    {user.uid}
+                  </span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="uppercase text-[10px] font-semibold tracking-wider opacity-50">
+                    Dołączył
+                  </span>
+                  <span>{formatDate(user.createdAt)}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="flex flex-col gap-4">
+            <div className="bg-white/5 p-5 rounded-xl border border-primary-neutral-background-default/30 h-full flex flex-col">
+              <h3 className="text-lg font-medium mb-4 text-text-main flex items-center gap-2">
+                Dane profilowe
+              </h3>
+
+              <div className="flex flex-col gap-4 flex-1">
+                <TextInput
+                  label="Nazwa wyświetlana"
+                  value={newUserData.name ?? ""}
+                  placeholder={user.name}
+                  onChange={(e) => handleFieldChange("name", e.target.value)}
+                  showButton={false}
+                />
+
+                <div>
+                  <label className="block text-sm text-text-neutral mb-2 font-semibold">
+                    Rola w systemie
+                  </label>
+                  <select
+                    className="w-full p-3 rounded-lg bg-black/20 border border-primary-neutral-stroke-default text-text-main focus:outline-none focus:border-fuchsia-600 transition-colors appearance-none"
+                    value={newUserData.role ?? ""}
+                    onChange={(e) =>
+                      handleFieldChange("role", e.target.value as UserRole)
+                    }
+                  >
+                    <option value="" disabled>
+                      — Wybierz rolę —
+                    </option>
+                    <option value="user">Użytkownik</option>
+                    <option value="moderator">Moderator</option>
+                    <option value="admin">Administrator</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="mt-6 flex justify-end">
                 <Button
                   onClick={() =>
                     adminUpdateUserAccount({ uid: user.uid, data: newUserData })
                   }
-                  text={isUpdatingData ? "Zapisywanie..." : "Zapisz"}
+                  text={isUpdatingData ? "Zapisywanie..." : "Zapisz zmiany"}
                   size="sm"
                   variant="gradient-fuchsia"
                   disabled={isUpdatingData}
+                  className="w-full md:w-auto"
                 />
               </div>
             </div>
           </div>
 
-          <div className="col-span-2 md:col-span-1 bg-white/5 p-4 rounded-lg border border-primary-neutral-background-default/30">
-            <h3 className="text-lg font-medium mb-3 text-text-main">
-              Zmień hasło
-            </h3>
+          <div className="flex flex-col gap-4">
+            <div className="bg-white/5 p-5 rounded-xl border border-primary-neutral-background-default/30 h-full flex flex-col">
+              <h3 className="text-lg font-medium mb-4 text-text-main flex items-center gap-2">
+                Bezpieczeństwo
+              </h3>
 
-            <div className="flex flex-col gap-3">
-              <TextInput
-                label="Nowe hasło"
-                value={newPassword}
-                placeholder="Wpisz nowe hasło"
-                onChange={(e) => setNewPassword(e.target.value)}
-                type="password"
-                showButton={true}
-              />
+              <div className="flex flex-col gap-4 flex-1">
+                <TextInput
+                  label="Ustaw nowe hasło"
+                  value={newPassword}
+                  placeholder="Min. 8 znaków"
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  type="password"
+                  showButton={true}
+                />
+                <p className="text-xs text-text-neutral/60">
+                  Pozostaw puste, jeśli nie chcesz zmieniać hasła użytkownika.
+                </p>
+              </div>
 
-              <div className="flex justify-end gap-3 mt-4">
+              <div className="mt-6 flex justify-end">
                 <Button
                   onClick={() =>
                     adminUpdateUserPassword({
@@ -132,58 +230,55 @@ export default function AdminUserEditModal({
                       newPassword: newPassword,
                     })
                   }
-                  text={
-                    isUpdatingPassword ? "Przetwarzanie..." : "Zapisz hasło"
-                  }
+                  text={isUpdatingPassword ? "Przetwarzanie..." : "Zmień hasło"}
                   size="sm"
                   variant="gradient-fuchsia"
-                  disabled={isUpdatingPassword}
+                  disabled={isUpdatingPassword || !newPassword}
+                  className="w-full md:w-auto"
                 />
               </div>
             </div>
           </div>
-          <div className="flex w-full gap-2">
-            <Button
-              onClick={onClose}
-              text="Usuń"
-              size="sm"
-              variant="icon-fuchsia-ghost"
-              className="bg-red-700 flex-1"
-              disabled={isUpdatingData || isUpdatingPassword}
-            />
+        </div>
 
-            {user.isBanned ? (
-              <>
-                <Button
-                  onClick={() => unBlockUser({ uid: user.uid })}
-                  text={isUnblockingUser ? "Przetwarzanie..." : "Odblokuj"}
-                  size="sm"
-                  variant="icon-fuchsia-ghost"
-                  className="bg-neutral-600 flex-1"
-                  disabled={isUnblockingUser}
-                />
-              </>
-            ) : (
-              <>
-                <Button
-                  onClick={() => blockUser({ uid: user.uid })}
-                  size="sm"
-                  text={isBlockingUser ? "Przetwarzanie..." : "Zablokuj"}
-                  variant="icon-fuchsia-ghost"
-                  className="bg-red-700 flex-1"
-                  disabled={isBlockingUser}
-                />
-              </>
-            )}
-          </div>
-
+        <div className="mt-6 pt-6 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
           <Button
             onClick={onClose}
-            text="Anuluj"
-            size="sm"
-            variant="icon-fuchsia-ghost"
+            text="Anuluj i zamknij"
             disabled={isUpdatingData || isUpdatingPassword}
+            className="text-text-neutral hover:text-white order-2 md:order-1"
           />
+
+          <div className="flex gap-3 w-full md:w-auto order-1 md:order-2">
+            {user.isBanned ? (
+              <Button
+                onClick={() => unBlockUser({ uid: user.uid })}
+                text={isUnblockingUser ? "Odblokowywanie..." : "Odblokuj konto"}
+                size="sm"
+                variant="glass-card"
+                className="bg-green-500/10 border-green-500/30 text-green-400 hover:bg-green-500/20"
+                disabled={isUnblockingUser}
+              />
+            ) : (
+              <Button
+                onClick={() => blockUser({ uid: user.uid })}
+                text={isBlockingUser ? "Blokowanie..." : "Zablokuj konto"}
+                size="md"
+                variant="glass-card"
+                className="bg-yellow-500/10 border-yellow-500/30 text-yellow-400 hover:bg-yellow-500/20"
+                disabled={isBlockingUser}
+              />
+            )}
+
+            <Button
+              onClick={() => adminDeleteUser(user.uid)}
+              text={isDeletingUser ? "Usuwanie..." : "Usuń użytkownika"}
+              size="md"
+              variant="glass-card"
+              className="bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20"
+              disabled={isUpdatingData}
+            />
+          </div>
         </div>
       </div>
     </div>
