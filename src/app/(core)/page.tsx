@@ -2,7 +2,7 @@
 
 import CreatePostModal from "@/features/posts/components/CreatePostModal";
 import CreatePostButton from "@/features/posts/components/CreatePostButton";
-import { PostList } from "@/features/posts/components/PostList";
+import { PostFeed } from "@/features/posts/components/PostFeed";
 import { useState } from "react";
 
 export default function HomePage() {
@@ -16,7 +16,7 @@ export default function HomePage() {
       {isCreateModalOpen && (
         <CreatePostModal onClose={() => setCreateModalOpen(false)} />
       )}
-      <PostList />
+      <PostFeed />
     </div>
   );
 }

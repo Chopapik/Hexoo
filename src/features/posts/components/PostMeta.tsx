@@ -1,5 +1,6 @@
 ﻿import type { Post } from "../types/post.type";
 import { Avatar } from "./Avatar";
+import dayjs from "dayjs";
 
 type PostMetaProps = {
   post: Post;
@@ -18,12 +19,12 @@ export const PostMeta = ({ post }: PostMetaProps) => {
         </div>
         <div className="size- inline-flex justify-center items-center gap-1">
           <div className="justify-start text-text-neutral text-xs font-normal font-['Roboto']">
-            {post.date}
+            {dayjs(post.createdAt).format("DD/MM/YYYY")}
           </div>
-          <div className="size-1 bg-text-neutral rounded-full" />
-          <div className="justify-start text-text-neutral text-xs font-normal font-['Roboto']">
+          {/* <div className="size-1 bg-text-neutral rounded-full" /> */}
+          {/* <div className="justify-start text-text-neutral text-xs font-normal font-['Roboto']">
             {post.device}
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
