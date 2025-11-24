@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 // Biblioteka do detekcji
 import { osName, browserName, isMobile, isTablet } from "react-device-detect";
-import type { CreatePost, DeviceInfo } from "../types/post.type";
+import type { CreatePost } from "../types/post.type";
 import { CreatePostSchema } from "../types/post.type";
 
 export default function useCreatePostForm() {
@@ -22,11 +22,11 @@ export default function useCreatePostForm() {
     defaultValues: {
       text: "",
       imageFile: undefined,
-      device: {
-        type: "Desktop",
-        os: "Unknown",
-        browser: "Unknown",
-      },
+      // device: {
+      //   type: "Desktop",
+      //   os: "Unknown",
+      //   browser: "Unknown",
+      // },
     },
   });
 
@@ -37,12 +37,12 @@ export default function useCreatePostForm() {
     const deviceType = isTablet ? "Tablet" : isMobile ? "Mobile" : "Desktop";
     const safeOs = osName.slice(0, 50);
     const safeBrowser = browserName.slice(0, 50);
-    const deviceInfo: DeviceInfo = {
-      type: deviceType,
-      os: safeOs,
-      browser: safeBrowser,
-    };
-    setValue("device", deviceInfo);
+    // const deviceInfo: DeviceInfo = {
+    //   type: deviceType,
+    //   os: safeOs,
+    //   browser: safeBrowser,
+    // };
+    // setValue("device", deviceInfo);
   }, [setValue]);
 
   useEffect(() => {
@@ -73,19 +73,19 @@ export default function useCreatePostForm() {
     const values = data ?? getValues();
     const imageFile = values.imageFile as unknown as File | undefined;
     const text = values.text ?? "";
-    const currentDevice = values.device ?? {
-      type: "Desktop",
-      os: "Unknown",
-      browser: "Unknown",
-    };
+    // const currentDevice = values.device ?? {
+    //   type: "Desktop",
+    //   os: "Unknown",
+    //   browser: "Unknown",
+    // };
     if (imageFile instanceof File) {
       const fd = new FormData();
       if (text) fd.append("text", text);
-      fd.append("device", JSON.stringify(currentDevice));
+      // fd.append("device", JSON.stringify(currentDevice));
       fd.append("imageFile", imageFile);
       return fd;
     }
-    return { text, device: currentDevice } as CreatePost;
+    return { text } as CreatePost;
   };
 
   return {
