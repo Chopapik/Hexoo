@@ -4,10 +4,7 @@ type PostBodyProps = {
   post: Post;
 };
 
-// const PLACEHOLDER_IMAGE = "https://placehold.co/500x426";
-
 export const PostBody = ({ post }: PostBodyProps) => {
-  // const imageSrc = post.imageUrl ?? PLACEHOLDER_IMAGE;
   console.log(post);
   return (
     <>
