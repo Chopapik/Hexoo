@@ -23,6 +23,22 @@ const ensureAdmin = async () => {
   }
 };
 
+export const adminDeleteUser = async (uid: string) => {
+  await ensureAdmin();
+
+  if (!uid) {
+    throw createAppError({
+      message: "No 'uid' provided for deletion",
+    });
+  }
+
+  await adminAuth.deleteUser(uid);
+
+  await adminDb.collection("users").doc(uid).delete();
+
+  return { success: true, uid };
+};
+
 export const adminCreateUserAccount = async (data: AdminUserCreate) => {
   await ensureAdmin();
 
