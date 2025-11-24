@@ -1,12 +1,12 @@
 import z from "zod";
 
-export const DeviceSchema = z.object({
-  type: z.enum(["Mobile", "Tablet", "Desktop", "Unknown"]),
-  os: z.string().trim().max(50, { message: "os_name_too_long" }),
-  browser: z.string().trim().max(50, { message: "browser_name_too_long" }),
-});
+// export const DeviceSchema = z.object({
+//   type: z.enum(["Mobile", "Tablet", "Desktop", "Unknown"]),
+//   os: z.string().trim().max(50, { message: "os_name_too_long" }),
+//   browser: z.string().trim().max(50, { message: "browser_name_too_long" }),
+// });
 
-export type DeviceInfo = z.infer<typeof DeviceSchema>;
+// export type DeviceInfo = z.infer<typeof DeviceSchema>;
 
 export interface Post {
   id: string;
@@ -15,7 +15,7 @@ export interface Post {
   userAvatarUrl?: string | null;
   text: string;
   imageUrl?: string | null;
-  device?: DeviceInfo | null;
+  // device?: DeviceInfo | null;
   likesCount: number;
   isLikedByMe?: boolean;
   commentsCount: number;
@@ -34,7 +34,9 @@ export const CreatePostSchema = z.object({
         !file || ["image/png", "image/jpeg", "image/webp"].includes(file.type),
       "wrong_file_type"
     ),
-  device: DeviceSchema,
+  // type: z.enum(["Mobile", "Tablet", "Desktop", "Unknown"]),
+  // os: z.string().trim().max(50, { message: "os_name_too_long" }),
+  // browser: z.string().trim().max(50, { message: "browser_name_too_long" }),
 });
 
 export type CreatePost = z.infer<typeof CreatePostSchema>;
