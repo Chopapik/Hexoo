@@ -1,4 +1,7 @@
-import { adminCreateUserAccount } from "@/features/admin/api/adminService";
+import {
+  adminCreateUserAccount,
+  adminDeleteUser,
+} from "@/features/admin/api/adminService";
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 
