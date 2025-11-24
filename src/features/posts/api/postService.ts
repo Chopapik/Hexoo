@@ -18,6 +18,17 @@ import {
 } from "@/features/images/api/imageService";
 const POSTS_COLLECTION = "posts";
 
+const normalizePublicUrl = (
+  u: string | null | undefined
+): string | null | undefined => {
+  if (!u) return u;
+  const protoMatch = u.match(/^(https?:\/\/)/i);
+  if (!protoMatch) return u;
+  const proto = protoMatch[1];
+  const rest = u.slice(proto.length).replace(/^(https?:\/\/)+/i, "");
+  return proto + rest;
+};
+
 export const createPost = async (postData: CreatePost) => {
   const user = await getUserFromSession();
 
@@ -35,7 +46,9 @@ export const createPost = async (postData: CreatePost) => {
 
   if (hasFile(postData.imageFile)) {
     const upload = await uploadImage(postData.imageFile, user.uid);
-    imageUrl = upload.publicUrl;
+    const safePublicUrl = normalizePublicUrl(upload.publicUrl);
+    imageUrl = safePublicUrl;
+
     imageMeta = {
       storagePath: upload.storagePath,
       downloadToken: upload.downloadToken,
@@ -96,7 +109,9 @@ export const updatePost = async (postId: string, data: UpdatePost) => {
 
   if (hasFile(data.imageFile)) {
     const upload = await uploadImage(data.imageFile, user.uid);
-    imageUrl = upload.publicUrl;
+
+    const safePublicUrl = normalizePublicUrl(upload.publicUrl);
+    imageUrl = safePublicUrl;
     imageMeta = {
       storagePath: upload.storagePath,
       downloadToken: upload.downloadToken,
@@ -141,13 +156,11 @@ export const getPosts = async (
   limit = 20,
   startAfterId?: string
 ): Promise<Post[]> => {
-  // 1. Próbujemy pobrać sesję (żeby wiedzieć, dla kogo sprawdzać "isLikedByMe")
   let currentUserUid: string | null = null;
   try {
     const session = await getUserFromSession();
     currentUserUid = session.uid;
   } catch (err) {
-    // Użytkownik niezalogowany - to OK, po prostu nie zobaczy co polubił
     currentUserUid = null;
   }
 
@@ -165,16 +178,12 @@ export const getPosts = async (
 
   const snap = await query.get();
 
-  // 2. Mapujemy posty i równolegle sprawdzamy status lajka (tylko jeśli user zalogowany)
   const posts = await Promise.all(
     snap.docs.map(async (d) => {
       const data = d.data();
 
       let isLikedByMe = false;
 
-      // Jeśli user jest zalogowany, sprawdzamy czy istnieje dokument w subkolekcji
-      // To kosztuje 1 odczyt na każdy post, ale przy 20 postach to pomijalne,
-      // a daje pełną funkcjonalność.
       if (currentUserUid) {
         const likeSnap = await d.ref
           .collection("likes")
@@ -192,14 +201,11 @@ export const getPosts = async (
         imageUrl: data.imageUrl ?? null,
         device: data.device ?? null,
 
-        // TERAZ UŻYWAMY LICZNIKA ZAMIAST TABLICY
         likesCount: data.likesCount ?? 0,
         commentsCount: data.commentsCount ?? 0,
 
-        // Dodajemy flagę dla frontend'u
         isLikedByMe,
 
-        // Tablica likes jest teraz pusta lub null w głównym dokumencie
         likes: null,
 
         createdAt: data.createdAt?.toDate

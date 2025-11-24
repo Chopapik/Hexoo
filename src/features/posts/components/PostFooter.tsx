@@ -16,16 +16,16 @@ export const PostFooter = ({ post }: PostFooterProps) => {
         <div data-svg-wrapper>
           <LikeIcon />
         </div>
-        <div className="justify-start text-text-neutral text-base font-semibold font-['Albert_Sans']">
-          1
+        <div className="justify-start text-text-neutral text-sm font-semibold font-Albert_Sans">
+          {post.likesCount}
         </div>
       </div>
       <div className="size- flex justify-start items-center gap-1.5">
         <div data-svg-wrapper>
           <CommentIcon />
         </div>
-        <div className="justify-start text-text-neutral text-base font-semibold font-['Albert_Sans']">
-          1
+        <div className="justify-start text-text-neutral text-sm font-semibold font-Albert_Sans">
+          {post.commentsCount}
         </div>
       </div>
     </div>
