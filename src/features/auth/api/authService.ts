@@ -13,6 +13,10 @@ import { setSessionCookie, clearSessionCookie } from "@/lib/session";
 import { isUsernameTaken } from "./utils/checkUsernameUnique";
 import { formatZodErrorFlat } from "@/lib/zod";
 import { processRegistrationError } from "./errors/processRegistrationError";
+import {
+  ActivityType,
+  logActivity,
+} from "@/features/admin/api/activityService";
 
 const SESSION_EXPIRES_MS = 5 * 24 * 60 * 60 * 1000;
 
@@ -20,14 +24,13 @@ export async function logoutUser() {
   await clearSessionCookie();
   return { message: "Session cleared" };
 }
-
 export async function loginUser(userLoginData: LoginData) {
   const parsed = LoginSchema.safeParse(userLoginData);
+  const { email, password } = userLoginData;
 
   if (!parsed.success) {
     throw createAppError({
       code: "VALIDATION_ERROR",
-      message: "Invalid register credentails",
       data: {
         code: "auth/validation_failed",
         details: formatZodErrorFlat(parsed.error),
@@ -35,35 +38,108 @@ export async function loginUser(userLoginData: LoginData) {
     });
   }
 
-  const resp = await signInWithPassword(
-    userLoginData.email,
-    userLoginData.password
-  );
+  const userSnapshot = await adminDb
+    .collection("users")
+    .where("email", "==", email)
+    .limit(1)
+    .get();
 
-  const sessionCookie = await adminAuth.createSessionCookie(resp.idToken!, {
-    expiresIn: SESSION_EXPIRES_MS,
-  });
-
-  const userDoc = await adminDb.collection("users").doc(resp.localId).get();
-
-  if (!userDoc.exists) {
+  if (userSnapshot.empty) {
     throw createAppError({
-      code: "USER_NOT_FOUND",
-      message: "User does not exist in loginUser()",
+      code: "INVALID_CREDENTIALS",
+      message: "User not found or invalid credentials",
     });
   }
 
-  const userSnap = userDoc.data()!;
-  const user = {
-    uid: userSnap.uid,
-    email: resp.email,
-    name: userSnap.name,
-    role: userSnap.role,
-  };
+  const userDoc = userSnapshot.docs[0];
+  const userData = userDoc.data();
+  const uid = userData.uid;
 
-  await setSessionCookie(sessionCookie);
+  if (userData.lockoutUntil) {
+    const lockoutTime = userData.lockoutUntil.toDate();
+    if (lockoutTime > new Date()) {
+      await logActivity(
+        uid,
+        "LOGIN_FAILED" as ActivityType,
+        `Próba logowania na zablokowane konto. Blokada do ${lockoutTime.toISOString()}`
+      );
 
-  return { user };
+      throw createAppError({
+        code: "FORBIDDEN",
+        data: { lockoutTime },
+      });
+    }
+  }
+
+  try {
+    const resp = await signInWithPassword(email, password);
+
+    await userDoc.ref.update({
+      failedLoginAttempts: 0,
+      lockoutUntil: null,
+    });
+    await logActivity(
+      uid,
+      "LOGIN_SUCCESS" as ActivityType,
+      "Użytkownik zalogowany pomyślnie"
+    );
+
+    const sessionCookie = await adminAuth.createSessionCookie(resp.idToken!, {
+      expiresIn: SESSION_EXPIRES_MS,
+    });
+
+    const dbUserDoc = await adminDb
+      .collection("users")
+      .doc(resp.localId!)
+      .get();
+
+    if (!dbUserDoc.exists) {
+      throw createAppError({
+        code: "USER_NOT_FOUND",
+        message: "User does not exist in loginUser()",
+      });
+    }
+
+    const userSnap = dbUserDoc.data()!;
+    const user = {
+      uid: userSnap.uid,
+      email: resp.email,
+      name: userSnap.name,
+      role: userSnap.role,
+    };
+
+    await setSessionCookie(sessionCookie);
+
+    return { user };
+  } catch (error: any) {
+    const MAX_ATTEMPTS = 3;
+
+    const currentAttempts = (userData.failedLoginAttempts || 0) + 1;
+    let updateData: any = { failedLoginAttempts: currentAttempts };
+
+    if (currentAttempts >= MAX_ATTEMPTS) {
+      const lockoutDate = new Date();
+      lockoutDate.setMinutes(lockoutDate.getMinutes() + 15);
+      updateData.lockoutUntil = admin.firestore.Timestamp.fromDate(lockoutDate);
+
+      await logActivity(
+        uid,
+        "USER_BLOCKED" as ActivityType,
+        `Konto zablokowane na 15 min po ${currentAttempts} nieudanych próbach`
+      );
+    } else {
+      await logActivity(
+        uid,
+        "LOGIN_FAILED" as ActivityType,
+        `Błędne hasło (Próba ${currentAttempts}/${MAX_ATTEMPTS})`
+      );
+    }
+
+    await userDoc.ref.update(updateData);
+
+    // Rzucamy oryginalny błąd
+    throw error;
+  }
 }
 
 export async function registerUser(userRegisterData: RegisterData) {
