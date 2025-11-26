@@ -68,6 +68,13 @@ export async function loginUser(userLoginData: LoginData) {
         code: "FORBIDDEN",
         data: { lockoutTime },
       });
+    } else {
+      await userDoc.ref.update({
+        failedLoginAttempts: 0,
+        lockoutUntil: null,
+      });
+
+      userData.failedLoginAttempts = 0;
     }
   }
 

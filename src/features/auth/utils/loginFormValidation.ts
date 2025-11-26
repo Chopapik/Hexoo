@@ -22,6 +22,11 @@ const ERROR_DICTIONARY: Record<string, ValidationMessage> = {
     field: "root",
     type: "Dismiss",
   },
+  FORBIDDEN: {
+    text: "Konto zostało zablokowane na 15 minut z powodu zbyt dużej liczby niepoprawnych logowań",
+    field: "root",
+    type: "Dismiss",
+  },
   default: {
     text: "Wystąpił nieznany błąd",
     field: "root",
