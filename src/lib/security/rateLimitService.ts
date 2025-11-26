@@ -4,7 +4,7 @@ import admin from "firebase-admin";
 
 // Configuration constants
 const MAX_ANONYMOUS_ATTEMPTS = 10;
-const LOCKOUT_DURATION_MINUTES = 1;
+const LOCKOUT_DURATION_MINUTES = 10;
 
 /**
  * Protects against Brute Force attacks on login/register.
