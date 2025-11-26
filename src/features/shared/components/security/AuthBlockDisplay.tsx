@@ -67,11 +67,11 @@ export default function AuthBlockDisplay({ data }: { data: AuthBlockData }) {
         </span>
       </div>
       <h1 className="text-3xl font-Albert_Sans font-bold text-text-main text-center mb-2">
-        Konto Zablokowane
+        Adres IP Zablokowany
       </h1>
       <p className="text-base text-text-neutral text-center mb-6 font-Albert_Sans">
-        Twój adres IP lub konto zostało tymczasowo zablokowane z powodu zbyt
-        wielu nieudanych prób logowania.
+        Twój adres IP został tymczasowo zablokowany z powodu wykrycia
+        podejrzanej aktywności (zbyt wiele prób logowania).
       </p>
       <div className="bg-red-900/20 p-4 rounded-xl border border-red-700/50 text-center font-Albert_Sans">
         <p className="text-xs font-semibold uppercase text-red-400 mb-1">

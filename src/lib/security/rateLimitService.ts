@@ -2,9 +2,14 @@ import { adminDb } from "@/lib/firebaseAdmin";
 import { createAppError } from "@/lib/ApiError";
 import admin from "firebase-admin";
 
-const MAX_ANONYMOUS_ATTEMPTS = 20;
-const LOCKOUT_DURATION_MINUTES = 100;
+// Configuration constants
+const MAX_ANONYMOUS_ATTEMPTS = 10;
+const LOCKOUT_DURATION_MINUTES = 1;
 
+/**
+ * Protects against Brute Force attacks on login/register.
+ * Uses "Lazy Reset" pattern to clear old locks.
+ */
 export async function checkAndIncrementIpLimit(ip: string) {
   const ipRef = adminDb.collection("ip_rate_limits").doc(ip);
   const snap = await ipRef.get();
@@ -15,25 +20,41 @@ export async function checkAndIncrementIpLimit(ip: string) {
     const data = snap.data()!;
     const { attempts, lockoutUntil } = data;
 
-    if (lockoutUntil && lockoutUntil.toDate() > now) {
-      throw createAppError({
-        code: "RATE_LIMIT",
-        message: `Ip ${ip} blocked for to manny requests until : ${lockoutUntil
-          .toDate()
-          .toLocaleTimeString()}`,
-        status: 429,
-        data: {
-          ipBlocked: true,
-          lockoutUntil,
-          maxAnonymousAttempts: MAX_ANONYMOUS_ATTEMPTS,
-        },
-      });
+    // 1. Check existing lock
+    if (lockoutUntil) {
+      const lockoutTime = lockoutUntil.toDate();
+
+      if (lockoutTime > now) {
+        // Still blocked -> Throw error
+        throw createAppError({
+          code: "RATE_LIMIT",
+          message: `IP blocked until: ${lockoutTime.toLocaleTimeString()}`,
+          status: 429,
+          data: {
+            ipBlocked: true,
+            lockoutUntil,
+            maxAnonymousAttempts: MAX_ANONYMOUS_ATTEMPTS,
+          },
+        });
+      } else {
+        // Block expired -> Lazy Reset
+        await ipRef.update({
+          attempts: 1,
+          lockoutUntil: null,
+          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
+        return; // User is clean now
+      }
     }
 
+    // 2. Check if limit exceeded
     if (attempts >= MAX_ANONYMOUS_ATTEMPTS) {
-      const lockoutDate = new Date(
-        now.getTime() + LOCKOUT_DURATION_MINUTES * 60 * 1000
+      // Apply lock
+      const lockoutDate = new Date();
+      lockoutDate.setMinutes(
+        lockoutDate.getMinutes() + LOCKOUT_DURATION_MINUTES
       );
+
       await ipRef.update({
         attempts: attempts + 1,
         lockoutUntil: admin.firestore.Timestamp.fromDate(lockoutDate),
@@ -42,23 +63,23 @@ export async function checkAndIncrementIpLimit(ip: string) {
 
       throw createAppError({
         code: "RATE_LIMIT",
-        message: `Ip ${ip} blocked for to manny requests until : ${lockoutUntil
-          .toDate()
-          .toLocaleTimeString()}`,
+        message: `Too many attempts. Blocked for ${LOCKOUT_DURATION_MINUTES} min.`,
         status: 429,
         data: {
           ipBlocked: true,
-          lockoutUntil,
+          lockoutUntil: admin.firestore.Timestamp.fromDate(lockoutDate),
           maxAnonymousAttempts: MAX_ANONYMOUS_ATTEMPTS,
         },
       });
     }
 
+    // 3. Increment attempts
     await ipRef.update({
       attempts: admin.firestore.FieldValue.increment(1),
       updatedAt: admin.firestore.FieldValue.serverTimestamp(),
     });
   } else {
+    // 4. First visit -> Create record
     await ipRef.set({
       ip,
       attempts: 1,
@@ -69,6 +90,9 @@ export async function checkAndIncrementIpLimit(ip: string) {
   }
 }
 
+/**
+ * Manually resets limit (e.g. after successful login)
+ */
 export async function resetIpLimit(ip: string) {
   const ipRef = adminDb.collection("ip_rate_limits").doc(ip);
   await ipRef.set(
