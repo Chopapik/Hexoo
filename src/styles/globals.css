@@ -7,6 +7,10 @@ body {
   margin: 0;
 }
 
+.grecaptcha-badge {
+  visibility: hidden !important;
+}
+
 /* Default theme = dark mode */
 @theme {
   --font-Plus_Jakarta_Sans: "Plus Jakarta Sans", sans-serif;
