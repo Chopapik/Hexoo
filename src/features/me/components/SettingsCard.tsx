@@ -7,11 +7,14 @@ import { useLogout } from "@/features/auth/hooks/useLogout";
 import { useDeleteAccount } from "@/features/me/hooks/useDeleteAccount";
 import { useUpdatePassword } from "../hooks/useUpdatePassword";
 import type { PasswordUpdate } from "../me.type";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 
 export default function SettingsPage() {
   const { logout } = useLogout();
   const { deleteAccount } = useDeleteAccount();
   const { updatePassword, isPending } = useUpdatePassword();
+
+  const { executeRecaptcha } = useGoogleReCaptcha();
 
   const [passwordData, setPasswordData] = useState<PasswordUpdate>({
     oldPassword: "",
@@ -49,6 +52,11 @@ export default function SettingsPage() {
   };
 
   const handlePasswordChange = async () => {
+    if (!executeRecaptcha) {
+      setError("reCAPTCHA nie jest jeszcze gotowa. Spróbuj za chwilę.");
+      return;
+    }
+
     setError(null);
     setSuccess(null);
 
@@ -56,10 +64,13 @@ export default function SettingsPage() {
     if (!validate()) return;
 
     try {
+      const token = await executeRecaptcha("change_password");
+
       await updatePassword({
         oldPassword: passwordData.oldPassword,
         newPassword: passwordData.newPassword,
         reOldPassword: passwordData.reOldPassword,
+        recaptchaToken: token,
       });
       setSuccess("Hasło zmienione pomyślnie.");
       setPasswordData({ oldPassword: "", newPassword: "", reOldPassword: "" });
