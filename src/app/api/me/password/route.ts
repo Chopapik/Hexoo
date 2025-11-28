@@ -7,7 +7,7 @@ import { createAppError } from "@/lib/ApiError";
 export const PUT = withErrorHandling(async (req: Request) => {
   const body = await req.json();
 
-  const { recaptchaToken } = body;
+  const { recaptchaToken, ...newPasswordData } = body;
 
   if (!recaptchaToken) {
     throw createAppError({
@@ -18,7 +18,7 @@ export const PUT = withErrorHandling(async (req: Request) => {
 
   await verifyRecaptchaToken(recaptchaToken);
 
-  const result = await updatePassword(body);
+  const result = await updatePassword(newPasswordData);
 
   const response = handleSuccess({ user: result.user });
 
