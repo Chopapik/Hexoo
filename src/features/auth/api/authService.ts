@@ -143,8 +143,6 @@ export async function loginUser(userLoginData: LoginData) {
     }
 
     await userDoc.ref.update(updateData);
-
-    // Rzucamy oryginalny błąd
     throw error;
   }
 }

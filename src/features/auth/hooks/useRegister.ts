@@ -3,15 +3,18 @@ import { useRouter } from "next/navigation";
 import { RegisterData } from "../types/auth.types";
 import axiosInstance from "@/lib/axiosInstance";
 import { ApiError } from "@/lib/ApiError";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 
 type ErrorCallback = (errorCode: string, field?: string) => void;
 
 export default function useRegister(onErrorCallback: ErrorCallback) {
   const router = useRouter();
 
+  const { executeRecaptcha } = useGoogleReCaptcha();
+
   const registerMutation = useMutation({
-    mutationFn: (userData: RegisterData) =>
-      axiosInstance.post(`/auth/register`, userData),
+    mutationFn: (dataWithToken: RegisterData & { recaptchaToken: string }) =>
+      axiosInstance.post(`/auth/register`, dataWithToken),
 
     onSuccess: () => {
       router.push("/");
@@ -46,8 +49,20 @@ export default function useRegister(onErrorCallback: ErrorCallback) {
     },
   });
 
-  const handleRegister = (data: RegisterData) => {
-    registerMutation.mutate(data);
+  const handleRegister = async (data: RegisterData) => {
+    if (!executeRecaptcha) {
+      onErrorCallback("reCAPTCHA nie jest jeszcze gotowa.", "root");
+      return;
+    }
+
+    const token = await executeRecaptcha("register");
+
+    const dataWithToken = {
+      ...data,
+      recaptchaToken: token,
+    };
+
+    registerMutation.mutate(dataWithToken);
   };
 
   return {
