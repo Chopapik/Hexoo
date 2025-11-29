@@ -7,7 +7,7 @@ const axiosInstance = axios.create({
   // headers: { "Content-Type": "application/json", Accept: "application/json" },
 });
 
-// Helper – opakowanie błędu bez tworzenia klas
+// Helper - wraps the error without creating class instances
 function wrapError(payload: any) {
   return {
     isApiError: true,
@@ -23,7 +23,7 @@ axiosInstance.interceptors.response.use(
     const body = res?.data;
 
     if (body && typeof body === "object") {
-      // { ok: false, error: {...} }
+      // Case: { ok: false, error: {...} }
       if (body.ok === false && body.error) {
         throw wrapError({
           code: body.error.code ?? "INTERNAL_ERROR",
@@ -34,7 +34,7 @@ axiosInstance.interceptors.response.use(
         });
       }
 
-      // { ok: true, data: ... }
+      // Case: { ok: true, data: ... }
       if (body.ok === true && "data" in body) {
         return { ...res, data: body.data };
       }
@@ -50,7 +50,7 @@ axiosInstance.interceptors.response.use(
     const resp = error?.response;
     const respData = resp?.data;
 
-    // Jeśli backend zwrócił normalny ApiError JSON
+    // 1. If the backend returned a standard ApiError JSON (even with a 404 status)
     if (respData && typeof respData === "object") {
       if (respData.ok === false && respData.error) {
         throw wrapError({
@@ -61,8 +61,20 @@ axiosInstance.interceptors.response.use(
           data: respData.error.data,
         });
       }
+    }
 
-      // Jakiś inny structured error
+    // 2. Handle specific HTTP 404 error (when JSON body is missing or empty) 🐤
+    if (resp?.status === 404) {
+      throw wrapError({
+        code: "NOT_FOUND",
+        message: "Resource not found (404)",
+        status: 404,
+        details: respData || "Endpoint does not exist",
+      });
+    }
+
+    // 3. Any other structured error (without the ok: false flag) or HTML error response
+    if (resp) {
       throw wrapError({
         code: "EXTERNAL_SERVICE",
         message: resp?.statusText || "External service error",
@@ -71,7 +83,7 @@ axiosInstance.interceptors.response.use(
       });
     }
 
-    // Timeout
+    // 4. Timeout handling
     if (error?.code === "ECONNABORTED") {
       throw wrapError({
         code: "NETWORK_TIMEOUT",
@@ -81,7 +93,7 @@ axiosInstance.interceptors.response.use(
       });
     }
 
-    // Zupełnie inny network error
+    // 5. Generic network error (e.g., no internet connection)
     throw wrapError({
       code: "NETWORK_ERROR",
       message: error?.message ?? "Network error",
