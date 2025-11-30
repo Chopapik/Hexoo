@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { BsSpeedometer2 } from "react-icons/bs";
+import { BsHourglassSplit } from "react-icons/bs";
 
 export type ThrottleData = {
   ip: string;
@@ -10,64 +10,45 @@ export type ThrottleData = {
 };
 
 export default function ThrottleBlockDisplay({ data }: { data: ThrottleData }) {
-  const [timeLeft, setTimeLeft] = useState<number>(0);
+  const [isLocked, setIsLocked] = useState(true);
+
+  const unlockTime = new Date(data.retryAfter).toLocaleTimeString("pl-PL", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
 
   useEffect(() => {
-    const targetTime = data.retryAfter;
-
-    const update = () => {
+    const checkStatus = () => {
       const now = Date.now();
-      const diff = targetTime - now;
-      setTimeLeft(diff > 0 ? diff : 0);
-
-      if (diff <= 0) {
+      if (now >= data.retryAfter) {
+        setIsLocked(false);
         window.location.href = "/";
       }
     };
-
-    const interval = setInterval(update, 100);
-    update();
+    const interval = setInterval(checkStatus, 1000);
+    checkStatus();
 
     return () => clearInterval(interval);
-  }, [data]);
-
-  const secondsLeft = (timeLeft / 1000).toFixed(1);
+  }, [data.retryAfter]);
 
   return (
-    <div className="w-[480px] p-8 glass-card border border-yellow-500/30 shadow-xl backdrop-blur-xl animate-in fade-in zoom-in-95 duration-200 rounded-[20px]">
-      <div className="flex items-center justify-center mb-5 text-yellow-500">
-        <span className="p-3 bg-yellow-500/10 rounded-full border border-yellow-500/30">
-          <BsSpeedometer2 className="w-8 h-8 text-yellow-400" />
-        </span>
+    <div className="w-full max-w-[420px] flex flex-col items-center">
+      <div className="mb-6 p-3 bg-white/5 rounded-full border border-white/10 text-text-neutral">
+        <BsHourglassSplit className="w-6 h-6 opacity-80" />
       </div>
-
-      <h1 className="text-2xl font-Albert_Sans font-bold text-text-main text-center mb-2">
-        Zwolnij trochę! ✋
+      <h1 className="text-xl font-Albert_Sans font-medium text-text-main text-center mb-2">
+        Tymczasowe ograniczenie
       </h1>
-
-      <p className="text-base text-text-neutral text-center mb-6 font-Albert_Sans">
-        Wysyłasz zbyt wiele zapytań w krótkim czasie. Nasz serwer musi złapać
-        oddech.
+      <p className="text-sm text-text-neutral text-center mb-8 font-Albert_Sans leading-relaxed">
+        Wykryliśmy dużą liczbę zapytań z Twojego urządzenia.
+        <br />
+        Dostęp do serwisu zostanie przywrócony o godzinie:
       </p>
-
-      <div className="bg-yellow-900/20 p-4 rounded-xl border border-yellow-700/50 text-center font-Albert_Sans">
-        <p className="text-xs font-semibold uppercase text-yellow-400 mb-1">
-          Odblokowanie za
-        </p>
-
-        <div className="text-4xl font-extrabold text-yellow-200 font-mono">
-          {secondsLeft} s
-        </div>
-      </div>
-
-      <div className="mt-6 flex justify-center">
-        <button
-          onClick={() => (window.location.href = "/")}
-          disabled={timeLeft > 0}
-          className="px-6 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {timeLeft > 0 ? "Czekaj..." : "Odśwież stronę"}
-        </button>
+      <div className="px-6 py-3 bg-white/5 rounded-lg border border-white/10 mb-8">
+        <span className="text-2xl font-mono font-semibold text-text-main tracking-wider">
+          {unlockTime}
+        </span>
       </div>
     </div>
   );
