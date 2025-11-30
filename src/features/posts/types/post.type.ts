@@ -21,6 +21,8 @@ export interface Post {
   commentsCount: number;
   createdAt: any;
   updatedAt?: any;
+  moderationStatus: "approved" | "pending" | "rejected";
+  flaggedReasons?: string[]; //e.g ["violence"]
 }
 
 export const CreatePostSchema = z.object({

@@ -22,11 +22,12 @@ function sendError(code: string, status = 500, data?: Record<string, any>) {
 
 export function handleError<T>(
   code: string,
+  message: string,
   data?: Record<string, any>,
   status = 500,
   details?: Record<string, any>
 ) {
   //to do, logging success
-  console.warn(details); //in future replaced by logging system
+  console.warn(`message: ${message} details: ${details}`); //in future replaced by logging system
   return sendError(code, status, data);
 }

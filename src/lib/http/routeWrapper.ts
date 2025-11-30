@@ -29,6 +29,7 @@ export function withErrorHandling(
 
       return handleError(
         apiError.code,
+        apiError.message,
         apiError.data,
         apiError.status,
         apiError.details
