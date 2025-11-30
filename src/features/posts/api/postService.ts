@@ -16,6 +16,8 @@ import {
   deleteImage,
   hasFile,
 } from "@/features/images/api/imageService";
+import { moderateText } from "@/features/moderation/api/textModeration";
+
 const POSTS_COLLECTION = "posts";
 
 const normalizePublicUrl = (
@@ -41,13 +43,25 @@ export const createPost = async (postData: CreatePost) => {
     });
   }
 
+  let moderationStatus: "approved" | "pending" = "approved";
+  let flaggedReasons: string[] = [];
+
+  if (postData.text) {
+    const aiResult = await moderateText(postData.text);
+
+    if (aiResult.flagged) {
+      moderationStatus = "pending";
+      flaggedReasons = aiResult.categories;
+    }
+  }
+
   let imageUrl: string | null = null;
   let imageMeta: any = null;
 
   if (hasFile(postData.imageFile)) {
     const upload = await uploadImage(postData.imageFile, user.uid);
     const safePublicUrl = normalizePublicUrl(upload.publicUrl);
-    imageUrl = safePublicUrl;
+    imageUrl = safePublicUrl || null;
 
     imageMeta = {
       storagePath: upload.storagePath,
@@ -67,6 +81,8 @@ export const createPost = async (postData: CreatePost) => {
     device: postData.device ?? "Web",
     createdAt: admin.firestore.FieldValue.serverTimestamp(),
     updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    moderationStatus,
+    flaggedReasons,
   };
 
   const ref = await adminDb.collection(POSTS_COLLECTION).add(doc);
@@ -164,8 +180,9 @@ export const getPosts = async (
     currentUserUid = null;
   }
 
-  let query: FirebaseFirestore.Query = adminDb
+  let query = adminDb
     .collection("posts")
+    .where("moderationStatus", "==", "approved")
     .orderBy("createdAt", "desc")
     .limit(limit);
 
@@ -214,6 +231,7 @@ export const getPosts = async (
         updatedAt: data.updatedAt?.toDate
           ? data.updatedAt.toDate()
           : data.updatedAt,
+        moderationStatus: data.moderationStatus,
       } as Post;
     })
   );
