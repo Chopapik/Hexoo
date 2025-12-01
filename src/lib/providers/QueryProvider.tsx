@@ -49,9 +49,6 @@ const handleGlobalError = (error: any) => {
     }
     return;
   }
-
-  // 4. Normal errors (e.g. wrong password 401) – show a toast
-  toast.error(translateApiError(error));
 };
 
 export default function QueryProvider({

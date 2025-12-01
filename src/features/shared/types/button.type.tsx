@@ -4,7 +4,8 @@ export type ButtonVariant =
   | "gradient-fuchsia"
   | "icon-fuchsia-solid"
   | "icon-fuchsia-ghost"
-  | "glass-card";
+  | "glass-card"
+  | "danger";
 export type ButtonSize = "sm" | "md" | "lg" | "xl" | "icon" | "iconSm";
 
 export interface ButtonProps {

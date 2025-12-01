@@ -1,15 +1,22 @@
 import React from "react";
+import Image from "next/image";
 
 export function NavItem({
   label,
   to,
+  iconUrl, // Added iconUrl prop
   hasNotification = false,
 }: {
   label: string;
   to: string;
+  iconUrl?: string; // Added iconUrl to prop types
   hasNotification?: boolean;
 }) {
   const isActive = false; // neutral placeholder, no routing logic
+
+  const iconClasses =
+    "size-4 left-[4px] top-[3px] absolute " +
+    (isActive ? "text-text-main" : "text-text-neutral group-hover/item:text-text-main"); // Using text-colors for SVG stroke/fill
 
   return (
     <div
@@ -27,14 +34,18 @@ export function NavItem({
       <div className="flex justify-start items-center gap-1 overflow-hidden">
         <div className="relative inline-flex flex-col justify-start items-start overflow-hidden">
           <div className="size-6 relative overflow-hidden">
-            <div
-              className={
-                "size-4 left-[4px] top-[3px] absolute " +
-                (isActive
-                  ? "bg-text-main"
-                  : "bg-text-neutral group-hover/item:bg-text-main")
-              }
-            />
+            {iconUrl ? (
+              <Image src={iconUrl} alt={label} width={24} height={24} className={iconClasses} />
+            ) : (
+              <div
+                className={
+                  "size-4 left-[4px] top-[3px] absolute " +
+                  (isActive
+                    ? "bg-text-main"
+                    : "bg-text-neutral group-hover/item:bg-text-main")
+                }
+              />
+            )}
           </div>
 
           <div className="size-2 left-[16px] top-0 absolute">
