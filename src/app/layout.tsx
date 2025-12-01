@@ -28,28 +28,6 @@ export default function RootLayout({
               </ReduxProvider>
             </QueryProvider>
           </RecaptchaProvider>
-
-          <footer className="w-full py-6 text-center text-xs text-text-neutral opacity-70">
-            Ta strona jest chroniona przez reCAPTCHA, a obowiązują zasady
-            <a
-              href="https://policies.google.com/privacy"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline"
-            >
-              Polityki prywatności
-            </a>
-            oraz
-            <a
-              href="https://policies.google.com/terms"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline"
-            >
-              Warunki korzystania z usług Google
-            </a>
-            .
-          </footer>
         </ClientSecurityGuard>
       </body>
     </html>
