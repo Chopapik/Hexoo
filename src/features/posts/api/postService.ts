@@ -19,6 +19,7 @@ import {
 import { moderateText } from "@/features/moderation/api/textModeration";
 
 const POSTS_COLLECTION = "posts";
+const REPORT_THRESHOLD = 3;
 
 const normalizePublicUrl = (
   u: string | null | undefined
@@ -29,6 +30,48 @@ const normalizePublicUrl = (
   const proto = protoMatch[1];
   const rest = u.slice(proto.length).replace(/^(https?:\/\/)+/i, "");
   return proto + rest;
+};
+
+export const reportPost = async (postId: string, reason: string) => {
+  const user = await getUserFromSession();
+  const postRef = adminDb.collection(POSTS_COLLECTION).doc(postId);
+
+  return await adminDb.runTransaction(async (t) => {
+    const doc = await t.get(postRef);
+    if (!doc.exists) {
+      throw createAppError({ code: "NOT_FOUND", message: "Post nie istnieje" });
+    }
+
+    const data = doc.data()!;
+    const reports = data.userReports || [];
+
+    if (reports.includes(user.uid)) {
+      throw createAppError({
+        code: "CONFLICT",
+      });
+    }
+
+    const newReports = [...reports, user.uid];
+
+    const shouldHide = newReports.length >= REPORT_THRESHOLD;
+
+    const updateData: any = {
+      userReports: newReports,
+    };
+
+    if (shouldHide) {
+      updateData.moderationStatus = "pending";
+      updateData.flaggedReasons =
+        admin.firestore.FieldValue.arrayUnion("user_reports");
+    }
+
+    t.update(postRef, updateData);
+
+    return {
+      hidden: shouldHide,
+      reportsCount: newReports.length,
+    };
+  });
 };
 
 export const createPost = async (postData: CreatePost) => {
