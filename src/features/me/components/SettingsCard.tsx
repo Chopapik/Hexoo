@@ -1,142 +1,99 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import Button from "@/features/shared/components/ui/Button";
-import TextInput from "@/features/shared/components/ui/TextInput";
 import { useLogout } from "@/features/auth/hooks/useLogout";
 import { useDeleteAccount } from "@/features/me/hooks/useDeleteAccount";
-import { useUpdatePassword } from "../hooks/useUpdatePassword";
-import type { PasswordUpdate } from "../me.type";
-import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
+import ChangePasswordModal from "./ChangePasswordModal";
+import ConfirmDeleteModal from "./ConfirmDeleteModal";
+
+const SettingsSection = ({
+  title,
+  children,
+}: {
+  title: string;
+  children: ReactNode;
+}) => (
+  <div className="w-full p-4 md:px-6 md:py-5 bg-primary-neutral-background-default rounded-xl border-t-2 border-primary-neutral-stroke-default shadow-lg">
+    <h3 className="text-lg font-semibold font-Albert_Sans text-text-main mb-4">
+      {title}
+    </h3>
+    <div className="flex flex-col gap-4">{children}</div>
+  </div>
+);
 
 export default function SettingsPage() {
   const { logout } = useLogout();
   const { deleteAccount } = useDeleteAccount();
-  const { updatePassword, isPending } = useUpdatePassword();
-
-  const { executeRecaptcha } = useGoogleReCaptcha();
-
-  const [passwordData, setPasswordData] = useState<PasswordUpdate>({
-    oldPassword: "",
-    newPassword: "",
-    reOldPassword: "",
-  });
-
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
-
-  const updateForm = (field: keyof PasswordUpdate, value: string) => {
-    setPasswordData((prev) => ({ ...prev, [field]: value }));
-    setError(null);
-    setSuccess(null);
-  };
-
-  const validate = (): boolean => {
-    if (
-      !passwordData.newPassword ||
-      !passwordData.oldPassword ||
-      !passwordData.reOldPassword
-    ) {
-      setError("Wypełnij wszystkie pola.");
-      return false;
-    }
-    if (passwordData.newPassword.length < 8) {
-      setError("Nowe hasło musi mieć przynajmniej 8 znaków.");
-      return false;
-    }
-    if (passwordData.newPassword !== passwordData.reOldPassword) {
-      setError("Nowe hasło i potwierdzenie nie są takie same.");
-      return false;
-    }
-    return true;
-  };
-
-  const handlePasswordChange = async () => {
-    if (!executeRecaptcha) {
-      setError("reCAPTCHA nie jest jeszcze gotowa. Spróbuj za chwilę.");
-      return;
-    }
-
-    setError(null);
-    setSuccess(null);
-
-    if (isPending) return;
-    if (!validate()) return;
-
-    try {
-      const token = await executeRecaptcha("change_password");
-
-      await updatePassword({
-        oldPassword: passwordData.oldPassword,
-        newPassword: passwordData.newPassword,
-        reOldPassword: passwordData.reOldPassword,
-        recaptchaToken: token,
-      });
-      setSuccess("Hasło zmienione pomyślnie.");
-      setPasswordData({ oldPassword: "", newPassword: "", reOldPassword: "" });
-    } catch (error: any) {
-      setError(error?.message ?? "Wystąpił błąd podczas zmiany hasła.");
-    }
-  };
+  const [isPasswordModalOpen, setPasswordModalOpen] = useState(false);
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
 
   return (
-    <div className="max-w-[400px] w-full mx-auto mt-10 p-6 text-text-main flex flex-col gap-6">
-      <h2 className="text-2xl font-semibold font-Albert_Sans text-text-main text-center mb-2">
-        Ustawienia konta
-      </h2>
+    <>
+      <div className="w-full text-text-main flex flex-col gap-6 mt-4">
+        <h2 className="text-3xl font-bold font-Albert_Sans text-text-main mb-2">
+          Ustawienia konta
+        </h2>
 
-      <div className="flex flex-col gap-4">
-        <div className="flex flex-col gap-3 bg-white/5 p-4 rounded-xl border border-primary-neutral-background-default/30">
-          <span className="text-sm text-text-neutral">Zmiana hasła</span>
+        {/* --- Password Change Section --- */}
+        <SettingsSection title="Bezpieczeństwo">
+          <div className="flex flex-col md:flex-row items-center justify-between">
+            <div>
+              <h4 className="font-semibold text-text-main">Hasło</h4>
+              <p className="text-sm text-text-neutral">
+                Regularna zmiana hasła zwiększa bezpieczeństwo Twojego konta.
+              </p>
+            </div>
+            <Button
+              text="Zmień hasło"
+              variant="gradient-fuchsia"
+              onClick={() => setPasswordModalOpen(true)}
+            />
+          </div>
+        </SettingsSection>
 
-          <TextInput
-            type="password"
-            value={passwordData.oldPassword}
-            onChange={(e) => updateForm("oldPassword", e.target.value)}
-            placeholder="Aktualne hasło"
-          />
-
-          <TextInput
-            type="password"
-            value={passwordData.newPassword}
-            onChange={(e) => updateForm("newPassword", e.target.value)}
-            placeholder="Nowe hasło"
-          />
-
-          <TextInput
-            type="password"
-            value={passwordData.reOldPassword}
-            onChange={(e) => updateForm("reOldPassword", e.target.value)}
-            placeholder="Powtórz nowe hasło"
-          />
-
-          {error && <div className="text-sm text-red-400 mt-1">{error}</div>}
-          {success && (
-            <div className="text-sm text-green-400 mt-1">{success}</div>
-          )}
-
-          <Button
-            text={isPending ? "Zapisywanie..." : "Zmień hasło"}
-            variant="gradient-fuchsia"
-            onClick={handlePasswordChange}
-            disabled={isPending}
-          />
-        </div>
-
-        <div className="flex flex-col gap-3 bg-white/5 p-4 rounded-xl border border-primary-neutral-background-default/30">
-          <span className="text-sm text-text-neutral">Zarządzanie kontem</span>
-          <Button
-            variant="icon-fuchsia-solid"
-            text="Wyloguj się"
-            onClick={() => logout()}
-          />
-          <Button
-            variant="glass-card"
-            text="Usuń konto"
-            onClick={() => deleteAccount()}
-          />
-        </div>
+        {/* --- Account Management Section --- */}
+        <SettingsSection title="Zarządzanie kontem">
+          <div className="flex flex-col md:flex-row items-center justify-between">
+            <div>
+              <h4 className="font-semibold text-text-main">Wyloguj się</h4>
+              <p className="text-sm text-text-neutral">
+                Zakończ obecną sesję na tym urządzeniu.
+              </p>
+            </div>
+            <Button
+              variant="icon-fuchsia-solid"
+              text="Wyloguj się"
+              onClick={() => logout()}
+            />
+          </div>
+          <div className="w-full h-px bg-primary-neutral-stroke-default my-2" />
+          <div className="flex flex-col md:flex-row items-center justify-between">
+            <div>
+              <h4 className="font-semibold text-red-500">Usuń konto</h4>
+              <p className="text-sm text-text-neutral">
+                Trwałe usunięcie konta i wszystkich powiązanych z nim danych.
+                Tej akcji nie można cofnąć.
+              </p>
+            </div>
+            <Button
+              variant="danger"
+              text="Usuń konto"
+              onClick={() => setDeleteModalOpen(true)}
+            />
+          </div>
+        </SettingsSection>
       </div>
-    </div>
+
+      <ChangePasswordModal
+        isOpen={isPasswordModalOpen}
+        onClose={() => setPasswordModalOpen(false)}
+      />
+      <ConfirmDeleteModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={deleteAccount}
+      />
+    </>
   );
 }

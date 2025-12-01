@@ -3,6 +3,8 @@ import Link from "next/link";
 import { NavItem } from "./NavItem";
 import { useAppSelector } from "@/lib/store/hooks";
 import { UserSessionData } from "@/features/users/types/user.type";
+import keyIconUrl from "@/features/shared/assets/icons/key.svg?url"; // Import the key icon
+import Button from "../../ui/Button";
 
 type LeftNavProps = {
   onOpenRight?: () => void;
@@ -35,10 +37,18 @@ export function LeftNav({ onOpenRight, user }: LeftNavProps) {
             <Link href={`/${user.name}`}>
               <NavItem label={"Twój profil"} to="/profile" />
             </Link>
+            {/* Added Settings NavItem */}
+            <Link href="/settings">
+              <NavItem
+                label={"Ustawienia"}
+                to="/settings"
+                iconUrl={keyIconUrl}
+              />
+            </Link>
           </div>
-          {/* <div className="hidden xl:block">
-        <Button size="xl" onClick={onOpenRight} />
-      </div> */}
+          <div className="hidden xl:block">
+            <Button size="xl" onClick={onOpenRight} />
+          </div>
         </>
       ) : (
         <></>

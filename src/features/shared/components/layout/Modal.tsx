@@ -11,6 +11,7 @@ interface ModalProps {
 }
 
 export default function Modal({
+  isOpen,
   onClose,
   title,
   children,
@@ -24,6 +25,10 @@ export default function Modal({
     window.addEventListener("keydown", handleEsc);
     return () => window.removeEventListener("keydown", handleEsc);
   }, [onClose]);
+
+  if (typeof document === "undefined" || !isOpen) {
+    return null;
+  }
 
   const handleModalClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -75,8 +80,6 @@ export default function Modal({
       </div>
     </div>
   );
-
-  if (typeof document === "undefined") return null;
 
   return createPortal(modalContent, document.body);
 }

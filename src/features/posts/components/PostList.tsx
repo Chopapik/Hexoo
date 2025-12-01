@@ -1,5 +1,4 @@
-﻿// features/posts/components/PostList.tsx
-"use client";
+﻿"use client";
 
 import React, { useEffect, useRef } from "react";
 import type { Post } from "../types/post.type";
@@ -23,7 +22,6 @@ export const PostList = ({ className = "" }: PostListProps) => {
     isFetchingNextPage,
   } = usePosts();
 
-  // Prosta obsługa Infinite Scroll
   const observerTarget = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -47,7 +45,6 @@ export const PostList = ({ className = "" }: PostListProps) => {
     };
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  // Loading Skeleton (zachowujący styl glass-card)
   if (isLoading) {
     return (
       <main className={joinClassNames(className)}>

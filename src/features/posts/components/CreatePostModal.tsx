@@ -12,12 +12,16 @@ import type { CreatePost } from "../types/post.type";
 import { parseErrorMessages } from "../utils/postFormValidation";
 
 interface CreatePostModalProps {
+  isOpen: boolean;
   onClose: () => void;
 }
 
 const MAX_CHARS = 1000;
 
-export default function CreatePostModal({ onClose }: CreatePostModalProps) {
+export default function CreatePostModal({
+  isOpen,
+  onClose,
+}: CreatePostModalProps) {
   const {
     register,
     handleSubmit,
@@ -119,8 +123,13 @@ export default function CreatePostModal({ onClose }: CreatePostModalProps) {
     </div>
   );
 
-  return (
-    <Modal title="Nowy post" onClose={onClose} footer={footerContent}>
+    return (
+    <Modal
+      isOpen={isOpen}
+      title="Nowy post"
+      onClose={onClose}
+      footer={footerContent}
+    >
       <div className="flex flex-col gap-4">
         {imagePreview && (
           <div className="relative w-fit group animate-in fade-in zoom-in-95 duration-200">
