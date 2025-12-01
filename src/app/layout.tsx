@@ -7,6 +7,7 @@ import ReduxProvider from "@/lib/providers/ReduxProvider";
 import QueryProvider from "@/lib/providers/QueryProvider";
 import RecaptchaProvider from "@/lib/providers/RecaptchaProvider";
 import ClientSecurityGuard from "@/features/shared/components/security/ClientSecurityGuard";
+import ToastContainer from "@/lib/providers/ToastContainer";
 export const metadata: Metadata = {
   title: "Hexoo",
 };
@@ -21,7 +22,10 @@ export default function RootLayout({
         <ClientSecurityGuard>
           <RecaptchaProvider>
             <QueryProvider>
-              <ReduxProvider>{children}</ReduxProvider>
+              <ReduxProvider>
+                {children}
+                <ToastContainer />
+              </ReduxProvider>
             </QueryProvider>
           </RecaptchaProvider>
 
