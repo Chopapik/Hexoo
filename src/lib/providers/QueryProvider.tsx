@@ -10,7 +10,6 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { translateApiError } from "@/i18n/errorTranslator";
-import { saveBlock } from "../security/clientBlockStore";
 
 const handleGlobalError = (error: any) => {
   // 1. Safety check: if we're already on the error page, do nothing (avoid loops)
@@ -44,9 +43,6 @@ const handleGlobalError = (error: any) => {
       `/critical-error?status=${codeParam}&details=${detailsParam}`
     );
 
-    if (status === 429) {
-      saveBlock(detailsObj, code);
-    }
     return;
   }
 };
