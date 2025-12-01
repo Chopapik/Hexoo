@@ -1,25 +1,29 @@
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 export function NavItem({
   label,
   to,
-  iconUrl, // Added iconUrl prop
+  iconUrl,
   hasNotification = false,
 }: {
   label: string;
   to: string;
-  iconUrl?: string; // Added iconUrl to prop types
+  iconUrl?: string;
   hasNotification?: boolean;
 }) {
-  const isActive = false; // neutral placeholder, no routing logic
+  const isActive = false;
 
   const iconClasses =
     "size-4 left-[4px] top-[3px] absolute " +
-    (isActive ? "text-text-main" : "text-text-neutral group-hover/item:text-text-main"); // Using text-colors for SVG stroke/fill
+    (isActive
+      ? "text-text-main"
+      : "text-text-neutral group-hover/item:text-text-main");
 
   return (
-    <div
+    <Link
+      href={to}
       className="rounded-xl inline-flex justify-start items-center gap-5 group/item cursor-pointer"
       aria-current={isActive ? "page" : undefined}
     >
@@ -35,7 +39,13 @@ export function NavItem({
         <div className="relative inline-flex flex-col justify-start items-start overflow-hidden">
           <div className="size-6 relative overflow-hidden">
             {iconUrl ? (
-              <Image src={iconUrl} alt={label} width={24} height={24} className={iconClasses} />
+              <Image
+                src={iconUrl}
+                alt={label}
+                width={24}
+                height={24}
+                className={iconClasses}
+              />
             ) : (
               <div
                 className={
@@ -68,6 +78,6 @@ export function NavItem({
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
