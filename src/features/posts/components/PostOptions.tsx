@@ -51,7 +51,7 @@ export default function PostOptions({
             e.stopPropagation();
             setIsMenuOpen(!isMenuOpen);
           }}
-          className="p-2 text-text-neutral hover:text-text-main transition-colors rounded-full hover:bg-white/5"
+          className="p-2 text-text-neutral hover:text-text-main transition-colors rounded-xl hover:bg-white/5"
         >
           <DotsIcon />
         </button>

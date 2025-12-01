@@ -4,6 +4,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/pl";
 import PostOptions from "./PostOptions";
+import Link from "next/link";
 
 dayjs.extend(relativeTime);
 dayjs.locale("pl");
@@ -28,7 +29,12 @@ export const PostMeta = ({ post }: PostMetaProps) => {
     <div className="w-full flex justify-between items-start">
       <div className="inline-flex justify-start items-center gap-2">
         <div className="size-10">
-          <Avatar src={post.userAvatarUrl} alt={post.userName} />
+          <Link href={`/${post.userName}`}>
+            <Avatar
+              src={post.userAvatarUrl ?? undefined}
+              alt={post.userName ?? undefined}
+            />
+          </Link>
         </div>
         <div className="self-stretch inline-flex flex-col justify-center items-start">
           <div className="justify-start text-text-main text-sm font-medium font-Albert_Sans">
