@@ -1,4 +1,5 @@
-﻿import type { Post } from "../types/post.type";
+﻿import Link from "next/link";
+import type { Post } from "../types/post.type";
 
 type PostBodyProps = {
   post: Post;
@@ -12,6 +13,7 @@ export const PostBody = ({ post }: PostBodyProps) => {
         <div className="self-stretch justify-start text-text-main text-base font-normal font-Albert_Sans">
           {post.text}
         </div>
+
         {post.imageUrl && (
           <img
             className="w-auto max-h-96 relative rounded-xl "
