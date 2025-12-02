@@ -28,7 +28,9 @@ export default async function RootLayout({
   const isAdmin = sessionUserData?.role === "admin";
 
   return isAdmin ? (
-    <div className="w-screen ">{children}</div>
+    <div className="w-full min-h-screen bg-page-background flex flex-col">
+      {children}
+    </div>
   ) : (
     <div className="text-white">:/</div>
   );
