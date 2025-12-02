@@ -25,7 +25,7 @@ export const PostBody = ({ post }: PostBodyProps) => {
         </div>
 
         {post.imageUrl && (
-          <img
+<img
             className="w-full relative rounded-xl object-cover"
             src={post.imageUrl}
             alt="Post content"
