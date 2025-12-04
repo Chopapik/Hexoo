@@ -5,7 +5,6 @@ import TextInput from "@/features/shared/components/ui/TextInput";
 import Button from "@/features/shared/components/ui/Button";
 import useCreateUser from "../hooks/user/useAdminCreateUser";
 import type { UserRole } from "@/features/users/types/user.type";
-import { generatePassword } from "@/features/auth/utils/generatePassword";
 
 export default function AdminUserCreateModal({
   onClose,
@@ -17,30 +16,12 @@ export default function AdminUserCreateModal({
   const [password, setPassword] = useState("");
   const [role, setRole] = useState<UserRole>("user");
 
-  const [formulaInfo, setFormulaInfo] = useState<{
-    a: number;
-    x: number;
-    result: string;
-  } | null>(null);
-
   const { createUser, isPending } = useCreateUser();
 
   const handleCreate = () => {
     if (!email || !password || !name) return;
 
     createUser({ name, email, password, role }, { onSuccess: () => onClose() });
-  };
-
-  const handleGeneratePass = () => {
-    const safeName = name || "default";
-    const { password: newPass, x, rawValue } = generatePassword(safeName);
-
-    setPassword(newPass);
-    setFormulaInfo({
-      a: safeName.length,
-      x: x,
-      result: rawValue.toFixed(4),
-    });
   };
 
   return (
@@ -139,50 +120,14 @@ export default function AdminUserCreateModal({
                 <div className="flex-1">
                   <TextInput
                     label="Hasło"
-                    type="text"
+                    type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     showButton={false}
-                    placeholder="Wpisz lub wygeneruj..."
+                    placeholder="Wpisz hasło..."
                   />
                 </div>
-                <Button text="Generuj" size="md" onClick={handleGeneratePass} />
               </div>
-
-              {formulaInfo && (
-                <div className="w-full bg-black/40 rounded-lg border border-white/5 p-3 animate-in slide-in-from-top-1 duration-300">
-                  <div className="flex justify-between items-center mb-2 border-b border-white/5 pb-2">
-                    <span className="text-[10px] uppercase tracking-widest text-text-neutral font-bold">
-                      ALGORYTM
-                    </span>
-                    <span className="text-[10px] font-mono text-text-neutral/60">
-                      y = a * sin(1/x)
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-3 gap-2 font-mono text-xs">
-                    <div className="flex flex-col items-center p-1 bg-white/5 rounded">
-                      <span className="text-text-neutral/60 text-[10px]">
-                        a
-                      </span>
-                      <span className="text-text-main">{formulaInfo.a}</span>
-                    </div>
-                    <div className="flex flex-col items-center p-1 bg-white/5 rounded">
-                      <span className="text-text-neutral/60 text-[10px]">
-                        x
-                      </span>
-                      <span className="text-text-main">{formulaInfo.x}</span>
-                    </div>
-                    <div className="flex flex-col items-center p-1 bg-fuchsia-500/10 border border-fuchsia-500/20 rounded">
-                      <span className="text-fuchsia-400/80 text-[10px]">
-                        Wynik
-                      </span>
-                      <span className="text-fuchsia-300 font-bold">
-                        {formulaInfo.result}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
 
