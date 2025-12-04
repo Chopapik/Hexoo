@@ -47,3 +47,9 @@ export interface UserProfile {
   lastOnline?: Date;
   createdAt: Date;
 }
+
+export interface UserBlockData {
+  uidToBlock: string;
+  bannedBy: string;
+  bannedReason: string;
+}

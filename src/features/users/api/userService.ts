@@ -1,7 +1,8 @@
-import { adminDb } from "@/lib/firebaseAdmin";
+import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
 import admin from "firebase-admin";
-import type { User, UserProfile } from "../types/user.type";
+import type { User, UserBlockData, UserProfile } from "../types/user.type";
 import { createAppError } from "@/lib/ApiError";
+import { ensureModeratorOrAdmin } from "@/features/moderator/api/moderatorService";
 
 export async function createUserDocument(
   uid: string,
@@ -67,3 +68,45 @@ export async function getUserProfile(name: string) {
 
   return { user: userProfile };
 }
+
+export const blockUser = async (data: UserBlockData) => {
+  await ensureModeratorOrAdmin();
+
+  if (!data.uidToBlock) {
+    throw createAppError({
+      message: "No 'uid' in blockUser()",
+    });
+  }
+
+  await adminAuth.updateUser(data.uidToBlock, { disabled: true });
+
+  await adminDb.collection("users").doc(data.uidToBlock).update({
+    isBanned: true,
+    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    bannedBy: data.bannedBy,
+    bannedReason: data.bannedReason,
+  });
+
+  return;
+};
+
+export const unblockUser = async (uid: string) => {
+  await ensureModeratorOrAdmin();
+
+  if (!uid) {
+    throw createAppError({
+      message: "No 'uid' in unblockUser",
+    });
+  }
+
+  await adminAuth.updateUser(uid, { disabled: false });
+
+  await adminDb.collection("users").doc(uid).update({
+    isBanned: false,
+    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    bannedBy: null,
+    bannedReason: undefined,
+  });
+
+  return;
+};

@@ -3,8 +3,10 @@ import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
 import { createAppError } from "@/lib/ApiError";
 import { Post } from "@/features/posts/types/post.type";
 import { FieldValue } from "firebase-admin/firestore";
+import { blockUser } from "@/features/users/api/userService";
+import { UserBlockData } from "@/features/users/types/user.type";
 
-const ensureModeratorOrAdmin = async () => {
+export const ensureModeratorOrAdmin = async () => {
   const session = await getUserFromSession();
   if (session.role !== "moderator" && session.role !== "admin") {
     throw createAppError({
@@ -76,12 +78,11 @@ export const reviewPost = async (
   if (banAuthor) {
     const authorId = postSnap.data()?.userId;
     if (authorId) {
-      const userRef = adminDb.collection("users").doc(authorId);
-      batch.update(userRef, {
-        isBanned: true,
+      await blockUser({
+        uidToBlock: authorId,
         bannedBy: moderator.uid,
         bannedReason: `Decision on post ${postId}`,
-      });
+      } as UserBlockData);
     }
   }
 
