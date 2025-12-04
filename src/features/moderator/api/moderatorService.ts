@@ -3,7 +3,7 @@ import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
 import { createAppError } from "@/lib/ApiError";
 import { Post } from "@/features/posts/types/post.type";
 import { FieldValue } from "firebase-admin/firestore";
-import { blockUser } from "@/features/users/api/userService";
+import { blockUser, unblockUser } from "@/features/users/api/userService";
 import { UserBlockData } from "@/features/users/types/user.type";
 
 export const ensureModeratorOrAdmin = async () => {
@@ -75,8 +75,10 @@ export const reviewPost = async (
     });
   }
 
+  let authorId: string | undefined;
+
   if (banAuthor) {
-    const authorId = postSnap.data()?.userId;
+    authorId = postSnap.data()?.userId;
     if (authorId) {
       await blockUser({
         uidToBlock: authorId,
@@ -86,6 +88,36 @@ export const reviewPost = async (
     }
   }
 
-  await batch.commit();
+  try {
+    await batch.commit();
+  } catch (error) {
+    if (banAuthor && authorId) {
+      console.error(
+        `[ReviewPost] Batch failed. Rolling back ban for user ${authorId}...`
+      );
+      try {
+        await unblockUser(authorId);
+        console.log(
+          `[ReviewPost] Rollback successful. User ${authorId} unblocked.`
+        );
+      } catch (rollbackError) {
+        throw createAppError({
+          code: "INTERNAL_ERROR",
+          message:
+            "[ReviewPost] CRITICAL: Failed to rollback ban for user ${authorId}",
+        });
+      }
+    }
+    if (error instanceof Error) {
+      throw createAppError({
+        code: "INTERNAL_ERROR",
+        message: error.message,
+      });
+    }
+    throw createAppError({
+      code: "INTERNAL_ERROR",
+    });
+  }
+
   return { success: true, action, postId };
 };
