@@ -64,7 +64,7 @@ const ModerationQueueItem = ({ post, onAction, isPending }: any) => {
 
         <PostCard post={post} />
 
-        <div className="bg-[#151515] p-3 flex flex-wrap justify-end gap-3 border-t border-white/10 shadow-[0_-5px_15px_rgba(0,0,0,0.5)]">
+        <div className="bg-secondary-neutral-background-default p-3 flex flex-wrap justify-end gap-3 border-t border-white/10 shadow-[0_-5px_15px_rgba(0,0,0,0.5)]">
           <Button
             text="Banuj Autora & Usuń"
             variant="danger"
@@ -107,7 +107,7 @@ export default function ModeratorDashboard() {
     );
 
   return (
-    <div className="w-full max-w-[920px] mx-auto pt-6 flex flex-col gap-6 pb-20">
+    <div className="w-full max-w-4xl mx-auto pt-6 flex flex-col gap-6 pb-20">
       <div className="glass-card p-6 rounded-xl border border-primary-fuchsia-stroke-default bg-black/40 backdrop-blur-md">
         <h1 className="text-2xl font-bold text-text-main font-Albert_Sans">
           Panel Moderatora 🛡️
@@ -124,7 +124,7 @@ export default function ModeratorDashboard() {
       </div>
 
       {posts?.length === 0 && (
-        <div className="text-center text-text-neutral py-20 bg-white/5 rounded-xl border border-dashed border-white/10">
+        <div className="text-center text-text-neutral py-20 bg-white/5 rounded-xl border border-dashed border-secondary-neutral-background-default">
           <p className="text-xl">Czysto! ✨</p>
           <p className="text-sm mt-2 opacity-60">
             Brak postów wymagających uwagi.
