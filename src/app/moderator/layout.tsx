@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
 import { ApiError } from "@/lib/ApiError";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Hexoo",
 };
 
-export default async function RootLayout({
+export default async function ModeratorLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -26,7 +26,10 @@ export default async function RootLayout({
     throw error;
   }
 
-  if (sessionUserData?.role !== "admin") {
+  if (
+    sessionUserData?.role !== "admin" &&
+    sessionUserData?.role !== "moderator"
+  ) {
     notFound();
   }
 

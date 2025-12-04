@@ -7,7 +7,9 @@ export const POST = withErrorHandling(
     const { id } = await context.params;
     const body = await req.json();
 
-    const result = await reportPost(id, body.reason || "spam");
+    const { reason, details } = body;
+
+    const result = await reportPost(id, reason, details);
 
     return handleSuccess(result);
   }

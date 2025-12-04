@@ -8,6 +8,13 @@ import z from "zod";
 
 // export type DeviceInfo = z.infer<typeof DeviceSchema>;
 
+export interface ReportDetails {
+  uid: string;
+  reason: string;
+  details?: string;
+  createdAt: string;
+}
+
 export interface Post {
   id: string;
   userId: string;
@@ -21,6 +28,8 @@ export interface Post {
   commentsCount: number;
   createdAt: any;
   updatedAt?: any;
+  userReports?: string[];
+  reportsMeta?: ReportDetails[];
   moderationStatus: "approved" | "pending" | "rejected";
   flaggedReasons?: string[]; //e.g ["violence"]
 }

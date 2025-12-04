@@ -75,7 +75,7 @@ function UncannyOrganism() {
 
 export default function Hexoo3D() {
   return (
-    <div className="w-full h-64 rounded-2xl overflow-hidden bg-black/40 border border-primary-neutral-stroke-default relative group cursor-grab active:cursor-grabbing">
+    <div className="w-full h-64 rounded-2xl overflow-hidden glass-card relative group cursor-grab active:cursor-grabbing">
       {/* Vignette and scanline effect (optional, for mood) */}
       <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.4)_100%)] z-10" />
 

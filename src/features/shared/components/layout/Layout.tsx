@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Header } from "./Header";
 import { LeftNav } from "./LeftNav/LeftNav";
 import { BottomNav } from "./LeftNav/BottomNav";
 import { RightNavSidebar, RightNavOverlay } from "./RightNav/RightNav";
 import { UserSessionData } from "@/features/users/types/user.type";
+import { setUser } from "@/features/auth/store/authSlice";
+import { useAppDispatch } from "@/lib/store/hooks";
 
 export const Layout: React.FC<{
   children: React.ReactNode;
@@ -14,6 +16,12 @@ export const Layout: React.FC<{
   const [isRightNavOpen, setIsRightNavOpen] = useState(false);
   const openRight = () => setIsRightNavOpen(true);
   const closeRight = () => setIsRightNavOpen(false);
+
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(setUser(user));
+  }, [user, dispatch]);
 
   return (
     <div className="flex justify-center bg-page-background w-full min-h-screen">

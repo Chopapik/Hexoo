@@ -8,6 +8,7 @@ import {
   type CreatePost,
   type UpdatePost,
   type Post,
+  ReportDetails,
 } from "../types/post.type";
 import { formatZodErrorFlat } from "@/lib/zod";
 
@@ -17,6 +18,7 @@ import {
   hasFile,
 } from "@/features/images/api/imageService";
 import { moderateText } from "@/features/moderation/api/textModeration";
+import { FieldValue } from "firebase-admin/firestore";
 
 const POSTS_COLLECTION = "posts";
 const REPORT_THRESHOLD = 3;
@@ -32,7 +34,11 @@ const normalizePublicUrl = (
   return proto + rest;
 };
 
-export const reportPost = async (postId: string, reason: string) => {
+export const reportPost = async (
+  postId: string,
+  reason: string,
+  details?: string
+) => {
   const user = await getUserFromSession();
   const postRef = adminDb.collection(POSTS_COLLECTION).doc(postId);
 
@@ -53,10 +59,19 @@ export const reportPost = async (postId: string, reason: string) => {
 
     const newReports = [...reports, user.uid];
 
+    const newReportMeta: ReportDetails = {
+      uid: user.uid,
+      reason: reason,
+      details: details || "",
+      createdAt: new Date().toISOString(),
+    };
+    2;
     const shouldHide = newReports.length >= REPORT_THRESHOLD;
 
     const updateData: any = {
+      reportsMeta: FieldValue.arrayUnion(newReportMeta),
       userReports: newReports,
+      updatedAt: FieldValue.serverTimestamp(),
     };
 
     if (shouldHide) {
