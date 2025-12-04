@@ -1,11 +1,9 @@
 import admin from "firebase-admin";
 import { randomUUID } from "crypto";
 import { createAppError } from "@/lib/ApiError";
+import sharp from "sharp";
 
-const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
-const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const STORAGE_FOLDER = "posts";
-
 const bucket = admin.storage().bucket();
 
 const ensureBucket = () => {
@@ -17,7 +15,9 @@ const ensureBucket = () => {
   }
 };
 
-const normalizeFile = async (file: any) => {
+export const uploadImage = async (file: File | Blob, uid = "anon") => {
+  ensureBucket();
+
   if (!file) {
     throw createAppError({
       code: "INVALID_INPUT",
@@ -25,93 +25,54 @@ const normalizeFile = async (file: any) => {
     });
   }
 
-  if (typeof file.arrayBuffer === "function") {
-    // Browser File
-    const ab = await file.arrayBuffer().catch((err: any) => {
-      throw createAppError({
-        code: "INVALID_INPUT",
-        message: "Failed to read file",
-        details: err,
-      });
-    });
-
-    return {
-      buffer: Buffer.from(ab),
-      contentType: file.type || "application/octet-stream",
-      originalName: file.name || "upload",
-    };
-  }
-
-  if (file?.buffer && Buffer.isBuffer(file.buffer)) {
-    // multer-like
-    return {
-      buffer: file.buffer,
-      contentType: file.mimetype || "application/octet-stream",
-      originalName: file.originalname || "upload",
-    };
-  }
-
-  if (Buffer.isBuffer(file)) {
-    return {
-      buffer: file,
-      contentType: "application/octet-stream",
-      originalName: "upload",
-    };
-  }
-
-  throw createAppError({
-    code: "INVALID_INPUT",
-    message: "Unsupported file format",
-  });
-};
-
-export const uploadImage = async (file: any, uid = "anon") => {
-  ensureBucket();
-
-  const { buffer, contentType, originalName } = await normalizeFile(file);
-
-  if (!buffer.length) {
+  let inputBuffer: Buffer;
+  try {
+    const arrayBuffer = await file.arrayBuffer();
+    inputBuffer = Buffer.from(arrayBuffer);
+  } catch (e) {
     throw createAppError({
       code: "INVALID_INPUT",
-      message: "Empty file",
+      message: "Failed to read file",
     });
   }
 
-  if (buffer.length > MAX_IMAGE_BYTES) {
+  let processedBuffer: Buffer;
+  try {
+    processedBuffer = await sharp(inputBuffer)
+      .resize(1920, 1920, {
+        fit: "inside",
+        withoutEnlargement: true,
+      })
+      .webp({ quality: 80 })
+      .toBuffer();
+  } catch (err) {
     throw createAppError({
       code: "VALIDATION_ERROR",
-      message: "Image too large",
-    });
-  }
-
-  if (contentType && !ALLOWED_TYPES.includes(contentType)) {
-    throw createAppError({
-      code: "VALIDATION_ERROR",
-      message: "Unsupported image type",
+      message: "Invalid image file or format not supported",
+      details: err,
     });
   }
 
   const ts = Date.now();
-  const ext = originalName.split(".").pop() || "bin";
   const id = randomUUID();
-  const storagePath = `${STORAGE_FOLDER}/${uid}_${ts}_${id}.${ext}`;
+  const storagePath = `${STORAGE_FOLDER}/${uid}_${ts}_${id}.webp`;
   const downloadToken = randomUUID();
 
-  const metadata = {
-    contentType,
-    metadata: { firebaseStorageDownloadTokens: downloadToken },
-  };
-
   try {
-    await bucket.file(storagePath).save(buffer, {
-      metadata,
+    const fileRef = bucket.file(storagePath);
+
+    await fileRef.save(processedBuffer, {
+      metadata: {
+        contentType: "image/webp",
+        metadata: {
+          firebaseStorageDownloadTokens: downloadToken,
+        },
+      },
       resumable: false,
     });
 
     const bucketName = bucket.name;
-    const emulatorHost =
-      process.env.STORAGE_EMULATOR_HOST ||
-      process.env.FIREBASE_STORAGE_EMULATOR_HOST;
+    const emulatorHost = process.env.FIREBASE_STORAGE_EMULATOR_HOST;
 
     const publicUrl = emulatorHost
       ? `http://${emulatorHost}/v0/b/${bucketName}/o/${encodeURIComponent(
@@ -125,13 +86,13 @@ export const uploadImage = async (file: any, uid = "anon") => {
       publicUrl,
       storagePath,
       downloadToken,
-      contentType,
-      sizeBytes: buffer.length,
+      contentType: "image/webp",
+      sizeBytes: processedBuffer.length,
     };
   } catch (err) {
     throw createAppError({
       code: "EXTERNAL_SERVICE",
-      message: "Failed to upload image",
+      message: "Failed to upload image to storage",
       details: err,
     });
   }
@@ -139,9 +100,7 @@ export const uploadImage = async (file: any, uid = "anon") => {
 
 export const deleteImage = async (storagePath: string | null | undefined) => {
   if (!storagePath) return;
-
   ensureBucket();
-
   try {
     await bucket
       .file(storagePath)
@@ -151,18 +110,12 @@ export const deleteImage = async (storagePath: string | null | undefined) => {
         throw err;
       });
   } catch (err) {
-    throw createAppError({
-      code: "EXTERNAL_SERVICE",
-      message: "Failed to delete image",
-      details: err,
-    });
+    console.warn("Failed to delete image", err);
   }
 };
 
 export const hasFile = (f: any): boolean => {
   if (!f) return false;
   if (typeof f.size === "number") return f.size > 0;
-  if (f?.buffer && Buffer.isBuffer(f.buffer)) return f.buffer.length > 0;
-  if (Buffer.isBuffer(f)) return f.length > 0;
   return false;
 };

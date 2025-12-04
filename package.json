@@ -33,6 +33,7 @@
     "react-loading-indicators": "^1.0.1",
     "react-redux": "^9.2.0",
     "redux": "^5.0.1",
+    "sharp": "^0.34.5",
     "zod": "^4.1.12"
   },
   "devDependencies": {
