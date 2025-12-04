@@ -32,7 +32,7 @@ export default function CriticalErrorPage() {
   }
 
   return (
-    <div className="w-full flex justify-center pt-10 min-h-screen bg-page-background">
+    <div className="w-full min-h-screen flex flex-col items-center justify-center ">
       {status === "RATE_LIMIT" && errorData.lockoutUntil && (
         <AuthBlockDisplay data={errorData as AuthBlockData} />
       )}

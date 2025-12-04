@@ -33,7 +33,8 @@ export default function ThrottleBlockDisplay({ data }: { data: ThrottleData }) {
   }, [data.retryAfter]);
 
   return (
-    <div className="w-full max-w-[420px] flex flex-col items-center">
+    <div className="w-full max-w-md p-10 glass-card border border-fuchsia-500/20 shadow-2xl rounded-2xl flex h-fit flex-col items-center">
+      {" "}
       <div className="mb-6 p-3 bg-white/5 rounded-full border border-white/10 text-text-neutral">
         <BsHourglassSplit className="w-6 h-6 opacity-80" />
       </div>

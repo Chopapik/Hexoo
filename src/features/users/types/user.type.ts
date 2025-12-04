@@ -36,7 +36,7 @@ export type UserSessionData = {
   uid: string;
   email: string;
   name: string;
-  role: string;
+  role: UserRole;
   avatarUrl?: string;
 };
 

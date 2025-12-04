@@ -1,6 +1,3 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import { BsShieldLockFill } from "react-icons/bs";
 
 export type AuthBlockData = {
@@ -13,8 +10,6 @@ export type AuthBlockData = {
 };
 
 export default function AuthBlockDisplay({ data }: { data: AuthBlockData }) {
-  const [isLocked, setIsLocked] = useState(true);
-
   const lockoutTimestamp = data.lockoutUntil._seconds * 1000;
 
   const unlockTime = new Date(lockoutTimestamp).toLocaleTimeString("pl-PL", {
@@ -23,23 +18,8 @@ export default function AuthBlockDisplay({ data }: { data: AuthBlockData }) {
     second: "2-digit",
   });
 
-  useEffect(() => {
-    const checkStatus = () => {
-      const now = Date.now();
-      if (now >= lockoutTimestamp) {
-        setIsLocked(false);
-        window.location.href = "/login";
-      }
-    };
-
-    const interval = setInterval(checkStatus, 1000);
-    checkStatus();
-
-    return () => clearInterval(interval);
-  }, [lockoutTimestamp]);
-
   return (
-    <div className="w-full max-w-[420px] max-h-fit p-8 glass-card border border-red-500/20 shadow-2xl rounded-2xl flex flex-col items-center">
+    <div className="w-full flex-1 max-w-md p-10 glass-card rounded-2xl flex h-fit flex-col items-center">
       <div className="mb-6 p-3 bg-red-500/10 rounded-full border border-red-500/20 text-red-500">
         <BsShieldLockFill className="w-6 h-6 opacity-90" />
       </div>

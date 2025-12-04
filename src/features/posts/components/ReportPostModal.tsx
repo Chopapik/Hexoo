@@ -43,7 +43,7 @@ export default function ReportPostModal({
       />
       <Button
         text={isPending ? "Wysyłanie..." : "Zgłoś post"}
-        variant="gradient-fuchsia" // Użyjmy czerwonego stylu jeśli masz, jeśli nie to fuksja
+        variant="gradient-fuchsia"
         size="sm"
         onClick={handleSubmit}
         disabled={isPending}
@@ -57,15 +57,13 @@ export default function ReportPostModal({
       onClose={onClose}
       title="Zgłoś naruszenie"
       footer={footer}
-      className="max-w-md" // Węższy modal
+      className="max-w-md"
     >
       <div className="flex flex-col gap-4 p-2">
         <p className="text-sm text-text-neutral">
           Pomóż nam zrozumieć, co jest nie tak z tym postem. Jeśli post narusza
           zasady, zostanie usunięty.
         </p>
-
-        {/* Lista powodów (Radio-like) */}
         <div className="flex flex-col gap-2">
           {REPORT_REASONS.map((item) => (
             <label
@@ -85,7 +83,7 @@ export default function ReportPostModal({
                 value={item.id}
                 checked={reason === item.id}
                 onChange={(e) => setReason(e.target.value)}
-                className="hidden" // Ukrywamy natywne radio, stylujemy kontener
+                className="hidden"
               />
               <div
                 className={`w-4 h-4 rounded-full border flex items-center justify-center ${
@@ -102,8 +100,6 @@ export default function ReportPostModal({
             </label>
           ))}
         </div>
-
-        {/* Opcjonalny opis */}
         {reason === "other" && (
           <div className="mt-2 animate-in fade-in slide-in-from-top-2">
             <TextInput

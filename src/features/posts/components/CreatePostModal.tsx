@@ -91,7 +91,7 @@ export default function CreatePostModal({
 
         <button
           onClick={() => fileInputRef.current?.click()}
-          className="text-text-neutral hover:text-text-main p-2 rounded-full hover:bg-white/10 transition-all"
+          className="text-text-neutral hover:text-text-main p-2 rounded-xl hover:bg-secondary-neutral-background-hover transition-all"
           title="Dodaj zdjęcie"
         >
           <PaperclipIcon className="w-5 h-5" />
@@ -115,7 +115,7 @@ export default function CreatePostModal({
         `}
       >
         {isPending ? (
-          <div className="w-5 h-5 border-2 border-t-transparent border-black rounded-full animate-spin" />
+          <div className="w-5 h-5 border-2 border-t-transparent border-black rounded-xl animate-spin" />
         ) : (
           <SendIcon className="w-5 h-5" />
         )}
@@ -123,7 +123,7 @@ export default function CreatePostModal({
     </div>
   );
 
-    return (
+  return (
     <Modal
       isOpen={isOpen}
       title="Nowy post"
