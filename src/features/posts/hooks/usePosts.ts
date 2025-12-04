@@ -9,7 +9,7 @@ export default function usePosts() {
     queryKey: ["posts"],
     queryFn: async ({ pageParam }) => {
       const params = new URLSearchParams({
-        limit: "5",
+        limit: "20",
       });
 
       if (pageParam) {
