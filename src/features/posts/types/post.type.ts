@@ -8,6 +8,8 @@ import z from "zod";
 
 // export type DeviceInfo = z.infer<typeof DeviceSchema>;
 
+export const POST_MAX_CHARS = 1000;
+
 export interface ReportDetails {
   uid: string;
   reason: string;
@@ -35,7 +37,7 @@ export interface Post {
 }
 
 export const CreatePostSchema = z.object({
-  text: z.string().trim().max(1000, { message: "text_too_long" }),
+  text: z.string().trim().max(POST_MAX_CHARS, { message: "text_too_long" }),
   imageFile: z
     .instanceof(File)
     .optional()

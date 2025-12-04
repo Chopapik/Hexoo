@@ -10,13 +10,11 @@ import useCreatePostForm from "../hooks/useCreatePostForm";
 import useCreatePost from "../hooks/useCreatePost";
 import type { CreatePost } from "../types/post.type";
 import { parseErrorMessages } from "../utils/postFormValidation";
-
+import { POST_MAX_CHARS } from "../types/post.type";
 interface CreatePostModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
-
-const MAX_CHARS = 1000;
 
 export default function CreatePostModal({
   isOpen,
@@ -45,7 +43,7 @@ export default function CreatePostModal({
 
   const textValue = watch("text") || "";
   const currentLength = textValue.length;
-  const isOverLimit = currentLength > MAX_CHARS;
+  const isOverLimit = currentLength > POST_MAX_CHARS;
 
   const { createPost, isPending } = useCreatePost(
     () => {
@@ -180,7 +178,7 @@ export default function CreatePostModal({
               }
             `}
           >
-            {currentLength} / {MAX_CHARS}
+            {currentLength} / {POST_MAX_CHARS}
           </div>
         </div>
       </div>
