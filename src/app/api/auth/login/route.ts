@@ -1,24 +1,31 @@
-import { loginUser } from "@/features/auth/api/authService";
+import { createSession } from "@/features/auth/api/authService";
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import { createAppError } from "@/lib/ApiError";
 import { verifyRecaptchaToken } from "@/lib/recaptcha";
-import axios from "axios";
 
 export const POST = withErrorHandling(async (req: Request) => {
   const body = await req.json();
+  const { idToken, recaptchaToken } = body;
 
-  const { recaptchaToken, ...loginData } = body;
   if (!recaptchaToken) {
     throw createAppError({
       code: "FORBIDDEN",
-      message: "Brak weryfikacji reCAPTCHA",
+      message: "No reCAPTCHA login route",
+    });
+  }
+
+  if (!idToken) {
+    throw createAppError({
+      code: "INVALID_INPUT",
+      message: "No idToken in login route",
     });
   }
 
   await verifyRecaptchaToken(recaptchaToken);
 
-  const result = await loginUser(loginData);
+  // Wywołujemy nową funkcję createSession zamiast starego loginUser
+  const result = await createSession(idToken);
 
   return handleSuccess(result);
 });

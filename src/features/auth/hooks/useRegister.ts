@@ -4,42 +4,29 @@ import { RegisterData } from "../types/auth.types";
 import axiosInstance from "@/lib/axiosInstance";
 import { ApiError } from "@/lib/ApiError";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 
 type ErrorCallback = (errorCode: string, field?: string) => void;
 
 export default function useRegister(onErrorCallback: ErrorCallback) {
   const router = useRouter();
-
   const { executeRecaptcha } = useGoogleReCaptcha();
 
-  const registerMutation = useMutation({
-    mutationFn: (dataWithToken: RegisterData & { recaptchaToken: string }) =>
-      axiosInstance.post(`/auth/register`, dataWithToken),
+  const sessionMutation = useMutation({
+    mutationFn: (data: {
+      idToken: string;
+      name: string;
+      email: string;
+      recaptchaToken: string;
+    }) => axiosInstance.post(`/auth/register`, data),
 
     onSuccess: () => {
       router.push("/");
     },
 
     onError: (error: ApiError) => {
-      console.log("error", error);
       if (!error) return;
-      if (error.code === "VALIDATION_ERROR" && error.data?.details) {
-        if (typeof error.data.details === "object") {
-          Object.entries(error.data.details).forEach(([field, messages]) => {
-            const msgArray = messages as string[];
-            if (msgArray.length > 0) {
-              onErrorCallback(msgArray[0], field);
-            }
-          });
-          return;
-        }
-
-        const code = error.data?.code;
-        if (code === "auth/email-already-exists") {
-          onErrorCallback(code, error.data.field);
-          return;
-        }
-      }
 
       if (error.code === "CONFLICT" && error.data?.field) {
         onErrorCallback(error.data.code || "username_taken", error.data.field);
@@ -55,18 +42,39 @@ export default function useRegister(onErrorCallback: ErrorCallback) {
       return;
     }
 
-    const token = await executeRecaptcha("register");
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        data.email,
+        data.password
+      );
+      await updateProfile(userCredential.user, { displayName: data.name });
 
-    const dataWithToken = {
-      ...data,
-      recaptchaToken: token,
-    };
+      const idToken = await userCredential.user.getIdToken();
+      const recaptchaToken = await executeRecaptcha("register");
 
-    registerMutation.mutate(dataWithToken);
+      sessionMutation.mutate({
+        idToken,
+        name: data.name,
+        email: data.email,
+        recaptchaToken,
+      });
+    } catch (error: any) {
+      console.error("Client register error:", error);
+      const errorCode = error.code;
+
+      if (errorCode === "auth/email-already-in-use") {
+        onErrorCallback("auth/email-already-exists", "email");
+      } else if (errorCode === "auth/weak-password") {
+        onErrorCallback("password_too_short", "password");
+      } else {
+        onErrorCallback("default", "root");
+      }
+    }
   };
 
   return {
     handleRegister,
-    isLoading: registerMutation.isPending,
+    isLoading: sessionMutation.isPending,
   };
 }

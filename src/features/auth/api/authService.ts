@@ -1,22 +1,9 @@
 import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
-import {
-  LoginData,
-  LoginSchema,
-  RegisterData,
-  RegisterSchema,
-} from "../types/auth.types";
-import { signInWithPassword } from "./utils/firebaseAuthAPI";
 import { createAppError } from "@/lib/ApiError";
-import { validateAuthData } from "./utils/validateAuthData";
 import admin from "firebase-admin";
 import { setSessionCookie, clearSessionCookie } from "@/lib/session";
 import { isUsernameTaken } from "./utils/checkUsernameUnique";
-import { formatZodErrorFlat } from "@/lib/zod";
-import { processRegistrationError } from "./errors/processRegistrationError";
-import {
-  ActivityType,
-  logActivity,
-} from "@/features/admin/api/activityService";
+import { logActivity } from "@/features/admin/api/activityService";
 
 const SESSION_EXPIRES_MS = 5 * 24 * 60 * 60 * 1000;
 
@@ -24,180 +11,173 @@ export async function logoutUser() {
   await clearSessionCookie();
   return { message: "Session cleared" };
 }
-export async function loginUser(userLoginData: LoginData) {
-  const parsed = LoginSchema.safeParse(userLoginData);
-  const { email, password } = userLoginData;
-
-  if (!parsed.success) {
-    throw createAppError({
-      code: "VALIDATION_ERROR",
-      data: {
-        code: "auth/validation_failed",
-        details: formatZodErrorFlat(parsed.error),
-      },
-    });
-  }
-
-  const userSnapshot = await adminDb
-    .collection("users")
-    .where("email", "==", email)
-    .limit(1)
-    .get();
-
-  if (userSnapshot.empty) {
+export async function createSession(idToken: string) {
+  let decodedToken;
+  try {
+    decodedToken = await adminAuth.verifyIdToken(idToken);
+  } catch (error) {
     throw createAppError({
       code: "INVALID_CREDENTIALS",
-      message: "User not found or invalid credentials",
+      message: "Failed to verify Firebase ID Token during login.",
     });
   }
 
-  const userDoc = userSnapshot.docs[0];
-  const userData = userDoc.data();
-  const uid = userData.uid;
+  const uid = decodedToken.uid;
+  const email = decodedToken.email;
+
+  const userDocRef = adminDb.collection("users").doc(uid);
+  const userDoc = await userDocRef.get();
+
+  if (!userDoc.exists) {
+    throw createAppError({
+      code: "USER_NOT_FOUND",
+      message: `User document for UID ${uid} does not exist in Firestore.`,
+    });
+  }
+
+  const userData = userDoc.data()!;
+
+  if (userData.isBanned) {
+    await logActivity(uid, "LOGIN_FAILED", "Login attempt on banned account");
+    throw createAppError({
+      code: "FORBIDDEN",
+    });
+  }
 
   if (userData.lockoutUntil) {
     const lockoutTime = userData.lockoutUntil.toDate();
     if (lockoutTime > new Date()) {
-      await logActivity(
-        uid,
-        "LOGIN_FAILED" as ActivityType,
-        `Próba logowania na zablokowane konto. Blokada do ${lockoutTime.toISOString()}`
-      );
-
       throw createAppError({
         code: "FORBIDDEN",
-        data: { lockoutTime },
+        details: { lockoutTime },
       });
     } else {
-      await userDoc.ref.update({
-        failedLoginAttempts: 0,
-        lockoutUntil: null,
-      });
-
-      userData.failedLoginAttempts = 0;
+      await userDocRef.update({ lockoutUntil: null, failedLoginAttempts: 0 });
     }
+  }
+
+  let sessionCookie;
+  try {
+    sessionCookie = await adminAuth.createSessionCookie(idToken, {
+      expiresIn: SESSION_EXPIRES_MS,
+    });
+  } catch (error) {
+    throw createAppError({
+      code: "INTERNAL_ERROR",
+      message: "Failed to create session cookie via Admin SDK.",
+      details: error,
+    });
   }
 
   try {
-    const resp = await signInWithPassword(email, password);
-
-    await userDoc.ref.update({
+    await userDocRef.update({
       failedLoginAttempts: 0,
       lockoutUntil: null,
+      lastOnline: admin.firestore.FieldValue.serverTimestamp(),
     });
+
     await logActivity(
       uid,
-      "LOGIN_SUCCESS" as ActivityType,
-      "Użytkownik zalogowany pomyślnie"
+      "LOGIN_SUCCESS",
+      "User logged in via Client SDK flow"
     );
-
-    const sessionCookie = await adminAuth.createSessionCookie(resp.idToken!, {
-      expiresIn: SESSION_EXPIRES_MS,
-    });
-
-    const dbUserDoc = await adminDb
-      .collection("users")
-      .doc(resp.localId!)
-      .get();
-
-    if (!dbUserDoc.exists) {
-      throw createAppError({
-        code: "USER_NOT_FOUND",
-        message: "User does not exist in loginUser()",
-      });
-    }
-
-    const userSnap = dbUserDoc.data()!;
-    const user = {
-      uid: userSnap.uid,
-      email: resp.email,
-      name: userSnap.name,
-      role: userSnap.role,
-    };
-
-    await setSessionCookie(sessionCookie);
-
-    return { user };
-  } catch (error: any) {
-    const MAX_ATTEMPTS = 3;
-
-    const currentAttempts = (userData.failedLoginAttempts || 0) + 1;
-    let updateData: any = { failedLoginAttempts: currentAttempts };
-
-    if (currentAttempts >= MAX_ATTEMPTS) {
-      const lockoutDate = new Date();
-      lockoutDate.setMinutes(lockoutDate.getMinutes() + 15);
-      updateData.lockoutUntil = admin.firestore.Timestamp.fromDate(lockoutDate);
-
-      await logActivity(
-        uid,
-        "USER_BLOCKED" as ActivityType,
-        `Konto zablokowane na 15 min po ${currentAttempts} nieudanych próbach`
-      );
-    } else {
-      await logActivity(
-        uid,
-        "LOGIN_FAILED" as ActivityType,
-        `Błędne hasło (Próba ${currentAttempts}/${MAX_ATTEMPTS})`
-      );
-    }
-
-    await userDoc.ref.update(updateData);
-    throw error;
+  } catch (error) {
+    console.error("Failed to update user stats or log activity:", error);
   }
-}
-
-export async function registerUser(userRegisterData: RegisterData) {
-  const parsed = RegisterSchema.safeParse(userRegisterData);
-
-  if (!parsed.success) {
-    throw createAppError({
-      code: "VALIDATION_ERROR",
-      data: {
-        code: "auth/validation_failed",
-        details: formatZodErrorFlat(parsed.error),
-      },
-    });
-  }
-
-  const { email, password, name } = parsed.data;
-
-  if (await isUsernameTaken(name)) {
-    throw createAppError({
-      code: "CONFLICT",
-      data: { code: "auth/username_taken", field: "name" },
-    });
-  }
-
-  const authUser = await adminAuth
-    .createUser({
-      email,
-      password,
-      displayName: name,
-    })
-    .catch(processRegistrationError);
-
-  await adminDb.collection("users").doc(authUser.uid).set({
-    uid: authUser.uid,
-    email,
-    name,
-    nameLowercase: name.toLowerCase(),
-    role: "user",
-    isBanned: false,
-    createdAt: admin.firestore.FieldValue.serverTimestamp(),
-    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-  });
-
-  const { idToken } = await signInWithPassword(email, password);
-  const sessionCookie = await adminAuth.createSessionCookie(idToken, {
-    expiresIn: 60 * 60 * 24 * 7 * 1000,
-  });
 
   await setSessionCookie(sessionCookie);
 
   return {
     user: {
-      uid: authUser.uid,
+      uid: userData.uid,
+      email: email,
+      name: userData.name,
+      role: userData.role,
+      avatarUrl: userData.avatarUrl,
+    },
+  };
+}
+
+export async function registerUser(data: {
+  idToken: string;
+  name: string;
+  email: string;
+}) {
+  const { idToken, name, email } = data;
+
+  let decodedToken;
+  try {
+    decodedToken = await adminAuth.verifyIdToken(idToken);
+  } catch (error) {
+    throw createAppError({
+      code: "INVALID_CREDENTIALS",
+      message: "Failed to verify Firebase ID Token during registration.",
+      details: error,
+    });
+  }
+
+  const uid = decodedToken.uid;
+  if (await isUsernameTaken(name)) {
+    try {
+      await adminAuth.deleteUser(uid);
+    } catch (cleanupErr) {
+      console.error(
+        "Failed to cleanup user from Auth after username conflict:",
+        cleanupErr
+      );
+    }
+
+    throw createAppError({
+      code: "CONFLICT",
+      message: `Username '${name}' is already taken.`,
+      details: { field: "name" },
+    });
+  }
+
+  try {
+    await adminDb.collection("users").doc(uid).set(
+      {
+        uid,
+        email,
+        name,
+        nameLowercase: name.toLowerCase(),
+        role: "user",
+        isBanned: false,
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      },
+      { merge: true }
+    );
+
+    await logActivity(
+      uid,
+      "USER_CREATED",
+      "Account created via Client SDK flow"
+    );
+  } catch (error) {
+    throw createAppError({
+      code: "DB_ERROR",
+      message: "Failed to create user document in Firestore.",
+    });
+  }
+
+  let sessionCookie;
+  try {
+    sessionCookie = await adminAuth.createSessionCookie(idToken, {
+      expiresIn: SESSION_EXPIRES_MS,
+    });
+  } catch (error) {
+    throw createAppError({
+      code: "INTERNAL_ERROR",
+      message: "Failed to create session cookie after registration.",
+    });
+  }
+
+  await setSessionCookie(sessionCookie);
+
+  return {
+    user: {
+      uid,
       name,
       email,
       role: "user" as const,
