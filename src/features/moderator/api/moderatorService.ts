@@ -48,75 +48,59 @@ export const reviewPost = async (
   if (!postId) throw createAppError({ code: "INVALID_INPUT" });
 
   const postRef = adminDb.collection("posts").doc(postId);
-  const postSnap = await postRef.get();
 
-  if (!postSnap.exists) throw createAppError({ code: "NOT_FOUND" });
+  const transactionResult = await adminDb.runTransaction(
+    async (transaction) => {
+      const postDoc = await transaction.get(postRef);
 
-  const batch = adminDb.batch();
+      if (!postDoc.exists) {
+        throw createAppError({ code: "NOT_FOUND" });
+      }
 
-  if (action === "reject") {
-    batch.update(postRef, {
-      moderationStatus: "rejected",
-      reviewedBy: moderator.uid,
-      reviewedAt: FieldValue.serverTimestamp(),
-    });
-  } else if (action === "approve") {
-    batch.update(postRef, {
-      moderationStatus: "approved",
-      flaggedReasons: [],
-      reviewedBy: moderator.uid,
-      reviewedAt: FieldValue.serverTimestamp(),
-    });
-  } else if (action === "quarantine") {
-    batch.update(postRef, {
-      moderationStatus: "pending",
-      reviewedBy: moderator.uid,
-      reviewedAt: FieldValue.serverTimestamp(),
-    });
-  }
+      if (postDoc.data()!.moderationStatus !== "pending") {
+        throw createAppError({ code: "CONFLICT" });
+      }
 
-  let authorId: string | undefined;
+      const postData = postDoc.data();
 
-  if (banAuthor) {
-    authorId = postSnap.data()?.userId;
-    if (authorId) {
+      if (action === "reject") {
+        transaction.update(postRef, {
+          moderationStatus: "rejected",
+          reviewedBy: moderator.uid,
+          reviewedAt: FieldValue.serverTimestamp(),
+        });
+      } else if (action === "approve") {
+        transaction.update(postRef, {
+          moderationStatus: "approved",
+          flaggedReasons: [],
+          reviewedBy: moderator.uid,
+          reviewedAt: FieldValue.serverTimestamp(),
+        });
+      } else if (action === "quarantine") {
+        transaction.update(postRef, {
+          moderationStatus: "pending",
+          reviewedBy: moderator.uid,
+          reviewedAt: FieldValue.serverTimestamp(),
+        });
+      }
+
+      return { authorId: postData?.userId };
+    }
+  );
+
+  if (banAuthor && transactionResult.authorId) {
+    try {
       await blockUser({
-        uidToBlock: authorId,
+        uidToBlock: transactionResult.authorId,
         bannedBy: moderator.uid,
         bannedReason: `Decision on post ${postId}`,
       } as UserBlockData);
-    }
-  }
-
-  try {
-    await batch.commit();
-  } catch (error) {
-    if (banAuthor && authorId) {
+    } catch (error) {
       console.error(
-        `[ReviewPost] Batch failed. Rolling back ban for user ${authorId}...`
+        `[ReviewPost] Failed to ban user ${transactionResult.authorId} after post review.`,
+        error
       );
-      try {
-        await unblockUser(authorId);
-        console.log(
-          `[ReviewPost] Rollback successful. User ${authorId} unblocked.`
-        );
-      } catch (rollbackError) {
-        throw createAppError({
-          code: "INTERNAL_ERROR",
-          message:
-            "[ReviewPost] CRITICAL: Failed to rollback ban for user ${authorId}",
-        });
-      }
     }
-    if (error instanceof Error) {
-      throw createAppError({
-        code: "INTERNAL_ERROR",
-        message: error.message,
-      });
-    }
-    throw createAppError({
-      code: "INTERNAL_ERROR",
-    });
   }
 
   return { success: true, action, postId };
