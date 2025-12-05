@@ -11,14 +11,14 @@ export const POST = withErrorHandling(async (req: Request) => {
   if (!recaptchaToken) {
     throw createAppError({
       code: "FORBIDDEN",
-      message: "No reCAPTCHA login route",
+      message: "[auth/login/route.POST] No reCAPTCHA token provided.",
     });
   }
 
   if (!idToken) {
     throw createAppError({
       code: "INVALID_INPUT",
-      message: "No idToken in login route",
+      message: "[auth/login/route.POST] No idToken provided.",
     });
   }
 

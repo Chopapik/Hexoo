@@ -12,7 +12,7 @@ export const PUT = withErrorHandling(async (req: Request) => {
   if (!recaptchaToken) {
     throw createAppError({
       code: "FORBIDDEN",
-      message: "Brak weryfikacji reCAPTCHA",
+      message: "[me/password/route.PUT] reCAPTCHA token missing.",
     });
   }
 

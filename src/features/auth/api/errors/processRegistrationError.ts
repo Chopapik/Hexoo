@@ -14,7 +14,8 @@ export async function processRegistrationError(
     } catch (rollbackError) {
       if (rollbackError instanceof FirebaseError) {
         throw createAppError({
-          message: rollbackError.message,
+          code: "INTERNAL_ERROR",
+          message: `[processRegistrationError] Failed to rollback user deletion: ${rollbackError.message}`,
         });
       }
     }
@@ -27,6 +28,7 @@ export async function processRegistrationError(
     ) {
       throw createAppError({
         code: "CONFLICT",
+        message: "[processRegistrationError] Email already exists.",
         data: {
           code: error.code,
           field: "email",
@@ -36,7 +38,7 @@ export async function processRegistrationError(
 
     throw createAppError({
       code: "VALIDATION_ERROR",
-      message: error.message,
+      message: `[processRegistrationError] Firebase auth error: ${error.message}`,
       data: {},
       details: { stack: error.stack },
     });

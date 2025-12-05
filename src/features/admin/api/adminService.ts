@@ -11,14 +11,14 @@ const ensureAdmin = async () => {
   if (!session) {
     throw createAppError({
       code: "AUTH_REQUIRED",
-      message: "No session.",
+      message: "[adminService.ensureAdmin] No session found",
     });
   }
 
   if (session.role !== "admin") {
     throw createAppError({
       code: "FORBIDDEN",
-      message: "Admin role required.",
+      message: "[adminService.ensureAdmin] Admin role required",
     });
   }
 };
@@ -28,7 +28,8 @@ export const adminDeleteUser = async (uid: string) => {
 
   if (!uid) {
     throw createAppError({
-      message: "No 'uid' provided for deletion",
+      code: "INVALID_INPUT",
+      message: "[adminService.adminDeleteUser] No 'uid' provided for deletion",
     });
   }
 
@@ -45,7 +46,7 @@ export const adminCreateUserAccount = async (data: AdminUserCreate) => {
   if (!data?.email || !data?.password || !data?.name) {
     throw createAppError({
       code: "VALIDATION_ERROR",
-      message: "Empty create user credentials",
+      message: "[adminService.adminCreateUserAccount] Empty create user credentials",
       data: { code: "admin/empty_create_user_account_credentials" },
     });
   }
@@ -108,7 +109,8 @@ export const adminUpdateUserAccount = async (
 
   if (!uid) {
     throw createAppError({
-      message: "No 'uid' in adminUpdateUserAccount",
+      code: "INVALID_INPUT",
+      message: "[adminService.adminUpdateUserAccount] No 'uid' provided",
     });
   }
 
@@ -144,13 +146,15 @@ export const adminUpdateUserPassword = async (
 
   if (!uid) {
     throw createAppError({
-      message: "No 'uid' in adminUpdateUserPassword",
+      code: "INVALID_INPUT",
+      message: "[adminService.adminUpdateUserPassword] No 'uid' provided",
     });
   }
 
   if (!uid || !newPassword || newPassword.length < 8) {
     throw createAppError({
       code: "VALIDATION_ERROR",
+      message: "[adminService.adminUpdateUserPassword] Invalid password provided",
       data: { code: "admin/empty_create_user_account_credentials" },
     });
   }

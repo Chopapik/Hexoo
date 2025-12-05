@@ -45,7 +45,7 @@ export const reportPost = async (
   return await adminDb.runTransaction(async (t) => {
     const doc = await t.get(postRef);
     if (!doc.exists) {
-      throw createAppError({ code: "NOT_FOUND", message: "Post nie istnieje" });
+      throw createAppError({ code: "NOT_FOUND", message: "[postService.reportPost] Post document not found by ID" });
     }
 
     const data = doc.data()!;
@@ -54,6 +54,7 @@ export const reportPost = async (
     if (reports.includes(user.uid)) {
       throw createAppError({
         code: "CONFLICT",
+        message: "[postService.reportPost] User has already reported this post",
       });
     }
 
@@ -96,7 +97,7 @@ export const createPost = async (postData: CreatePost) => {
   if (!parsed.success) {
     throw createAppError({
       code: "VALIDATION_ERROR",
-      message: "Invalid post data",
+      message: "[postService.createPost] Invalid post data",
       data: { details: formatZodErrorFlat(parsed.error) },
     });
   }
@@ -154,7 +155,7 @@ export const updatePost = async (postId: string, data: UpdatePost) => {
   if (!parsed.success) {
     throw createAppError({
       code: "VALIDATION_ERROR",
-      message: "Invalid post data",
+      message: "[postService.updatePost] Invalid post data",
       data: { details: formatZodErrorFlat(parsed.error) },
     });
   }
@@ -165,7 +166,7 @@ export const updatePost = async (postId: string, data: UpdatePost) => {
   if (!snap.exists) {
     throw createAppError({
       code: "NOT_FOUND",
-      message: "Post not found",
+      message: "[postService.updatePost] Post not found",
     });
   }
 
@@ -174,7 +175,7 @@ export const updatePost = async (postId: string, data: UpdatePost) => {
   if (post.userId !== user.uid) {
     throw createAppError({
       code: "FORBIDDEN",
-      message: "Not allowed",
+      message: "[postService.updatePost] User is not the author of the post",
     });
   }
 
@@ -208,7 +209,7 @@ export const getPostById = async (postId: string) => {
   if (!postId?.trim()) {
     throw createAppError({
       code: "NOT_FOUND",
-      message: "Post not found",
+      message: "[postService.getPostById] Post ID is empty or whitespace",
     });
   }
 
@@ -216,7 +217,7 @@ export const getPostById = async (postId: string) => {
   if (!snap.exists) {
     throw createAppError({
       code: "NOT_FOUND",
-      message: "Post not found",
+      message: "[postService.getPostById] Post not found",
     });
   }
 

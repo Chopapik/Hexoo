@@ -23,7 +23,8 @@ export async function updateProfile(data: UserProfileUpdate) {
   if (!hasName && !hasAvatar) {
     throw createAppError({
       code: "VALIDATION_ERROR",
-      message: "No fields were provided for profile update.",
+      message:
+        "[meService.updateProfile] No fields were provided for profile update.",
       details: { field: "root", reason: "no_update_fields" },
     });
   }
@@ -57,6 +58,7 @@ export const updatePassword = async (passwordData: PasswordUpdate) => {
   ) {
     throw createAppError({
       code: "VALIDATION_ERROR",
+      message: "[meService.updatePassword] New password is empty or invalid.",
       data: { field: "newPassword", reason: "empty" },
     });
   }
@@ -64,6 +66,7 @@ export const updatePassword = async (passwordData: PasswordUpdate) => {
   if (passwordData.newPassword.length < 8) {
     throw createAppError({
       code: "VALIDATION_ERROR",
+      message: "[meService.updatePassword] New password is too short.",
       data: { field: "newPassword", reason: "too_short" },
     });
   }
@@ -86,7 +89,8 @@ export const updatePassword = async (passwordData: PasswordUpdate) => {
   if (!loginResult || !loginResult.sessionCookie) {
     throw createAppError({
       code: "INTERNAL_ERROR",
-      message: "Could not refresh session after password update.",
+      message:
+        "[meService.updatePassword] Could not refresh session after password update.",
     });
   }
 

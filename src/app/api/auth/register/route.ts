@@ -11,7 +11,7 @@ export const POST = withErrorHandling(async (req) => {
   if (!recaptchaToken) {
     throw createAppError({
       code: "FORBIDDEN",
-      message: "Brak weryfikacji reCAPTCHA",
+      message: "[auth/register/route.POST] reCAPTCHA token missing.",
     });
   }
 

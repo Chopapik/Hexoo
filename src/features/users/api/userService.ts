@@ -27,7 +27,8 @@ export async function createUserDocument(
 
   if (!data) {
     throw createAppError({
-      message: "Missing user data in createUserDocument()",
+      code: "DB_ERROR",
+      message: "[userService.createUserDocument] Missing user data after creation",
     });
   }
 
@@ -74,7 +75,8 @@ export const blockUser = async (data: UserBlockData) => {
 
   if (!data.uidToBlock) {
     throw createAppError({
-      message: "No 'uid' in blockUser()",
+      code: "INVALID_INPUT",
+      message: "[userService.blockUser] No 'uidToBlock' provided",
     });
   }
 
@@ -95,7 +97,8 @@ export const unblockUser = async (uid: string) => {
 
   if (!uid) {
     throw createAppError({
-      message: "No 'uid' in unblockUser",
+      code: "INVALID_INPUT",
+      message: "[userService.unblockUser] No 'uid' provided",
     });
   }
 
