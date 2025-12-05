@@ -47,6 +47,7 @@ firestore-debug.log
 database-debug.log
 pubsub-debug.log
 storage-debug.log
+/.firebase/
 
 # Local dumps / temp files
 *.json
