@@ -10,7 +10,7 @@ const ensureBucket = () => {
   if (!bucket) {
     throw createAppError({
       code: "SERVICE_UNAVAILABLE",
-      message: "Storage bucket is not configured",
+      message: "[imageService.ensureBucket] Storage bucket is not configured",
     });
   }
 };
@@ -21,7 +21,7 @@ export const uploadImage = async (file: File | Blob, uid = "anon") => {
   if (!file) {
     throw createAppError({
       code: "INVALID_INPUT",
-      message: "No file provided",
+      message: "[imageService.uploadImage] No file provided",
     });
   }
 
@@ -32,7 +32,7 @@ export const uploadImage = async (file: File | Blob, uid = "anon") => {
   } catch (e) {
     throw createAppError({
       code: "INVALID_INPUT",
-      message: "Failed to read file",
+      message: "[imageService.uploadImage] Failed to read file",
     });
   }
 
@@ -48,7 +48,7 @@ export const uploadImage = async (file: File | Blob, uid = "anon") => {
   } catch (error) {
     throw createAppError({
       code: "VALIDATION_ERROR",
-      message: "Invalid image file or format not supported",
+      message: "[imageService.uploadImage] Invalid image file or format not supported",
       details: error,
     });
   }
@@ -92,7 +92,7 @@ export const uploadImage = async (file: File | Blob, uid = "anon") => {
   } catch (error) {
     throw createAppError({
       code: "EXTERNAL_SERVICE",
-      message: "Failed to upload image to storage",
+      message: "[imageService.uploadImage] Failed to upload image to storage",
     });
   }
 };
@@ -111,7 +111,7 @@ export const deleteImage = async (storagePath: string | null | undefined) => {
   } catch (error) {
     throw createAppError({
       code: "EXTERNAL_SERVICE",
-      message: "Failed to delete image from storage",
+      message: "[imageService.deleteImage] Failed to delete image from storage",
     });
   }
 };

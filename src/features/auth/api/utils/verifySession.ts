@@ -9,6 +9,7 @@ export async function getUserFromSession(): Promise<UserSessionData | never> {
   if (!sessionCookie.session) {
     throw createAppError({
       code: "AUTH_REQUIRED",
+      message: "[verifySession.getUserFromSession] No session cookie found.",
     });
   }
 
@@ -16,7 +17,7 @@ export async function getUserFromSession(): Promise<UserSessionData | never> {
     .verifySessionCookie(sessionCookie.value, true)
     .catch(() => {
       throw createAppError({
-        message: "Invalid or expired session",
+        message: "[verifySession.getUserFromSession] Invalid or expired session cookie",
         code: "INVALID_SESSION",
       });
     });
@@ -24,7 +25,7 @@ export async function getUserFromSession(): Promise<UserSessionData | never> {
   const snap = await adminDb.collection("users").doc(decoded.uid).get();
   if (!snap.exists) {
     throw createAppError({
-      message: "User not found in database",
+      message: "[verifySession.getUserFromSession] User not found in database",
       code: "USER_NOT_FOUND",
     });
   }
@@ -32,7 +33,7 @@ export async function getUserFromSession(): Promise<UserSessionData | never> {
   const data = snap.data();
   if (!data) {
     throw createAppError({
-      message: "User document has no data",
+      message: "[verifySession.getUserFromSession] User document has no data",
       code: "USER_NOT_FOUND",
     });
   }

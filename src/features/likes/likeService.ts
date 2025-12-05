@@ -11,7 +11,7 @@ export async function toggleLike(
   const user = await getUserFromSession();
 
   if (!resourceId) {
-    throw createAppError({ code: "INVALID_INPUT", message: "Brak ID zasobu" });
+    throw createAppError({ code: "INVALID_INPUT", message: "[likeService.toggleLike] Resource ID is missing." });
   }
 
   const parentRef = adminDb.collection(collectionName).doc(resourceId);
@@ -25,7 +25,7 @@ export async function toggleLike(
     if (!resourceDoc.exists) {
       throw createAppError({
         code: "NOT_FOUND",
-        message: `Reosurce with id: ${resourceId}  from collection  ${collectionName}, not found`,
+        message: `[likeService.toggleLike] Resource with id: ${resourceId}  from collection  ${collectionName}, not found`,
       });
     }
 

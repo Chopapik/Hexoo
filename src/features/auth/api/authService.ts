@@ -18,7 +18,7 @@ export async function createSession(idToken: string) {
   } catch (error) {
     throw createAppError({
       code: "INVALID_CREDENTIALS",
-      message: "Failed to verify Firebase ID Token during login.",
+      message: "[authService.createSession] Failed to verify Firebase ID Token during login.",
     });
   }
 
@@ -31,7 +31,7 @@ export async function createSession(idToken: string) {
   if (!userDoc.exists) {
     throw createAppError({
       code: "USER_NOT_FOUND",
-      message: `User document for UID ${uid} does not exist in Firestore.`,
+      message: `[authService.createSession] User document for UID ${uid} does not exist in Firestore.`,
     });
   }
 
@@ -41,6 +41,7 @@ export async function createSession(idToken: string) {
     await logActivity(uid, "LOGIN_FAILED", "Login attempt on banned account");
     throw createAppError({
       code: "FORBIDDEN",
+      message: "[authService.createSession] User is banned",
     });
   }
 
@@ -49,6 +50,7 @@ export async function createSession(idToken: string) {
     if (lockoutTime > new Date()) {
       throw createAppError({
         code: "FORBIDDEN",
+        message: "[authService.createSession] Account is locked",
         details: { lockoutTime },
       });
     } else {
@@ -64,7 +66,7 @@ export async function createSession(idToken: string) {
   } catch (error) {
     throw createAppError({
       code: "INTERNAL_ERROR",
-      message: "Failed to create session cookie via Admin SDK.",
+      message: "[authService.createSession] Failed to create session cookie via Admin SDK.",
       details: error,
     });
   }
@@ -111,7 +113,7 @@ export async function registerUser(data: {
   } catch (error) {
     throw createAppError({
       code: "INVALID_CREDENTIALS",
-      message: "Failed to verify Firebase ID Token during registration.",
+      message: "[authService.registerUser] Failed to verify Firebase ID Token during registration.",
       details: error,
     });
   }
@@ -129,7 +131,7 @@ export async function registerUser(data: {
 
     throw createAppError({
       code: "CONFLICT",
-      message: `Username '${name}' is already taken.`,
+      message: `[authService.registerUser] Username '${name}' is already taken.`,
       details: { field: "name" },
     });
   }
@@ -157,7 +159,7 @@ export async function registerUser(data: {
   } catch (error) {
     throw createAppError({
       code: "DB_ERROR",
-      message: "Failed to create user document in Firestore.",
+      message: "[authService.registerUser] Failed to create user document in Firestore.",
     });
   }
 
@@ -169,7 +171,7 @@ export async function registerUser(data: {
   } catch (error) {
     throw createAppError({
       code: "INTERNAL_ERROR",
-      message: "Failed to create session cookie after registration.",
+      message: "[authService.registerUser] Failed to create session cookie after registration.",
     });
   }
 
