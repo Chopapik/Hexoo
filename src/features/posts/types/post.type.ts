@@ -1,13 +1,5 @@
 import z from "zod";
 
-// export const DeviceSchema = z.object({
-//   type: z.enum(["Mobile", "Tablet", "Desktop", "Unknown"]),
-//   os: z.string().trim().max(50, { message: "os_name_too_long" }),
-//   browser: z.string().trim().max(50, { message: "browser_name_too_long" }),
-// });
-
-// export type DeviceInfo = z.infer<typeof DeviceSchema>;
-
 export const POST_MAX_CHARS = 1000;
 
 export interface ReportDetails {
@@ -17,23 +9,40 @@ export interface ReportDetails {
   createdAt: string;
 }
 
+export interface ImageMeta {
+  storagePath: string;
+  downloadToken: string;
+}
+
 export interface Post {
   id: string;
   userId: string;
   userName: string;
   userAvatarUrl?: string | null;
   text: string;
+
+  // Media
   imageUrl?: string | null;
-  // device?: DeviceInfo | null;
+  imageMeta?: ImageMeta | null;
+
+  // Metadata
+  device?: string | null;
   likesCount: number;
   isLikedByMe?: boolean;
   commentsCount: number;
-  createdAt: any;
-  updatedAt?: any;
+
+  createdAt: Date;
+  updatedAt?: Date;
+
+  // Moderation & Safety
   userReports?: string[];
   reportsMeta?: ReportDetails[];
   moderationStatus: "approved" | "pending" | "rejected";
-  flaggedReasons?: string[]; //e.g ["violence"]
+  flaggedReasons?: string[]; // e.g. ["violence", "hate"]
+
+  // Admin/Moderator fields
+  reviewedBy?: string;
+  reviewedAt?: Date;
 }
 
 export const CreatePostSchema = z.object({
@@ -47,16 +56,19 @@ export const CreatePostSchema = z.object({
         !file || ["image/png", "image/jpeg", "image/webp"].includes(file.type),
       "wrong_file_type"
     ),
-  // type: z.enum(["Mobile", "Tablet", "Desktop", "Unknown"]),
-  // os: z.string().trim().max(50, { message: "os_name_too_long" }),
-  // browser: z.string().trim().max(50, { message: "browser_name_too_long" }),
+  device: z.string().optional(),
 });
 
 export type CreatePost = z.infer<typeof CreatePostSchema>;
 
 export const UpdatePostSchema = z.object({
-  text: z.string().trim().max(1000, { message: "text_too_long" }).optional(),
+  text: z
+    .string()
+    .trim()
+    .max(POST_MAX_CHARS, { message: "text_too_long" })
+    .optional(),
   imageFile: z.instanceof(File).optional(),
+  device: z.string().optional(),
 });
 
 export type UpdatePost = z.infer<typeof UpdatePostSchema>;

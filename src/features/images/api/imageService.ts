@@ -45,11 +45,11 @@ export const uploadImage = async (file: File | Blob, uid = "anon") => {
       })
       .webp({ quality: 80 })
       .toBuffer();
-  } catch (err) {
+  } catch (error) {
     throw createAppError({
       code: "VALIDATION_ERROR",
       message: "Invalid image file or format not supported",
-      details: err,
+      details: error,
     });
   }
 
@@ -89,11 +89,10 @@ export const uploadImage = async (file: File | Blob, uid = "anon") => {
       contentType: "image/webp",
       sizeBytes: processedBuffer.length,
     };
-  } catch (err) {
+  } catch (error) {
     throw createAppError({
       code: "EXTERNAL_SERVICE",
       message: "Failed to upload image to storage",
-      details: err,
     });
   }
 };
@@ -105,12 +104,15 @@ export const deleteImage = async (storagePath: string | null | undefined) => {
     await bucket
       .file(storagePath)
       .delete()
-      .catch((err: any) => {
-        if (err?.code === 404) return;
-        throw err;
+      .catch((error: any) => {
+        if (error?.code === 404) return;
+        throw error;
       });
-  } catch (err) {
-    console.warn("Failed to delete image", err);
+  } catch (error) {
+    throw createAppError({
+      code: "EXTERNAL_SERVICE",
+      message: "Failed to delete image from storage",
+    });
   }
 };
 
