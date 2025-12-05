@@ -5,6 +5,9 @@ import { LoginData } from "../types/auth.types";
 import axiosInstance from "@/lib/axiosInstance";
 import { ApiError } from "@/lib/ApiError";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { FirebaseError } from "firebase/app";
 
 type ErrorCallback = (errorCode: string, field?: string) => void;
 
@@ -12,16 +15,15 @@ export default function useLogin(onErrorCallback: ErrorCallback) {
   const { executeRecaptcha } = useGoogleReCaptcha();
   const router = useRouter();
 
-  const loginMutate = useMutation({
-    mutationFn: (dataWithToken: LoginData & { recaptchaToken: string }) =>
-      axiosInstance.post("/auth/login", dataWithToken),
+  const sessionMutation = useMutation({
+    mutationFn: (data: { idToken: string; recaptchaToken: string }) =>
+      axiosInstance.post("/auth/login", data),
 
-    onSuccess: (response) => {
+    onSuccess: () => {
       router.push("/");
     },
     onError: (error: ApiError) => {
       if (!error) return;
-
       onErrorCallback(error.code || "default");
     },
   });
@@ -32,18 +34,40 @@ export default function useLogin(onErrorCallback: ErrorCallback) {
       return;
     }
 
-    const token = await executeRecaptcha("login");
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        data.email,
+        data.password
+      );
+      const idToken = await userCredential.user.getIdToken();
 
-    const dataWithToken = {
-      ...data,
-      recaptchaToken: token,
-    };
+      const recaptchaToken = await executeRecaptcha("login");
 
-    loginMutate.mutate(dataWithToken);
+      sessionMutation.mutate({ idToken, recaptchaToken });
+    } catch (error: any) {
+      if (error instanceof FirebaseError) {
+        const errorCode = error.code;
+
+        if (
+          errorCode === "auth/invalid-credential" ||
+          errorCode === "auth/user-not-found" ||
+          errorCode === "auth/wrong-password"
+        ) {
+          onErrorCallback("INVALID_CREDENTIALS", "root");
+        } else if (errorCode === "auth/too-many-requests") {
+          onErrorCallback("RATE_LIMIT", "root");
+        } else if (errorCode === "auth/user-disabled") {
+          onErrorCallback("FORBIDDEN", "root");
+        } else {
+          onErrorCallback("default", "root");
+        }
+      }
+    }
   };
 
   return {
     handleLogin,
-    isLoading: loginMutate.isPending,
+    isLoading: sessionMutation.isPending,
   };
 }
