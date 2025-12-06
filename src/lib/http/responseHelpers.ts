@@ -7,7 +7,7 @@ function sendSuccess<T>(data: T, status = 200) {
   return NextResponse.json(payload, { status });
 }
 
-export function handleSuccess<T>(data: T, status = 200) {
+export function handleSuccess<T>(data?: T, status = 200) {
   return sendSuccess(data, status);
 }
 

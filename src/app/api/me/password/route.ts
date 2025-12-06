@@ -20,7 +20,7 @@ export const PUT = withErrorHandling(async (req: Request) => {
 
   const result = await updatePassword(newPasswordData);
 
-  const response = handleSuccess({ user: result.user });
+  const response = handleSuccess();
 
   return response;
 });

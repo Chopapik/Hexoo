@@ -1,9 +1,9 @@
 import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
 import { UserProfileUpdate } from "@/features/users/types/user.type";
 import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
-import { PasswordUpdate } from "../me.type";
-import { loginUser } from "@/features/auth/api/authService";
+import { UpdatePasswordData, UpdatePasswordDataSchema } from "../me.type";
 import { createAppError } from "@/lib/ApiError";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 export async function deleteAccount() {
   const decoded = await getUserFromSession();
@@ -49,25 +49,17 @@ export async function updateProfile(data: UserProfileUpdate) {
   };
 }
 
-export const updatePassword = async (passwordData: PasswordUpdate) => {
+export const updatePassword = async (passwordData: UpdatePasswordData) => {
   const decoded = await getUserFromSession();
 
-  if (
-    !passwordData?.newPassword ||
-    typeof passwordData.newPassword !== "string"
-  ) {
-    throw createAppError({
-      code: "VALIDATION_ERROR",
-      message: "[meService.updatePassword] New password is empty or invalid.",
-      data: { field: "newPassword", reason: "empty" },
-    });
-  }
+  const validationResult = UpdatePasswordDataSchema.safeParse(passwordData);
 
-  if (passwordData.newPassword.length < 8) {
+  if (validationResult.error) {
+    const errors = validationResult.error.flatten().fieldErrors;
+
     throw createAppError({
       code: "VALIDATION_ERROR",
-      message: "[meService.updatePassword] New password is too short.",
-      data: { field: "newPassword", reason: "too_short" },
+      details: errors,
     });
   }
 
@@ -79,20 +71,4 @@ export const updatePassword = async (passwordData: PasswordUpdate) => {
     .collection("users")
     .doc(decoded.uid)
     .set({ updatedAt: new Date() }, { merge: true });
-
-  // refresh session and validate result inside service
-  const loginResult = await loginUser({
-    email: decoded.email,
-    password: passwordData.newPassword,
-  });
-
-  if (!loginResult || !loginResult.sessionCookie) {
-    throw createAppError({
-      code: "INTERNAL_ERROR",
-      message:
-        "[meService.updatePassword] Could not refresh session after password update.",
-    });
-  }
-
-  return loginResult;
 };
