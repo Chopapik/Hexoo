@@ -18,7 +18,8 @@ export async function createSession(idToken: string) {
   } catch (error) {
     throw createAppError({
       code: "INVALID_CREDENTIALS",
-      message: "[authService.createSession] Failed to verify Firebase ID Token during login.",
+      message:
+        "[authService.createSession] Failed to verify Firebase ID Token during login.",
     });
   }
 
@@ -66,7 +67,8 @@ export async function createSession(idToken: string) {
   } catch (error) {
     throw createAppError({
       code: "INTERNAL_ERROR",
-      message: "[authService.createSession] Failed to create session cookie via Admin SDK.",
+      message:
+        "[authService.createSession] Failed to create session cookie via Admin SDK.",
       details: error,
     });
   }
@@ -105,7 +107,7 @@ export async function registerUser(data: {
   name: string;
   email: string;
 }) {
-  const { idToken, name, email } = data;
+  const { idToken, name } = data;
 
   let decodedToken;
   try {
@@ -113,12 +115,14 @@ export async function registerUser(data: {
   } catch (error) {
     throw createAppError({
       code: "INVALID_CREDENTIALS",
-      message: "[authService.registerUser] Failed to verify Firebase ID Token during registration.",
+      message:
+        "[authService.registerUser] Failed to verify Firebase ID Token during registration.",
       details: error,
     });
   }
 
-  const uid = decodedToken.uid;
+  const { uid, email } = decodedToken;
+
   if (await isUsernameTaken(name)) {
     try {
       await adminAuth.deleteUser(uid);
@@ -159,7 +163,8 @@ export async function registerUser(data: {
   } catch (error) {
     throw createAppError({
       code: "DB_ERROR",
-      message: "[authService.registerUser] Failed to create user document in Firestore.",
+      message:
+        "[authService.registerUser] Failed to create user document in Firestore.",
     });
   }
 
@@ -171,7 +176,8 @@ export async function registerUser(data: {
   } catch (error) {
     throw createAppError({
       code: "INTERNAL_ERROR",
-      message: "[authService.registerUser] Failed to create session cookie after registration.",
+      message:
+        "[authService.registerUser] Failed to create session cookie after registration.",
     });
   }
 

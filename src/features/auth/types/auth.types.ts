@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { UserRole } from "@/features/users/types/user.type";
-import { ValidationMessage } from "@/features/shared/types/validation.type";
 
 export const RegisterSchema = z.object({
   email: z
