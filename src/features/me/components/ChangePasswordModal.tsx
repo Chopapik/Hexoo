@@ -16,13 +16,16 @@ export default function ChangePasswordModal({
   isOpen,
   onClose,
 }: ChangePasswordModalProps) {
-  const { register, errors, handleSubmit } = useUpdatePasswordForm();
+  const { register, errors, handleSubmit, handleErrorsMessages } =
+    useUpdatePasswordForm();
 
-  const { updatePassword, isPending } = useUpdatePassword();
+  const { updatePassword, isPending } = useUpdatePassword(handleErrorsMessages);
 
   const onSubmit = handleSubmit(async (data) => {
-    await updatePassword(data);
-    onClose();
+    const success = await updatePassword(data);
+    if (success) {
+      onClose();
+    }
   });
 
   const footerContent = (

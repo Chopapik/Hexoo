@@ -22,13 +22,23 @@ const ERROR_DICTIONARY: Record<string, ValidationMessage> = {
     type: "Dismiss",
   },
   new_password_not_equal: {
-    text: "Nowe hasła nie sa takie same",
+    text: "Nowe hasła nie są takie same",
     field: "newPassword",
+    type: "Dismiss",
+  },
+  "auth/wrong-password": {
+    text: "Stare hasło jest niepoprawne",
+    field: "oldPassword",
+    type: "Dismiss",
+  },
+  "auth/invalid-credential": {
+    text: "Stare hasło jest niepoprawne",
+    field: "oldPassword",
     type: "Dismiss",
   },
 
   FORBIDDEN: {
-    text: "Brak uprawnień do tej cyznności",
+    text: "Brak uprawnień do tej czynności",
     field: "root",
     type: "Dismiss",
   },

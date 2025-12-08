@@ -19,9 +19,13 @@ export default function useUpdatePasswordForm() {
     },
   });
 
-  const handleServerErrors = (errorCode: string, field?: string) => {
-    if (field === "oldPassword" || field === "newPassword") {
-      setError(field, {
+  const handleErrorsMessages = (errorCode: string, field?: string) => {
+    if (
+      field === "oldPassword" ||
+      field === "newPassword" ||
+      field === "reNewPassword"
+    ) {
+      setError(field as keyof UpdatePasswordData, {
         type: "server",
         message: errorCode,
       });
@@ -40,6 +44,6 @@ export default function useUpdatePasswordForm() {
     isSubmitting,
     reset,
     setError,
-    handleServerErrors,
+    handleErrorsMessages,
   };
 }
