@@ -3,13 +3,17 @@ import axiosInstance from "@/lib/axiosInstance";
 import { UpdatePasswordData } from "../me.type";
 import useRecaptcha from "@/features/shared/hooks/useRecaptcha";
 import toast from "react-hot-toast";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+  EmailAuthProvider,
+  reauthenticateWithCredential,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { useAppSelector } from "@/lib/store/hooks";
 
-// type ErrorCallback = (errorCode: string, field?: string) => void;
+type ErrorCallback = (errorCode: string, field?: string) => void;
 
-export const useUpdatePassword = () => {
+export const useUpdatePassword = (errorCallBack: ErrorCallback) => {
   const { getRecaptchaToken } = useRecaptcha();
 
   const userEmail = useAppSelector((state) => state.auth.user?.email);
@@ -24,7 +28,7 @@ export const useUpdatePassword = () => {
       if (error.code) {
         toast.error(error.code);
       } else {
-        toast.error("wystapił nienzany błąd");
+        toast.error("wystąpił nieznany błąd");
       }
     },
     onSuccess: async (response, variables) => {
@@ -50,14 +54,41 @@ export const useUpdatePassword = () => {
     },
   });
 
-  const handleUpdatePassword = async (data: UpdatePasswordData) => {
-    if (!userEmail) {
+  const handleUpdatePassword = async (
+    data: UpdatePasswordData
+  ): Promise<boolean> => {
+    const currentUser = auth.currentUser;
+
+    if (!userEmail || !currentUser) {
       toast.error(
-        "Błąd: Brak adresu email użytkownika. Zaloguj się aby wykonac akcję."
+        "Błąd: Brak adresu email użytkownika. Zaloguj się aby wykonać akcję."
       );
-      return;
+      return false;
     }
-    mutation.mutateAsync(data);
+
+    const credential = EmailAuthProvider.credential(
+      userEmail,
+      data.oldPassword
+    );
+
+    try {
+      await reauthenticateWithCredential(currentUser, credential);
+    } catch (error: any) {
+      if (
+        error.code === "auth/invalid-credential" ||
+        error.code === "auth/wrong-password"
+      ) {
+        errorCallBack("auth/wrong-password", "oldPassword");
+      } else if (error.code === "auth/too-many-requests") {
+        toast.error("Zbyt wiele prób. Spróbuj później.");
+      } else {
+        toast.error("Nie udało się zweryfikować starego hasła.");
+      }
+      return false;
+    }
+
+    await mutation.mutateAsync(data);
+    return true;
   };
 
   return {
