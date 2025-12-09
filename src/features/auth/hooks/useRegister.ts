@@ -9,7 +9,7 @@ import { auth } from "@/lib/firebase";
 
 type ErrorCallback = (errorCode: string, field?: string) => void;
 
-export default function useRegister(onErrorCallback: ErrorCallback) {
+export default function useRegister(onError: ErrorCallback) {
   const router = useRouter();
   const { executeRecaptcha } = useGoogleReCaptcha();
 
@@ -29,16 +29,16 @@ export default function useRegister(onErrorCallback: ErrorCallback) {
       if (!error) return;
 
       if (error.code === "CONFLICT" && error.data?.field) {
-        onErrorCallback(error.data.code || "username_taken", error.data.field);
+        onError(error.data.code || "username_taken", error.data.field);
         return;
       }
-      onErrorCallback(error.message || "default");
+      onError(error.message || "default");
     },
   });
 
   const handleRegister = async (data: RegisterData) => {
     if (!executeRecaptcha) {
-      onErrorCallback("reCAPTCHA nie jest jeszcze gotowa.", "root");
+      onError("reCAPTCHA nie jest jeszcze gotowa.", "root");
       return;
     }
 
@@ -64,11 +64,11 @@ export default function useRegister(onErrorCallback: ErrorCallback) {
       const errorCode = error.code;
 
       if (errorCode === "auth/email-already-in-use") {
-        onErrorCallback("auth/email-already-exists", "email");
+        onError("auth/email-already-exists", "email");
       } else if (errorCode === "auth/weak-password") {
-        onErrorCallback("password_too_short", "password");
+        onError("password_too_short", "password");
       } else {
-        onErrorCallback("default", "root");
+        onError("default", "root");
       }
     }
   };

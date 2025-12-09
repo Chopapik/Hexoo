@@ -11,7 +11,7 @@ import useRecaptcha from "@/features/shared/hooks/useRecaptcha";
 
 type ErrorCallback = (errorCode: string, field?: string) => void;
 
-export default function useLogin(onErrorCallback: ErrorCallback) {
+export default function useLogin(onError: ErrorCallback) {
   const { getRecaptchaToken } = useRecaptcha();
   const router = useRouter();
 
@@ -24,7 +24,7 @@ export default function useLogin(onErrorCallback: ErrorCallback) {
     },
     onError: (error: ApiError) => {
       if (!error) return;
-      onErrorCallback(error.code || "default");
+      onError(error.code || "default");
     },
   });
 
@@ -50,13 +50,13 @@ export default function useLogin(onErrorCallback: ErrorCallback) {
           errorCode === "auth/user-not-found" ||
           errorCode === "auth/wrong-password"
         ) {
-          onErrorCallback("INVALID_CREDENTIALS", "root");
+          onError("INVALID_CREDENTIALS", "root");
         } else if (errorCode === "auth/too-many-requests") {
-          onErrorCallback("RATE_LIMIT", "root");
+          onError("RATE_LIMIT", "root");
         } else if (errorCode === "auth/user-disabled") {
-          onErrorCallback("FORBIDDEN", "root");
+          onError("FORBIDDEN", "root");
         } else {
-          onErrorCallback("default", "root");
+          onError("default", "root");
         }
       }
     }
