@@ -1,27 +1,12 @@
 ﻿import type { Post } from "../types/post.type";
 import { Avatar } from "./Avatar";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/pl";
 import PostOptions from "./PostOptions";
 import Link from "next/link";
-
-dayjs.extend(relativeTime);
-dayjs.locale("pl");
+import { formatSmartDate } from "@/features/shared/utils/dateUtils";
 
 type PostMetaProps = {
   post: Post;
-};
-
-const formatDate = (date: any) => {
-  if (!date) return "";
-  const d =
-    typeof date === "string" ? new Date(date) : new Date(date._seconds * 1000);
-
-  if (dayjs().diff(d, "hour") > 24) {
-    return dayjs(d).format("D MMMM YYYY");
-  }
-  return dayjs(d).fromNow();
 };
 
 export const PostMeta = ({ post }: PostMetaProps) => {
@@ -42,7 +27,7 @@ export const PostMeta = ({ post }: PostMetaProps) => {
           </div>
           <div className="size- inline-flex justify-center items-center gap-1">
             <div className="justify-start text-text-neutral text-xs font-normal font-Albert_Sans">
-              {formatDate(post.createdAt)}{" "}
+              {formatSmartDate(post.createdAt)}
             </div>
           </div>
         </div>

@@ -28,7 +28,8 @@ export async function createUserDocument(
   if (!data) {
     throw createAppError({
       code: "DB_ERROR",
-      message: "[userService.createUserDocument] Missing user data after creation",
+      message:
+        "[userService.createUserDocument] Missing user data after creation",
     });
   }
 
@@ -63,8 +64,12 @@ export async function getUserProfile(name: string) {
     uid: userData.uid,
     name: userData.name,
     avatarUrl: userData.avatarUrl,
-    lastOnline: userData.lastOnline,
-    createdAt: userData.createdAt,
+    lastOnline: (userData.lastOnline as any)?.toDate
+      ? (userData.lastOnline as any).toDate()
+      : userData.lastOnline,
+    createdAt: (userData.createdAt as any)?.toDate
+      ? (userData.createdAt as any).toDate()
+      : userData.createdAt,
   };
 
   return { user: userProfile };

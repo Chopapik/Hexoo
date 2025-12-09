@@ -1,6 +1,5 @@
 "use client";
 
-import dayjs from "dayjs";
 import Image from "next/image";
 import useProfile from "../hooks/useProfile";
 import defaultAvatarUrl from "@/features/shared/assets/defaultAvatar.svg?url";
@@ -8,30 +7,10 @@ import { useEffect, useState } from "react";
 import Button from "@/features/shared/components/ui/Button";
 import EditProfileModal from "../../me/components/EditProfileModal";
 import "dayjs/locale/pl";
-
-dayjs.locale("pl");
+import { formatDate } from "@/features/shared/utils/dateUtils";
 
 const status = "Offline";
 
-const toDate = (v?: any): Date | null => {
-  if (!v) return null;
-  if (typeof v.toDate === "function") return v.toDate();
-  if (typeof v._seconds === "number") {
-    return new Date(v._seconds * 1000 + (v._nanoseconds ?? 0) / 1e6);
-  }
-  const maybeDate = new Date(v);
-  return isNaN(maybeDate.getTime()) ? null : maybeDate;
-};
-
-const formatJoinDate = (joinDate?: any) => {
-  const d = toDate(joinDate);
-  return d ? dayjs(d).format("MMMM YYYY") : "—";
-};
-
-const formatLastOnlineDate = (date?: any) => {
-  const d = toDate(date);
-  return d ? dayjs(d).format("DD.MM.YYYY HH:mm") : "—";
-};
 export const UserProfileCard = ({
   username,
   enableSettings,
@@ -93,7 +72,7 @@ export const UserProfileCard = ({
                   dołączył
                 </div>
                 <div className="self-stretch h-3.5 justify-start text-text-main text-xs font-normal font-Albert_Sans">
-                  {formatJoinDate(createdAt)}
+                  {formatDate(createdAt, "MMMM YYYY")}
                 </div>
               </div>
 

@@ -15,15 +15,7 @@ import useBlockUser from "../hooks/user/useBlockUser";
 import useUnblockUser from "../hooks/user/useUnblockUser";
 import defaultAvatarUrl from "@/features/shared/assets/defaultAvatar.svg?url";
 import useAdminDeleteUser from "../hooks/user/useAdminDeleteUser";
-
-function formatDate(date?: Date | string | null) {
-  if (!date) return "—";
-  return new Date(date).toLocaleDateString("pl-PL", {
-    day: "2-digit",
-    month: "long",
-    year: "numeric",
-  });
-}
+import { formatDate } from "@/features/shared/utils/dateUtils";
 
 export default function AdminUserEditModal({
   user,
