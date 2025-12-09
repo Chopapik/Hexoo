@@ -1,6 +1,7 @@
 import { getPostById, updatePost } from "@/features/posts/api/postService";
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
+import { UpdatePost } from "@/features/posts/types/post.type";
 
 export const GET = withErrorHandling(
   async (req: Request, context: { params: Promise<{ id: string }> }) => {
@@ -19,13 +20,13 @@ export const PUT = withErrorHandling(
       const form = await req.formData();
       const text = String(form.get("text") || "");
       const device = String(form.get("device"));
-      const imageFile = form.get("imageFile") as any;
+      const imageFile = form.get("imageFile");
 
       const result = await updatePost(id, {
         text,
         device,
         imageFile,
-      } as any);
+      } as UpdatePost);
       return handleSuccess(result, 201);
     }
 

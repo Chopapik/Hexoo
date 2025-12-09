@@ -29,8 +29,6 @@ export default function CreatePostModal({
     handleFileChange,
     checkFormat,
     formState,
-    setError,
-    clearErrors,
     watch,
   } = useCreatePostForm();
 
