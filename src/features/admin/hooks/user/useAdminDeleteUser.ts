@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axiosInstance from "@/lib/axiosInstance";
-// import { toast } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 
 export default function useAdminDeleteUser() {
   const queryClient = useQueryClient();
@@ -12,10 +12,10 @@ export default function useAdminDeleteUser() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "allUsers"] });
-      //   toast.success("Użytkownik został usunięty");
+      toast.success("Użytkownik został usunięty");
     },
     onError: (error) => {
-      //   toast.error("Nie udało się usunąć użytkownika");
+      toast.error("Nie udało się usunąć użytkownika");
     },
   });
 

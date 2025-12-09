@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { RegisterData } from "../types/auth.types";
+import { RegisterData } from "../types/auth.type";
 import axiosInstance from "@/lib/axiosInstance";
 import { ApiError } from "@/lib/ApiError";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
@@ -19,7 +19,7 @@ export default function useRegister(onError: ErrorCallback) {
       name: string;
       email: string;
       recaptchaToken: string;
-    }) => axiosInstance.post(`/auth/register`, data),
+    }) => axiosInstance.post("/auth/register", data),
 
     onSuccess: () => {
       router.push("/");

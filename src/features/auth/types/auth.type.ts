@@ -40,11 +40,3 @@ export const LoginSchema = z.object({
 
 export type RegisterData = z.infer<typeof RegisterSchema>;
 export type LoginData = z.infer<typeof LoginSchema>;
-
-export interface AuthUser {
-  uid: string;
-  name: string;
-  email: string;
-  role: UserRole;
-  avatarUrl?: string | null;
-}

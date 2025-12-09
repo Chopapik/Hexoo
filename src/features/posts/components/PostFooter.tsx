@@ -12,7 +12,7 @@ type PostFooterProps = {
 export const PostFooter = ({ post }: PostFooterProps) => {
   const { toggleLike } = useToggleLike();
 
-  const activeTextColor = "text-[#DB2777]";
+  const activeTextColor = "text-fuchsia-600";
   const inactiveTextColor = "text-text-neutral";
 
   return (

@@ -8,7 +8,7 @@ import warningIconUrl from "@/features/shared/assets/icons/warning.svg?url";
 import Image from "next/image";
 import { useLoginForm } from "../hooks/useLoginForm";
 import useLogin from "../hooks/useLogin";
-import { LoginData } from "../types/auth.types";
+import { LoginData } from "../types/auth.type";
 import { ValidationMessage } from "@/features/shared/types/validation.type";
 import { parseErrorMessages } from "../utils/loginFormValidation";
 
@@ -20,13 +20,6 @@ export default function LoginForm() {
   const onSubmit = async (data: LoginData) => {
     await handleLogin(data);
   };
-
-  // const getFieldErrors = (errorMessage?: string): ValidationMessage[] => {
-  //   if (errorMessage) {
-  //     return parseErrorMessages(errorMessage);
-  //   }
-  //   return [];
-  // };
 
   return (
     <div className="w-2xl px-32 py-20 rounded-[20px] inline-flex flex-col justify-center items-center gap-10 overflow-hidden glass-card bg-neutral-500/5">
