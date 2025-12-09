@@ -4,8 +4,8 @@ const STORAGE_KEY = "hexoo_security_block";
 
 export type StoredBlock = {
   type: "AUTH_BLOCK" | "THROTTLE";
-  until: number; // Timestamp w ms, do kiedy trwa blokada
-  details: any; // Pełne dane błędu do wyświetlenia na stronie błędu
+  until: number;
+  details: any;
 };
 
 export const saveBlock = (data: any, code: string) => {
@@ -13,15 +13,12 @@ export const saveBlock = (data: any, code: string) => {
 
   let until = 0;
 
-  // 1. Obsługa Auth Block (Brute Force) - format Firebase Timestamp
   if (data.lockoutUntil?._seconds) {
     until = data.lockoutUntil._seconds * 1000;
-  }
-  // 2. Obsługa Throttle - format number (timestamp ms)
-  else if (data.retryAfter) {
+  } else if (data.retryAfter) {
     until = data.retryAfter;
   } else {
-    return; // Jeśli nie ma daty końca, nie zapisujemy w cache
+    return;
   }
 
   const blockData: StoredBlock = {
@@ -43,7 +40,6 @@ export const getActiveBlock = (): StoredBlock | null => {
     const data = JSON.parse(raw) as StoredBlock;
     const now = Date.now();
 
-    // Jeśli blokada już minęła, czyścimy storage i zwracamy null
     if (data.until <= now) {
       localStorage.removeItem(STORAGE_KEY);
       return null;

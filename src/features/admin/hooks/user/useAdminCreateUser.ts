@@ -1,8 +1,8 @@
 import { useMutation } from "@tanstack/react-query";
 import axiosInstance from "@/lib/axiosInstance";
-import type { AdminUserCreate } from "../../types/admin.type";
+import type { AdminUserCreate } from "@/features/admin/types/admin.type";
 
-export default function useAdminDeleteUser() {
+export default function useAdminCreateUser() {
   const m = useMutation({
     mutationFn: async (userData: AdminUserCreate) => {
       const res = await axiosInstance.post(`/admin/user`, userData);

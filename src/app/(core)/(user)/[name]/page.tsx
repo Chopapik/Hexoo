@@ -11,14 +11,14 @@ export default async function ProfilePage({
 
   try {
     user = await getUserFromSession();
-  } catch (err: any) {
+  } catch (error: unknown) {
     if (
-      err instanceof ApiError &&
-      (err.code === "AUTH_REQUIRED" || err.code === "INVALID_SESSION")
+      error instanceof ApiError &&
+      (error.code === "AUTH_REQUIRED" || error.code === "INVALID_SESSION")
     ) {
       user = null;
     } else {
-      throw err;
+      throw error;
     }
   }
 

@@ -23,10 +23,6 @@ export const UserProfileCard = ({
   const [showEditProfileModal, setShowEditProfileModal] =
     useState<boolean>(false);
 
-  useEffect(() => {
-    console.log(userProfileData);
-  }, [userProfileData]);
-
   if (!userProfileData) {
     return <div>Loading...</div>;
   }

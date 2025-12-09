@@ -45,7 +45,10 @@ export const reportPost = async (
   return await adminDb.runTransaction(async (t) => {
     const doc = await t.get(postRef);
     if (!doc.exists) {
-      throw createAppError({ code: "NOT_FOUND", message: "[postService.reportPost] Post document not found by ID" });
+      throw createAppError({
+        code: "NOT_FOUND",
+        message: "[postService.reportPost] Post document not found by ID",
+      });
     }
 
     const data = doc.data()!;
@@ -66,7 +69,7 @@ export const reportPost = async (
       details: details || "",
       createdAt: new Date().toISOString(),
     };
-    2;
+
     const shouldHide = newReports.length >= REPORT_THRESHOLD;
 
     const updateData: any = {

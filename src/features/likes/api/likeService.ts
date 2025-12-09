@@ -1,8 +1,8 @@
 import { adminDb } from "@/lib/firebaseAdmin";
-import { getUserFromSession } from "../../auth/api/utils/verifySession";
 import { createAppError } from "@/lib/ApiError";
 import { Like } from "../types/like.type";
 import { FieldValue } from "firebase-admin/firestore";
+import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
 
 export async function toggleLike(
   resourceId: string,

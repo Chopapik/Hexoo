@@ -25,7 +25,7 @@ export const PostMeta = ({ post }: PostMetaProps) => {
           <div className="justify-start text-text-main text-sm font-medium font-Albert_Sans">
             {post.userName}
           </div>
-          <div className="size- inline-flex justify-center items-center gap-1">
+          <div className="inline-flex justify-center items-center gap-1">
             <div className="justify-start text-text-neutral text-xs font-normal font-Albert_Sans">
               {formatSmartDate(post.createdAt)}
             </div>

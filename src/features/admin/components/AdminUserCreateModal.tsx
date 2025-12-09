@@ -3,7 +3,7 @@
 import { useState } from "react";
 import TextInput from "@/features/shared/components/ui/TextInput";
 import Button from "@/features/shared/components/ui/Button";
-import useAdminDeleteUser from "../hooks/user/useAdminCreateUser";
+import adminCreateUser from "../hooks/user/useAdminCreateUser";
 import type { UserRole } from "@/features/users/types/user.type";
 
 export default function AdminUserCreateModal({
@@ -16,7 +16,7 @@ export default function AdminUserCreateModal({
   const [password, setPassword] = useState("");
   const [role, setRole] = useState<UserRole>("user");
 
-  const { createUser, isPending } = useAdminDeleteUser();
+  const { createUser, isPending } = adminCreateUser();
 
   const handleCreate = () => {
     if (!email || !password || !name) return;
