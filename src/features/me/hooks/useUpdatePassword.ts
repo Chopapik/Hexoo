@@ -13,7 +13,7 @@ import { useAppSelector } from "@/lib/store/hooks";
 
 type ErrorCallback = (errorCode: string, field?: string) => void;
 
-export const useUpdatePassword = (errorCallBack: ErrorCallback) => {
+export const useUpdatePassword = (onError: ErrorCallback) => {
   const { getRecaptchaToken } = useRecaptcha();
 
   const userEmail = useAppSelector((state) => state.auth.user?.email);
@@ -78,7 +78,7 @@ export const useUpdatePassword = (errorCallBack: ErrorCallback) => {
         error.code === "auth/invalid-credential" ||
         error.code === "auth/wrong-password"
       ) {
-        errorCallBack("auth/wrong-password", "oldPassword");
+        onError("auth/wrong-password", "oldPassword");
       } else if (error.code === "auth/too-many-requests") {
         toast.error("Zbyt wiele prób. Spróbuj później.");
       } else {

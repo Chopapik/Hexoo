@@ -3,8 +3,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { CreatePost } from "../types/post.type";
 
 export default function useCreatePost(
-  successFnCallBack?: (data?: any) => void,
-  errorFnCallBack?: (err?: any) => void
+  onSuccess?: (data?: any) => void,
+  onError?: (error?: any) => void
 ) {
   const queryClient = useQueryClient();
 
@@ -28,11 +28,11 @@ export default function useCreatePost(
       await queryClient.invalidateQueries({
         queryKey: ["posts"],
       });
-      successFnCallBack?.(data);
+      onSuccess?.(data);
     },
 
-    onError: (err) => {
-      errorFnCallBack?.(err);
+    onError: (error) => {
+      onError?.(error);
     },
   });
 
