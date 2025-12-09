@@ -7,20 +7,11 @@ import Button from "@/features/shared/components/ui/Button";
 import type { User } from "@/features/users/types/user.type";
 import AdminUserEditModal from "./AdminUserEditModal";
 import AdminUserCreateModal from "./AdminUserCreateModal";
+import { formatDate } from "@/features/shared/utils/dateUtils";
 
 type GetUsersResponse = {
   users: User[];
 };
-
-function formatDate(iso?: string | Date | null) {
-  if (!iso) return "-";
-  try {
-    const d = new Date(iso as string);
-    return d.toLocaleString();
-  } catch {
-    return String(iso);
-  }
-}
 
 enum AdminModal {
   NONE,
