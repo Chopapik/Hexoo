@@ -12,7 +12,6 @@ export function useLogout() {
     },
     onSuccess: () => {
       router.push("/login");
-      ć;
     },
     onError: (error) => {
       console.error("Logout failed", error);

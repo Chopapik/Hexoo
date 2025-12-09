@@ -16,12 +16,12 @@ export default async function RootLayout({
 
   try {
     sessionUserData = await getUserFromSession();
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (
       error instanceof ApiError &&
       (error.code === "AUTH_REQUIRED" || error.code === "INVALID_SESSION")
     ) {
-      return <div className="text-white">:/</div>;
+      redirect("/login");
     }
     throw error;
   }
