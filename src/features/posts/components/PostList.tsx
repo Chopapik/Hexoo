@@ -12,7 +12,7 @@ type PostListProps = {
 const joinClassNames = (className?: string) =>
   ["w-full", className].filter(Boolean).join(" ");
 
-export const PostList = ({ className = "" }: PostListProps) => {
+export default function PostList({ className = "" }: PostListProps) {
   const {
     data,
     isLoading,
@@ -112,4 +112,4 @@ export const PostList = ({ className = "" }: PostListProps) => {
       </div>
     </main>
   );
-};
+}

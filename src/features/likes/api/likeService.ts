@@ -1,7 +1,7 @@
 import { adminDb } from "@/lib/firebaseAdmin";
-import { getUserFromSession } from "../auth/api/utils/verifySession";
+import { getUserFromSession } from "../../auth/api/utils/verifySession";
 import { createAppError } from "@/lib/ApiError";
-import { Like } from "./like.type";
+import { Like } from "../types/like.type";
 import { FieldValue } from "firebase-admin/firestore";
 
 export async function toggleLike(
@@ -11,7 +11,10 @@ export async function toggleLike(
   const user = await getUserFromSession();
 
   if (!resourceId) {
-    throw createAppError({ code: "INVALID_INPUT", message: "[likeService.toggleLike] Resource ID is missing." });
+    throw createAppError({
+      code: "INVALID_INPUT",
+      message: "[likeService.toggleLike] Resource ID is missing.",
+    });
   }
 
   const parentRef = adminDb.collection(collectionName).doc(resourceId);

@@ -4,7 +4,7 @@ type CreatePostButtonProps = {
 
 export default function CreatePostButton({ onClick }: CreatePostButtonProps) {
   return (
-    <div
+    <button
       onClick={onClick}
       style={{
         background:
@@ -29,6 +29,6 @@ export default function CreatePostButton({ onClick }: CreatePostButtonProps) {
           />
         </svg>
       </div>
-    </div>
+    </button>
   );
 }

@@ -1,4 +1,4 @@
-import { toggleLike } from "@/features/likes/likeService";
+import { toggleLike } from "@/features/likes/api/likeService";
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 

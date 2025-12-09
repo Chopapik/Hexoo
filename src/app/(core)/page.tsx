@@ -2,7 +2,7 @@
 
 import CreatePostModal from "@/features/posts/components/CreatePostModal";
 import CreatePostButton from "@/features/posts/components/CreatePostButton";
-import { PostList } from "@/features/posts/components/PostList";
+import PostList from "@/features/posts/components/PostList";
 import { useState } from "react";
 
 export default function HomePage() {

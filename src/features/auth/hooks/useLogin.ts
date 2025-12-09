@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { LoginData } from "../types/auth.types";
+import { LoginData } from "../types/auth.type";
 import axiosInstance from "@/lib/axiosInstance";
 import { ApiError } from "@/lib/ApiError";
 import { signInWithEmailAndPassword } from "firebase/auth";

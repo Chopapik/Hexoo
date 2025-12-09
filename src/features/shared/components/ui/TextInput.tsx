@@ -11,7 +11,7 @@ export interface Message {
   text: string;
 }
 
-interface InputProps {
+interface TextInputProps {
   label?: string;
   name?: string;
   type?: "text" | "password" | "email";
@@ -45,7 +45,7 @@ export default function TextInput({
   onChange,
   onBlur,
   showButton = true,
-}: InputProps) {
+}: TextInputProps) {
   const [showPassword, setShowPassword] = useState(false);
 
   const togglePasswordVisibility = () => setShowPassword((prev) => !prev);

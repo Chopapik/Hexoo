@@ -15,12 +15,6 @@ import axiosInstance from "@/lib/axiosInstance";
 import toast from "react-hot-toast";
 import ConfirmDeletePostModal from "./ConfirmDeletePostModal.tsx";
 
-const DotsIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
-  </svg>
-);
-
 export default function PostOptions({
   postId,
   authorId,
@@ -77,7 +71,7 @@ export default function PostOptions({
           <Menu as="div" className="relative inline-block text-left">
             <div>
               <Menu.Button className="p-2 text-text-neutral hover:text-text-main transition-colors rounded-xl hover:bg-primary-neutral-background-hover">
-                <DotsIcon />
+                <BsThreeDots size={20} />
               </Menu.Button>
             </div>
 

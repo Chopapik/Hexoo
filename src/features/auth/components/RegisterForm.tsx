@@ -8,7 +8,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import useRegister from "../hooks/useRegister";
-import { RegisterData } from "../types/auth.types";
+import { RegisterData } from "../types/auth.type";
 import { parseRegisterErrorMessages } from "../utils/registerFormValidation";
 import { useRegisterForm } from "../hooks/useRegisterForm";
 
