@@ -1,6 +1,7 @@
 import axiosInstance from "@/lib/axiosInstance";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Post } from "../types/post.type";
+import toast from "react-hot-toast";
 
 export function useToggleLike() {
   const queryClient = useQueryClient();
@@ -43,7 +44,7 @@ export function useToggleLike() {
       if (context?.previousPosts) {
         queryClient.setQueryData(["posts"], context.previousPosts);
       }
-      //TODO toast.error("Nie udało się polubić posta");
+      toast.error("Nie udało się polubić posta");
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["posts"] });

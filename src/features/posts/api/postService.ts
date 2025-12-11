@@ -21,6 +21,8 @@ import { moderateText } from "@/features/moderation/api/textModeration";
 import { FieldValue } from "firebase-admin/firestore";
 
 const POSTS_COLLECTION = "posts";
+const LIKES_COLLECTION = "likes";
+
 const REPORT_THRESHOLD = 3;
 
 const normalizePublicUrl = (
@@ -97,6 +99,7 @@ export const createPost = async (postData: CreatePost) => {
   const user = await getUserFromSession();
 
   const parsed = CreatePostSchema.safeParse(postData);
+
   if (!parsed.success) {
     throw createAppError({
       code: "VALIDATION_ERROR",
@@ -118,9 +121,12 @@ export const createPost = async (postData: CreatePost) => {
   }
 
   let imageUrl: string | null = null;
-  let imageMeta: any = null;
+  let imageMeta: {
+    storagePath: string;
+    downloadToken: string;
+  } | null = null;
 
-  if (hasFile(postData.imageFile)) {
+  if (hasFile(postData.imageFile) && postData.imageFile) {
     const upload = await uploadImage(postData.imageFile, user.uid);
     const safePublicUrl = normalizePublicUrl(upload.publicUrl);
     imageUrl = safePublicUrl || null;
@@ -131,7 +137,7 @@ export const createPost = async (postData: CreatePost) => {
     };
   }
 
-  const doc = {
+  const Postdoc = {
     userId: user.uid,
     userName: user.name,
     userAvatarUrl: user.avatarUrl ?? null,
@@ -147,8 +153,17 @@ export const createPost = async (postData: CreatePost) => {
     flaggedReasons,
   };
 
-  const ref = await adminDb.collection(POSTS_COLLECTION).add(doc);
-  return { id: ref.id, ...doc } as Post;
+  const createdPostRef = await adminDb
+    .collection(POSTS_COLLECTION)
+    .add(Postdoc);
+
+  // const likeDoc = {
+  //   postId: createdPostRef.id,
+  //   userId: user.uid,
+  //   likedAt: admin.firestore.FieldValue.serverTimestamp(),
+  // };
+
+  // await adminDb.collection(LIKES_COLLECTION).add(likeDoc);
 };
 
 export const updatePost = async (postId: string, data: UpdatePost) => {
@@ -185,7 +200,7 @@ export const updatePost = async (postId: string, data: UpdatePost) => {
   let imageUrl = post.imageUrl;
   let imageMeta = post.imageMeta;
 
-  if (hasFile(data.imageFile)) {
+  if (hasFile(data.imageFile) && data.imageFile) {
     const upload = await uploadImage(data.imageFile, user.uid);
 
     const safePublicUrl = normalizePublicUrl(upload.publicUrl);
@@ -230,6 +245,7 @@ export const getPostById = async (postId: string) => {
     ...data,
   } as Post;
 };
+
 export const getPosts = async (
   limit = 20,
   startAfterId?: string
@@ -238,12 +254,12 @@ export const getPosts = async (
   try {
     const session = await getUserFromSession();
     currentUserUid = session.uid;
-  } catch (err) {
+  } catch (error) {
     currentUserUid = null;
   }
 
-  let query = adminDb
-    .collection("posts")
+  let postsQuery = adminDb
+    .collection(POSTS_COLLECTION)
     .where("moderationStatus", "==", "approved")
     .orderBy("createdAt", "desc")
     .limit(limit);
@@ -251,52 +267,53 @@ export const getPosts = async (
   if (startAfterId) {
     const startSnap = await adminDb.collection("posts").doc(startAfterId).get();
     if (startSnap.exists) {
-      query = query.startAfter(startSnap);
+      postsQuery = postsQuery.startAfter(startSnap);
     }
   }
 
-  const snap = await query.get();
+  const postsSnap = await postsQuery.get();
 
-  const posts = await Promise.all(
-    snap.docs.map(async (d) => {
-      const data = d.data();
+  const visiblePostIds = postsSnap.docs.map((doc) => doc.id);
 
-      let isLikedByMe = false;
+  let likedPostIds: string[] = [];
 
-      if (currentUserUid) {
-        const likeSnap = await d.ref
-          .collection("likes")
-          .doc(currentUserUid)
-          .get();
-        isLikedByMe = likeSnap.exists;
-      }
+  if (currentUserUid && visiblePostIds.length > 0) {
+    const likesQuery = await adminDb
+      .collection(LIKES_COLLECTION)
+      .where("userId", "==", currentUserUid)
+      .where("parentId", "in", visiblePostIds)
+      .get();
 
-      return {
-        id: d.id,
-        userId: data.userId,
-        userName: data.userName,
-        userAvatarUrl: data.userAvatarUrl ?? null,
-        text: data.text,
-        imageUrl: data.imageUrl ?? null,
-        device: data.device ?? null,
+    likedPostIds = likesQuery.docs.map((doc) => doc.data().parentId);
+  }
 
-        likesCount: data.likesCount ?? 0,
-        commentsCount: data.commentsCount ?? 0,
+  const posts = postsSnap.docs.map((doc) => {
+    const data = doc.data();
+    const postId = doc.id;
 
-        isLikedByMe,
+    return {
+      id: postId,
+      userId: data.userId,
+      userName: data.userName,
+      userAvatarUrl: data.userAvatarUrl ?? null,
+      text: data.text,
+      imageUrl: data.imageUrl ?? null,
+      device: data.device ?? null,
 
-        likes: null,
+      likesCount: data.likesCount ?? 0,
+      commentsCount: data.commentsCount ?? 0,
 
-        createdAt: data.createdAt?.toDate
-          ? data.createdAt.toDate()
-          : data.createdAt,
-        updatedAt: data.updatedAt?.toDate
-          ? data.updatedAt.toDate()
-          : data.updatedAt,
-        moderationStatus: data.moderationStatus,
-      } as Post;
-    })
-  );
+      isLikedByMe: likedPostIds.includes(postId),
+
+      createdAt: data.createdAt?.toDate
+        ? data.createdAt.toDate()
+        : data.createdAt,
+      updatedAt: data.updatedAt?.toDate
+        ? data.updatedAt.toDate()
+        : data.updatedAt,
+      moderationStatus: data.moderationStatus,
+    } as Post;
+  });
 
   return posts;
 };
