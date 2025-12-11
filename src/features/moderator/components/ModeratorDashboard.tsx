@@ -1,6 +1,6 @@
 "use client";
 
-import { PostCard } from "@/features/posts/components/PostLayout";
+import { PostCard } from "@/features/posts/components/PostCard";
 import Button from "@/features/shared/components/ui/Button";
 import { useModeratorDashboard } from "../hooks/useModeratorDashboard";
 
