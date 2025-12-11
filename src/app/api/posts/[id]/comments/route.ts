@@ -1,9 +1,10 @@
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import { addComment } from "@/features/comments/api/commentService";
+import { NextRequest } from "next/server";
 
 export const POST = withErrorHandling(
-  async (req: Request, context: { params: Promise<{ id: string }> }) => {
+  async (req: NextRequest, context: { params: Promise<{ id: string }> }) => {
     const { id } = await context.params;
     const body = await req.json();
 

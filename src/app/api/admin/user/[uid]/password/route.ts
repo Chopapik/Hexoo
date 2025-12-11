@@ -1,9 +1,10 @@
 import { adminUpdateUserPassword } from "@/features/admin/api/adminService";
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
+import { NextRequest } from "next/server";
 
 export const PUT = withErrorHandling(
-  async (req: Request, context: { params: Promise<{ uid: string }> }) => {
+  async (req: NextRequest, context: { params: Promise<{ uid: string }> }) => {
     const body = await req.json();
     const { uid } = await context.params;
     const { newPassword } = body;

@@ -1,10 +1,11 @@
 import { handleError } from "./responseHelpers";
 import { ApiError } from "../ApiError";
+import { NextRequest } from "next/server";
 
 export function withErrorHandling(
-  handler: (req: Request, context?: any) => Promise<Response | any>
+  handler: (req: NextRequest, context?: any) => Promise<Response | any>
 ) {
-  return async (req: Request, context?: any) => {
+  return async (req: NextRequest, context?: any) => {
     try {
       return await handler(req, context);
     } catch (caught) {

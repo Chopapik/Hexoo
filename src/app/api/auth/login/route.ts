@@ -3,8 +3,9 @@ import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import { createAppError } from "@/lib/ApiError";
 import { verifyRecaptchaToken } from "@/lib/recaptcha";
+import { NextRequest } from "next/server";
 
-export const POST = withErrorHandling(async (req: Request) => {
+export const POST = withErrorHandling(async (req: NextRequest) => {
   const body = await req.json();
   const { idToken, recaptchaToken } = body;
 
@@ -24,7 +25,6 @@ export const POST = withErrorHandling(async (req: Request) => {
 
   await verifyRecaptchaToken(recaptchaToken);
 
-  // Wywołujemy nową funkcję createSession zamiast starego loginUser
   const result = await createSession(idToken);
 
   return handleSuccess(result);

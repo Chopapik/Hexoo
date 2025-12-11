@@ -2,9 +2,10 @@ import { getPostById, updatePost } from "@/features/posts/api/postService";
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import { UpdatePost } from "@/features/posts/types/post.type";
+import { NextRequest } from "next/server";
 
 export const GET = withErrorHandling(
-  async (req: Request, context: { params: Promise<{ id: string }> }) => {
+  async (req: NextRequest, context: { params: Promise<{ id: string }> }) => {
     const { id } = await context.params;
     const post = await getPostById(id);
     return handleSuccess(post);
@@ -12,7 +13,7 @@ export const GET = withErrorHandling(
 );
 
 export const PUT = withErrorHandling(
-  async (req: Request, context: { params: Promise<{ id: string }> }) => {
+  async (req: NextRequest, context: { params: Promise<{ id: string }> }) => {
     const { id } = await context.params;
     const contentType = req.headers.get("content-type") || "";
 

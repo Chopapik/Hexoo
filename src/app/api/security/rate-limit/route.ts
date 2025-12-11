@@ -1,8 +1,9 @@
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { checkAndIncrementIpLimit } from "@/lib/security/rateLimitService";
 import { handleSuccess } from "@/lib/http/responseHelpers";
+import { NextRequest } from "next/server";
 
-export const POST = withErrorHandling(async (req: Request) => {
+export const POST = withErrorHandling(async (req: NextRequest) => {
   const { searchParams } = new URL(req.url);
   const ip = searchParams.get("ip");
 
