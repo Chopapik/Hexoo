@@ -34,13 +34,11 @@ export async function toggleLike(
       });
     }
 
-    const currentLikesCount = parentSnap.data()?.likesCount || 0;
-
     if (likeSnap.exists) {
       transaction.delete(likeRef);
 
       transaction.update(parentRef, {
-        likesCount: Math.max(0, currentLikesCount - 1),
+        likesCount: FieldValue.increment(-1),
       });
     } else {
       transaction.set(likeRef, {
@@ -50,7 +48,7 @@ export async function toggleLike(
       } as Like);
 
       transaction.update(parentRef, {
-        likesCount: currentLikesCount + 1,
+        likesCount: FieldValue.increment(1),
         updatedAt: FieldValue.serverTimestamp(),
       });
     }
