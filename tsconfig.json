@@ -22,13 +22,16 @@
       "@/*": ["./src/*"]
     }
   },
+  "types": ["@types/mdx"],
   "include": [
     "svgr.d.ts",
     "next-env.d.ts",
+    "src/features/shared/types/mdx.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts"
+    ".next/dev/types/**/*.ts",
+    "**/*.mdx"
   ],
   "exclude": ["node_modules"]
 }
