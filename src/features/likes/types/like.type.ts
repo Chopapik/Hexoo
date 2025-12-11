@@ -1,7 +1,6 @@
 export type Like = {
-  uid: string;
-  userName: string;
-  userAvatarUrl: string | null;
+  parentId: string;
+  userId: string;
   likedAt: any;
 };
 

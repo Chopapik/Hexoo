@@ -39,5 +39,5 @@ export default function useCreatePost(
   return {
     createPost: mutation.mutate,
     isPending: mutation.isPending,
-  } as const;
+  };
 }

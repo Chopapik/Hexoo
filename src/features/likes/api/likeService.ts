@@ -5,61 +5,54 @@ import { FieldValue } from "firebase-admin/firestore";
 import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
 
 export async function toggleLike(
-  resourceId: string,
-  collectionName: "posts" | "comments"
+  parentId: string,
+  parentCollectionName: "posts" | "comments"
 ) {
   const user = await getUserFromSession();
 
-  if (!resourceId) {
+  if (!parentId) {
     throw createAppError({
       code: "INVALID_INPUT",
       message: "[likeService.toggleLike] Resource ID is missing.",
     });
   }
 
-  const parentRef = adminDb.collection(collectionName).doc(resourceId);
+  const parentRef = adminDb.collection(parentCollectionName).doc(parentId);
 
-  const likeRef = parentRef.collection("likes").doc(user.uid);
+  const likeId = `${parentId}_${user.uid}`;
+
+  const likeRef = adminDb.collection("likes").doc(likeId);
 
   return await adminDb.runTransaction(async (transaction) => {
-    const resourceDoc = await transaction.get(parentRef);
-    const likeDoc = await transaction.get(likeRef);
+    const parentSnap = await transaction.get(parentRef);
+    const likeSnap = await transaction.get(likeRef);
 
-    if (!resourceDoc.exists) {
+    if (!parentSnap.exists) {
       throw createAppError({
         code: "NOT_FOUND",
-        message: `[likeService.toggleLike] Resource with id: ${resourceId}  from collection  ${collectionName}, not found`,
+        message: `[likeService.toggleLike] Resource with id: ${parentId} from collection ${parentCollectionName}, not found`,
       });
     }
 
-    const resourceData = resourceDoc.data();
+    const currentLikesCount = parentSnap.data()?.likesCount || 0;
 
-    const currentCount = resourceData?.likesCount || 0;
-
-    let newCount = currentCount;
-    let isLiked = false;
-
-    if (likeDoc.exists) {
+    if (likeSnap.exists) {
       transaction.delete(likeRef);
-      newCount = Math.max(0, currentCount - 1);
-      isLiked = false;
+
+      transaction.update(parentRef, {
+        likesCount: Math.max(0, currentLikesCount - 1),
+      });
     } else {
-      const newLike: Like = {
-        uid: user.uid,
-        userName: user.name,
-        userAvatarUrl: user.avatarUrl ?? null,
+      transaction.set(likeRef, {
+        parentId,
+        userId: user.uid,
         likedAt: FieldValue.serverTimestamp(),
-      };
+      } as Like);
 
-      transaction.set(likeRef, newLike);
-      newCount = currentCount + 1;
-      isLiked = true;
+      transaction.update(parentRef, {
+        likesCount: currentLikesCount + 1,
+        updatedAt: FieldValue.serverTimestamp(),
+      });
     }
-
-    transaction.update(parentRef, {
-      likesCount: newCount,
-      updatedAt: FieldValue.serverTimestamp(),
-    });
-    return { isLiked, likesCount: newCount };
   });
 }

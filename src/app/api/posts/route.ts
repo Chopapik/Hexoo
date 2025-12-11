@@ -16,8 +16,8 @@ export const POST = withErrorHandling(async (req: Request) => {
     return handleSuccess(result, 201);
   }
   const body = await req.json();
-  const result = await createPost(body);
-  return handleSuccess(result, 201);
+  await createPost(body);
+  return handleSuccess();
 });
 
 export const GET = withErrorHandling(async (req: Request) => {
