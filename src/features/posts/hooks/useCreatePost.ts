@@ -13,7 +13,7 @@ export default function useCreatePost(
       if (postData instanceof FormData) {
         const res = await axiosInstance.post("/posts", postData, {
           withCredentials: true,
-          headers: { "Content-Type": undefined as any },
+          headers: { "Content-Type": undefined },
         });
         return res.data;
       }

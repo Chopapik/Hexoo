@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef } from "react";
 import type { Post } from "../types/post.type";
-import { PostCard } from "./PostLayout";
+import { PostCard } from "./PostCard";
 import usePosts from "../hooks/usePosts";
 
 type PostListProps = {

@@ -7,16 +7,17 @@ import { useToggleLike } from "../hooks/useToggleLike";
 
 type PostFooterProps = {
   post: Post;
+  onCommentClick: () => void;
 };
 
-export const PostFooter = ({ post }: PostFooterProps) => {
+export const PostFooter = ({ post, onCommentClick }: PostFooterProps) => {
   const { toggleLike } = useToggleLike();
 
-  const activeTextColor = "text-fuchsia-600";
+  const activeTextColor = "text-primary-fuchsia-stroke-default";
   const inactiveTextColor = "text-text-neutral";
 
   return (
-    <div className="w-full  bg-transparent inline-flex justify-start items-start gap-4 mt-2">
+    <div className="w-full bg-transparent inline-flex justify-start items-start gap-4 mt-2">
       <div
         className="flex justify-start items-center gap-1.5 cursor-pointer group"
         onClick={(e) => {
@@ -36,7 +37,13 @@ export const PostFooter = ({ post }: PostFooterProps) => {
         </div>
       </div>
 
-      <div className="flex justify-start items-center gap-1.5 cursor-pointer group">
+      <div
+        className="flex justify-start items-center gap-1.5 cursor-pointer group"
+        onClick={(e) => {
+          e.stopPropagation();
+          onCommentClick();
+        }}
+      >
         <div
           data-svg-wrapper
           className="group-hover:text-text-main transition-colors"

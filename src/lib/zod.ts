@@ -1,4 +1,3 @@
-// src/lib/zod.ts
 import { ZodError } from "zod";
 
 export function formatZodErrorFlat(error: ZodError): Record<string, string[]> {
@@ -14,7 +13,6 @@ export function formatZodErrorFlat(error: ZodError): Record<string, string[]> {
     result[path].push(message);
   }
 
-  // Usuń _root jeśli pusty
   if (result._root && result._root.length === 0) {
     delete result._root;
   }
