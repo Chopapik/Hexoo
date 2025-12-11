@@ -1,7 +1,8 @@
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import { createPost, getPosts } from "@/features/posts/api/postService";
-export const POST = withErrorHandling(async (req: Request) => {
+import { NextRequest } from "next/server";
+export const POST = withErrorHandling(async (req: NextRequest) => {
   const contentType = req.headers.get("content-type") || "";
   if (contentType.includes("multipart/form-data")) {
     const form = await req.formData();
@@ -20,7 +21,7 @@ export const POST = withErrorHandling(async (req: Request) => {
   return handleSuccess();
 });
 
-export const GET = withErrorHandling(async (req: Request) => {
+export const GET = withErrorHandling(async (req: NextRequest) => {
   const { searchParams } = new URL(req.url);
   const limit = parseInt(searchParams.get("limit") || "20", 10);
   const startAfter = searchParams.get("startAfter") || undefined;
