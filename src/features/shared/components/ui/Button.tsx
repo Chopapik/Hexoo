@@ -1,4 +1,8 @@
-import type { ButtonProps, ButtonSize, ButtonVariant } from "../../types/button.type";
+import type {
+  ButtonProps,
+  ButtonSize,
+  ButtonVariant,
+} from "../../types/button.type";
 import Image from "next/image";
 
 /**
@@ -6,9 +10,9 @@ import Image from "next/image";
  * @type {Record<ButtonSize, string>}
  */
 const sizeClasses: Record<ButtonSize, string> = {
-  sm: "h-7 min-w-9 px-3 text-xs rounded-xl",
-  md: "h-9 min-w-[110px] px-4 text-base rounded-3xl",
-  lg: "h-11 min-w-[190px] px-5 text-base rounded-xl",
+  sm: "h-7 min-w-7 px-3 text-xs rounded-xl",
+  md: "h-9 min-w-9 px-4 text-base rounded-3xl",
+  lg: "h-11 min-w-11 px-5 text-base rounded-xl",
   xl: "h-13 w-full px-3 text-base rounded-xl",
   // Icon-only sizes
   icon: "h-9 min-w-9 rounded-xl",
