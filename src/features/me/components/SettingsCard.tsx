@@ -1,11 +1,34 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useState, useEffect, type ReactNode } from "react";
 import Button from "@/features/shared/components/ui/Button";
 import { useLogout } from "@/features/auth/hooks/useLogout";
 import { useDeleteAccount } from "@/features/me/hooks/useDeleteAccount";
 import ChangePasswordModal from "./ChangePasswordModal";
 import ConfirmDeleteModal from "./ConfirmDeleteModal";
+import { toggleTheme } from "@/features/shared/utils/theme";
+import { LuSun, LuMoon } from "react-icons/lu";
+
+const ThemeToggleIcon = ({ isDark }: { isDark: boolean }) => {
+  return (
+    <div className="relative w-5 h-5 flex items-center justify-center">
+      <LuSun
+        className={`w-5 h-5 absolute transition-all duration-500 ease-spring-smooth ${
+          isDark
+            ? "opacity-0 -rotate-90 scale-0"
+            : "opacity-100 rotate-0 scale-100"
+        }`}
+      />
+      <LuMoon
+        className={`w-5 h-5 absolute transition-all duration-500 ease-spring-smooth ${
+          isDark
+            ? "opacity-100 rotate-0 scale-100"
+            : "opacity-0 -rotate-90 scale-0"
+        }`}
+      />
+    </div>
+  );
+};
 
 const SettingsSection = ({
   title,
@@ -22,38 +45,73 @@ const SettingsSection = ({
   </div>
 );
 
-export default function SettingsPage() {
+export default function SettingsCard() {
   const { logout } = useLogout();
   const { deleteAccount } = useDeleteAccount();
   const [isPasswordModalOpen, setPasswordModalOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
 
+  const [isDark, setIsDark] = useState(false);
+  const [isMounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    const isDarkMode =
+      document.documentElement.classList.contains("dark") ||
+      localStorage.getItem("theme") === "dark";
+    setIsDark(isDarkMode);
+    setMounted(true);
+  }, []);
+
+  const handleThemeToggle = () => {
+    toggleTheme();
+    setIsDark((prev) => !prev);
+  };
+
   return (
     <>
       <div className="w-full text-text-main flex flex-col gap-6 mt-4">
         <h2 className="text-3xl font-bold font-Albert_Sans text-text-main mb-2">
-          Ustawienia konta
+          Ustawienia
         </h2>
-
-        {/* --- Password Change Section --- */}
-        <SettingsSection title="Bezpieczeństwo">
+        <SettingsSection title="Wygląd">
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div>
-              <h4 className="font-semibold text-text-main">Hasło</h4>
+              <h4 className="font-semibold text-text-main">Motyw aplikacji</h4>
               <p className="text-sm text-text-neutral">
-                Regularna zmiana hasła zwiększa bezpieczeństwo Twojego konta.
+                Dostosuj wygląd interfejsu do swoich preferencji (Jasny /
+                Ciemny).
+              </p>
+            </div>
+            <Button
+              leftIcon={
+                isMounted ? (
+                  <ThemeToggleIcon isDark={isDark} />
+                ) : (
+                  <div className="w-5 h-5" />
+                )
+              }
+              onClick={handleThemeToggle}
+              className="w-fit"
+            />
+          </div>
+        </SettingsSection>
+
+        <SettingsSection title="Konto">
+          <div className="flex flex-col md:flex-row items-center justify-between">
+            <div>
+              <h4 className="font-semibold text-text-main">Zmiana hasła</h4>
+              <p className="text-sm text-text-neutral">
+                Zaktualizuj swoje hasło, aby zachować bezpieczeństwo konta.
               </p>
             </div>
             <Button
               text="Zmień hasło"
-              variant="gradient-fuchsia"
               onClick={() => setPasswordModalOpen(true)}
             />
           </div>
         </SettingsSection>
 
-        {/* --- Account Management Section --- */}
-        <SettingsSection title="Zarządzanie kontem">
+        <SettingsSection title="Strefa niebezpieczna">
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div>
               <h4 className="font-semibold text-text-main">Wyloguj się</h4>
