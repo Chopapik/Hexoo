@@ -2,37 +2,26 @@ const STORAGE_KEY = "theme";
 export type ThemeName = "dark" | "light";
 
 export const getTheme = (): ThemeName => {
-  const attr = document?.documentElement.getAttribute("data-theme");
-  return attr === "light" || attr === "dark" ? (attr as ThemeName) : "dark";
+  if (typeof document === "undefined") return "dark";
+  const attr = document.documentElement.getAttribute("data-theme");
+  return attr === "light" ? "light" : "dark";
 };
 
 export const setTheme = (theme: ThemeName) => {
+  if (typeof document === "undefined") return;
+
   document.documentElement.setAttribute("data-theme", theme);
+
   try {
     localStorage.setItem(STORAGE_KEY, theme);
-  } catch {}
+  } catch (e) {
+    console.error("Nie udało się zapisać motywu:", e);
+  }
 };
 
 export const toggleTheme = (): ThemeName => {
-  const next: ThemeName = getTheme() === "dark" ? "light" : "dark";
+  const current = getTheme();
+  const next = current === "dark" ? "light" : "dark";
   setTheme(next);
   return next;
-};
-
-export const initTheme = () => {
-  let theme: ThemeName | null = null;
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored === "light" || stored === "dark") theme = stored as ThemeName;
-  } catch {}
-
-  if (!theme) {
-    const prefersDark =
-      typeof window !== "undefined" &&
-      window.matchMedia &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches;
-    theme = prefersDark ? "dark" : "light";
-  }
-
-  setTheme(theme);
 };
