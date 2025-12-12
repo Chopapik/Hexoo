@@ -13,6 +13,8 @@ body {
   visibility: hidden !important;
 }
 
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 /* Default theme = dark mode */
 @theme {
   --font-Plus_Jakarta_Sans: "Plus Jakarta Sans", sans-serif;
