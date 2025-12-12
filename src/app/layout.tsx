@@ -8,6 +8,8 @@ import QueryProvider from "@/lib/providers/QueryProvider";
 import RecaptchaProvider from "@/lib/providers/RecaptchaProvider";
 import ClientSecurityGuard from "@/features/shared/components/security/ClientSecurityGuard";
 import ToastContainer from "@/lib/providers/ToastContainer";
+import ThemeScript from "@/features/shared/components/ThemeScript";
+
 export const metadata: Metadata = {
   title: "Hexoo",
 };
@@ -19,6 +21,7 @@ export default function RootLayout({
   return (
     <html lang="pl">
       <body>
+        <ThemeScript />
         <ClientSecurityGuard>
           <RecaptchaProvider>
             <QueryProvider>
