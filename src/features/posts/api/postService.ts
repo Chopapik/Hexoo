@@ -302,6 +302,8 @@ export const getPosts = async (
         ? data.updatedAt.toDate()
         : data.updatedAt,
       moderationStatus: data.moderationStatus,
+
+      isNSFW: data.isNSFW,
     } as Post;
   });
 
