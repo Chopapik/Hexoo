@@ -28,7 +28,7 @@ export const addComment = async (data: AddCommentDto) => {
   const { text, postId } = parsed.data;
 
   const { moderationStatus, isNSFW, flaggedReasons, flaggedSource } =
-    await performModeration(text);
+    await performModeration(user.uid, text);
 
   const postRef = adminDb.collection("posts").doc(postId);
   const commentsRef = postRef.collection("comments");

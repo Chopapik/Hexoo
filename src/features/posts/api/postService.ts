@@ -105,7 +105,11 @@ export const createPost = async (createPostData: CreatePost) => {
   }
 
   const { moderationStatus, isNSFW, flaggedReasons, flaggedSource } =
-    await performModeration(createPostData.text, createPostData.imageFile);
+    await performModeration(
+      user.uid,
+      createPostData.text,
+      createPostData.imageFile
+    );
 
   let imageUrl: string | null = null;
   let imageMeta: {
@@ -182,7 +186,11 @@ export const updatePost = async (
   }
 
   const { moderationStatus, isNSFW, flaggedReasons, flaggedSource } =
-    await performModeration(updatePostData.text, updatePostData.imageFile);
+    await performModeration(
+      user.uid,
+      updatePostData.text,
+      updatePostData.imageFile
+    );
 
   let imageUrl = post.imageUrl;
   let imageMeta = post.imageMeta;
