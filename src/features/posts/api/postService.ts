@@ -19,6 +19,11 @@ import {
 } from "@/features/images/api/imageService";
 import { moderateText } from "@/features/moderation/api/textModeration";
 import { FieldValue } from "firebase-admin/firestore";
+import { moderateImage } from "@/features/moderation/api/imageModeration";
+import {
+  getAiModerationVerdict,
+  ModerationStatus,
+} from "../utils/assessPostSafety";
 
 const POSTS_COLLECTION = "posts";
 const LIKES_COLLECTION = "likes";
@@ -108,16 +113,47 @@ export const createPost = async (postData: CreatePost) => {
     });
   }
 
-  let moderationStatus: "approved" | "pending" = "approved";
+  let moderationStatus: ModerationStatus = "approved";
   let flaggedReasons: string[] = [];
+  let isNSFW: boolean = false;
+  let flaggedSource: string[] = [];
 
-  if (postData.text) {
-    const aiResult = await moderateText(postData.text);
-
-    if (aiResult.flagged) {
-      moderationStatus = "pending";
-      flaggedReasons = aiResult.categories;
+  //text ai moderation
+  if (postData.text && postData.text.trim()) {
+    const textResult = await moderateText(postData.text);
+    if (textResult.flagged) {
+      flaggedReasons.push(...textResult.categories);
+      flaggedSource.push("text");
     }
+  }
+
+  //image ai moderation
+  if (postData.imageFile && postData.imageFile instanceof File) {
+    const imageResult = await moderateImage(postData.imageFile);
+
+    if (imageResult.flagged) {
+      const uniqueCategories = imageResult.categories.filter(
+        (c) => !flaggedReasons.includes(c)
+      );
+      flaggedReasons.push(...uniqueCategories);
+      flaggedSource.push("image");
+    }
+  }
+
+  // moderation verdict
+  if (flaggedReasons.length > 0) {
+    const moderationResult = getAiModerationVerdict(flaggedReasons);
+
+    isNSFW = moderationResult.isNSFW;
+    moderationStatus = moderationResult.status;
+  }
+
+  if (moderationStatus === "rejected") {
+    throw createAppError({
+      code: "POLICY_VIOLATION",
+      message: "[postService.createPost] Post content regard service terms",
+      data: { reasons: flaggedReasons },
+    });
   }
 
   let imageUrl: string | null = null;
@@ -126,6 +162,7 @@ export const createPost = async (postData: CreatePost) => {
     downloadToken: string;
   } | null = null;
 
+  // save file to store
   if (hasFile(postData.imageFile) && postData.imageFile) {
     const upload = await uploadImage(postData.imageFile, user.uid);
     const safePublicUrl = normalizePublicUrl(upload.publicUrl);
@@ -150,7 +187,9 @@ export const createPost = async (postData: CreatePost) => {
     createdAt: admin.firestore.FieldValue.serverTimestamp(),
     updatedAt: admin.firestore.FieldValue.serverTimestamp(),
     moderationStatus,
+    isNSFW,
     flaggedReasons,
+    flaggedSource,
   };
 
   const createdPostRef = await adminDb
