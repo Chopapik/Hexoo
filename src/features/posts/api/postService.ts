@@ -87,6 +87,13 @@ export const reportPost = async (
 export const createPost = async (createPostData: CreatePost) => {
   const user = await getUserFromSession();
 
+  if (user.isRestricted) {
+    throw createAppError({
+      code: "FORBIDDEN",
+      data: { reason: "account_restricted" },
+    });
+  }
+
   const parsed = CreatePostSchema.safeParse(createPostData);
 
   if (!parsed.success) {

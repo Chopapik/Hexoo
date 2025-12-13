@@ -4,9 +4,17 @@ import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
 import { createAppError } from "@/lib/ApiError";
 import { AddCommentSchema, AddCommentDto } from "../types/comment.type";
 import { formatZodErrorFlat } from "@/lib/zod";
+import { performModeration } from "@/features/moderation/utils/assessSafety";
 
 export const addComment = async (data: AddCommentDto) => {
   const user = await getUserFromSession();
+
+  if (user.isRestricted) {
+    throw createAppError({
+      code: "FORBIDDEN",
+      data: { reason: "account_restricted" },
+    });
+  }
 
   const parsed = AddCommentSchema.safeParse(data);
   if (!parsed.success) {
@@ -18,6 +26,9 @@ export const addComment = async (data: AddCommentDto) => {
   }
 
   const { text, postId } = parsed.data;
+
+  const { moderationStatus, isNSFW, flaggedReasons, flaggedSource } =
+    await performModeration(text);
 
   const postRef = adminDb.collection("posts").doc(postId);
   const commentsRef = postRef.collection("comments");
@@ -44,6 +55,10 @@ export const addComment = async (data: AddCommentDto) => {
       likesCount: 0,
       createdAt: FieldValue.serverTimestamp(),
       updatedAt: FieldValue.serverTimestamp(),
+      moderationStatus,
+      isNSFW,
+      flaggedReasons,
+      flaggedSource,
     };
 
     transaction.set(newCommentRef, commentDoc);

@@ -17,7 +17,8 @@ export async function getUserFromSession(): Promise<UserSessionData | never> {
     .verifySessionCookie(sessionCookie.value, true)
     .catch(() => {
       throw createAppError({
-        message: "[verifySession.getUserFromSession] Invalid or expired session cookie",
+        message:
+          "[verifySession.getUserFromSession] Invalid or expired session cookie",
         code: "INVALID_SESSION",
       });
     });
@@ -31,6 +32,7 @@ export async function getUserFromSession(): Promise<UserSessionData | never> {
   }
 
   const data = snap.data();
+
   if (!data) {
     throw createAppError({
       message: "[verifySession.getUserFromSession] User document has no data",
@@ -44,5 +46,6 @@ export async function getUserFromSession(): Promise<UserSessionData | never> {
     name: data.name,
     role: data.role,
     avatarUrl: data.avatarUrl,
+    isRestricted: data.isRestricted || false,
   };
 }
