@@ -16,7 +16,8 @@ export type ErrorCode =
   | "USER_NOT_FOUND"
   | "INVALID_SESSION"
   | "UNAUTHORIZED_ACTION"
-  | "SERVICE_UNAVAILABLE";
+  | "SERVICE_UNAVAILABLE"
+  | "POLICY_VIOLATION";
 
 type AppErrorArgs = {
   code?: ErrorCode;
@@ -62,6 +63,10 @@ export const createAppError = (args: AppErrorArgs) => {
     INVALID_SESSION: { msg: "Invalid session token", status: 401 },
     UNAUTHORIZED_ACTION: { msg: "You cannot perform this action", status: 403 },
     SERVICE_UNAVAILABLE: { msg: "Service unavailable", status: 503 },
+    POLICY_VIOLATION: {
+      msg: "Content violates community guidelines",
+      status: 422,
+    },
   };
 
   const def = defaultMessages[args.code ?? "INTERNAL_ERROR"];

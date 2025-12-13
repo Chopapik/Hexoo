@@ -39,6 +39,7 @@ export interface Post {
   reportsMeta?: ReportDetails[];
   moderationStatus: "approved" | "pending" | "rejected";
   flaggedReasons?: string[]; // e.g. ["violence", "hate"]
+  isNSFW: boolean;
 
   // Admin/Moderator fields
   reviewedBy?: string;

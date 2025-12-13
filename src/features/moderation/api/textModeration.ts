@@ -1,3 +1,4 @@
+import { createAppError } from "@/lib/ApiError";
 import OpenAI from "openai";
 
 const openai = new OpenAI();
@@ -27,7 +28,9 @@ export async function moderateText(text: string): Promise<ModerationResult> {
       categories: categories,
     };
   } catch (error) {
-    console.error("OpenAI Error:", error);
-    return { flagged: false, categories: [] };
+    throw createAppError({
+      code: "EXTERNAL_SERVICE",
+      message: `[textModeration] OpenAI Error during moderateText: ${error}`,
+    });
   }
 }
