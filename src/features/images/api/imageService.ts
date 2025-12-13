@@ -15,7 +15,7 @@ const ensureBucket = () => {
   }
 };
 
-export const uploadImage = async (file: File | Blob, uid = "anon") => {
+export const uploadImage = async (file: File | Blob, uid: string) => {
   ensureBucket();
 
   if (!file) {
@@ -48,7 +48,8 @@ export const uploadImage = async (file: File | Blob, uid = "anon") => {
   } catch (error) {
     throw createAppError({
       code: "VALIDATION_ERROR",
-      message: "[imageService.uploadImage] Invalid image file or format not supported",
+      message:
+        "[imageService.uploadImage] Invalid image file or format not supported",
       details: error,
     });
   }

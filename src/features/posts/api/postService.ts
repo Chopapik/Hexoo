@@ -17,29 +17,13 @@ import {
   deleteImage,
   hasFile,
 } from "@/features/images/api/imageService";
-import { moderateText } from "@/features/moderation/api/textModeration";
 import { FieldValue } from "firebase-admin/firestore";
-import { moderateImage } from "@/features/moderation/api/imageModeration";
-import {
-  getAiModerationVerdict,
-  ModerationStatus,
-} from "../utils/assessPostSafety";
+import { performModeration } from "../../moderation/utils/assessSafety";
 
 const POSTS_COLLECTION = "posts";
 const LIKES_COLLECTION = "likes";
 
 const REPORT_THRESHOLD = 3;
-
-const normalizePublicUrl = (
-  u: string | null | undefined
-): string | null | undefined => {
-  if (!u) return u;
-  const protoMatch = u.match(/^(https?:\/\/)/i);
-  if (!protoMatch) return u;
-  const proto = protoMatch[1];
-  const rest = u.slice(proto.length).replace(/^(https?:\/\/)+/i, "");
-  return proto + rest;
-};
 
 export const reportPost = async (
   postId: string,
@@ -100,10 +84,10 @@ export const reportPost = async (
   });
 };
 
-export const createPost = async (postData: CreatePost) => {
+export const createPost = async (createPostData: CreatePost) => {
   const user = await getUserFromSession();
 
-  const parsed = CreatePostSchema.safeParse(postData);
+  const parsed = CreatePostSchema.safeParse(createPostData);
 
   if (!parsed.success) {
     throw createAppError({
@@ -113,48 +97,8 @@ export const createPost = async (postData: CreatePost) => {
     });
   }
 
-  let moderationStatus: ModerationStatus = "approved";
-  let flaggedReasons: string[] = [];
-  let isNSFW: boolean = false;
-  let flaggedSource: string[] = [];
-
-  //text ai moderation
-  if (postData.text && postData.text.trim()) {
-    const textResult = await moderateText(postData.text);
-    if (textResult.flagged) {
-      flaggedReasons.push(...textResult.categories);
-      flaggedSource.push("text");
-    }
-  }
-
-  //image ai moderation
-  if (postData.imageFile && postData.imageFile instanceof File) {
-    const imageResult = await moderateImage(postData.imageFile);
-
-    if (imageResult.flagged) {
-      const uniqueCategories = imageResult.categories.filter(
-        (c) => !flaggedReasons.includes(c)
-      );
-      flaggedReasons.push(...uniqueCategories);
-      flaggedSource.push("image");
-    }
-  }
-
-  // moderation verdict
-  if (flaggedReasons.length > 0) {
-    const moderationResult = getAiModerationVerdict(flaggedReasons);
-
-    isNSFW = moderationResult.isNSFW;
-    moderationStatus = moderationResult.status;
-  }
-
-  if (moderationStatus === "rejected") {
-    throw createAppError({
-      code: "POLICY_VIOLATION",
-      message: "[postService.createPost] Post content regard service terms",
-      data: { reasons: flaggedReasons },
-    });
-  }
+  const { moderationStatus, isNSFW, flaggedReasons, flaggedSource } =
+    await performModeration(createPostData.text, createPostData.imageFile);
 
   let imageUrl: string | null = null;
   let imageMeta: {
@@ -163,10 +107,9 @@ export const createPost = async (postData: CreatePost) => {
   } | null = null;
 
   // save file to store
-  if (hasFile(postData.imageFile) && postData.imageFile) {
-    const upload = await uploadImage(postData.imageFile, user.uid);
-    const safePublicUrl = normalizePublicUrl(upload.publicUrl);
-    imageUrl = safePublicUrl || null;
+  if (createPostData.imageFile) {
+    const upload = await uploadImage(createPostData.imageFile, user.uid);
+    imageUrl = upload.publicUrl || null;
 
     imageMeta = {
       storagePath: upload.storagePath,
@@ -178,12 +121,12 @@ export const createPost = async (postData: CreatePost) => {
     userId: user.uid,
     userName: user.name,
     userAvatarUrl: user.avatarUrl ?? null,
-    text: postData.text,
+    text: createPostData.text,
     imageUrl,
     imageMeta,
     likesCount: 0,
     commentsCount: 0,
-    device: postData.device ?? "Web",
+    device: createPostData.device ?? "Web",
     createdAt: admin.firestore.FieldValue.serverTimestamp(),
     updatedAt: admin.firestore.FieldValue.serverTimestamp(),
     moderationStatus,
@@ -195,24 +138,19 @@ export const createPost = async (postData: CreatePost) => {
   const createdPostRef = await adminDb
     .collection(POSTS_COLLECTION)
     .add(Postdoc);
-
-  // const likeDoc = {
-  //   postId: createdPostRef.id,
-  //   userId: user.uid,
-  //   likedAt: admin.firestore.FieldValue.serverTimestamp(),
-  // };
-
-  // await adminDb.collection(LIKES_COLLECTION).add(likeDoc);
 };
 
-export const updatePost = async (postId: string, data: UpdatePost) => {
+export const updatePost = async (
+  postId: string,
+  updatePostData: UpdatePost
+) => {
   const user = await getUserFromSession();
 
-  const parsed = UpdatePostSchema.safeParse(data);
+  const parsed = UpdatePostSchema.safeParse(updatePostData);
   if (!parsed.success) {
     throw createAppError({
       code: "VALIDATION_ERROR",
-      message: "[postService.updatePost] Invalid post data",
+      message: "[postService.updatePost] Invalid post updatePostData",
       data: { details: formatZodErrorFlat(parsed.error) },
     });
   }
@@ -236,14 +174,16 @@ export const updatePost = async (postId: string, data: UpdatePost) => {
     });
   }
 
+  const { moderationStatus, isNSFW, flaggedReasons, flaggedSource } =
+    await performModeration(updatePostData.text, updatePostData.imageFile);
+
   let imageUrl = post.imageUrl;
   let imageMeta = post.imageMeta;
 
-  if (hasFile(data.imageFile) && data.imageFile) {
-    const upload = await uploadImage(data.imageFile, user.uid);
+  if (hasFile(updatePostData.imageFile) && updatePostData.imageFile) {
+    const upload = await uploadImage(updatePostData.imageFile, user.uid);
 
-    const safePublicUrl = normalizePublicUrl(upload.publicUrl);
-    imageUrl = safePublicUrl;
+    imageUrl = upload.publicUrl;
     imageMeta = {
       storagePath: upload.storagePath,
       downloadToken: upload.downloadToken,
@@ -253,10 +193,14 @@ export const updatePost = async (postId: string, data: UpdatePost) => {
   }
 
   await ref.update({
-    text: data.text ?? post.text,
+    text: updatePostData.text ?? post.text,
     imageUrl,
     imageMeta,
     updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    moderationStatus,
+    isNSFW,
+    flaggedReasons,
+    flaggedSource,
   });
 
   return await getPostById(postId);
