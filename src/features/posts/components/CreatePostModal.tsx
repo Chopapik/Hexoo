@@ -30,6 +30,7 @@ export default function CreatePostModal({
     checkFormat,
     formState,
     watch,
+    triggerPicker,
   } = useCreatePostForm();
 
   const [rootError, setRootError] = useState<string | null>(null);
@@ -86,7 +87,7 @@ export default function CreatePostModal({
         />
 
         <button
-          onClick={() => fileInputRef.current?.click()}
+          onClick={triggerPicker}
           className="text-text-neutral hover:text-text-main p-2 rounded-xl hover:bg-secondary-neutral-background-hover transition-all"
           title="Dodaj zdjęcie"
         >
