@@ -2,6 +2,7 @@ import { hasFile } from "@/features/images/api/imageService";
 import { moderateImage } from "@/features/moderation/api/imageModeration";
 import { moderateText } from "@/features/moderation/api/textModeration";
 import { createAppError } from "@/lib/ApiError";
+import { logModerationEvent } from "@/features/moderator/api/moderationLogService";
 
 export type ModerationStatus = "approved" | "pending" | "rejected";
 
@@ -54,6 +55,7 @@ export const getAiModerationVerdict = (
 };
 
 export const performModeration = async (
+  userId: string,
   text?: string,
   imageFile?: File | null
 ): Promise<{
@@ -94,6 +96,26 @@ export const performModeration = async (
     const moderationResult = getAiModerationVerdict(flaggedReasons);
     isNSFW = moderationResult.isNSFW;
     moderationStatus = moderationResult.status;
+  }
+
+  // 4. Logging
+  if (moderationStatus !== "approved") {
+    const verdictUpper = moderationStatus.toUpperCase() as
+      | "PENDING"
+      | "REJECTED";
+
+    const actionTaken =
+      moderationStatus === "rejected"
+        ? "BLOCKED_CREATION"
+        : "FLAGGED_FOR_REVIEW";
+
+    await logModerationEvent({
+      userId: userId,
+      timestamp: new Date().toISOString(),
+      verdict: verdictUpper,
+      categories: flaggedReasons,
+      actionTaken: actionTaken,
+    });
   }
 
   if (moderationStatus === "rejected") {
