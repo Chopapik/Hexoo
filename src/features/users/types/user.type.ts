@@ -11,6 +11,7 @@ export interface User {
   lastOnline: Date;
   isActive?: boolean;
   isBanned?: boolean;
+  isRestricted?: boolean;
 }
 
 export interface UserDataUpdate {
@@ -38,6 +39,7 @@ export type UserSessionData = {
   name: string;
   role: UserRole;
   avatarUrl?: string;
+  isRestricted?: boolean;
 };
 
 export interface UserProfile {
@@ -52,4 +54,10 @@ export interface UserBlockData {
   uidToBlock: string;
   bannedBy: string;
   bannedReason: string;
+}
+
+export interface UserRestrictionData {
+  uid: string;
+  restrictedBy: string;
+  reason: string;
 }

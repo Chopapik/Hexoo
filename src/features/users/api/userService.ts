@@ -1,6 +1,11 @@
 import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
 import admin from "firebase-admin";
-import type { User, UserBlockData, UserProfile } from "../types/user.type";
+import type {
+  User,
+  UserBlockData,
+  UserProfile,
+  UserRestrictionData,
+} from "../types/user.type";
 import { createAppError } from "@/lib/ApiError";
 import { ensureModeratorOrAdmin } from "@/features/moderator/api/moderatorService";
 
@@ -117,4 +122,58 @@ export const unblockUser = async (uid: string) => {
   });
 
   return;
+};
+
+export const unrestrictUser = async (uid: string) => {
+  await ensureModeratorOrAdmin();
+
+  if (!uid) {
+    throw createAppError({
+      code: "INVALID_INPUT",
+      message: "[userService.unrestrictUser] No 'uid' provided",
+    });
+  }
+
+  await adminDb.collection("users").doc(uid).update({
+    isRestricted: false,
+    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    restrictedBy: admin.firestore.FieldValue.delete(),
+    restrictedReason: admin.firestore.FieldValue.delete(),
+  });
+
+  return { success: true, uid, status: "active" };
+};
+
+const _applyRestrictionInternal = async (
+  uid: string,
+  reason: string,
+  source: "ADMIN" | "AI_SYSTEM"
+) => {
+  if (!uid) {
+    throw createAppError({
+      code: "INVALID_INPUT",
+      message: "UID is required for restriction",
+    });
+  }
+
+  await adminDb.collection("users").doc(uid).update({
+    isRestricted: true,
+    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    restrictedBy: source,
+    restrictedReason: reason,
+  });
+
+  return { success: true, uid, status: "restricted", source };
+};
+
+export const restrictUser = async (data: { uid: string; reason: string }) => {
+  await ensureModeratorOrAdmin();
+
+  return await _applyRestrictionInternal(data.uid, data.reason, "ADMIN");
+};
+
+export const restrictUserBySystem = async (uid: string, reason: string) => {
+  console.log(`[AI MODERATION] Restricting user ${uid} due to: ${reason}`);
+
+  return await _applyRestrictionInternal(uid, reason, "AI_SYSTEM");
 };
