@@ -21,27 +21,6 @@ export interface UserDataUpdate {
   avatarUrl?: string;
 }
 
-export interface UserEmailUpdate {}
-
-export interface UserPasswordUpdate {
-  oldPassword: string;
-  newPassword: string;
-}
-
-export interface UserProfileUpdate {
-  name: string;
-  avatarUrl?: string;
-}
-
-export type UserSessionData = {
-  uid: string;
-  email: string;
-  name: string;
-  role: UserRole;
-  avatarUrl?: string;
-  isRestricted?: boolean;
-};
-
 export interface UserProfile {
   uid: string;
   name: string;
