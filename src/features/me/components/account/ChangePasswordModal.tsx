@@ -3,9 +3,9 @@
 import TextInput from "@/features/shared/components/ui/TextInput";
 import Button from "@/features/shared/components/ui/Button";
 import Modal from "@/features/shared/components/layout/Modal";
-import { useUpdatePassword } from "../hooks/useUpdatePassword";
-import useUpdatePasswordForm from "../hooks/useUpdatePasswordForm";
-import { parseErrorMessages } from "../utils/UpdatePasswordFormValidation";
+import { useUpdatePassword } from "../../hooks/useUpdatePassword";
+import useUpdatePasswordForm from "../../hooks/useUpdatePasswordForm";
+import { parseErrorMessages } from "../../utils/UpdatePasswordFormValidation";
 
 interface ChangePasswordModalProps {
   isOpen: boolean;
