@@ -81,8 +81,7 @@ export const reviewPost = async (
           reviewedBy: moderator.uid,
           reviewedAt: FieldValue.serverTimestamp(),
         });
-
-        await deleteImage(postData.imageUrl);
+        await deleteImage(postData.imageMeta?.storagePath);
       } else if (action === "approve") {
         transaction.update(postRef, {
           moderationStatus: "approved",
