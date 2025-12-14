@@ -1,9 +1,13 @@
 import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
-import { UserProfileUpdate } from "@/features/users/types/user.type";
 import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
-import { UpdatePasswordData, UpdatePasswordDataSchema } from "../me.type";
+import {
+  UpdatePasswordData,
+  UpdatePasswordSchema,
+  UpdateProfileData,
+  UpdateProfileSchema,
+} from "../me.type";
 import { createAppError } from "@/lib/ApiError";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { formatZodErrorFlat } from "@/lib/zod";
 
 export async function deleteAccount() {
   const decoded = await getUserFromSession();
@@ -12,32 +16,45 @@ export async function deleteAccount() {
   return;
 }
 
-export async function updateProfile(data: UserProfileUpdate) {
+export async function updateProfile(data: UpdateProfileData) {
   const decoded = await getUserFromSession();
   const uid = decoded.uid;
 
-  const hasName = typeof data.name === "string" && data.name.trim() !== "";
-  const hasAvatar =
-    typeof data.avatarUrl === "string" && data.avatarUrl.trim() !== "";
-
-  if (!hasName && !hasAvatar) {
+  const parsed = UpdateProfileSchema.safeParse(data);
+  if (!parsed.success) {
     throw createAppError({
       code: "VALIDATION_ERROR",
-      message:
-        "[meService.updateProfile] No fields were provided for profile update.",
+      message: "[meService.updateProfile] Błąd walidacji danych profilu.",
+      data: { details: formatZodErrorFlat(parsed.error) },
+    });
+  }
+
+  const { name, avatarFile } = parsed.data;
+
+  if (!name && avatarFile === undefined) {
+    throw createAppError({
+      code: "VALIDATION_ERROR",
+      message: "[meService.updateProfile] Brak danych do aktualizacji.",
       details: { field: "root", reason: "no_update_fields" },
     });
   }
 
   const authUpdate: { displayName?: string; photoURL?: string } = {};
-  if (hasName) authUpdate.displayName = data.name!.trim();
-  if (hasAvatar) authUpdate.photoURL = data.avatarUrl!.trim();
-
-  await adminAuth.updateUser(uid, authUpdate);
-
   const dbUpdate: Record<string, any> = { updatedAt: new Date() };
-  if (hasName) dbUpdate.name = data.name!.trim();
-  if (hasAvatar) dbUpdate.avatarUrl = data.avatarUrl!.trim();
+
+  if (name) {
+    authUpdate.displayName = name;
+    dbUpdate.name = name;
+  }
+
+  if (avatarFile !== undefined) {
+    authUpdate.photoURL = "";
+    dbUpdate.avatarUrl = null; //TODO add saving images from imageservice
+  }
+
+  if (Object.keys(authUpdate).length > 0) {
+    await adminAuth.updateUser(uid, authUpdate);
+  }
 
   await adminDb.collection("users").doc(uid).set(dbUpdate, { merge: true });
 
@@ -52,19 +69,20 @@ export async function updateProfile(data: UserProfileUpdate) {
 export const updatePassword = async (passwordData: UpdatePasswordData) => {
   const decoded = await getUserFromSession();
 
-  const validationResult = UpdatePasswordDataSchema.safeParse(passwordData);
+  const parsed = UpdatePasswordSchema.safeParse(passwordData);
 
-  if (validationResult.error) {
-    const errors = validationResult.error.flatten().fieldErrors;
-
+  if (!parsed.success) {
     throw createAppError({
       code: "VALIDATION_ERROR",
-      details: errors,
+      message: "[meService.updatePassword] Błąd walidacji hasła.",
+      data: { details: formatZodErrorFlat(parsed.error) },
     });
   }
 
+  const { newPassword } = parsed.data;
+
   await adminAuth.updateUser(decoded.uid, {
-    password: passwordData.newPassword,
+    password: newPassword,
   });
 
   await adminDb

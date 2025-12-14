@@ -10,16 +10,13 @@ export type SessionData = {
   isRestricted?: boolean;
 };
 
-export const UpdatePasswordDataSchema = z
+export const UpdatePasswordSchema = z
   .object({
     newPassword: z
       .string()
       .min(8, { message: "newPassword_too_short" })
       .max(128, { message: "newPassword_too_long" }),
     reNewPassword: z.string().min(1, { message: "reNewPassword_required" }),
-    // .regex(/[A-Z]/, { message: "password_missing_uppercase" })
-    // .regex(/[0-9]/, { message: "password_missing_digit" })
-    // .regex(/[^A-Za-z0-9]/, { message: "password_missing_special" }),
     oldPassword: z.string().min(1, { message: "oldPassword_required" }),
     recaptchaToken: z.string().optional(),
   })
@@ -28,4 +25,25 @@ export const UpdatePasswordDataSchema = z
     path: ["reNewPassword"],
   });
 
-export type UpdatePasswordData = z.infer<typeof UpdatePasswordDataSchema>;
+export type UpdatePasswordData = z.infer<typeof UpdatePasswordSchema>;
+
+export const UpdateProfileSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(3, { message: "name_too_short" })
+    .max(30, { message: "name_too_long" })
+    .regex(/^[a-zA-Z0-9_]+$/, { message: "name_invalid_chars" })
+    .optional(),
+  avatarFile: z
+    .instanceof(File)
+    .optional()
+    .refine((file) => !file || file.size <= 5 * 1024 * 1024, "file_too_big")
+    .refine(
+      (file) =>
+        !file || ["image/png", "image/jpeg", "image/webp"].includes(file.type),
+      "wrong_file_type"
+    ),
+});
+
+export type UpdateProfileData = z.infer<typeof UpdateProfileSchema>;
