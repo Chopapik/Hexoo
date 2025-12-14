@@ -1,10 +1,10 @@
-export type Like = {
+export interface Like {
   parentId: string;
   userId: string;
   likedAt: any;
-};
+}
 
-export type ToggleLikeResult = {
+export interface ToggleLikeResult {
   isLiked: boolean;
   likesCount: number;
-};
+}
