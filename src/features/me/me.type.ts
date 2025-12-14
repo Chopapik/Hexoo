@@ -1,4 +1,14 @@
 import z from "zod";
+import { UserRole } from "../users/types/user.type";
+
+export type SessionData = {
+  uid: string;
+  email: string;
+  name: string;
+  role: UserRole;
+  avatarUrl?: string;
+  isRestricted?: boolean;
+};
 
 export const UpdatePasswordDataSchema = z
   .object({

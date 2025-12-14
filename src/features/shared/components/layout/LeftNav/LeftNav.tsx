@@ -1,14 +1,12 @@
-import React, { useEffect } from "react";
 import Link from "next/link";
 import { NavItem } from "./NavItem";
-import { useAppSelector } from "@/lib/store/hooks";
-import { UserSessionData } from "@/features/users/types/user.type";
 import keyIconUrl from "@/features/shared/assets/icons/key.svg?url"; // Import the key icon
 import Button from "../../ui/Button";
+import { SessionData } from "@/features/me/me.type";
 
 type LeftNavProps = {
   onOpenRight?: () => void;
-  user: UserSessionData | null;
+  user: SessionData | null;
 };
 
 export function LeftNav({ onOpenRight, user }: LeftNavProps) {

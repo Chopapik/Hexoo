@@ -1,11 +1,11 @@
 import Link from "next/link";
-import { UserSessionData } from "@/features/users/types/user.type";
 import Button from "../ui/Button";
 import { Logo } from "../ui/Logo";
 import chevronRightUrl from "@/features/shared/assets/icons/chevronRight.svg?url";
 import { Avatar } from "@/features/posts/components/Avatar";
+import { SessionData } from "@/features/me/me.type";
 
-export const Header = ({ user }: { user: UserSessionData | null }) => {
+export const Header = ({ user }: { user: SessionData | null }) => {
   return (
     <div className="h-14 w-full px-4 bg-primary-neutral-background-default rounded-xl border-t-2 border-primary-neutral-stroke-default inline-flex justify-between items-center shadow-lg">
       <Link

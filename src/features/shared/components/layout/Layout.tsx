@@ -5,13 +5,13 @@ import { Header } from "./Header";
 import { LeftNav } from "./LeftNav/LeftNav";
 import { BottomNav } from "./LeftNav/BottomNav";
 import { RightNavSidebar, RightNavOverlay } from "./RightNav/RightNav";
-import { UserSessionData } from "@/features/users/types/user.type";
 import { setUser } from "@/features/auth/store/authSlice";
 import { useAppDispatch } from "@/lib/store/hooks";
+import { SessionData } from "@/features/me/me.type";
 
 export const Layout: React.FC<{
   children: React.ReactNode;
-  user: UserSessionData | null;
+  user: SessionData | null;
 }> = ({ children, user }) => {
   const [isRightNavOpen, setIsRightNavOpen] = useState(false);
   const openRight = () => setIsRightNavOpen(true);

@@ -1,9 +1,9 @@
 import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
 import { createAppError } from "@/lib/ApiError";
-import type { UserSessionData } from "@/features/users/types/user.type";
 import { getSessionCookie } from "@/lib/session";
+import { SessionData } from "@/features/me/me.type";
 
-export async function getUserFromSession(): Promise<UserSessionData | never> {
+export async function getUserFromSession(): Promise<SessionData | never> {
   const sessionCookie = await getSessionCookie();
 
   if (!sessionCookie.session) {
