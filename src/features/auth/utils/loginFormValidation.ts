@@ -1,5 +1,4 @@
 import { ValidationMessage } from "@/features/shared/types/validation.type";
-import { INVALID } from "zod/v3";
 
 const ERROR_DICTIONARY: Record<string, ValidationMessage> = {
   email_required: {
@@ -24,11 +23,6 @@ const ERROR_DICTIONARY: Record<string, ValidationMessage> = {
   },
   FORBIDDEN: {
     text: "Konto zostało zablokowane na 15 minut z powodu zbyt dużej liczby niepoprawnych logowań",
-    field: "root",
-    type: "Dismiss",
-  },
-  default: {
-    text: "Wystąpił nieznany błąd",
     field: "root",
     type: "Dismiss",
   },

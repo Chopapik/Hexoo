@@ -1,4 +1,4 @@
-import { createAppError } from "./ApiError";
+import { createAppError } from "./AppError";
 
 const RECAPTCHA_VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify";
 const SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY;

@@ -1,6 +1,6 @@
 import admin from "firebase-admin";
 import { randomUUID } from "crypto";
-import { createAppError } from "@/lib/ApiError";
+import { createAppError } from "@/lib/AppError";
 import sharp from "sharp";
 
 const bucket = admin.storage().bucket();

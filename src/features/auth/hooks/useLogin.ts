@@ -3,11 +3,12 @@ import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { LoginData } from "../types/auth.type";
 import axiosInstance from "@/lib/axiosInstance";
-import { ApiError } from "@/lib/ApiError";
+import { ApiError } from "@/lib/AppError";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { FirebaseError } from "firebase/app";
 import useRecaptcha from "@/features/shared/hooks/useRecaptcha";
+import toast from "react-hot-toast";
 
 type ErrorCallback = (errorCode: string, field?: string) => void;
 
@@ -41,7 +42,7 @@ export default function useLogin(onError: ErrorCallback) {
       const idToken = await userCredential.user.getIdToken();
 
       recaptchaToken && sessionMutation.mutate({ idToken, recaptchaToken });
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (error instanceof FirebaseError) {
         const errorCode = error.code;
 
@@ -55,9 +56,10 @@ export default function useLogin(onError: ErrorCallback) {
           onError("RATE_LIMIT", "root");
         } else if (errorCode === "auth/user-disabled") {
           onError("FORBIDDEN", "root");
-        } else {
-          onError("default", "root");
         }
+      } else {
+        console.error(error);
+        toast.error("Wystąpił nieznany błąd.");
       }
     }
   };

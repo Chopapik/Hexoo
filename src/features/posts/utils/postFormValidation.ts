@@ -28,12 +28,6 @@ const ERROR_DICTIONARY: Record<
     text: "Niedozwolony format pliku.",
     field: "imageFile",
   },
-
-  default: {
-    type: "Dismiss",
-    text: "Wystąpił nieznany błąd.",
-    field: "root",
-  },
 };
 
 export function parseErrorMessages(errorCode: string):

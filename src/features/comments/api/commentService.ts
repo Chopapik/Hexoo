@@ -1,7 +1,7 @@
 import { adminDb } from "@/lib/firebaseAdmin";
 import { FieldValue } from "firebase-admin/firestore";
 import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
-import { createAppError } from "@/lib/ApiError";
+import { createAppError } from "@/lib/AppError";
 import { AddCommentSchema, AddCommentDto } from "../types/comment.type";
 import { formatZodErrorFlat } from "@/lib/zod";
 import { performModeration } from "@/features/moderation/utils/assessSafety";

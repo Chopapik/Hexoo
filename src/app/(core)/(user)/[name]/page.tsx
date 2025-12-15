@@ -1,6 +1,6 @@
 import { UserProfileCard } from "@/features/users/components/UserProfileCard";
 import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
-import { ApiError } from "@/lib/ApiError";
+import { ApiError } from "@/lib/AppError";
 
 export default async function ProfilePage({
   params,

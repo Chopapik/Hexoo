@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import axiosInstance from "@/lib/axiosInstance";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 export function useLogout() {
   const router = useRouter();
@@ -15,6 +16,7 @@ export function useLogout() {
     },
     onError: (error) => {
       console.error("Logout failed", error);
+      toast.error("Wystąpił nieznany bład");
     },
   });
 

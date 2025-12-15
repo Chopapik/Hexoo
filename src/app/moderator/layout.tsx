@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
-import { ApiError } from "@/lib/ApiError";
+import { ApiError } from "@/lib/AppError";
 import { notFound } from "next/navigation";
 
 export const metadata: Metadata = {

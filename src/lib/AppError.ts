@@ -27,7 +27,7 @@ type AppErrorArgs = {
   data?: Record<string, any>;
 };
 
-export class ApiError extends Error {
+export class AppError extends Error {
   public code: ErrorCode;
   public status: number;
   public details?: any;
@@ -35,11 +35,21 @@ export class ApiError extends Error {
 
   constructor(opts?: AppErrorArgs) {
     super(opts?.message ?? "Unknown error appear");
-    this.name = "ApiError";
+    this.name = "AppError";
     this.code = opts?.code ?? "INTERNAL_ERROR";
     this.status = opts?.status ?? 500;
     this.details = opts?.details;
     this.data = opts?.data;
+  }
+}
+
+export class ApiError extends AppError {
+  constructor(opts: Omit<AppErrorArgs, "message" | "details">) {
+    super({
+      ...opts,
+      message: `ApiError: ${opts.code ?? "UNKNOWN"}`,
+    });
+    this.name = "ApiError";
   }
 }
 
@@ -74,7 +84,7 @@ export const createAppError = (args: AppErrorArgs) => {
   const status = args.status ?? def.status;
   const code = args.code ?? "INTERNAL_ERROR";
 
-  return new ApiError({
+  return new AppError({
     message,
     status,
     code,

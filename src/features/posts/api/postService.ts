@@ -1,7 +1,7 @@
 import admin from "firebase-admin";
 import { adminDb } from "@/lib/firebaseAdmin";
 import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
-import { createAppError } from "@/lib/ApiError";
+import { createAppError } from "@/lib/AppError";
 import {
   CreatePostSchema,
   UpdatePostSchema,
@@ -12,13 +12,8 @@ import {
 } from "../types/post.type";
 import { formatZodErrorFlat } from "@/lib/zod";
 
-import {
-  uploadImage,
-  deleteImage,
-  hasFile,
-} from "@/features/images/api/imageService";
+import { deleteImage } from "@/features/images/api/imageService";
 import { FieldValue } from "firebase-admin/firestore";
-import { performModeration } from "../../moderation/utils/assessSafety";
 import processPostContent from "./postHelpers";
 
 const POSTS_COLLECTION = "posts";

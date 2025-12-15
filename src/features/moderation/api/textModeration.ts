@@ -1,4 +1,4 @@
-import { createAppError } from "@/lib/ApiError";
+import { createAppError } from "@/lib/AppError";
 import OpenAI from "openai";
 
 const openai = new OpenAI();
