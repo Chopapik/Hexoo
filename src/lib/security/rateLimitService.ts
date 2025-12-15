@@ -1,5 +1,5 @@
 import { adminDb } from "@/lib/firebaseAdmin";
-import { createAppError } from "@/lib/ApiError";
+import { createAppError } from "@/lib/AppError";
 import admin from "firebase-admin";
 
 // Configuration constants

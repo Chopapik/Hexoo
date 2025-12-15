@@ -6,7 +6,7 @@ import type {
   UserProfile,
   UserRestrictionData,
 } from "../types/user.type";
-import { createAppError } from "@/lib/ApiError";
+import { createAppError } from "@/lib/AppError";
 import { ensureModeratorOrAdmin } from "@/features/moderator/api/moderatorService";
 
 export async function createUserDocument(

@@ -10,6 +10,8 @@ import {
 } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { useAppSelector } from "@/lib/store/hooks";
+import { ApiError } from "@/lib/AppError";
+import { FirebaseError } from "firebase/app";
 
 type ErrorCallback = (errorCode: string, field?: string) => void;
 
@@ -24,7 +26,7 @@ export const useUpdatePassword = (onError: ErrorCallback) => {
       const payload = { ...data, recaptchaToken: token };
       await axiosInstance.put(`/me/password`, payload);
     },
-    onError: (error: any) => {
+    onError: (error: ApiError) => {
       if (error.code) {
         toast.error(error.code);
       } else {
@@ -73,18 +75,22 @@ export const useUpdatePassword = (onError: ErrorCallback) => {
 
     try {
       await reauthenticateWithCredential(currentUser, credential);
-    } catch (error: any) {
-      if (
-        error.code === "auth/invalid-credential" ||
-        error.code === "auth/wrong-password"
-      ) {
-        onError("auth/wrong-password", "oldPassword");
-      } else if (error.code === "auth/too-many-requests") {
-        toast.error("Zbyt wiele prób. Spróbuj później.");
-      } else {
-        toast.error("Nie udało się zweryfikować starego hasła.");
+    } catch (error: unknown) {
+      if (error instanceof FirebaseError) {
+        if (
+          error.code === "auth/invalid-credential" ||
+          error.code === "auth/wrong-password"
+        ) {
+          onError("auth/wrong-password", "oldPassword");
+        } else if (error.code === "auth/too-many-requests") {
+          toast.error("Zbyt wiele prób. Spróbuj później.");
+        } else {
+          toast.error("Nie udało się zweryfikować starego hasła.");
+        }
+        return false;
       }
-      return false;
+      console.error(error);
+      toast.error("Wystąpił nieoczekiwany błąd.");
     }
 
     await mutation.mutateAsync(data);

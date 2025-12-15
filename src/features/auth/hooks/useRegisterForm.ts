@@ -1,6 +1,10 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { RegisterData, RegisterSchema } from "../types/auth.type";
+import {
+  RegisterData,
+  registerFields,
+  RegisterSchema,
+} from "../types/auth.type";
 
 export function useRegisterForm() {
   const {
@@ -19,18 +23,12 @@ export function useRegisterForm() {
     },
   });
 
-  const handleServerErrors = (errorCode: string, field?: string) => {
-    if (field === "email" || field === "password" || field === "name") {
-      setError(field, {
-        type: "server",
-        message: errorCode,
-      });
-    } else {
-      setError("root", {
-        type: "server",
-        message: errorCode,
-      });
-    }
+  const handleServerErrors = (errorCode: string, field: registerFields) => {
+    console.log(errorCode, field);
+    setError(field, {
+      type: "server",
+      message: errorCode,
+    });
   };
 
   return {

@@ -1,5 +1,5 @@
 import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
-import { createAppError } from "@/lib/ApiError";
+import { createAppError } from "@/lib/AppError";
 import { getSessionCookie } from "@/lib/session";
 import { SessionData } from "@/features/me/me.type";
 

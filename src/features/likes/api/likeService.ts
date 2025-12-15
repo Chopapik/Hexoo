@@ -1,5 +1,5 @@
 import { adminDb } from "@/lib/firebaseAdmin";
-import { createAppError } from "@/lib/ApiError";
+import { createAppError } from "@/lib/AppError";
 import { Like } from "../types/like.type";
 import { FieldValue } from "firebase-admin/firestore";
 import { getUserFromSession } from "@/features/auth/api/utils/verifySession";

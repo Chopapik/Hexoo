@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
-import { ApiError } from "@/lib/ApiError";
 import { notFound, redirect } from "next/navigation";
+import { ApiError } from "@/lib/AppError";
 
 export const metadata: Metadata = {
   title: "Hexoo",

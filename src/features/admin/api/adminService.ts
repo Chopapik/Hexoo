@@ -2,7 +2,7 @@ import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
 import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
 import maskEmail from "@/features/shared/utils/maskEmail";
 import { AdminUserCreate } from "../types/admin.type";
-import { createAppError } from "@/lib/ApiError";
+import { createAppError } from "@/lib/AppError";
 import admin from "firebase-admin";
 
 const ensureAdmin = async () => {
@@ -46,7 +46,8 @@ export const adminCreateUserAccount = async (data: AdminUserCreate) => {
   if (!data?.email || !data?.password || !data?.name) {
     throw createAppError({
       code: "VALIDATION_ERROR",
-      message: "[adminService.adminCreateUserAccount] Empty create user credentials",
+      message:
+        "[adminService.adminCreateUserAccount] Empty create user credentials",
       data: { code: "admin/empty_create_user_account_credentials" },
     });
   }
@@ -154,7 +155,8 @@ export const adminUpdateUserPassword = async (
   if (!uid || !newPassword || newPassword.length < 8) {
     throw createAppError({
       code: "VALIDATION_ERROR",
-      message: "[adminService.adminUpdateUserPassword] Invalid password provided",
+      message:
+        "[adminService.adminUpdateUserPassword] Invalid password provided",
       data: { code: "admin/empty_create_user_account_credentials" },
     });
   }

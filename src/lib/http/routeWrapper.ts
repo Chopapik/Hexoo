@@ -1,5 +1,5 @@
 import { handleError } from "./responseHelpers";
-import { ApiError } from "../ApiError";
+import { AppError } from "../AppError";
 import { NextRequest } from "next/server";
 
 export function withErrorHandling(
@@ -9,12 +9,12 @@ export function withErrorHandling(
     try {
       return await handler(req, context);
     } catch (caught) {
-      let apiError: ApiError;
+      let appError: AppError;
 
-      if (caught instanceof ApiError) {
-        apiError = caught;
+      if (caught instanceof AppError) {
+        appError = caught;
       } else if (caught instanceof Error) {
-        apiError = new ApiError({
+        appError = new AppError({
           message: caught.message || "Unexpected error",
           details: {
             message: caught.message,
@@ -22,18 +22,18 @@ export function withErrorHandling(
           },
         });
       } else {
-        apiError = new ApiError({
+        appError = new AppError({
           message: typeof caught === "string" ? caught : "Non-error thrown",
           details: { raw: caught },
         });
       }
 
       return handleError(
-        apiError.code,
-        apiError.message,
-        apiError.data,
-        apiError.status,
-        apiError.details
+        appError.code,
+        appError.message,
+        appError.data,
+        appError.status,
+        appError.details
       );
     }
   };

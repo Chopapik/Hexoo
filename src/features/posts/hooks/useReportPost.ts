@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import axiosInstance from "@/lib/axiosInstance";
 import toast from "react-hot-toast";
-import { ApiError } from "@/lib/ApiError";
+import { ApiError } from "@/lib/AppError";
 
 type ReportPayload = {
   postId: string;

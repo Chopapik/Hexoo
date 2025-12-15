@@ -1,7 +1,7 @@
 import { hasFile } from "@/features/images/api/imageService";
 import { moderateImage } from "@/features/moderation/api/imageModeration";
 import { moderateText } from "@/features/moderation/api/textModeration";
-import { createAppError } from "@/lib/ApiError";
+import { createAppError } from "@/lib/AppError";
 import { logModerationEvent } from "@/features/moderator/api/moderationLogService";
 
 export type ModerationStatus = "approved" | "pending" | "rejected";

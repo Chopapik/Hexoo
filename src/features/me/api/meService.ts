@@ -6,7 +6,7 @@ import {
   UpdateProfileData,
   UpdateProfileSchema,
 } from "../me.type";
-import { createAppError } from "@/lib/ApiError";
+import { createAppError } from "@/lib/AppError";
 import { formatZodErrorFlat } from "@/lib/zod";
 
 export async function deleteAccount() {
@@ -50,7 +50,7 @@ export async function updateProfile(data: UpdateProfileData) {
   if (avatarFile !== undefined) {
     authUpdate.photoURL = "";
     dbUpdate.avatarUrl = null; //TODO add saving images from imageservice
-  }
+  } // i tez jezeli user aktualizuje avatar to masz uzyc delete funkcji na usuniecie starego avatara
 
   if (Object.keys(authUpdate).length > 0) {
     await adminAuth.updateUser(uid, authUpdate);

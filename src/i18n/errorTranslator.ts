@@ -1,4 +1,4 @@
-import { ApiError } from "@/lib/ApiError";
+import { ApiError } from "@/lib/AppError";
 
 const translations: Record<string, Record<string, string>> = {
   pl: {

@@ -1,13 +1,13 @@
 import { useMutation } from "@tanstack/react-query";
 import axiosInstance from "@/lib/axiosInstance";
-import type { UserProfileUpdate } from "@/features/users/types/user.type";
 import { useRouter } from "next/navigation";
+import { UpdateProfileData } from "../me.type";
 
 export default function useUpdateProfile() {
   const router = useRouter();
 
   const mutation = useMutation({
-    mutationFn: async (data: UserProfileUpdate) => {
+    mutationFn: async (data: UpdateProfileData) => {
       const response = await axiosInstance.put(`/me/profile`, data);
       return response.data;
     },

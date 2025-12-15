@@ -1,7 +1,7 @@
 import { createSession } from "@/features/auth/api/authService";
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
-import { createAppError } from "@/lib/ApiError";
+import { createAppError } from "@/lib/AppError";
 import { verifyRecaptchaToken } from "@/lib/recaptcha";
 import { NextRequest } from "next/server";
 

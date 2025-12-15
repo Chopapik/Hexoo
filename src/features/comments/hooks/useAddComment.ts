@@ -3,7 +3,7 @@ import axiosInstance from "@/lib/axiosInstance";
 import { AddCommentDto } from "../types/comment.type";
 import toast from "react-hot-toast";
 import { parseCommentErrorMessages } from "../utils/commentFormValidation";
-import { ApiError } from "@/lib/ApiError";
+import { ApiError } from "@/lib/AppError";
 
 export default function useAddComment(
   onSuccessCallback?: () => void,

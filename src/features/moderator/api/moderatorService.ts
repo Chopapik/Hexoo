@@ -1,6 +1,6 @@
 import { adminDb } from "@/lib/firebaseAdmin";
 import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
-import { createAppError } from "@/lib/ApiError";
+import { createAppError } from "@/lib/AppError";
 import { Post } from "@/features/posts/types/post.type";
 import { FieldValue } from "firebase-admin/firestore";
 import { blockUser, unblockUser } from "@/features/users/api/userService";

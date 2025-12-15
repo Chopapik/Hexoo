@@ -2,7 +2,7 @@ import { updatePassword } from "@/features/me/api/meService";
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import { verifyRecaptchaToken } from "@/lib/recaptcha";
-import { createAppError } from "@/lib/ApiError";
+import { createAppError } from "@/lib/AppError";
 import { NextRequest } from "next/server";
 
 export const PUT = withErrorHandling(async (req: NextRequest) => {

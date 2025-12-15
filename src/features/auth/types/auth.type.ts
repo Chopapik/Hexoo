@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { UserRole } from "@/features/users/types/user.type";
+
+export type registerFields = "name" | "email" | "password";
 
 export const RegisterSchema = z.object({
   email: z
