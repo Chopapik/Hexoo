@@ -3,7 +3,6 @@ import { randomUUID } from "crypto";
 import { createAppError } from "@/lib/ApiError";
 import sharp from "sharp";
 
-const STORAGE_FOLDER = "posts";
 const bucket = admin.storage().bucket();
 
 const ensureBucket = () => {
@@ -15,7 +14,11 @@ const ensureBucket = () => {
   }
 };
 
-export const uploadImage = async (file: File | Blob, uid: string) => {
+export const uploadImage = async (
+  file: File | Blob,
+  uid: string,
+  storageFolder: string
+) => {
   ensureBucket();
 
   if (!file) {
@@ -56,7 +59,7 @@ export const uploadImage = async (file: File | Blob, uid: string) => {
 
   const ts = Date.now();
   const id = randomUUID();
-  const storagePath = `${STORAGE_FOLDER}/${uid}_${ts}_${id}.webp`;
+  const storagePath = `${storageFolder}/${uid}_${ts}_${id}.webp`;
   const downloadToken = randomUUID();
 
   try {

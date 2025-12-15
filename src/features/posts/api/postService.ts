@@ -19,6 +19,7 @@ import {
 } from "@/features/images/api/imageService";
 import { FieldValue } from "firebase-admin/firestore";
 import { performModeration } from "../../moderation/utils/assessSafety";
+import processPostContent from "./postHelpers";
 
 const POSTS_COLLECTION = "posts";
 const LIKES_COLLECTION = "likes";
@@ -104,46 +105,26 @@ export const createPost = async (createPostData: CreatePost) => {
     });
   }
 
-  const { moderationStatus, isNSFW, flaggedReasons, flaggedSource } =
-    await performModeration(
-      user.uid,
-      createPostData.text,
-      createPostData.imageFile
-    );
-
-  let imageUrl: string | null = null;
-  let imageMeta: {
-    storagePath: string;
-    downloadToken: string;
-  } | null = null;
-
-  // save file to store
-  if (createPostData.imageFile) {
-    const upload = await uploadImage(createPostData.imageFile, user.uid);
-    imageUrl = upload.publicUrl || null;
-
-    imageMeta = {
-      storagePath: upload.storagePath,
-      downloadToken: upload.downloadToken,
-    };
-  }
-
-  const Postdoc = {
+  const processed = await processPostContent(
+    user.uid,
+    createPostData.text,
+    createPostData.imageFile
+  );
+  const Postdoc: Omit<Post, "id"> = {
     userId: user.uid,
     userName: user.name,
     userAvatarUrl: user.avatarUrl ?? null,
     text: createPostData.text,
-    imageUrl,
-    imageMeta,
+    imageUrl: processed.imageUrl,
+    imageMeta: processed.imageMeta,
     likesCount: 0,
     commentsCount: 0,
     device: createPostData.device ?? "Web",
     createdAt: admin.firestore.FieldValue.serverTimestamp(),
     updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-    moderationStatus,
-    isNSFW,
-    flaggedReasons,
-    flaggedSource,
+    moderationStatus: processed.moderationStatus,
+    isNSFW: processed.isNSFW,
+    flaggedReasons: processed.flaggedReasons,
   };
 
   const createdPostRef = await adminDb
@@ -151,17 +132,14 @@ export const createPost = async (createPostData: CreatePost) => {
     .add(Postdoc);
 };
 
-export const updatePost = async (
-  postId: string,
-  updatePostData: UpdatePost
-) => {
+export const updatePost = async (postId: string, updateData: UpdatePost) => {
   const user = await getUserFromSession();
 
-  const parsed = UpdatePostSchema.safeParse(updatePostData);
+  const parsed = UpdatePostSchema.safeParse(updateData);
   if (!parsed.success) {
     throw createAppError({
       code: "VALIDATION_ERROR",
-      message: "[postService.updatePost] Invalid post updatePostData",
+      message: "[postService.updatePost] Invalid post updateData",
       data: { details: formatZodErrorFlat(parsed.error) },
     });
   }
@@ -185,37 +163,24 @@ export const updatePost = async (
     });
   }
 
-  const { moderationStatus, isNSFW, flaggedReasons, flaggedSource } =
-    await performModeration(
-      user.uid,
-      updatePostData.text,
-      updatePostData.imageFile
-    );
+  const processed = await processPostContent(
+    user.uid,
+    updateData.text ?? post.text,
+    updateData.imageFile
+  );
 
-  let imageUrl = post.imageUrl;
-  let imageMeta = post.imageMeta;
-
-  if (hasFile(updatePostData.imageFile) && updatePostData.imageFile) {
-    const upload = await uploadImage(updatePostData.imageFile, user.uid);
-
-    imageUrl = upload.publicUrl;
-    imageMeta = {
-      storagePath: upload.storagePath,
-      downloadToken: upload.downloadToken,
-    };
-
-    await deleteImage(post.imageMeta?.storagePath);
+  if (processed.imageUrl && post.imageMeta?.storagePath) {
+    await deleteImage(post.imageMeta.storagePath);
   }
 
   await ref.update({
-    text: updatePostData.text ?? post.text,
-    imageUrl,
-    imageMeta,
+    text: updateData.text ?? post.text,
+    imageUrl: processed.imageUrl ?? post.imageUrl,
+    imageMeta: processed.imageMeta ?? post.imageMeta,
+    moderationStatus: processed.moderationStatus,
+    isNSFW: processed.isNSFW,
+    flaggedReasons: processed.flaggedReasons,
     updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-    moderationStatus,
-    isNSFW,
-    flaggedReasons,
-    flaggedSource,
   });
 
   return await getPostById(postId);

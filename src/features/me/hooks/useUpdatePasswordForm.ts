@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { UpdatePasswordData, UpdatePasswordDataSchema } from "../me.type";
+import { UpdatePasswordData, UpdatePasswordSchema } from "../me.type";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 export default function useUpdatePasswordForm() {
@@ -11,7 +11,7 @@ export default function useUpdatePasswordForm() {
     setValue,
     reset,
   } = useForm<UpdatePasswordData>({
-    resolver: zodResolver(UpdatePasswordDataSchema),
+    resolver: zodResolver(UpdatePasswordSchema),
     defaultValues: {
       newPassword: "",
       reNewPassword: "",
