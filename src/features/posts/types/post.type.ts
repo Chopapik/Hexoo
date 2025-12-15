@@ -1,3 +1,4 @@
+import { firestore } from "firebase-admin";
 import z from "zod";
 
 export const POST_MAX_CHARS = 1000;
@@ -31,8 +32,8 @@ export interface Post {
   isLikedByMe?: boolean;
   commentsCount: number;
 
-  createdAt: Date;
-  updatedAt?: Date;
+  createdAt: firestore.FieldValue;
+  updatedAt?: firestore.FieldValue;
 
   // Moderation & Safety
   userReports?: string[];
