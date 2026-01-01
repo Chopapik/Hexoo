@@ -26,6 +26,10 @@ export const RegisterSchema = z.object({
     .min(3, { message: "name_too_short" })
     .max(30, { message: "name_too_long" })
     .regex(/^[a-zA-Z0-9_]+$/, { message: "name_invalid_chars" }),
+
+  terms: z.literal(true, {
+    error: () => ({ message: "terms_required" }),
+  }),
 });
 
 export const LoginSchema = z.object({

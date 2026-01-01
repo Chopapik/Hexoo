@@ -59,6 +59,55 @@ export default function RegisterForm() {
           {...register("password")}
           messages={parseRegisterErrorMessages(errors.password?.message)}
         />
+        <div className="self-stretch w-full items-center flex flex-col">
+          <label className="flex items-center gap-3 cursor-pointer group">
+            <div className="relative flex items-center justify-center">
+              <input
+                type="checkbox"
+                {...register("terms")}
+                className="peer appearance-none w-5 h-5 border-2 border-secondary-neutral-stroke-default rounded bg-secondary-neutral-background-default/50 checked:bg-white checked:border-white transition-all duration-200"
+              />
+              <svg
+                className="absolute w-3.5 h-3.5 text-black opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </div>
+            <span className="text-text-main text-sm font-medium font-Plus_Jakarta_Sans">
+              Akceptuję
+              <Link
+                href="/terms"
+                className="underline hover:text-white transition-colors"
+              >
+                regulamin
+              </Link>{" "}
+              serwisu
+            </span>
+          </label>
+
+          {errors.terms && (
+            <div className="flex items-center gap-2 mt-1 animate-in fade-in slide-in-from-top-1">
+              <div className="text-red-500">
+                <svg width="12" height="12" viewBox="0 0 13 13" fill="none">
+                  <path
+                    d="M13 1.30929L11.6907 0L6.5 5.19071L1.30929 0L0 1.30929L5.19071 6.5L0 11.6907L1.30929 13L6.5 7.80929L11.6907 13L13 11.6907L7.80929 6.5L13 1.30929Z"
+                    fill="currentColor"
+                  />
+                </svg>
+              </div>
+              <span className="text-red-500 text-xs font-normal font-Roboto">
+                {parseRegisterErrorMessages(errors.terms.message)[0]?.text}
+              </span>
+            </div>
+          )}
+        </div>
 
         <div className="h-8 min-w-1 inline-flex flex-col justify-start items-start overflow-hidden">
           {errors.root && (

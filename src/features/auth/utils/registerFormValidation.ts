@@ -1,6 +1,7 @@
 import { ValidationMessage } from "@/features/shared/types/validation.type";
 
 const ERROR_DICTIONARY: Record<string, ValidationMessage> = {
+  //zod
   email_required: { text: "Email jest wymagany", type: "Dismiss" },
   email_invalid: { text: "Nieprawidłowy format Email", type: "Dismiss" },
   password_too_short: {
@@ -21,6 +22,9 @@ const ERROR_DICTIONARY: Record<string, ValidationMessage> = {
   name_too_long: { text: "Nazwa jest za długa", type: "Dismiss" },
   name_invalid_chars: { text: "Niedozwolone znaki w nazwie", type: "Dismiss" },
 
+  terms_required: { text: "Musisz zaakceptować regulamin", type: "Dismiss" },
+
+  //Firebase client auth SDK
   "auth/email-already-exists": {
     text: "Ten email jest już zajęty",
     type: "Dismiss",
