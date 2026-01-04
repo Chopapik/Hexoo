@@ -1,3 +1,6 @@
+import { ImageMeta } from "@/features/posts/types/post.type";
+import { firestore } from "firebase-admin";
+
 export type UserRole = "admin" | "user" | "moderator";
 
 export interface User {
@@ -6,12 +9,25 @@ export interface User {
   email: string;
   role: UserRole;
   avatarUrl?: string;
-  createdAt: Date;
-  updatedAt?: Date;
-  lastOnline: Date;
+  avatarMeta?: ImageMeta;
+
+  createdAt: firestore.Timestamp | Date;
+  updatedAt?: firestore.Timestamp | Date;
+  lastOnline: firestore.Timestamp | Date;
+
   isActive?: boolean;
+
   isBanned?: boolean;
+  bannedAt?: firestore.Timestamp | Date;
+  bannedBy?: string;
+  bannedReason?: string;
+
   isRestricted?: boolean;
+  restrictedAt?: firestore.Timestamp | Date;
+  restrictedBy?: string;
+  restrictionReason?: string;
+
+  lastKnownIp?: string;
 }
 
 export interface UserDataUpdate {
@@ -19,14 +35,15 @@ export interface UserDataUpdate {
   email?: string;
   role?: UserRole;
   avatarUrl?: string;
+  isActive?: boolean;
 }
 
 export interface UserProfile {
   uid: string;
   name: string;
   avatarUrl?: string;
-  lastOnline?: Date;
-  createdAt: Date;
+  lastOnline?: firestore.Timestamp | Date;
+  createdAt: firestore.Timestamp | Date;
 }
 
 export interface UserBlockData {

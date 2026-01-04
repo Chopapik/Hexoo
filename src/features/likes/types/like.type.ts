@@ -1,7 +1,9 @@
+import { firestore } from "firebase-admin";
+
 export interface Like {
   parentId: string;
   userId: string;
-  likedAt: any;
+  likedAt: firestore.Timestamp | firestore.FieldValue;
 }
 
 export interface ToggleLikeResult {

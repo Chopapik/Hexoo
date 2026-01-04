@@ -80,15 +80,17 @@ export default function RegisterForm() {
                 <polyline points="20 6 9 17 4 12"></polyline>
               </svg>
             </div>
-            <span className="text-text-main text-sm font-medium font-Plus_Jakarta_Sans">
-              Akceptuję
-              <Link
-                href="/terms"
-                className="underline hover:text-white transition-colors"
-              >
-                regulamin
-              </Link>{" "}
-              serwisu
+            <span className="inline-flex items-center gap-1 text-text-main text-sm font-medium font-Plus_Jakarta_Sans">
+              <span>Akceptuję</span>
+              <span>
+                <Link
+                  href="/terms"
+                  className="underline hover:text-white transition-colors"
+                >
+                  regulamin
+                </Link>
+              </span>
+              <span>serwisu</span>
             </span>
           </label>
 

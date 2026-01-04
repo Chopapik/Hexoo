@@ -16,9 +16,6 @@ export const RegisterSchema = z.object({
     .string()
     .min(8, { message: "password_too_short" })
     .max(128, { message: "password_too_long" }),
-  // .regex(/[A-Z]/, { message: "password_missing_uppercase" })
-  // .regex(/[0-9]/, { message: "password_missing_digit" })
-  // .regex(/[^A-Za-z0-9]/, { message: "password_missing_special" }),
 
   name: z
     .string()

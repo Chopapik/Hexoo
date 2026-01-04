@@ -5,4 +5,5 @@ export interface AdminUserCreate {
   email: string;
   role: UserRole;
   password: string;
+  isActive?: boolean;
 }
