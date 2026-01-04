@@ -8,6 +8,7 @@ export type SessionData = {
   role: UserRole;
   avatarUrl?: string;
   isRestricted?: boolean;
+  isBanned?: boolean;
 };
 
 export const UpdatePasswordSchema = z

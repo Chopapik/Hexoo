@@ -1,4 +1,5 @@
 import z from "zod";
+import { firestore } from "firebase-admin";
 
 export const COMMENT_MAX_CHARS = 500;
 
@@ -10,9 +11,16 @@ export interface Comment {
   userAvatarUrl?: string | null;
   text: string;
   likesCount: number;
-  createdAt: Date;
-  updatedAt?: Date;
+
+  createdAt: firestore.Timestamp | firestore.FieldValue;
+  updatedAt?: firestore.Timestamp | firestore.FieldValue;
+
   isLikedByMe?: boolean;
+
+  moderationStatus: "approved" | "pending" | "rejected";
+  isNSFW: boolean;
+  flaggedReasons?: string[];
+  flaggedSource?: "text" | "image";
 }
 
 export const AddCommentSchema = z.object({

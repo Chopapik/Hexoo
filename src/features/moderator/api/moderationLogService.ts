@@ -1,12 +1,14 @@
 import { adminDb } from "@/lib/firebaseAdmin";
+import { firestore } from "firebase-admin";
 import { FieldValue } from "firebase-admin/firestore";
 
 export interface ModerationLogEntry {
   userId: string;
-  timestamp: string;
-  verdict: "PENDING" | "REJECTED";
+  timestamp: firestore.Timestamp | Date;
+  verdict: "PENDING" | "REJECTED" | "APPROVED";
   categories: string[];
-  actionTaken: "BLOCKED_CREATION" | "FLAGGED_FOR_REVIEW";
+  actionTaken: "BLOCKED_CREATION" | "FLAGGED_FOR_REVIEW" | "CONTENT_REMOVED";
+  createdAt?: firestore.Timestamp | firestore.FieldValue;
 }
 
 export const logModerationEvent = async (entry: ModerationLogEntry) => {

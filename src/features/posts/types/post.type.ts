@@ -7,12 +7,15 @@ export interface ReportDetails {
   uid: string;
   reason: string;
   details?: string;
-  createdAt: string;
+  createdAt: firestore.Timestamp | Date;
 }
 
 export interface ImageMeta {
+  publicUrl: string;
   storagePath: string;
   downloadToken: string;
+  contentType: string;
+  sizeBytes: number;
 }
 
 export interface Post {
@@ -22,29 +25,25 @@ export interface Post {
   userAvatarUrl?: string | null;
   text: string;
 
-  // Media
   imageUrl?: string | null;
   imageMeta?: ImageMeta | null;
 
-  // Metadata
   device?: string | null;
   likesCount: number;
   isLikedByMe?: boolean;
   commentsCount: number;
 
-  createdAt: firestore.FieldValue;
-  updatedAt?: firestore.FieldValue;
+  createdAt: firestore.Timestamp | firestore.FieldValue;
+  updatedAt?: firestore.Timestamp | firestore.FieldValue;
 
-  // Moderation & Safety
   userReports?: string[];
   reportsMeta?: ReportDetails[];
   moderationStatus: "approved" | "pending" | "rejected";
-  flaggedReasons?: string[]; // e.g. ["violence", "hate"]
+  flaggedReasons?: string[];
   isNSFW: boolean;
 
-  // Admin/Moderator fields
   reviewedBy?: string;
-  reviewedAt?: Date;
+  reviewedAt?: firestore.Timestamp | Date;
 }
 
 export const CreatePostSchema = z.object({
