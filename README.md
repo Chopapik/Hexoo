@@ -36,7 +36,7 @@ The project is built using a modern full-stack architecture:
 
 1.  **Clone the repository**:
     ```bash
-    git clone [https://github.com/your-username/hexoo.git](https://github.com/your-username/hexoo.git)
+    git clone [https://github.com/chopapik/hexoo.git](https://github.com/chopapik/hexoo.git)
     cd hexoo
     ```
 
