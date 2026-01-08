@@ -13,15 +13,18 @@ import ThemeScript from "@/features/shared/components/ThemeScript";
 export const metadata: Metadata = {
   title: "Hexoo",
 };
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pl">
-      <body>
+    <html lang="pl" suppressHydrationWarning>
+      <head>
         <ThemeScript />
+      </head>
+      <body>
         <ClientSecurityGuard>
           <RecaptchaProvider>
             <QueryProvider>
