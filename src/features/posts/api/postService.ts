@@ -11,8 +11,8 @@ import {
   ReportDetails,
 } from "../types/post.type";
 import { formatZodErrorFlat } from "@/lib/zod";
-
 import { deleteImage } from "@/features/images/api/imageService";
+import { getUsersByIds, getUserByUid } from "@/features/users/api/userService";
 import { FieldValue } from "firebase-admin/firestore";
 import processPostContent from "./postHelpers";
 
@@ -54,7 +54,7 @@ export const reportPost = async (
       uid: user.uid,
       reason: reason,
       details: details || "",
-      createdAt: new Date().toISOString(),
+      createdAt: new Date(),
     };
 
     const shouldHide = newReports.length >= REPORT_THRESHOLD;
@@ -105,10 +105,9 @@ export const createPost = async (createPostData: CreatePost) => {
     createPostData.text,
     createPostData.imageFile
   );
-  const Postdoc: Omit<Post, "id"> = {
+
+  const postDoc = {
     userId: user.uid,
-    userName: user.name,
-    userAvatarUrl: user.avatarUrl ?? null,
     text: createPostData.text,
     imageUrl: processed.imageUrl,
     imageMeta: processed.imageMeta,
@@ -122,9 +121,7 @@ export const createPost = async (createPostData: CreatePost) => {
     flaggedReasons: processed.flaggedReasons,
   };
 
-  const createdPostRef = await adminDb
-    .collection(POSTS_COLLECTION)
-    .add(Postdoc);
+  await adminDb.collection(POSTS_COLLECTION).add(postDoc);
 };
 
 export const updatePost = async (postId: string, updateData: UpdatePost) => {
@@ -181,7 +178,7 @@ export const updatePost = async (postId: string, updateData: UpdatePost) => {
   return await getPostById(postId);
 };
 
-export const getPostById = async (postId: string) => {
+export const getPostById = async (postId: string): Promise<Post> => {
   if (!postId?.trim()) {
     throw createAppError({
       code: "NOT_FOUND",
@@ -198,9 +195,13 @@ export const getPostById = async (postId: string) => {
   }
 
   const data = snap.data()!;
+  const author = await getUserByUid(data.userId);
+
   return {
     id: snap.id,
     ...data,
+    userName: author?.name ?? "Unknown",
+    userAvatarUrl: author?.avatarUrl ?? null,
   } as Post;
 };
 
@@ -230,6 +231,16 @@ export const getPosts = async (
   }
 
   const postsSnap = await postsQuery.get();
+  if (postsSnap.empty) {
+    return [];
+  }
+
+  const postDocs = postsSnap.docs.map((doc) => {
+    return { id: doc.id, ...doc.data() } as Post;
+  });
+
+  const authorIds = [...new Set(postDocs.map((post) => post.userId))];
+  const authors = await getUsersByIds(authorIds);
 
   const visiblePostIds = postsSnap.docs.map((doc) => doc.id);
 
@@ -245,34 +256,14 @@ export const getPosts = async (
     likedPostIds = likesQuery.docs.map((doc) => doc.data().parentId);
   }
 
-  const posts = postsSnap.docs.map((doc) => {
-    const data = doc.data();
-    const postId = doc.id;
-
+  const posts: Post[] = postDocs.map((doc) => {
+    const author = authors[doc.userId];
     return {
-      id: postId,
-      userId: data.userId,
-      userName: data.userName,
-      userAvatarUrl: data.userAvatarUrl ?? null,
-      text: data.text,
-      imageUrl: data.imageUrl ?? null,
-      device: data.device ?? null,
-
-      likesCount: data.likesCount ?? 0,
-      commentsCount: data.commentsCount ?? 0,
-
-      isLikedByMe: likedPostIds.includes(postId),
-
-      createdAt: data.createdAt?.toDate
-        ? data.createdAt.toDate()
-        : data.createdAt,
-      updatedAt: data.updatedAt?.toDate
-        ? data.updatedAt.toDate()
-        : data.updatedAt,
-      moderationStatus: data.moderationStatus,
-
-      isNSFW: data.isNSFW,
-    } as Post;
+      ...doc,
+      userName: author?.name ?? "Unknown",
+      userAvatarUrl: author?.avatarUrl ?? null,
+      isLikedByMe: likedPostIds.includes(doc.id),
+    };
   });
 
   return posts;
