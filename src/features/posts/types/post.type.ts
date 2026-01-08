@@ -33,8 +33,8 @@ export interface Post {
   isLikedByMe?: boolean;
   commentsCount: number;
 
-  createdAt: firestore.Timestamp | firestore.FieldValue;
-  updatedAt?: firestore.Timestamp | firestore.FieldValue;
+  createdAt: firestore.Timestamp | firestore.FieldValue | Date;
+  updatedAt?: firestore.Timestamp | firestore.FieldValue | Date;
 
   userReports?: string[];
   reportsMeta?: ReportDetails[];

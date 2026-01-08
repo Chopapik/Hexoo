@@ -13,7 +13,7 @@ import ReportPostModal from "./ReportPostModal";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axiosInstance from "@/lib/axiosInstance";
 import toast from "react-hot-toast";
-import ConfirmDeletePostModal from "./ConfirmDeletePostModal.tsx";
+import ConfirmDeletePostModal from "./ConfirmDeletePostModal";
 
 export default function PostOptions({
   postId,

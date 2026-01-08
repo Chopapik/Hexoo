@@ -177,3 +177,49 @@ export const restrictUserBySystem = async (uid: string, reason: string) => {
 
   return await _applyRestrictionInternal(uid, reason, "AI_SYSTEM");
 };
+
+export async function getUsersByIds(
+  uids: string[]
+): Promise<Record<string, { name: string; avatarUrl?: string | null }>> {
+  if (!uids || uids.length === 0) {
+    return {};
+  }
+
+  const uniqueUids = [...new Set(uids)];
+  const usersMap: Record<string, { name: string; avatarUrl?: string | null }> =
+    {};
+  const uidChunks: string[][] = [];
+
+  for (let i = 0; i < uniqueUids.length; i += 30) {
+    uidChunks.push(uniqueUids.slice(i, i + 30));
+  }
+
+  try {
+    const promises = uidChunks.map((chunk) =>
+      adminDb.collection("users").where("uid", "in", chunk).get()
+    );
+
+    const snapshots = await Promise.all(promises);
+
+    for (const snapshot of snapshots) {
+      if (!snapshot.empty) {
+        snapshot.docs.forEach((doc) => {
+          const user = doc.data() as User;
+          if (user) {
+            usersMap[user.uid] = {
+              name: user.name,
+              avatarUrl: user.avatarUrl || null,
+            };
+          }
+        });
+      }
+    }
+  } catch (error: any) {
+    throw createAppError({
+      code: "DB_ERROR",
+      message: `[userService.getUsersByIds] Error fetching users by UIDs: ${error.message}`,
+    });
+  }
+
+  return usersMap;
+}

@@ -49,8 +49,6 @@ export const addComment = async (data: AddCommentDto) => {
       id: newCommentRef.id,
       postId: postId,
       userId: user.uid,
-      userName: user.name,
-      userAvatarUrl: user.avatarUrl ?? null,
       text,
       likesCount: 0,
       createdAt: FieldValue.serverTimestamp(),

@@ -6,7 +6,7 @@ import Button from "@/features/shared/components/ui/Button";
 import Modal from "@/features/shared/components/layout/Modal";
 import type {
   UserProfile,
-  UserProfileUpdate,
+  UserDataUpdate,
 } from "@/features/users/types/user.type";
 import useUpdateProfile from "../hooks/useUpdateProfile";
 import { useCriticalError } from "@/features/shared/hooks/useCriticalError";
@@ -20,7 +20,7 @@ export default function EditProfileModal({
   user,
   onClose,
 }: EditProfileModalProps) {
-  const [newProfileData, setNewProfileData] = useState<UserProfileUpdate>({
+  const [newProfileData, setNewProfileData] = useState<UserDataUpdate>({
     name: user?.name || "",
     avatarUrl: user?.avatarUrl,
   });
@@ -30,7 +30,7 @@ export default function EditProfileModal({
 
   if (!user) return null;
 
-  const updateForm = (field: keyof UserProfileUpdate, value: string) => {
+  const updateForm = (field: keyof UserDataUpdate, value: string) => {
     setNewProfileData((prev) => ({ ...prev, [field]: value }));
   };
 
