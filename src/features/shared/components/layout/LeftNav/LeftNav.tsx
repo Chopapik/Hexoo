@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { NavItem } from "./NavItem";
-import keyIconUrl from "@/features/shared/assets/icons/key.svg?url"; // Import the key icon
-import Button from "../../ui/Button";
+import keyIconUrl from "@/features/shared/assets/icons/key.svg?url";
 import { SessionData } from "@/features/me/me.type";
 
 type LeftNavProps = {
@@ -26,12 +25,9 @@ export function LeftNav({ onOpenRight, user }: LeftNavProps) {
               to="/notifications"
               hasNotification={false}
             />
-            <NavItem label={"Twój profil"} to="/profile" />
+            <NavItem label={"Twój profil"} to={`/${user.name}`} />
             <NavItem label={"Ustawienia"} to="/settings" iconUrl={keyIconUrl} />
           </div>
-          {/* <div className="hidden xl:block">
-            <Button size="xl" onClick={onOpenRight} />
-          </div> */}
         </div>
       ) : (
         <></>
