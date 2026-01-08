@@ -25,7 +25,7 @@ export function LeftNav({ onOpenRight, user }: LeftNavProps) {
               to="/notifications"
               hasNotification={false}
             />
-            <NavItem label={"Twój profil"} to={`/${user.name}`} />
+            <NavItem label={"Twój profil"} to={`/profile/${user.name}`} />
             <NavItem label={"Ustawienia"} to="/settings" iconUrl={keyIconUrl} />
           </div>
         </div>

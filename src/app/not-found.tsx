@@ -31,8 +31,7 @@ export default function NotFound() {
         </h2>
 
         <p className="text-sm text-text-neutral text-center mb-8 font-Albert_Sans leading-relaxed">
-          Strona, profil użytkownika lub zasób, którego szukasz, nie istnieje
-          lub został usunięty.
+          Strona, której szukasz, nie istnieje lub została usunięta.
           <br />
           Sprawdź poprawność adresu URL.
         </p>
