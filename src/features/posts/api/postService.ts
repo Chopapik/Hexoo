@@ -268,3 +268,61 @@ export const getPosts = async (
 
   return posts;
 };
+
+export const getPostsByUserId = async (
+  userId: string,
+  limit = 20,
+  startAfterId?: string
+): Promise<Post[]> => {
+  let currentUserUid: string | null = null;
+  try {
+    const session = await getUserFromSession();
+    currentUserUid = session.uid;
+  } catch {
+    currentUserUid = null;
+  }
+
+  let postsQuery = adminDb
+    .collection(POSTS_COLLECTION)
+    .where("userId", "==", userId)
+    .where("moderationStatus", "==", "approved")
+    .orderBy("createdAt", "desc")
+    .limit(limit);
+
+  if (startAfterId) {
+    const startSnap = await adminDb
+      .collection(POSTS_COLLECTION)
+      .doc(startAfterId)
+      .get();
+    if (startSnap.exists) {
+      postsQuery = postsQuery.startAfter(startSnap);
+    }
+  }
+
+  const postsSnap = await postsQuery.get();
+  if (postsSnap.empty) return [];
+
+  const postDocs = postsSnap.docs.map(
+    (doc) => ({ id: doc.id, ...doc.data() } as Post)
+  );
+
+  const author = await getUserByUid(userId);
+  const visiblePostIds = postsSnap.docs.map((doc) => doc.id);
+
+  let likedPostIds: string[] = [];
+  if (currentUserUid && visiblePostIds.length > 0) {
+    const likesQuery = await adminDb
+      .collection(LIKES_COLLECTION)
+      .where("userId", "==", currentUserUid)
+      .where("parentId", "in", visiblePostIds)
+      .get();
+    likedPostIds = likesQuery.docs.map((doc) => doc.data().parentId);
+  }
+
+  return postDocs.map((doc) => ({
+    ...doc,
+    userName: author?.name ?? "Unknown",
+    userAvatarUrl: author?.avatarUrl ?? null,
+    isLikedByMe: likedPostIds.includes(doc.id),
+  }));
+};
