@@ -50,7 +50,8 @@ export function LeftNav({ onOpenRight, user }: LeftNavProps) {
             </Link>
           </div>
           <div className="text-[10px] text-text-neutral/40 font-mono">
-            © 2025 Hexoo Project. Created by CHOPAPIK. Protected by reCAPTCHA.
+            © 2025-2026 Hexoo Project. Created by CHOPAPIK. Protected by
+            reCAPTCHA.
           </div>
         </div>
       </footer>

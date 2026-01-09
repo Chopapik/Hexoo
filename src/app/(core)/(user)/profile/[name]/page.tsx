@@ -1,14 +1,51 @@
 import { UserProfileCard } from "@/features/users/components/UserProfileCard";
 import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
+import { getUserProfile } from "@/features/users/api/userService";
 import { ApiError } from "@/lib/AppError";
+import { notFound } from "next/navigation";
+import { Metadata } from "next";
 
-export default async function ProfilePage({
-  params,
-}: {
+type Props = {
   params: Promise<{ name: string }>;
-}) {
-  let user = null;
+};
 
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { name } = await params;
+  const profileData = await getUserProfile(name);
+
+  if (!profileData || !profileData.user) {
+    return {
+      title: "Nie znaleziono profilu - Hexoo",
+      robots: { index: false, follow: false },
+    };
+  }
+
+  const { user } = profileData;
+
+  return {
+    title: `${user.name} - Profil Hexoo`,
+    description: `Zobacz profil użytkownika ${user.name} w aplikacji Hexoo. Sprawdź posty i aktywność.`,
+    openGraph: {
+      title: `${user.name} na Hexoo`,
+      description: `Profil użytkownika ${user.name}. Dołączył: ${
+        user.createdAt ? new Date(user.createdAt).toLocaleDateString() : ""
+      }`,
+      images: user.avatarUrl ? [user.avatarUrl] : [],
+      type: "profile",
+    },
+  };
+}
+
+export default async function ProfilePage({ params }: Props) {
+  const { name } = await params;
+
+  const profileData = await getUserProfile(name);
+
+  if (!profileData || !profileData.user) {
+    notFound();
+  }
+
+  let user = null;
   try {
     user = await getUserFromSession();
   } catch (error: unknown) {
@@ -22,11 +59,14 @@ export default async function ProfilePage({
     }
   }
 
-  const { name } = await params;
-
   let enableSettings = false;
-
   if (user && user.name === name) enableSettings = true;
 
-  return <UserProfileCard username={name} enableSettings={enableSettings} />;
+  return (
+    <UserProfileCard
+      username={name}
+      enableEditProfile={enableSettings}
+      initialUser={profileData.user}
+    />
+  );
 }

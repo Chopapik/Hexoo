@@ -4,12 +4,13 @@ import { useState } from "react";
 import TextInput from "@/features/shared/components/ui/TextInput";
 import Button from "@/features/shared/components/ui/Button";
 import Modal from "@/features/shared/components/layout/Modal";
-import type {
-  UserProfile,
-  UserDataUpdate,
-} from "@/features/users/types/user.type";
+import type { UserProfile } from "@/features/users/types/user.type";
 import useUpdateProfile from "../hooks/useUpdateProfile";
-import { useCriticalError } from "@/features/shared/hooks/useCriticalError";
+import { useImagePicker } from "@/features/shared/hooks/useImagePicker";
+import { Avatar } from "@/features/posts/components/Avatar";
+import cameraIcon from "@/features/shared/assets/icons/camera.svg?url";
+import Image from "next/image";
+import toast from "react-hot-toast";
 
 interface EditProfileModalProps {
   user: UserProfile | null;
@@ -20,33 +21,38 @@ export default function EditProfileModal({
   user,
   onClose,
 }: EditProfileModalProps) {
-  const [newProfileData, setNewProfileData] = useState<UserDataUpdate>({
-    name: user?.name || "",
-    avatarUrl: user?.avatarUrl,
-  });
+  if (!user) {
+    toast.error("Nie można edytować profilu: brak danych użytkownika.");
+    return null;
+  }
+  const [name, setName] = useState(user.name);
+
+  const { imagePreview, fileInputRef, handleFileChange, triggerPicker } =
+    useImagePicker({
+      initialPreview: user?.avatarUrl,
+    });
+
+  const [selectedFile, setSelectedFile] = useState<File | undefined>(undefined);
 
   const { updateProfile, isPending } = useUpdateProfile();
-  const { handleCriticalError } = useCriticalError();
 
   if (!user) return null;
 
-  const updateForm = (field: keyof UserDataUpdate, value: string) => {
-    setNewProfileData((prev) => ({ ...prev, [field]: value }));
+  const onFileChangeWrapper = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleFileChange(e);
+    if (e.target.files?.[0]) {
+      setSelectedFile(e.target.files[0]);
+    }
   };
 
   const handleSave = async () => {
-    const name = newProfileData.name?.trim();
+    const trimmedName = name.trim();
 
-    if (name && name !== user.name) {
-      try {
-        await updateProfile(newProfileData);
-        onClose();
-      } catch (error) {
-        handleCriticalError(error);
-      }
-    } else {
-      onClose();
-    }
+    await updateProfile({
+      name: trimmedName,
+      avatarFile: selectedFile,
+    });
+    onClose();
   };
 
   const footerContent = (
@@ -68,16 +74,48 @@ export default function EditProfileModal({
       title={`Edytuj profil — ${user.name}`}
       footer={footerContent}
     >
-      <div className="flex flex-col gap-5">
-        <div className=" p-4 rounded-lg border border-primary-neutral-background-default/30">
+      <div className="flex flex-col gap-6">
+        <div className="flex flex-col items-center gap-3">
+          <div
+            className="relative group cursor-pointer"
+            onClick={triggerPicker}
+          >
+            <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-primary-neutral-stroke-default group-hover:border-fuchsia-500 transition-colors">
+              <Avatar src={imagePreview || undefined} alt={user.name} />
+            </div>
+
+            <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+              <Image
+                src={cameraIcon}
+                alt="Zmień"
+                width={24}
+                height={24}
+                className="opacity-80"
+              />
+            </div>
+          </div>
+          <p className="text-xs text-text-neutral">
+            Kliknij, aby zmienić zdjęcie
+          </p>
+
+          <input
+            type="file"
+            ref={fileInputRef}
+            className="hidden"
+            accept="image/png, image/jpeg, image/webp"
+            onChange={onFileChangeWrapper}
+          />
+        </div>
+
+        <div className="p-4 rounded-lg border border-primary-neutral-background-default/30">
           <h3 className="text-lg font-medium mb-3 text-text-main">Nazwa</h3>
 
           <div className="flex flex-col gap-3">
             <TextInput
               label="Nazwa użytkownika"
-              value={newProfileData.name || ""}
+              value={name}
               placeholder="Twoja publiczna nazwa"
-              onChange={(e) => updateForm("name", e.target.value)}
+              onChange={(e) => setName(e.target.value)}
               showButton={false}
             />
             <p className="text-sm text-text-neutral">
@@ -91,7 +129,7 @@ export default function EditProfileModal({
                 text={isPending ? "Zapisywanie..." : "Zapisz"}
                 size="sm"
                 variant="gradient-fuchsia"
-                disabled={isPending || !newProfileData.name?.trim()}
+                disabled={isPending || (!name.trim() && !selectedFile)}
               />
             </div>
           </div>
