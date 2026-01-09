@@ -4,6 +4,7 @@ import { getUserProfile } from "@/features/users/api/userService";
 import { ApiError } from "@/lib/AppError";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
+import { UserPostList } from "@/features/users/components/UserPostList";
 
 type Props = {
   params: Promise<{ name: string }>;
@@ -63,10 +64,14 @@ export default async function ProfilePage({ params }: Props) {
   if (user && user.name === name) enableSettings = true;
 
   return (
-    <UserProfileCard
-      username={name}
-      enableEditProfile={enableSettings}
-      initialUser={profileData.user}
-    />
+    <div className="flex flex-col gap-4">
+      <UserProfileCard
+        username={name}
+        enableEditProfile={enableSettings}
+        initialUser={profileData.user}
+      />
+
+      <UserPostList userId={profileData.user.uid} />
+    </div>
   );
 }
