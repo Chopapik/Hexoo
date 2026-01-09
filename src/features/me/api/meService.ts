@@ -1,13 +1,9 @@
 import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
 import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
-import {
-  UpdatePasswordData,
-  UpdatePasswordSchema,
-  UpdateProfileData,
-  UpdateProfileSchema,
-} from "../me.type";
+import { UpdateProfileData, UpdateProfileSchema } from "../me.type";
 import { createAppError } from "@/lib/AppError";
 import { formatZodErrorFlat } from "@/lib/zod";
+import { uploadImage, deleteImage } from "@/features/images/api/imageService";
 
 export async function deleteAccount() {
   const decoded = await getUserFromSession();
@@ -31,13 +27,17 @@ export async function updateProfile(data: UpdateProfileData) {
 
   const { name, avatarFile } = parsed.data;
 
-  if (!name && avatarFile === undefined) {
+  if (!name && !avatarFile) {
     throw createAppError({
       code: "VALIDATION_ERROR",
       message: "[meService.updateProfile] Brak danych do aktualizacji.",
       details: { field: "root", reason: "no_update_fields" },
     });
   }
+
+  const userDoc = await adminDb.collection("users").doc(uid).get();
+  const userData = userDoc.data();
+  const currentStoragePath = userData?.avatarMeta?.storagePath;
 
   const authUpdate: { displayName?: string; photoURL?: string } = {};
   const dbUpdate: Record<string, any> = { updatedAt: new Date() };
@@ -47,10 +47,21 @@ export async function updateProfile(data: UpdateProfileData) {
     dbUpdate.name = name;
   }
 
-  if (avatarFile !== undefined) {
-    authUpdate.photoURL = "";
-    dbUpdate.avatarUrl = null; //TODO add saving images from imageservice
-  } // i tez jezeli user aktualizuje avatar to masz uzyc delete funkcji na usuniecie starego avatara
+  if (avatarFile) {
+    const uploadResult = await uploadImage(avatarFile, uid, "avatars");
+
+    if (currentStoragePath) {
+      await deleteImage(currentStoragePath);
+    }
+
+    authUpdate.photoURL = uploadResult.publicUrl;
+    dbUpdate.avatarUrl = uploadResult.publicUrl;
+    dbUpdate.avatarMeta = {
+      storagePath: uploadResult.storagePath,
+      contentType: uploadResult.contentType,
+      sizeBytes: uploadResult.sizeBytes,
+    };
+  }
 
   if (Object.keys(authUpdate).length > 0) {
     await adminAuth.updateUser(uid, authUpdate);
@@ -60,15 +71,18 @@ export async function updateProfile(data: UpdateProfileData) {
 
   return {
     uid,
+    email: decoded.email,
+    role: decoded.role,
     name: dbUpdate.name ?? decoded.name,
-    avatarUrl: dbUpdate.avatarUrl ?? null,
-    updatedAt: dbUpdate.updatedAt,
+    avatarUrl: dbUpdate.avatarUrl ?? decoded.avatarUrl,
+    isRestricted: decoded.isRestricted,
+    isBanned: decoded.isBanned,
   };
 }
 
-export const updatePassword = async (passwordData: UpdatePasswordData) => {
+export const updatePassword = async (passwordData: any) => {
   const decoded = await getUserFromSession();
-
+  const { UpdatePasswordSchema } = await import("../me.type");
   const parsed = UpdatePasswordSchema.safeParse(passwordData);
 
   if (!parsed.success) {
