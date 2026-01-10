@@ -28,6 +28,11 @@ const ERROR_DICTIONARY: Record<
     text: "Niedozwolony format pliku.",
     field: "imageFile",
   },
+  post_empty: {
+    type: "Dismiss",
+    text: "Post nie może być pusty. Dodaj tekst lub zdjęcie.",
+    field: "text",
+  },
 };
 
 export function parseErrorMessages(errorCode: string):

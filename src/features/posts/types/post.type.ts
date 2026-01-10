@@ -46,19 +46,25 @@ export interface Post {
   reviewedAt?: firestore.Timestamp | Date;
 }
 
-export const CreatePostSchema = z.object({
-  text: z.string().trim().max(POST_MAX_CHARS, { message: "text_too_long" }),
-  imageFile: z
-    .instanceof(File)
-    .optional()
-    .refine((file) => !file || file.size <= 5 * 1024 * 1024, "file_too_big")
-    .refine(
-      (file) =>
-        !file || ["image/png", "image/jpeg", "image/webp"].includes(file.type),
-      "wrong_file_type"
-    ),
-  device: z.string().optional(),
-});
+export const CreatePostSchema = z
+  .object({
+    text: z.string().trim().max(POST_MAX_CHARS, { message: "text_too_long" }),
+    imageFile: z
+      .instanceof(File)
+      .optional()
+      .refine((file) => !file || file.size <= 5 * 1024 * 1024, "file_too_big")
+      .refine(
+        (file) =>
+          !file ||
+          ["image/png", "image/jpeg", "image/webp"].includes(file.type),
+        "wrong_file_type"
+      ),
+    device: z.string().optional(),
+  })
+  .refine((data) => data.text.length > 0 || !!data.imageFile, {
+    message: "post_empty",
+    path: ["text"],
+  });
 
 export type CreatePost = z.infer<typeof CreatePostSchema>;
 
