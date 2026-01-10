@@ -20,7 +20,7 @@ export default function ModeratorDashboard() {
     <div className="w-full max-w-4xl mx-auto pt-6 flex flex-col gap-6 pb-20">
       <div className="glass-card p-6 rounded-xl border border-primary-fuchsia-stroke-default bg-black/40 backdrop-blur-md">
         <h1 className="text-2xl font-bold text-text-main font-Albert_Sans">
-          Panel Moderatora 🛡️
+          Panel Moderatora
         </h1>
         <p className="text-text-neutral text-sm mt-1">
           Kolejka postów oflagowanych przez AI oraz zgłoszonych przez
@@ -35,7 +35,6 @@ export default function ModeratorDashboard() {
 
       {posts?.length === 0 && (
         <div className="text-center text-text-neutral py-20 bg-white/5 rounded-xl border border-dashed border-secondary-neutral-background-default">
-          <p className="text-xl">Czysto! ✨</p>
           <p className="text-sm mt-2 opacity-60">
             Brak postów wymagających uwagi.
           </p>

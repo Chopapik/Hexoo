@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { NavItem } from "./NavItem";
-import keyIconUrl from "@/features/shared/assets/icons/key.svg?url";
 import { SessionData } from "@/features/me/me.type";
+import { House, MessageCircle, Bell, User, Settings } from "lucide-react";
 
 type LeftNavProps = {
   onOpenRight?: () => void;
@@ -13,20 +13,14 @@ export function LeftNav({ onOpenRight, user }: LeftNavProps) {
     <div className="hidden md:flex md:sticky md:top-[88px] justify-end-safe self-start bg-primary-neutral-background-default border-t-2 border-primary-neutral-stroke-default  rounded-xl overflow-hidden md:w-20 xl:w-72 px-3 py-3 lg:px-4 lg:py-4 flex-col items-center h-full">
       {user ? (
         <div className="h-full py-5 gap-12 flex flex-col">
-          <div className="flex flex-col md:justify-start items-start w-fit font-Plus_Jakarta_Sans ">
-            <NavItem label={"Strona główna"} to="/" />
+          <div className="flex flex-col md:justify-start items-start w-fit font-Plus_Jakarta_Sans gap-2">
+            <NavItem label={"Strona główna"} to="/" icon={House} />
             <NavItem
-              label={"Wiadomości"}
-              to="/messages"
-              hasNotification={true}
+              label={"Twój profil"}
+              to={`/profile/${user.name}`}
+              icon={User}
             />
-            <NavItem
-              label={"Powiadomienia"}
-              to="/notifications"
-              hasNotification={false}
-            />
-            <NavItem label={"Twój profil"} to={`/profile/${user.name}`} />
-            <NavItem label={"Ustawienia"} to="/settings" iconUrl={keyIconUrl} />
+            <NavItem label={"Ustawienia"} to="/settings" icon={Settings} />
           </div>
         </div>
       ) : (
