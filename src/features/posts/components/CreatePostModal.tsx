@@ -95,9 +95,7 @@ export default function CreatePostModal({
         </button>
       </div>
 
-      <span className="text-red-500 text-sm font-medium animate-pulse">
-        {displayError}
-      </span>
+      <span className="text-red-500 text-sm font-medium">{displayError}</span>
 
       <button
         onClick={submit}
