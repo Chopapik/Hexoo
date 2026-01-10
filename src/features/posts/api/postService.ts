@@ -109,8 +109,8 @@ export const createPost = async (createPostData: CreatePost) => {
   const postDoc = {
     userId: user.uid,
     text: createPostData.text,
-    imageUrl: processed.imageUrl,
-    imageMeta: processed.imageMeta,
+    imageUrl: processed.imageUrl ?? null,
+    imageMeta: processed.imageMeta ?? null,
     likesCount: 0,
     commentsCount: 0,
     device: createPostData.device ?? "Web",
