@@ -2,9 +2,14 @@ import { adminDb } from "@/lib/firebaseAdmin";
 import { FieldValue } from "firebase-admin/firestore";
 import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
 import { createAppError } from "@/lib/AppError";
-import { AddCommentSchema, AddCommentDto } from "../types/comment.type";
+import {
+  AddCommentSchema,
+  AddCommentDto,
+  Comment,
+} from "../types/comment.type";
 import { formatZodErrorFlat } from "@/lib/zod";
 import { performModeration } from "@/features/moderation/utils/assessSafety";
+import { getUsersByIds } from "@/features/users/api/userService";
 
 export const addComment = async (data: AddCommentDto) => {
   const user = await getUserFromSession();
@@ -68,4 +73,57 @@ export const addComment = async (data: AddCommentDto) => {
   });
 
   return { success: true, postId };
+};
+
+export const getCommentsByPostId = async (
+  postId: string
+): Promise<Comment[]> => {
+  let currentUserUid: string | null = null;
+  try {
+    const session = await getUserFromSession();
+    currentUserUid = session.uid;
+  } catch {
+    currentUserUid = null;
+  }
+
+  const commentsSnap = await adminDb
+    .collection("posts")
+    .doc(postId)
+    .collection("comments")
+    .where("moderationStatus", "==", "approved")
+    .orderBy("createdAt", "asc")
+    .get();
+
+  if (commentsSnap.empty) return [];
+
+  const commentDocs = commentsSnap.docs.map(
+    (doc) => ({ id: doc.id, ...doc.data() } as Comment)
+  );
+
+  const authorIds = [...new Set(commentDocs.map((c) => c.userId))];
+  const authors = await getUsersByIds(authorIds);
+
+  let likedCommentIds: string[] = [];
+  if (currentUserUid) {
+    const likesQuery = await adminDb
+      .collection("likes")
+      .where("userId", "==", currentUserUid)
+      .where(
+        "parentId",
+        "in",
+        commentsSnap.docs.map((d) => d.id)
+      )
+      .get();
+    likedCommentIds = likesQuery.docs.map((doc) => doc.data().parentId);
+  }
+
+  return commentDocs.map((doc) => {
+    const author = authors[doc.userId];
+    return {
+      ...doc,
+      userName: author?.name ?? "Unknown",
+      userAvatarUrl: author?.avatarUrl ?? null,
+      isLikedByMe: likedCommentIds.includes(doc.id),
+    };
+  });
 };
