@@ -16,7 +16,7 @@ export default function useCreatePostForm() {
     watch,
   } = useForm<CreatePost>({
     resolver: zodResolver(CreatePostSchema),
-    mode: "onBlur",
+    mode: "onSubmit",
     defaultValues: {
       text: "",
       imageFile: undefined,

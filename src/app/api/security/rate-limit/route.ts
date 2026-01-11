@@ -1,5 +1,5 @@
 import { withErrorHandling } from "@/lib/http/routeWrapper";
-import { checkAndIncrementIpLimit } from "@/lib/security/bruteForceProtectionService";
+import { checkAndIncrementIpLimit } from "@/features/security/api/bruteForceProtectionService";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import { NextRequest } from "next/server";
 

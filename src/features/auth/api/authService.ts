@@ -4,7 +4,7 @@ import admin from "firebase-admin";
 import { setSessionCookie, clearSessionCookie } from "@/lib/session";
 import { isUsernameTaken } from "./utils/checkUsernameUnique";
 import { logActivity } from "@/features/admin/api/activityService";
-import { resetIpLimit } from "@/lib/security/bruteForceProtectionService";
+import { resetIpLimit } from "@/features/security/api/bruteForceProtectionService";
 
 const SESSION_EXPIRES_MS = 5 * 24 * 60 * 60 * 1000;
 
