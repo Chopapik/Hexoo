@@ -1,16 +1,17 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { PaperclipIcon } from "../icons/PaperclipIcon";
 import { SendIcon } from "../icons/SendIcon";
-import Image from "next/image";
 import { useAppSelector } from "@/lib/store/hooks";
 import Modal from "@/features/shared/components/layout/Modal";
+import AlertModal from "@/features/shared/components/layout/AlertModal"; // Import nowego modala
 import useCreatePostForm from "../hooks/useCreatePostForm";
 import useCreatePost from "../hooks/useCreatePost";
 import type { CreatePost } from "../types/post.type";
 import { parseErrorMessages } from "../utils/postFormValidation";
 import { POST_MAX_CHARS } from "../types/post.type";
+
 interface CreatePostModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -34,6 +35,9 @@ export default function CreatePostModal({
   } = useCreatePostForm();
 
   const [rootError, setRootError] = useState<string | null>(null);
+  const [moderationBlockReason, setModerationBlockReason] = useState<
+    string | null
+  >(null);
 
   const validationErrorRaw =
     formState.errors.text?.message || formState.errors.imageFile?.message || "";
@@ -51,7 +55,16 @@ export default function CreatePostModal({
     },
     (error) => {
       const parsedError = parseErrorMessages(error);
-      parsedError && setRootError(parsedError.text);
+
+      if (parsedError?.text) {
+        setRootError(parsedError.text);
+      } else {
+        const message =
+          error?.response?.data?.message ||
+          "Twój post nie mógł zostać opublikowany z powodów bezpieczeństwa.";
+
+        setModerationBlockReason(message);
+      }
     }
   );
 
@@ -59,6 +72,7 @@ export default function CreatePostModal({
     if (isOverLimit) return;
 
     setRootError(null);
+    setModerationBlockReason(null);
 
     const formatted = checkFormat(data);
     createPost(formatted);
@@ -119,66 +133,74 @@ export default function CreatePostModal({
   );
 
   return (
-    <Modal
-      isOpen={isOpen}
-      title="Nowy post"
-      onClose={onClose}
-      footer={footerContent}
-    >
-      <div className="flex flex-col gap-4">
-        {imagePreview && (
-          <div className="relative w-fit group animate-in fade-in zoom-in-95 duration-200">
-            <img
-              src={imagePreview}
-              alt="Preview"
-              width={200}
-              height={200}
-              className="rounded-xl border border-primary-neutral-stroke-default object-cover max-h-64 w-auto"
-            />
-            <button
-              onClick={removeImage}
-              className="absolute top-1 right-1 bg-black/70 text-white rounded-full p-1 hover:bg-black transition-colors opacity-0 group-hover:opacity-100"
-            >
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="3"
+    <>
+      <Modal
+        isOpen={isOpen}
+        title="Nowy post"
+        onClose={onClose}
+        footer={footerContent}
+      >
+        <div className="flex flex-col gap-4">
+          {imagePreview && (
+            <div className="relative w-fit group animate-in fade-in zoom-in-95 duration-200">
+              <img
+                src={imagePreview}
+                alt="Preview"
+                width={200}
+                height={200}
+                className="rounded-xl border border-primary-neutral-stroke-default object-cover max-h-64 w-auto"
+              />
+              <button
+                onClick={removeImage}
+                className="absolute top-1 right-1 bg-black/70 text-white rounded-full p-1 hover:bg-black transition-colors opacity-0 group-hover:opacity-100"
               >
-                <path d="M18 6 6 18" />
-                <path d="m6 6 12 12" />
-              </svg>
-            </button>
-          </div>
-        )}
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                >
+                  <path d="M18 6 6 18" />
+                  <path d="m6 6 12 12" />
+                </svg>
+              </button>
+            </div>
+          )}
 
-        <div className="relative w-full">
-          <textarea
-            {...register("text")}
-            onKeyDown={handleKeyDown}
-            placeholder={
-              user ? `Co u Ciebie słychać, ${user.name}?` : "Napisz coś..."
-            }
-            className="w-full bg-transparent text-text-main placeholder:text-text-neutral/50 text-base resize-none outline-none min-h-[100px] scrollbar-hide leading-relaxed pb-6"
-            autoFocus
-          />
-
-          <div
-            className={`
-              absolute bottom-0 right-0 text-xs font-medium transition-colors duration-200 pointer-events-none select-none
-              ${
-                isOverLimit
-                  ? "text-red-500"
-                  : "text-text-neutral/40 group-focus-within:text-text-neutral/70"
+          <div className="relative w-full">
+            <textarea
+              {...register("text")}
+              onKeyDown={handleKeyDown}
+              placeholder={
+                user ? `Co u Ciebie słychać, ${user.name}?` : "Napisz coś..."
               }
-            `}
-          >
-            {currentLength} / {POST_MAX_CHARS}
+              className="w-full bg-transparent text-text-main placeholder:text-text-neutral/50 text-base resize-none outline-none min-h-[100px] scrollbar-hide leading-relaxed pb-6"
+              autoFocus
+            />
+
+            <div
+              className={`
+                absolute bottom-0 right-0 text-xs font-medium transition-colors duration-200 pointer-events-none select-none
+                ${
+                  isOverLimit
+                    ? "text-red-500"
+                    : "text-text-neutral/40 group-focus-within:text-text-neutral/70"
+                }
+              `}
+            >
+              {currentLength} / {POST_MAX_CHARS}
+            </div>
           </div>
         </div>
-      </div>
-    </Modal>
+      </Modal>
+      <AlertModal
+        isOpen={!!moderationBlockReason}
+        onClose={() => setModerationBlockReason(null)}
+        title="Post odrzucony"
+        message={moderationBlockReason || ""}
+      />
+    </>
   );
 }
