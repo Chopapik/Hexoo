@@ -55,7 +55,7 @@ export default function useLogin(onError: ErrorCallback) {
         } else if (errorCode === "auth/too-many-requests") {
           onError("RATE_LIMIT", "root");
         } else if (errorCode === "auth/user-disabled") {
-          onError("FORBIDDEN", "root");
+          onError("ACCOUNT_BANNED", "root");
         }
       } else {
         console.error(error);

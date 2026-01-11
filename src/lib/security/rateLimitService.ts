@@ -27,8 +27,7 @@ export async function checkAndIncrementIpLimit(ip: string) {
       if (lockoutTime > now) {
         // Still blocked -> Throw error
         throw createAppError({
-          code: "RATE_LIMIT",
-          message: `IP blocked until: ${lockoutTime.toLocaleTimeString()}`,
+          code: "SECURITY_LOCKOUT",
           status: 429,
           data: {
             ipBlocked: true,
@@ -63,7 +62,6 @@ export async function checkAndIncrementIpLimit(ip: string) {
 
       throw createAppError({
         code: "RATE_LIMIT",
-        message: `Too many attempts. Blocked for ${LOCKOUT_DURATION_MINUTES} min.`,
         status: 429,
         data: {
           ipBlocked: true,

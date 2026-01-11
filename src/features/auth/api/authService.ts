@@ -41,7 +41,7 @@ export async function createSession(idToken: string) {
   if (userData.isBanned) {
     await logActivity(uid, "LOGIN_FAILED", "Login attempt on banned account");
     throw createAppError({
-      code: "FORBIDDEN",
+      code: "ACCOUNT_BANNED",
       message: "[authService.createSession] User is banned",
     });
   }
@@ -50,7 +50,7 @@ export async function createSession(idToken: string) {
     const lockoutTime = userData.lockoutUntil.toDate();
     if (lockoutTime > new Date()) {
       throw createAppError({
-        code: "FORBIDDEN",
+        code: "SECURITY_LOCKOUT",
         message: "[authService.createSession] Account is locked",
         details: { lockoutTime },
       });
