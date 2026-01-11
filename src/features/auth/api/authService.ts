@@ -4,6 +4,7 @@ import admin from "firebase-admin";
 import { setSessionCookie, clearSessionCookie } from "@/lib/session";
 import { isUsernameTaken } from "./utils/checkUsernameUnique";
 import { logActivity } from "@/features/admin/api/activityService";
+import { resetIpLimit } from "@/lib/security/bruteForceProtectionService";
 
 const SESSION_EXPIRES_MS = 5 * 24 * 60 * 60 * 1000;
 
@@ -11,7 +12,7 @@ export async function logoutUser() {
   await clearSessionCookie();
   return { message: "Session cleared" };
 }
-export async function createSession(idToken: string) {
+export async function createSession(idToken: string, ip: string) {
   let decodedToken;
   try {
     decodedToken = await adminAuth.verifyIdToken(idToken);
@@ -46,19 +47,6 @@ export async function createSession(idToken: string) {
     });
   }
 
-  if (userData.lockoutUntil) {
-    const lockoutTime = userData.lockoutUntil.toDate();
-    if (lockoutTime > new Date()) {
-      throw createAppError({
-        code: "SECURITY_LOCKOUT",
-        message: "[authService.createSession] Account is locked",
-        details: { lockoutTime },
-      });
-    } else {
-      await userDocRef.update({ lockoutUntil: null, failedLoginAttempts: 0 });
-    }
-  }
-
   let sessionCookie;
   try {
     sessionCookie = await adminAuth.createSessionCookie(idToken, {
@@ -74,12 +62,6 @@ export async function createSession(idToken: string) {
   }
 
   try {
-    await userDocRef.update({
-      failedLoginAttempts: 0,
-      lockoutUntil: null,
-      lastOnline: admin.firestore.FieldValue.serverTimestamp(),
-    });
-
     await logActivity(
       uid,
       "LOGIN_SUCCESS",
@@ -87,6 +69,12 @@ export async function createSession(idToken: string) {
     );
   } catch (error) {
     console.error("Failed to update user stats or log activity:", error);
+  }
+
+  try {
+    await resetIpLimit(ip);
+  } catch (error) {
+    console.error("Failed to reset limits:", error);
   }
 
   await setSessionCookie(sessionCookie);

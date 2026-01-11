@@ -1,15 +1,14 @@
 import { withErrorHandling } from "@/lib/http/routeWrapper";
-import { checkAndIncrementIpLimit } from "@/lib/security/rateLimitService";
+import { checkAndIncrementIpLimit } from "@/lib/security/bruteForceProtectionService";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import { NextRequest } from "next/server";
 
 export const POST = withErrorHandling(async (req: NextRequest) => {
-  const { searchParams } = new URL(req.url);
-  const ip = searchParams.get("ip");
+  const forwarded = req.headers.get("x-forwarded-for");
+  const ip = forwarded
+    ? forwarded.split(",")[0].trim()
+    : req.headers.get("x-real-ip") || "unknown";
 
-  if (!ip) {
-    throw new Error("IP is required for rate limiting check");
-  }
   await checkAndIncrementIpLimit(ip);
 
   return handleSuccess({ status: "allowed" });

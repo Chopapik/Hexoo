@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { LoginData } from "../types/auth.type";
@@ -10,7 +9,7 @@ import { FirebaseError } from "firebase/app";
 import useRecaptcha from "@/features/shared/hooks/useRecaptcha";
 import toast from "react-hot-toast";
 
-type ErrorCallback = (errorCode: string, field?: string) => void;
+type ErrorCallback = (errorCode: string, field?: string, data?: any) => void;
 
 export default function useLogin(onError: ErrorCallback) {
   const { getRecaptchaToken } = useRecaptcha();
@@ -19,7 +18,6 @@ export default function useLogin(onError: ErrorCallback) {
   const sessionMutation = useMutation({
     mutationFn: (payload: { idToken: string; recaptchaToken: string }) =>
       axiosInstance.post("/auth/login", payload),
-
     onSuccess: () => {
       router.push("/");
     },
@@ -31,6 +29,16 @@ export default function useLogin(onError: ErrorCallback) {
 
   const handleLogin = async (data: LoginData) => {
     try {
+      try {
+        await axiosInstance.post("/security/rate-limit");
+      } catch (error: any) {
+        if (error.status === 429) {
+          onError(error.code || "SECURITY_LOCKOUT", "root", error.data);
+          return;
+        }
+        throw error;
+      }
+
       const userCredential = await signInWithEmailAndPassword(
         auth,
         data.email,
@@ -38,10 +46,11 @@ export default function useLogin(onError: ErrorCallback) {
       );
 
       const recaptchaToken = await getRecaptchaToken("login");
-
       const idToken = await userCredential.user.getIdToken();
 
-      recaptchaToken && sessionMutation.mutate({ idToken, recaptchaToken });
+      if (recaptchaToken) {
+        sessionMutation.mutate({ idToken, recaptchaToken });
+      }
     } catch (error: unknown) {
       if (error instanceof FirebaseError) {
         const errorCode = error.code;
