@@ -6,7 +6,6 @@ import "@/styles/glassmorphism.css";
 import ReduxProvider from "@/lib/providers/ReduxProvider";
 import QueryProvider from "@/lib/providers/QueryProvider";
 import RecaptchaProvider from "@/lib/providers/RecaptchaProvider";
-import ClientSecurityGuard from "@/features/shared/components/security/ClientSecurityGuard";
 import ToastContainer from "@/lib/providers/ToastContainer";
 import ThemeScript from "@/features/shared/components/ThemeScript";
 
@@ -25,16 +24,14 @@ export default function RootLayout({
         <ThemeScript />
       </head>
       <body>
-        <ClientSecurityGuard>
-          <RecaptchaProvider>
-            <QueryProvider>
-              <ReduxProvider>
-                {children}
-                <ToastContainer />
-              </ReduxProvider>
-            </QueryProvider>
-          </RecaptchaProvider>
-        </ClientSecurityGuard>
+        <RecaptchaProvider>
+          <QueryProvider>
+            <ReduxProvider>
+              {children}
+              <ToastContainer />
+            </ReduxProvider>
+          </QueryProvider>
+        </RecaptchaProvider>
       </body>
     </html>
   );

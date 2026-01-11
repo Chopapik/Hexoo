@@ -5,13 +5,13 @@ import admin from "firebase-admin";
 // Configuration constants
 const MAX_ANONYMOUS_ATTEMPTS = 10;
 const LOCKOUT_DURATION_MINUTES = 10;
+const COLLECTION_NAME = "auth_ip_rate_limits";
 
 /**
  * Protects against Brute Force attacks on login/register.
- * Uses "Lazy Reset" pattern to clear old locks.
  */
 export async function checkAndIncrementIpLimit(ip: string) {
-  const ipRef = adminDb.collection("ip_rate_limits").doc(ip);
+  const ipRef = adminDb.collection(COLLECTION_NAME).doc(ip);
   const snap = await ipRef.get();
 
   const now = admin.firestore.Timestamp.now().toDate();
@@ -61,7 +61,7 @@ export async function checkAndIncrementIpLimit(ip: string) {
       });
 
       throw createAppError({
-        code: "RATE_LIMIT",
+        code: "SECURITY_LOCKOUT",
         status: 429,
         data: {
           ipBlocked: true,
@@ -92,7 +92,7 @@ export async function checkAndIncrementIpLimit(ip: string) {
  * Manually resets limit (e.g. after successful login)
  */
 export async function resetIpLimit(ip: string) {
-  const ipRef = adminDb.collection("ip_rate_limits").doc(ip);
+  const ipRef = adminDb.collection(COLLECTION_NAME).doc(ip);
   await ipRef.set(
     {
       attempts: 0,
