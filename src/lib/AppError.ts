@@ -17,7 +17,34 @@ export type ErrorCode =
   | "INVALID_SESSION"
   | "UNAUTHORIZED_ACTION"
   | "SERVICE_UNAVAILABLE"
-  | "POLICY_VIOLATION";
+  | "POLICY_VIOLATION"
+  | "ACCOUNT_BANNED"
+  | "SECURITY_LOCKOUT"
+  | "RATE_LIMIT";
+
+const ErrorStatusMap: Record<ErrorCode, number> = {
+  AUTH_REQUIRED: 401,
+  INVALID_CREDENTIALS: 401,
+  FORBIDDEN: 403,
+  NOT_FOUND: 404,
+  VALIDATION_ERROR: 400,
+  RATE_LIMIT: 429,
+  EXTERNAL_SERVICE: 502,
+  DB_ERROR: 500,
+  INTERNAL_ERROR: 500,
+  INVALID_INPUT: 400,
+  CONFLICT: 409,
+  NETWORK_TIMEOUT: 504,
+  NETWORK_ERROR: 503,
+  NO_SESSION: 401,
+  USER_NOT_FOUND: 404,
+  INVALID_SESSION: 401,
+  UNAUTHORIZED_ACTION: 403,
+  SERVICE_UNAVAILABLE: 503,
+  POLICY_VIOLATION: 422,
+  ACCOUNT_BANNED: 403,
+  SECURITY_LOCKOUT: 423,
+};
 
 type AppErrorArgs = {
   code?: ErrorCode;
@@ -34,10 +61,11 @@ export class AppError extends Error {
   public data?: Record<string, any>;
 
   constructor(opts?: AppErrorArgs) {
-    super(opts?.message ?? "Unknown error appear");
+    super(opts?.message ?? opts?.code ?? "INTERNAL_ERROR");
+
     this.name = "AppError";
     this.code = opts?.code ?? "INTERNAL_ERROR";
-    this.status = opts?.status ?? 500;
+    this.status = opts?.status ?? ErrorStatusMap[this.code] ?? 500;
     this.details = opts?.details;
     this.data = opts?.data;
   }
@@ -54,41 +82,5 @@ export class ApiError extends AppError {
 }
 
 export const createAppError = (args: AppErrorArgs) => {
-  const defaultMessages: Record<ErrorCode, { msg: string; status: number }> = {
-    AUTH_REQUIRED: { msg: "Authentication required", status: 401 },
-    INVALID_CREDENTIALS: { msg: "Invalid credentials", status: 401 },
-    FORBIDDEN: { msg: "Forbidden", status: 403 },
-    NOT_FOUND: { msg: "Resource not found", status: 404 },
-    VALIDATION_ERROR: { msg: "Validation error", status: 400 },
-    RATE_LIMIT: { msg: "Too many requests", status: 429 },
-    EXTERNAL_SERVICE: { msg: "External service error", status: 502 },
-    DB_ERROR: { msg: "Database error", status: 500 },
-    INTERNAL_ERROR: { msg: "Internal server error", status: 500 },
-    INVALID_INPUT: { msg: "Invalid input", status: 400 },
-    CONFLICT: { msg: "Conflict", status: 409 },
-    NETWORK_TIMEOUT: { msg: "Network timeout", status: 504 },
-    NETWORK_ERROR: { msg: "Network error", status: 503 },
-    NO_SESSION: { msg: "Session not found", status: 401 },
-    USER_NOT_FOUND: { msg: "User not found", status: 404 },
-    INVALID_SESSION: { msg: "Invalid session token", status: 401 },
-    UNAUTHORIZED_ACTION: { msg: "You cannot perform this action", status: 403 },
-    SERVICE_UNAVAILABLE: { msg: "Service unavailable", status: 503 },
-    POLICY_VIOLATION: {
-      msg: "Content violates community guidelines",
-      status: 422,
-    },
-  };
-
-  const def = defaultMessages[args.code ?? "INTERNAL_ERROR"];
-  const message = args.message ?? def.msg;
-  const status = args.status ?? def.status;
-  const code = args.code ?? "INTERNAL_ERROR";
-
-  return new AppError({
-    message,
-    status,
-    code,
-    data: args.data,
-    details: args.details,
-  });
+  return new AppError(args);
 };
