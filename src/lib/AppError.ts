@@ -19,8 +19,7 @@ export type ErrorCode =
   | "SERVICE_UNAVAILABLE"
   | "POLICY_VIOLATION"
   | "ACCOUNT_BANNED"
-  | "SECURITY_LOCKOUT"
-  | "RATE_LIMIT";
+  | "SECURITY_LOCKOUT";
 
 const ErrorStatusMap: Record<ErrorCode, number> = {
   AUTH_REQUIRED: 401,
