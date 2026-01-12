@@ -4,6 +4,7 @@ import { useAppSelector } from "@/lib/store/hooks";
 import AppearanceSection from "./appearance/AppearanceSection";
 import AccountSection from "./account/AccountSection";
 import DangerZoneSection from "./danger/DangerZoneSection";
+import ContentSection from "./appearance/ContentSection";
 
 export default function SettingsCard() {
   const user = useAppSelector((state) => state.auth.user);
@@ -16,6 +17,7 @@ export default function SettingsCard() {
         Ustawienia
       </h2>
       <AppearanceSection />
+      <ContentSection />
       <AccountSection />
       <DangerZoneSection />
     </div>

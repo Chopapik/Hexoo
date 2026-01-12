@@ -1,12 +1,13 @@
 ﻿"use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { Post } from "../types/post.type";
 import { PostBody } from "./PostBody";
 import { PostFooter } from "./PostFooter";
 import { PostMeta } from "./PostMeta";
 import AddCommentModal from "@/features/comments/components/AddCommentModal";
-import { useAppSelector } from "@/lib/store/hooks";
+import { useAppSelector, useAppDispatch } from "@/lib/store/hooks";
+import { initializeSettings } from "@/features/me/store/settingsSlice";
 
 type PostCardProps = {
   post: Post;
@@ -16,6 +17,15 @@ type PostCardProps = {
 export const PostCard = ({ post, revealNSFW }: PostCardProps) => {
   const [showAddCommentModal, setShowAddCommentModal] = useState(false);
   const user = useAppSelector((state) => state.auth.user);
+
+  const showNSFW = useAppSelector((state) => state.settings.showNSFW);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(initializeSettings());
+  }, [dispatch]);
+
+  const isContentVisible = !post.isNSFW || showNSFW || revealNSFW;
 
   return (
     <>
@@ -29,11 +39,11 @@ export const PostCard = ({ post, revealNSFW }: PostCardProps) => {
       <div className="w-full max-w-4xl p-4 bg-primary-neutral-background-default rounded-xl border-t-2 border-primary-neutral-stroke-default inline-flex flex-col justify-start items-start gap-4">
         <PostMeta post={post} />
 
-        {!post.isNSFW ? (
+        {isContentVisible ? (
           <PostBody post={post} />
         ) : (
-          <div className="w-full py-12 flex flex-col items-center justify-center gap-3 bg-primary-neutral-background-default rounded-xl  transition-colors group">
-            <div className="p-3 rounded-full bg-red-500/10 text-red-500  transition-colors">
+          <div className="w-full py-12 flex flex-col items-center justify-center gap-3 bg-primary-neutral-background-default transition-colors group">
+            <div className="p-3 rounded-full bg-red-500/10 text-red-500 transition-colors">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -57,8 +67,6 @@ export const PostCard = ({ post, revealNSFW }: PostCardProps) => {
               </p>
               <p className="text-text-neutral text-xs">
                 Ten post zawiera treści dla dorosłych.
-                <br />
-                {/* Zmień ustawienia, aby go zobaczyć. */}
               </p>
             </div>
           </div>
