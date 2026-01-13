@@ -3,7 +3,7 @@ import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
 import { createAppError } from "@/lib/AppError";
 import { Post } from "@/features/posts/types/post.type";
 import { FieldValue } from "firebase-admin/firestore";
-import { blockUser, unblockUser } from "@/features/users/api/userService";
+import { blockUser, getUsersByIds } from "@/features/users/api/userService";
 import { UserBlockData } from "@/features/users/types/user.type";
 import { deleteImage } from "@/features/images/api/imageService";
 
@@ -30,14 +30,31 @@ export const getModerationQueue = async () => {
     .limit(50)
     .get();
 
-  const posts = pendingSnapshot.docs.map((doc) => ({
+  if (pendingSnapshot.empty) {
+    return [];
+  }
+
+  const postDocs = pendingSnapshot.docs.map((doc) => ({
     id: doc.id,
     ...doc.data(),
     createdAt: doc.data().createdAt?.toDate(),
     updatedAt: doc.data().updatedAt?.toDate(),
   })) as Post[];
 
-  return posts;
+  const authorIds = [...new Set(postDocs.map((post) => post.userId))];
+
+  const authors = await getUsersByIds(authorIds);
+
+  const postsWithAuthors = postDocs.map((post) => {
+    const author = authors[post.userId];
+    return {
+      ...post,
+      userName: author?.name ?? "Unknown",
+      userAvatarUrl: author?.avatarUrl ?? null,
+    };
+  });
+
+  return postsWithAuthors;
 };
 
 export const reviewPost = async (
