@@ -93,7 +93,7 @@ export default function ModerationQueueItem({
             disabled={isPending}
           />
           <Button
-            text="Zatwierdź (Fałszywy alarm)"
+            text="Zatwierdź post"
             variant="gradient-fuchsia"
             size="sm"
             onClick={() => onAction({ postId: post.id, action: "approve" })}
