@@ -1,7 +1,9 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getClientIp } from "@/lib/serverUtils";
+import { isUserAuthenticated } from "@/lib/session";
 
 const BRUTE_FORCE_PATHS = ["/api/auth/login", "/api/auth/register"];
+const PUBLIC_PATHS = ["/login", "/register"];
 
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
@@ -11,6 +13,20 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith("/critical-error")
   ) {
     return NextResponse.next();
+  }
+
+  const isLoggedIn = isUserAuthenticated(request);
+
+  const isPublicPath =
+    PUBLIC_PATHS.some(
+      (path) => pathname === path || pathname.startsWith(`${path}/`)
+    ) || pathname.startsWith("/api/auth");
+
+  if (!isLoggedIn && !isPublicPath) {
+    if (pathname.startsWith("/api")) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
   const ip = await getClientIp();
@@ -56,7 +72,6 @@ export async function middleware(request: NextRequest) {
     }
 
     const errorPageUrl = new URL("/critical-error", request.url);
-
     errorPageUrl.searchParams.set("status", "RATE_LIMIT");
 
     if (errorResponse.error?.data) {
