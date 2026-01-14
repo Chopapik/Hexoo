@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import { type NextRequest } from "next/server";
 
 export type Session =
   | {
@@ -49,4 +50,8 @@ export async function getSessionCookie(): Promise<Session> {
     session: true,
     value: sessionValue,
   };
+}
+
+export function isUserAuthenticated(request: NextRequest): boolean {
+  return request.cookies.has(SESSION_COOKIE_NAME);
 }
