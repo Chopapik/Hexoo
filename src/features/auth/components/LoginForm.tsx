@@ -104,11 +104,11 @@ export default function LoginForm() {
         ) : (
           <div className="self-stretch flex flex-col justify-center items-end gap-1 mt-4">
             <Button
-              text={isLoading ? "Logowanie..." : "Zaloguj się"}
+              text="Zaloguj się"
               size="xl"
               rightIconUrl={keyIconUrl}
               type="submit"
-              disabled={isLoading}
+              isLoading={isLoading}
             />
           </div>
         )}

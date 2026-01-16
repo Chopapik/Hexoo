@@ -42,11 +42,11 @@ export default function ReportPostModal({
         disabled={isPending}
       />
       <Button
-        text={isPending ? "Wysyłanie..." : "Zgłoś post"}
+        text="Zgłoś post"
         variant="gradient-fuchsia"
         size="sm"
         onClick={handleSubmit}
-        disabled={isPending}
+        isLoading={isPending}
       />
     </div>
   );

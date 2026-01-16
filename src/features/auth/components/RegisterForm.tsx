@@ -124,11 +124,11 @@ export default function RegisterForm() {
 
         <div className="self-stretch flex flex-col justify-center items-end gap-1 mt-4">
           <Button
-            text={isLoading ? "Rejestracja..." : "Zarejestruj się"}
+            text="Zarejestruj się"
             size="xl"
             rightIconUrl={keyIconUrl}
             type="submit"
-            disabled={isLoading}
+            isLoading={isLoading}
           />
         </div>
       </form>

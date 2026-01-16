@@ -90,8 +90,8 @@ export default function AddCommentModal({
         <div className="flex justify-end gap-3">
           <Button
             type="submit"
-            disabled={isLoading}
-            text={isLoading ? "Wysyłanie..." : "Dodaj komentarz"}
+            isLoading={isLoading}
+            text="Dodaj komentarz"
             variant="gradient-fuchsia"
             size="md"
           />

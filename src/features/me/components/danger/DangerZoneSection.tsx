@@ -6,6 +6,7 @@ import { useLogout } from "@/features/auth/hooks/useLogout";
 import { useDeleteAccount } from "@/features/me/hooks/useDeleteAccount";
 import SettingsSection from "../SettingsSection";
 import ConfirmDeleteModal from "./ConfirmDeleteModal";
+import { LogOut, Trash2 } from "lucide-react";
 
 export default function DangerZoneSection() {
   const { logout } = useLogout();
@@ -25,6 +26,7 @@ export default function DangerZoneSection() {
           <Button
             variant="icon-fuchsia-solid"
             text="Wyloguj się"
+            rightIcon={<LogOut className="size-4" />}
             onClick={() => logout()}
           />
         </div>
@@ -40,6 +42,7 @@ export default function DangerZoneSection() {
           <Button
             variant="danger"
             text="Usuń konto"
+            rightIcon={<Trash2 className="size-4" />}
             onClick={() => setDeleteModalOpen(true)}
           />
         </div>

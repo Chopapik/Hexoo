@@ -4,6 +4,7 @@ import type {
   ButtonVariant,
 } from "../../types/button.type";
 import Image from "next/image";
+import { Loader2 } from "lucide-react";
 
 /**
  * Map Tailwind CSS classes to button sizes.
@@ -75,6 +76,7 @@ export default function Button({
   type = "button",
   disabled,
   onClick,
+  isLoading = false,
 }: ButtonProps) {
   // Keep base layout/interaction minimal so variants can fully style background/borders.
   const baseClasses =
@@ -88,23 +90,40 @@ export default function Button({
       onClick={onClick}
       className={combinedClasses}
       type={type}
-      disabled={disabled}
+      disabled={disabled || isLoading}
     >
-      {icon ? ( // Handle central icon prop
-        icon
-      ) : (
-        <>
-          {leftIcon ||
-            (leftIconUrl && (
-              <Image src={leftIconUrl} alt="" className={leftIconClassName} />
-            ))}
-          {text && <span>{text}</span>}
-          {rightIcon ||
-            (rightIconUrl && (
-              <Image src={rightIconUrl} alt="" className={rightIconClassName} />
-            ))}
-        </>
+      {isLoading && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <Loader2
+            className={`animate-spin ${
+              size === "sm" || size === "iconSm" ? "size-3.5" : "size-5"
+            }`}
+          />
+        </div>
       )}
+      <div
+        className={`flex items-center gap-2 ${isLoading ? "invisible" : ""}`}
+      >
+        {icon ? ( // Handle central icon prop
+          icon
+        ) : (
+          <>
+            {leftIcon ||
+              (leftIconUrl && (
+                <Image src={leftIconUrl} alt="" className={leftIconClassName} />
+              ))}
+            {text && <span>{text}</span>}
+            {rightIcon ||
+              (rightIconUrl && (
+                <Image
+                  src={rightIconUrl}
+                  alt=""
+                  className={rightIconClassName}
+                />
+              ))}
+          </>
+        )}
+      </div>
     </button>
   );
 }

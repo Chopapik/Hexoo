@@ -126,10 +126,11 @@ export default function EditProfileModal({
             <div className="flex justify-end gap-3 mt-4">
               <Button
                 onClick={handleSave}
-                text={isPending ? "Zapisywanie..." : "Zapisz"}
+                text="Zapisz"
                 size="sm"
                 variant="gradient-fuchsia"
-                disabled={isPending || (!name.trim() && !selectedFile)}
+                disabled={!name.trim() && !selectedFile}
+                isLoading={isPending}
               />
             </div>
           </div>
