@@ -1,13 +1,9 @@
 <p align="center">
-<img width="313" height="67" alt="logo hexoo" src="https://github.com/user-attachments/assets/85a2a61a-e4eb-4f35-8589-336a85bf1314" />
+<img src="logo-animated.svg" alt="Grok Animated Logo" width="100%">
 </p>
-
-
 <p align="center">
   A modern social platform designed for seamless content sharing and community interaction.
 </p>
-
----
 
 ## Overview
 
@@ -17,24 +13,25 @@ Hexoo is a web-based application that allows users to create posts, engage with 
 
 The project is built using a modern full-stack architecture:
 
-* **Frontend**: Next.js 16, React 19, Tailwind CSS 4
-* **State Management**: Redux Toolkit & React Redux
-* **Backend Services**: Firebase (Authentication, Firestore, Storage) & Firebase Admin SDK
-* **Security & Moderation**: OpenAI API (Content Moderation), Google reCAPTCHA v3
-* **Data Validation**: Zod
-* **API Communication**: Axios
+- **Frontend**: Next.js 16, React 19, Tailwind CSS 4
+- **State Management**: Redux Toolkit & React Redux
+- **Backend Services**: Firebase (Authentication, Firestore, Storage) & Firebase Admin SDK
+- **Security & Moderation**: OpenAI API (Content Moderation), Google reCAPTCHA v3
+- **Data Validation**: Zod
+- **API Communication**: Axios
 
 ## Getting Started
 
 ### Prerequisites
 
-* Node.js (latest LTS version)
-* npm (comes with Node.js)
-* A Firebase Project created in the Firebase Console
+- Node.js (latest LTS version)
+- npm (comes with Node.js)
+- A Firebase Project created in the Firebase Console
 
 ### Installation and Setup
 
 1.  **Clone the repository**:
+
     ```bash
     git clone [https://github.com/chopapik/hexoo.git](https://github.com/chopapik/hexoo.git)
     cd hexoo
@@ -42,6 +39,7 @@ The project is built using a modern full-stack architecture:
 
 2.  **Install dependencies**:
     This will install all necessary packages, including Firebase and OpenAI SDKs:
+
     ```bash
     npm install
     ```
@@ -74,3 +72,4 @@ FIREBASE_PRIVATE_KEY=your_private_key
 NEXT_PUBLIC_RECAPTCHA_SITE_KEY=your_site_key
 RECAPTCHA_SECRET_KEY=your_secret_key
 OPENAI_API_KEY=your_openai_api_key
+```
