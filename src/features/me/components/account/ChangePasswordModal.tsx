@@ -39,10 +39,10 @@ export default function ChangePasswordModal({
       />
       <Button
         onClick={onSubmit}
-        text={isPending ? "Zapisywanie..." : "Zapisz zmiany"}
+        text="Zapisz zmiany"
         size="sm"
         variant="gradient-fuchsia"
-        disabled={isPending}
+        isLoading={isPending}
       />
     </div>
   );

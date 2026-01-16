@@ -27,10 +27,10 @@ export default function ConfirmDeleteModal({
       />
       <Button
         onClick={onConfirm}
-        text={isPending ? "Usuwanie..." : "Tak, usuń konto"}
+        text="Tak, usuń konto"
         size="sm"
         variant="danger"
-        disabled={isPending}
+        isLoading={isPending}
       />
     </div>
   );

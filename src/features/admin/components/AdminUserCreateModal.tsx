@@ -143,10 +143,11 @@ export default function AdminUserCreateModal({
 
             <Button
               onClick={handleCreate}
-              text={isPending ? "Tworzenie..." : "Utwórz konto"}
+              text="Utwórz konto"
               size="sm"
               variant="gradient-fuchsia"
               disabled={isPending || !email || !password}
+              isLoading={isPending}
             />
           </div>
         </div>

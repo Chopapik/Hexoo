@@ -184,10 +184,11 @@ export default function AdminUserEditModal({
                   onClick={() =>
                     adminUpdateUserAccount({ uid: user.uid, data: newUserData })
                   }
-                  text={isUpdatingData ? "Zapisywanie..." : "Zapisz zmiany"}
+                  text="Zapisz zmiany"
                   size="sm"
                   variant="gradient-fuchsia"
                   disabled={isUpdatingData}
+                  isLoading={isUpdatingData}
                   className="w-full md:w-auto"
                 />
               </div>
@@ -222,10 +223,11 @@ export default function AdminUserEditModal({
                       newPassword: newPassword,
                     })
                   }
-                  text={isUpdatingPassword ? "Przetwarzanie..." : "Zmień hasło"}
+                  text="Zmień hasło"
                   size="sm"
                   variant="gradient-fuchsia"
                   disabled={isUpdatingPassword || !newPassword}
+                  isLoading={isUpdatingPassword}
                   className="w-full md:w-auto"
                 />
               </div>
@@ -245,30 +247,33 @@ export default function AdminUserEditModal({
             {user.isBanned ? (
               <Button
                 onClick={() => unBlockUser({ uid: user.uid })}
-                text={isUnblockingUser ? "Odblokowywanie..." : "Odblokuj konto"}
+                text="Odblokuj konto"
                 size="sm"
                 variant="glass-card"
                 className="bg-green-500/10 border-green-500/30 text-green-400 hover:bg-green-500/20"
                 disabled={isUnblockingUser}
+                isLoading={isUnblockingUser}
               />
             ) : (
               <Button
                 onClick={() => blockUser({ uid: user.uid })}
-                text={isBlockingUser ? "Blokowanie..." : "Zablokuj konto"}
+                text="Zablokuj konto"
                 size="md"
                 variant="glass-card"
                 className="bg-yellow-500/10 border-yellow-500/30 text-yellow-400 hover:bg-yellow-500/20"
                 disabled={isBlockingUser}
+                isLoading={isBlockingUser}
               />
             )}
 
             <Button
               onClick={() => adminDeleteUser(user.uid)}
-              text={isDeletingUser ? "Usuwanie..." : "Usuń użytkownika"}
+              text="Usuń użytkownika"
               size="md"
               variant="glass-card"
               className="bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20"
               disabled={isUpdatingData}
+              isLoading={isDeletingUser}
             />
           </div>
         </div>

@@ -5,7 +5,8 @@ import { PaperclipIcon } from "../icons/PaperclipIcon";
 import { SendIcon } from "../icons/SendIcon";
 import { useAppSelector } from "@/lib/store/hooks";
 import Modal from "@/features/shared/components/layout/Modal";
-import AlertModal from "@/features/shared/components/layout/AlertModal"; // Import nowego modala
+import Button from "@/features/shared/components/ui/Button";
+import AlertModal from "@/features/shared/components/layout/AlertModal";
 import useCreatePostForm from "../hooks/useCreatePostForm";
 import useCreatePost from "../hooks/useCreatePost";
 import type { CreatePost } from "../types/post.type";
@@ -100,35 +101,27 @@ export default function CreatePostModal({
           className="hidden"
         />
 
-        <button
+        <Button
           onClick={triggerPicker}
-          className="text-text-neutral hover:text-text-main p-2 rounded-xl hover:bg-secondary-neutral-background-hover transition-all"
-          title="Dodaj zdjęcie"
-        >
-          <PaperclipIcon className="w-5 h-5" />
-        </button>
+          icon={<PaperclipIcon className="w-5 h-5" />}
+          variant="glass-card"
+          size="icon"
+          className="text-text-neutral hover:text-white"
+          type="button"
+        />
       </div>
 
       <span className="text-red-500 text-sm font-medium">{displayError}</span>
 
-      <button
+      <Button
         onClick={submit}
-        disabled={isPending || isOverLimit || !!clientError}
-        className={`
-          p-2 rounded-xl transition-all duration-200 flex items-center justify-center
-          ${
-            isPending || isOverLimit || !!clientError
-              ? "bg-primary-neutral-stroke-default text-text-neutral cursor-not-allowed opacity-50"
-              : "bg-white text-black hover:opacity-90 shadow-[0_0_10px_rgba(255,255,255,0.2)]"
-          }
-        `}
-      >
-        {isPending ? (
-          <div className="w-5 h-5 border-2 border-t-transparent border-black rounded-xl animate-spin" />
-        ) : (
-          <SendIcon className="w-5 h-5" />
-        )}
-      </button>
+        disabled={isOverLimit || !!clientError}
+        isLoading={isPending}
+        icon={<SendIcon className="w-5 h-5" />}
+        variant="icon-fuchsia-solid"
+        size="icon"
+        type="submit"
+      />
     </div>
   );
 

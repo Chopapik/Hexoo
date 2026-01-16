@@ -23,4 +23,5 @@ export interface ButtonProps {
   rightIconClassName?: string;
   type?: "submit" | "reset" | "button";
   disabled?: boolean;
+  isLoading?: boolean;
 }
