@@ -31,14 +31,14 @@ const variantClasses: Record<ButtonVariant, string> = {
     "text-white border-[0.75px] border-transparent [--btn-fill:linear-gradient(180deg,#C026D3_0%,#86198F_100%)] [background:var(--btn-fill,_linear-gradient(180deg,#C026D3_0%,#86198F_100%))_padding-box,linear-gradient(180deg,#EF72FF_3%,#61006E_100%)_border-box] shadow-sm hover:brightness-90",
   // Icon-only solid magenta
   "icon-fuchsia-solid":
-    "text-white bg-gradient-to-b from-fuchsia-600 to-fuchsia-800 outline outline-[0.75px] outline-offset-[-0.75px] outline-fuchsia-400",
+    "text-white bg-gradient-to-b from-fuchsia-600 to-fuchsia-800 shadow-sm hover:brightness-90",
   // Icon-only ghost magenta
   "icon-fuchsia-ghost": "text-white bg-fuchsia-700/20",
   // Note: 'glass-card' relies on an external global CSS class for its styling.
   "glass-card": "text-white glass-card",
   // Danger variant for destructive actions
   danger:
-    "text-white bg-gradient-to-b from-red-600 to-red-800 outline outline-[0.75px] outline-offset-[-0.75px] outline-red-400 shadow-sm hover:brightness-90",
+    "text-white bg-gradient-to-b from-red-600 to-red-800 shadow-sm hover:brightness-90",
   // Transparent variant with flat hover
   transparent: "bg-transparent hover:bg-white/10 transition-colors",
 };
