@@ -66,7 +66,7 @@ export default function CreatePostModal({
 
         setModerationBlockReason(message);
       }
-    }
+    },
   );
 
   const submit = handleSubmit((data: CreatePost) => {
@@ -104,7 +104,7 @@ export default function CreatePostModal({
         <Button
           onClick={triggerPicker}
           icon={<PaperclipIcon className="w-5 h-5" />}
-          variant="glass-card"
+          variant="transparent"
           size="icon"
           className="text-text-neutral hover:text-white"
           type="button"

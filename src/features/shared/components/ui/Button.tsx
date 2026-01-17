@@ -39,6 +39,8 @@ const variantClasses: Record<ButtonVariant, string> = {
   // Danger variant for destructive actions
   danger:
     "text-white bg-gradient-to-b from-red-600 to-red-800 outline outline-[0.75px] outline-offset-[-0.75px] outline-red-400 shadow-sm hover:brightness-90",
+  // Transparent variant with flat hover
+  transparent: "bg-transparent hover:bg-white/10 transition-colors",
 };
 
 /**
