@@ -80,8 +80,14 @@ export default function EditProfileModal({
             className="relative group cursor-pointer"
             onClick={triggerPicker}
           >
-            <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-primary-neutral-stroke-default group-hover:border-fuchsia-500 transition-colors">
-              <Avatar src={imagePreview || undefined} alt={user.name} />
+            <div className="w-24 h-24 rounded-xl overflow-hidden border border-primary-neutral-stroke-default group-hover:border-fuchsia-500 transition-colors">
+              <Avatar
+                src={imagePreview || undefined}
+                alt={user.name}
+                width={96}
+                height={96}
+                className="w-full h-full border-none"
+              />
             </div>
 
             <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
