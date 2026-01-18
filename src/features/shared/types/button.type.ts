@@ -6,6 +6,7 @@ export type ButtonVariant =
   | "icon-fuchsia-ghost"
   | "glass-card"
   | "danger"
+  | "secondary"
   | "transparent";
 export type ButtonSize = "sm" | "md" | "lg" | "xl" | "icon" | "iconSm";
 

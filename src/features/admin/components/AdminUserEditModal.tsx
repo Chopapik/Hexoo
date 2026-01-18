@@ -2,7 +2,10 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import Modal from "@/features/shared/components/layout/Modal";
 import TextInput from "@/features/shared/components/ui/TextInput";
+import Select from "@/features/shared/components/ui/Select";
 import Button from "@/features/shared/components/ui/Button";
 import type {
   User,
@@ -51,7 +54,7 @@ export default function AdminUserEditModal({
 
   const handleFieldChange = (
     field: keyof UserDataUpdate,
-    value: string | UserRole
+    value: string | UserRole,
   ) => {
     setNewUserData((prev) => ({
       ...prev,
@@ -64,30 +67,63 @@ export default function AdminUserEditModal({
   const displayRole = newUserData.role || user.role || "user";
   const displayName = newUserData.name || user.name;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+  const footer = (
+    <div className="flex flex-col md:flex-row justify-between items-center gap-4 w-full">
+      <Button
         onClick={onClose}
+        text="Anuluj i zamknij"
+        disabled={isUpdatingData || isUpdatingPassword}
+        className="text-text-neutral hover:text-white order-2 md:order-1 border-transparent"
+        variant="icon-fuchsia-ghost"
+        size="sm"
       />
 
-      <div
-        className="relative w-full max-w-3xl rounded-2xl p-6 shadow-2xl border border-primary-neutral-stroke-default
-                    glass-card backdrop-blur-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200"
-      >
-        <div className="flex justify-between items-center mb-6 border-b border-white/10 pb-4">
-          <h2 className="text-2xl font-Albert_Sans font-semibold text-text-main">
-            Edycja użytkownika
-          </h2>
-          <button
-            onClick={onClose}
-            className="text-text-neutral hover:text-text-main transition-colors"
-          >
-            ✕
-          </button>
-        </div>
+      <div className="flex gap-3 w-full md:w-auto order-1 md:order-2 justify-end">
+        {user.isBanned ? (
+          <Button
+            onClick={() => unBlockUser({ uid: user.uid })}
+            text="Odblokuj konto"
+            size="sm"
+            variant="secondary"
+            className="text-green-400 border-green-500/30 hover:bg-green-500/10"
+            disabled={isUnblockingUser}
+            isLoading={isUnblockingUser}
+          />
+        ) : (
+          <Button
+            onClick={() => blockUser({ uid: user.uid })}
+            text="Zablokuj konto"
+            size="sm"
+            variant="secondary"
+            className="text-yellow-400 border-yellow-500/30 hover:bg-yellow-500/10"
+            disabled={isBlockingUser}
+            isLoading={isBlockingUser}
+          />
+        )}
 
-        <div className="mb-8 p-5 rounded-xl border border-primary-neutral-stroke-default bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-white/5 via-transparent to-transparent">
+        <Button
+          onClick={() => adminDeleteUser(user.uid)}
+          text="Usuń użytkownika"
+          size="sm"
+          variant="danger"
+          disabled={isUpdatingData}
+          isLoading={isDeletingUser}
+        />
+      </div>
+    </div>
+  );
+
+  return (
+    <Modal
+      isOpen={true}
+      onClose={onClose}
+      title="Edycja użytkownika"
+      className="max-w-3xl"
+      footer={footer}
+    >
+      <div className="flex flex-col gap-6 p-1">
+        {/* User Summary Card */}
+        <div className="mb-8 p-5 rounded-xl border border-primary-neutral-stroke-default bg-[radial-gradient(ellipse_at_top_right,var(--tw-gradient-stops))] from-white/5 via-transparent to-transparent">
           <div className="flex flex-col sm:flex-row items-center gap-6">
             <div className="relative shrink-0">
               <Image
@@ -142,7 +178,9 @@ export default function AdminUserEditModal({
           </div>
         </div>
 
+        {/* Edit Forms Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Profile Data */}
           <div className="flex flex-col gap-4">
             <div className="bg-white/5 p-5 rounded-xl border border-primary-neutral-background-default/30 h-full flex flex-col">
               <h3 className="text-lg font-medium mb-4 text-text-main flex items-center gap-2">
@@ -158,25 +196,19 @@ export default function AdminUserEditModal({
                   showButton={false}
                 />
 
-                <div>
-                  <label className="block text-sm text-text-neutral mb-2 font-semibold">
-                    Rola w systemie
-                  </label>
-                  <select
-                    className="w-full p-3 rounded-lg bg-black/20 border border-primary-neutral-stroke-default text-text-main focus:outline-none focus:border-fuchsia-600 transition-colors appearance-none"
-                    value={newUserData.role ?? ""}
-                    onChange={(e) =>
-                      handleFieldChange("role", e.target.value as UserRole)
-                    }
-                  >
-                    <option value="" disabled>
-                      — Wybierz rolę —
-                    </option>
-                    <option value="user">Użytkownik</option>
-                    <option value="moderator">Moderator</option>
-                    <option value="admin">Administrator</option>
-                  </select>
-                </div>
+                <Select
+                  label="Rola w systemie"
+                  value={newUserData.role ?? ""}
+                  onChange={(e) =>
+                    handleFieldChange("role", e.target.value as UserRole)
+                  }
+                  options={[
+                    { value: "user", label: "Użytkownik" },
+                    { value: "moderator", label: "Moderator" },
+                    { value: "admin", label: "Administrator" },
+                  ]}
+                  placeholder="— Wybierz rolę —"
+                />
               </div>
 
               <div className="mt-6 flex justify-end">
@@ -195,6 +227,7 @@ export default function AdminUserEditModal({
             </div>
           </div>
 
+          {/* Security */}
           <div className="flex flex-col gap-4">
             <div className="bg-white/5 p-5 rounded-xl border border-primary-neutral-background-default/30 h-full flex flex-col">
               <h3 className="text-lg font-medium mb-4 text-text-main flex items-center gap-2">
@@ -234,50 +267,7 @@ export default function AdminUserEditModal({
             </div>
           </div>
         </div>
-
-        <div className="mt-6 pt-6 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
-          <Button
-            onClick={onClose}
-            text="Anuluj i zamknij"
-            disabled={isUpdatingData || isUpdatingPassword}
-            className="text-text-neutral hover:text-white order-2 md:order-1"
-          />
-
-          <div className="flex gap-3 w-full md:w-auto order-1 md:order-2">
-            {user.isBanned ? (
-              <Button
-                onClick={() => unBlockUser({ uid: user.uid })}
-                text="Odblokuj konto"
-                size="sm"
-                variant="glass-card"
-                className="bg-green-500/10 border-green-500/30 text-green-400 hover:bg-green-500/20"
-                disabled={isUnblockingUser}
-                isLoading={isUnblockingUser}
-              />
-            ) : (
-              <Button
-                onClick={() => blockUser({ uid: user.uid })}
-                text="Zablokuj konto"
-                size="md"
-                variant="glass-card"
-                className="bg-yellow-500/10 border-yellow-500/30 text-yellow-400 hover:bg-yellow-500/20"
-                disabled={isBlockingUser}
-                isLoading={isBlockingUser}
-              />
-            )}
-
-            <Button
-              onClick={() => adminDeleteUser(user.uid)}
-              text="Usuń użytkownika"
-              size="md"
-              variant="glass-card"
-              className="bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20"
-              disabled={isUpdatingData}
-              isLoading={isDeletingUser}
-            />
-          </div>
-        </div>
       </div>
-    </div>
+    </Modal>
   );
 }

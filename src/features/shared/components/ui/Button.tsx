@@ -39,6 +39,9 @@ const variantClasses: Record<ButtonVariant, string> = {
   // Danger variant for destructive actions
   danger:
     "text-white bg-gradient-to-b from-red-600 to-red-800 shadow-sm hover:brightness-90",
+  // Secondary variant (neutral)
+  secondary:
+    "bg-white/5 border border-white/10 text-white hover:bg-white/10 shadow-sm backdrop-blur-sm",
   // Transparent variant with flat hover
   transparent: "bg-transparent hover:bg-white/10 transition-colors",
 };
