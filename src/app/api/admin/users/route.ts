@@ -1,4 +1,4 @@
-import { adminGetAllUsers } from "@/features/admin/api/adminService";
+import { adminGetAllUsers } from "@/features/admin/api/services/adminService";
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 

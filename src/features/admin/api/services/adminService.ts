@@ -1,8 +1,9 @@
-import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
 import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
 import maskEmail from "@/features/shared/utils/maskEmail";
-import { AdminUserCreate } from "../types/admin.type";
+import { AdminUserCreate } from "@/features/admin/types/admin.type";
 import { createAppError } from "@/lib/AppError";
+import { authRepository } from "@/features/auth/api/repositories";
+import { userRepository } from "@/features/users/api/repositories";
 import admin from "firebase-admin";
 
 const ensureAdmin = async () => {
@@ -33,9 +34,8 @@ export const adminDeleteUser = async (uid: string) => {
     });
   }
 
-  await adminAuth.deleteUser(uid);
-
-  await adminDb.collection("users").doc(uid).delete();
+  await authRepository.deleteUser(uid);
+  await userRepository.deleteUser(uid);
 
   return { success: true, uid };
 };
@@ -52,7 +52,7 @@ export const adminCreateUserAccount = async (data: AdminUserCreate) => {
     });
   }
 
-  const userRecord = await adminAuth.createUser({
+  const userRecord = await authRepository.createUser({
     email: data.email,
     password: data.password,
     displayName: data.name,
@@ -60,18 +60,13 @@ export const adminCreateUserAccount = async (data: AdminUserCreate) => {
 
   const uid = userRecord.uid;
 
-  const userDoc = {
-    uid,
-    email: data.email,
-    maskedEmail: maskEmail(data.email),
+  await userRepository.createUser(uid, {
     name: data.name,
+    email: data.email,
     role: data.role ?? "user",
-    isBanned: false,
-    createdAt: admin.firestore.FieldValue.serverTimestamp(),
-    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-  };
+  });
 
-  await adminDb.collection("users").doc(uid).set(userDoc, { merge: true });
+  await userRepository.updateUser(uid, {} as any);
 
   return {
     uid,
@@ -84,27 +79,23 @@ export const adminCreateUserAccount = async (data: AdminUserCreate) => {
 export const adminGetAllUsers = async () => {
   await ensureAdmin();
 
-  const snapshot = await adminDb.collection("users").get();
+  const users = await userRepository.getAllUsers();
 
-  return snapshot.docs.map((doc) => {
-    const data = doc.data();
-
-    return {
-      uid: doc.id,
-      name: data?.name ?? null,
-      email: maskEmail(data?.email ?? ""),
-      role: data?.role ?? "user",
-      createdAt: data?.createdAt?.toDate
-        ? data.createdAt.toDate()
-        : data?.createdAt,
-      isBanned: Boolean(data?.isBanned),
-    };
-  });
+  return users.map((user) => ({
+    uid: user.uid,
+    name: user.name ?? null,
+    email: maskEmail(user.email ?? ""),
+    role: user.role ?? "user",
+    createdAt: (user.createdAt as any)?.toDate
+      ? (user.createdAt as any).toDate()
+      : user.createdAt,
+    isBanned: Boolean(user.isBanned),
+  }));
 };
 
 export const adminUpdateUserAccount = async (
   uid: string,
-  data: { name?: string; email?: string; role?: string }
+  data: { name?: string; email?: string; role?: string },
 ) => {
   await ensureAdmin();
 
@@ -115,25 +106,23 @@ export const adminUpdateUserAccount = async (
     });
   }
 
-  const updatePayload: Record<string, any> = {
-    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-  };
+  const updatePayload: Record<string, any> = {};
 
   if (data.name?.trim()) updatePayload.name = data.name.trim();
   if (data.role?.trim()) updatePayload.role = data.role.trim();
   if (data.email?.trim()) {
     updatePayload.email = data.email.trim();
-    updatePayload.maskedEmail = maskEmail(data.email.trim());
+    // updatePayload.maskedEmail = maskEmail(data.email.trim()); // If we want to store it.
   }
 
-  await adminDb.collection("users").doc(uid).update(updatePayload);
+  await userRepository.updateUser(uid, updatePayload);
 
   const authUpdate: Record<string, any> = {};
   if (updatePayload.name) authUpdate.displayName = updatePayload.name;
   if (updatePayload.email) authUpdate.email = updatePayload.email;
 
   if (Object.keys(authUpdate).length > 0) {
-    await adminAuth.updateUser(uid, authUpdate);
+    await authRepository.updateUser(uid, authUpdate);
   }
 
   return;
@@ -141,7 +130,7 @@ export const adminUpdateUserAccount = async (
 
 export const adminUpdateUserPassword = async (
   uid: string,
-  newPassword: string
+  newPassword: string,
 ) => {
   await ensureAdmin();
 
@@ -161,15 +150,7 @@ export const adminUpdateUserPassword = async (
     });
   }
 
-  await adminAuth.updateUser(uid, { password: newPassword });
-
-  await adminDb
-    .collection("users")
-    .doc(uid)
-    .set(
-      { updatedAt: admin.firestore.FieldValue.serverTimestamp() },
-      { merge: true }
-    );
+  await authRepository.updateUser(uid, { password: newPassword });
 
   return;
 };

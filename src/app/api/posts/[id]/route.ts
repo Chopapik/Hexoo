@@ -1,4 +1,7 @@
-import { getPostById, updatePost } from "@/features/posts/api/postService";
+import {
+  getPostById,
+  updatePost,
+} from "@/features/posts/api/services/postService";
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import { UpdatePost } from "@/features/posts/types/post.type";
@@ -9,7 +12,7 @@ export const GET = withErrorHandling(
     const { id } = await context.params;
     const post = await getPostById(id);
     return handleSuccess(post);
-  }
+  },
 );
 
 export const PUT = withErrorHandling(
@@ -34,5 +37,5 @@ export const PUT = withErrorHandling(
     const body = await req.json();
     const result = await updatePost(id, body);
     return handleSuccess(result, 201);
-  }
+  },
 );

@@ -1,12 +1,12 @@
 import { NextRequest } from "next/server";
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
-import { getPostsByUserId } from "@/features/posts/api/postService";
+import { getPostsByUserId } from "@/features/posts/api/services/postService";
 
 export const GET = withErrorHandling(
   async (
     req: NextRequest,
-    { params }: { params: Promise<{ userId: string }> }
+    { params }: { params: Promise<{ userId: string }> },
   ) => {
     const { userId } = await params;
     const { searchParams } = new URL(req.url);
@@ -15,5 +15,5 @@ export const GET = withErrorHandling(
 
     const result = await getPostsByUserId(userId, limit, startAfter);
     return handleSuccess(result);
-  }
+  },
 );

@@ -1,4 +1,4 @@
-import { adminUpdateUserPassword } from "@/features/admin/api/adminService";
+import { adminUpdateUserPassword } from "@/features/admin/api/services/adminService";
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import { NextRequest } from "next/server";
@@ -10,5 +10,5 @@ export const PUT = withErrorHandling(
     const { newPassword } = body;
     const result = await adminUpdateUserPassword(uid, newPassword);
     return handleSuccess({ ok: true, result });
-  }
+  },
 );

@@ -1,4 +1,4 @@
-import { reportPost } from "@/features/posts/api/postService";
+import { reportPost } from "@/features/posts/api/services/postService";
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import { NextRequest } from "next/server";
@@ -13,5 +13,5 @@ export const POST = withErrorHandling(
     const result = await reportPost(id, reason, details);
 
     return handleSuccess(result);
-  }
+  },
 );

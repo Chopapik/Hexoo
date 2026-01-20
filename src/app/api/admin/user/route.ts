@@ -1,7 +1,7 @@
 import {
   adminCreateUserAccount,
   adminDeleteUser,
-} from "@/features/admin/api/adminService";
+} from "@/features/admin/api/services/adminService";
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import { NextRequest } from "next/server";

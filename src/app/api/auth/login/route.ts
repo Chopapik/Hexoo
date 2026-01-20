@@ -1,4 +1,4 @@
-import { createSession } from "@/features/auth/api/authService";
+import { createSession } from "@/features/auth/api/services/authService";
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import { createAppError } from "@/lib/AppError";

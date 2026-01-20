@@ -1,4 +1,4 @@
-import { getUserProfile } from "@/features/users/api/userService";
+import { getUserProfile } from "@/features/users/api/services/userService";
 import { NextRequest } from "next/server";
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
@@ -10,5 +10,5 @@ export const GET = withErrorHandling(
     const result = await getUserProfile(name);
 
     return handleSuccess(result);
-  }
+  },
 );
