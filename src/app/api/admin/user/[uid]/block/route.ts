@@ -1,4 +1,4 @@
-import { blockUser } from "@/features/users/api/userService";
+import { blockUser } from "@/features/users/api/services/userService";
 import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
@@ -16,5 +16,5 @@ export const PUT = withErrorHandling(
       bannedReason: reason,
     });
     return handleSuccess(result);
-  }
+  },
 );

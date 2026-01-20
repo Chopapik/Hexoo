@@ -1,6 +1,9 @@
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
-import { createPost, getPosts } from "@/features/posts/api/postService";
+import {
+  createPost,
+  getPosts,
+} from "@/features/posts/api/services/postService";
 import { NextRequest } from "next/server";
 import { CreatePost } from "@/features/posts/types/post.type";
 export const POST = withErrorHandling(async (req: NextRequest) => {

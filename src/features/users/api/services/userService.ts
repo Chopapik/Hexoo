@@ -1,11 +1,5 @@
-import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
-import admin from "firebase-admin";
-import type {
-  User,
-  UserBlockData,
-  UserProfile,
-  UserRestrictionData,
-} from "../types/user.type";
+import { userRepository } from "../repositories";
+import type { User, UserBlockData } from "../types/user.type";
 import { createAppError } from "@/lib/AppError";
 import { ensureModeratorOrAdmin } from "@/features/moderator/api/moderatorService";
 
@@ -15,20 +9,9 @@ export async function createUserDocument(
     name: string;
     email: string;
     role: string;
-  }
+  },
 ) {
-  const userDoc = {
-    uid,
-    name: userData.name,
-    email: userData.email,
-    role: userData.role,
-    createdAt: admin.firestore.FieldValue.serverTimestamp(),
-  };
-
-  await adminDb.doc(`users/${uid}`).set(userDoc, { merge: true });
-
-  const snap = await adminDb.doc(`users/${uid}`).get();
-  const data = snap.data();
+  const data = await userRepository.createUser(uid, userData);
 
   if (!data) {
     throw createAppError({
@@ -42,11 +25,7 @@ export async function createUserDocument(
 }
 
 export async function getUserByUid(uid: string): Promise<User | null> {
-  const userDoc = await adminDb.collection("users").doc(uid).get();
-
-  if (!userDoc.exists) return null;
-
-  return userDoc.data() as User;
+  return await userRepository.getUserByUid(uid);
 }
 
 export async function getUserProfile(name: string) {
@@ -55,15 +34,9 @@ export async function getUserProfile(name: string) {
   const cleaned = name.trim().replace(/\s+/g, "");
   if (!cleaned) return null;
 
-  const snapshot = await adminDb
-    .collection("users")
-    .where("name", "==", cleaned)
-    .limit(1)
-    .get();
+  const userData = await userRepository.getUserByName(cleaned);
 
-  if (snapshot.empty) return null;
-
-  const userData = snapshot.docs[0].data() as User;
+  if (!userData) return null;
 
   const userProfile = {
     uid: userData.uid,
@@ -90,16 +63,7 @@ export const blockUser = async (data: UserBlockData) => {
     });
   }
 
-  await adminAuth.updateUser(data.uidToBlock, { disabled: true });
-
-  await adminDb.collection("users").doc(data.uidToBlock).update({
-    isBanned: true,
-    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-    bannedBy: data.bannedBy,
-    bannedReason: data.bannedReason,
-  });
-
-  return;
+  await userRepository.blockUser(data);
 };
 
 export const unblockUser = async (uid: string) => {
@@ -112,16 +76,7 @@ export const unblockUser = async (uid: string) => {
     });
   }
 
-  await adminAuth.updateUser(uid, { disabled: false });
-
-  await adminDb.collection("users").doc(uid).update({
-    isBanned: false,
-    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-    bannedBy: null,
-    bannedReason: undefined,
-  });
-
-  return;
+  await userRepository.unblockUser(uid);
 };
 
 export const unrestrictUser = async (uid: string) => {
@@ -134,12 +89,7 @@ export const unrestrictUser = async (uid: string) => {
     });
   }
 
-  await adminDb.collection("users").doc(uid).update({
-    isRestricted: false,
-    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-    restrictedBy: admin.firestore.FieldValue.delete(),
-    restrictedReason: admin.firestore.FieldValue.delete(),
-  });
+  await userRepository.updateUserRestriction(uid, false);
 
   return { success: true, uid, status: "active" };
 };
@@ -147,7 +97,7 @@ export const unrestrictUser = async (uid: string) => {
 const _applyRestrictionInternal = async (
   uid: string,
   reason: string,
-  source: "ADMIN" | "AI_SYSTEM"
+  source: "ADMIN" | "AI_SYSTEM",
 ) => {
   if (!uid) {
     throw createAppError({
@@ -156,9 +106,7 @@ const _applyRestrictionInternal = async (
     });
   }
 
-  await adminDb.collection("users").doc(uid).update({
-    isRestricted: true,
-    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+  await userRepository.updateUserRestriction(uid, true, {
     restrictedBy: source,
     restrictedReason: reason,
   });
@@ -179,47 +127,18 @@ export const restrictUserBySystem = async (uid: string, reason: string) => {
 };
 
 export async function getUsersByIds(
-  uids: string[]
+  uids: string[],
 ): Promise<Record<string, { name: string; avatarUrl?: string | null }>> {
   if (!uids || uids.length === 0) {
     return {};
   }
 
-  const uniqueUids = [...new Set(uids)];
-  const usersMap: Record<string, { name: string; avatarUrl?: string | null }> =
-    {};
-  const uidChunks: string[][] = [];
-
-  for (let i = 0; i < uniqueUids.length; i += 30) {
-    uidChunks.push(uniqueUids.slice(i, i + 30));
-  }
-
   try {
-    const promises = uidChunks.map((chunk) =>
-      adminDb.collection("users").where("uid", "in", chunk).get()
-    );
-
-    const snapshots = await Promise.all(promises);
-
-    for (const snapshot of snapshots) {
-      if (!snapshot.empty) {
-        snapshot.docs.forEach((doc) => {
-          const user = doc.data() as User;
-          if (user) {
-            usersMap[user.uid] = {
-              name: user.name,
-              avatarUrl: user.avatarUrl || null,
-            };
-          }
-        });
-      }
-    }
+    return await userRepository.getUsersByIds(uids);
   } catch (error: any) {
     throw createAppError({
       code: "DB_ERROR",
       message: `[userService.getUsersByIds] Error fetching users by UIDs: ${error.message}`,
     });
   }
-
-  return usersMap;
 }

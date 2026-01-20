@@ -1,5 +1,4 @@
 import admin from "firebase-admin";
-import { adminDb } from "@/lib/firebaseAdmin";
 import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
 import { createAppError } from "@/lib/AppError";
 import {
@@ -8,75 +7,28 @@ import {
   type CreatePost,
   type UpdatePost,
   type Post,
-  ReportDetails,
-} from "../types/post.type";
+} from "@/features/posts/types/post.type";
 import { formatZodErrorFlat } from "@/lib/zod";
 import { deleteImage } from "@/features/images/api/imageService";
-import { getUsersByIds, getUserByUid } from "@/features/users/api/userService";
-import { FieldValue } from "firebase-admin/firestore";
+import {
+  getUsersByIds,
+  getUserByUid,
+} from "@/features/users/api/services/userService";
 import processPostContent from "./postHelpers";
-
-const POSTS_COLLECTION = "posts";
-const LIKES_COLLECTION = "likes";
-
-const REPORT_THRESHOLD = 3;
+import { postRepository } from "../repositories";
+import { likeRepository } from "@/features/likes/api/repositories";
 
 export const reportPost = async (
   postId: string,
   reason: string,
-  details?: string
+  details?: string,
 ) => {
   const user = await getUserFromSession();
-  const postRef = adminDb.collection(POSTS_COLLECTION).doc(postId);
 
-  return await adminDb.runTransaction(async (t) => {
-    const doc = await t.get(postRef);
-    if (!doc.exists) {
-      throw createAppError({
-        code: "NOT_FOUND",
-        message: "[postService.reportPost] Post document not found by ID",
-      });
-    }
-
-    const data = doc.data()!;
-    const reports = data.userReports || [];
-
-    if (reports.includes(user.uid)) {
-      throw createAppError({
-        code: "CONFLICT",
-        message: "[postService.reportPost] User has already reported this post",
-      });
-    }
-
-    const newReports = [...reports, user.uid];
-
-    const newReportMeta: ReportDetails = {
-      uid: user.uid,
-      reason: reason,
-      details: details || "",
-      createdAt: new Date(),
-    };
-
-    const shouldHide = newReports.length >= REPORT_THRESHOLD;
-
-    const updateData: any = {
-      reportsMeta: FieldValue.arrayUnion(newReportMeta),
-      userReports: newReports,
-      updatedAt: FieldValue.serverTimestamp(),
-    };
-
-    if (shouldHide) {
-      updateData.moderationStatus = "pending";
-      updateData.flaggedReasons =
-        admin.firestore.FieldValue.arrayUnion("user_reports");
-    }
-
-    t.update(postRef, updateData);
-
-    return {
-      hidden: shouldHide,
-      reportsCount: newReports.length,
-    };
+  return await postRepository.reportPost(postId, {
+    userId: user.uid,
+    reason,
+    details,
   });
 };
 
@@ -103,7 +55,7 @@ export const createPost = async (createPostData: CreatePost) => {
   const processed = await processPostContent(
     user.uid,
     createPostData.text,
-    createPostData.imageFile
+    createPostData.imageFile,
   );
 
   const postDoc = {
@@ -121,7 +73,7 @@ export const createPost = async (createPostData: CreatePost) => {
     flaggedReasons: processed.flaggedReasons,
   };
 
-  await adminDb.collection(POSTS_COLLECTION).add(postDoc);
+  await postRepository.createPost(postDoc);
 };
 
 export const updatePost = async (postId: string, updateData: UpdatePost) => {
@@ -136,17 +88,14 @@ export const updatePost = async (postId: string, updateData: UpdatePost) => {
     });
   }
 
-  const ref = adminDb.collection(POSTS_COLLECTION).doc(postId);
-  const snap = await ref.get();
+  const post = await postRepository.getPostById(postId);
 
-  if (!snap.exists) {
+  if (!post) {
     throw createAppError({
       code: "NOT_FOUND",
       message: "[postService.updatePost] Post not found",
     });
   }
-
-  const post = snap.data()!;
 
   if (post.userId !== user.uid) {
     throw createAppError({
@@ -158,14 +107,14 @@ export const updatePost = async (postId: string, updateData: UpdatePost) => {
   const processed = await processPostContent(
     user.uid,
     updateData.text ?? post.text,
-    updateData.imageFile
+    updateData.imageFile,
   );
 
   if (processed.imageUrl && post.imageMeta?.storagePath) {
     await deleteImage(post.imageMeta.storagePath);
   }
 
-  await ref.update({
+  await postRepository.updatePost(postId, {
     text: updateData.text ?? post.text,
     imageUrl: processed.imageUrl ?? post.imageUrl,
     imageMeta: processed.imageMeta ?? post.imageMeta,
@@ -186,20 +135,19 @@ export const getPostById = async (postId: string): Promise<Post> => {
     });
   }
 
-  const snap = await adminDb.collection(POSTS_COLLECTION).doc(postId).get();
-  if (!snap.exists) {
+  const post = await postRepository.getPostById(postId);
+
+  if (!post) {
     throw createAppError({
       code: "NOT_FOUND",
       message: "[postService.getPostById] Post not found",
     });
   }
 
-  const data = snap.data()!;
-  const author = await getUserByUid(data.userId);
+  const author = await getUserByUid(post.userId);
 
   return {
-    id: snap.id,
-    ...data,
+    ...post,
     userName: author?.name ?? "Unknown",
     userAvatarUrl: author?.avatarUrl ?? null,
   } as Post;
@@ -207,7 +155,7 @@ export const getPostById = async (postId: string): Promise<Post> => {
 
 export const getPosts = async (
   limit = 20,
-  startAfterId?: string
+  startAfterId?: string,
 ): Promise<Post[]> => {
   let currentUserUid: string | null = null;
   try {
@@ -217,62 +165,42 @@ export const getPosts = async (
     currentUserUid = null;
   }
 
-  let postsQuery = adminDb
-    .collection(POSTS_COLLECTION)
-    .where("moderationStatus", "==", "approved")
-    .orderBy("createdAt", "desc")
-    .limit(limit);
+  const posts = await postRepository.getPosts(limit, startAfterId);
 
-  if (startAfterId) {
-    const startSnap = await adminDb.collection("posts").doc(startAfterId).get();
-    if (startSnap.exists) {
-      postsQuery = postsQuery.startAfter(startSnap);
-    }
-  }
-
-  const postsSnap = await postsQuery.get();
-  if (postsSnap.empty) {
+  if (posts.length === 0) {
     return [];
   }
 
-  const postDocs = postsSnap.docs.map((doc) => {
-    return { id: doc.id, ...doc.data() } as Post;
-  });
-
-  const authorIds = [...new Set(postDocs.map((post) => post.userId))];
+  const authorIds = [...new Set(posts.map((post) => post.userId))];
   const authors = await getUsersByIds(authorIds);
 
-  const visiblePostIds = postsSnap.docs.map((doc) => doc.id);
+  const visiblePostIds = posts.map((post) => post.id);
 
   let likedPostIds: string[] = [];
 
   if (currentUserUid && visiblePostIds.length > 0) {
-    const likesQuery = await adminDb
-      .collection(LIKES_COLLECTION)
-      .where("userId", "==", currentUserUid)
-      .where("parentId", "in", visiblePostIds)
-      .get();
-
-    likedPostIds = likesQuery.docs.map((doc) => doc.data().parentId);
+    likedPostIds = await likeRepository.getLikesForParents(
+      currentUserUid,
+      visiblePostIds,
+    );
   }
 
-  const posts: Post[] = postDocs.map((doc) => {
-    const author = authors[doc.userId];
+  return posts.map((post) => {
+    const author = authors[post.userId];
     return {
-      ...doc,
+      ...post,
       userName: author?.name ?? "Unknown",
       userAvatarUrl: author?.avatarUrl ?? null,
-      isLikedByMe: likedPostIds.includes(doc.id),
+      isLikedByMe: likedPostIds.includes(post.id),
+      id: post.id, // Ensure ID is present
     };
   });
-
-  return posts;
 };
 
 export const getPostsByUserId = async (
   userId: string,
   limit = 20,
-  startAfterId?: string
+  startAfterId?: string,
 ): Promise<Post[]> => {
   let currentUserUid: string | null = null;
   try {
@@ -282,47 +210,30 @@ export const getPostsByUserId = async (
     currentUserUid = null;
   }
 
-  let postsQuery = adminDb
-    .collection(POSTS_COLLECTION)
-    .where("userId", "==", userId)
-    .where("moderationStatus", "==", "approved")
-    .orderBy("createdAt", "desc")
-    .limit(limit);
-
-  if (startAfterId) {
-    const startSnap = await adminDb
-      .collection(POSTS_COLLECTION)
-      .doc(startAfterId)
-      .get();
-    if (startSnap.exists) {
-      postsQuery = postsQuery.startAfter(startSnap);
-    }
-  }
-
-  const postsSnap = await postsQuery.get();
-  if (postsSnap.empty) return [];
-
-  const postDocs = postsSnap.docs.map(
-    (doc) => ({ id: doc.id, ...doc.data() } as Post)
+  const posts = await postRepository.getPostsByUserId(
+    userId,
+    limit,
+    startAfterId,
   );
 
+  if (posts.length === 0) return [];
+
   const author = await getUserByUid(userId);
-  const visiblePostIds = postsSnap.docs.map((doc) => doc.id);
+  const visiblePostIds = posts.map((post) => post.id);
 
   let likedPostIds: string[] = [];
   if (currentUserUid && visiblePostIds.length > 0) {
-    const likesQuery = await adminDb
-      .collection(LIKES_COLLECTION)
-      .where("userId", "==", currentUserUid)
-      .where("parentId", "in", visiblePostIds)
-      .get();
-    likedPostIds = likesQuery.docs.map((doc) => doc.data().parentId);
+    likedPostIds = await likeRepository.getLikesForParents(
+      currentUserUid,
+      visiblePostIds,
+    );
   }
 
-  return postDocs.map((doc) => ({
-    ...doc,
+  return posts.map((post) => ({
+    ...post,
     userName: author?.name ?? "Unknown",
     userAvatarUrl: author?.avatarUrl ?? null,
-    isLikedByMe: likedPostIds.includes(doc.id),
+    isLikedByMe: likedPostIds.includes(post.id),
+    id: post.id,
   }));
 };

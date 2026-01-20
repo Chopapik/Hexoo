@@ -4,7 +4,7 @@ import { performModeration } from "@/features/moderation/utils/assessSafety";
 export default async function processPostContent(
   uid: string,
   text: string,
-  imageFile?: File | null
+  imageFile?: File | null,
 ) {
   const moderation = await performModeration(uid, text, imageFile);
 
@@ -16,6 +16,9 @@ export default async function processPostContent(
       imageMeta: {
         storagePath: upload.storagePath,
         downloadToken: upload.downloadToken,
+        publicUrl: upload.publicUrl,
+        contentType: upload.contentType,
+        sizeBytes: upload.sizeBytes,
       },
     };
   }

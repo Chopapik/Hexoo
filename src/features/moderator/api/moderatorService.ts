@@ -3,7 +3,10 @@ import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
 import { createAppError } from "@/lib/AppError";
 import { Post } from "@/features/posts/types/post.type";
 import { FieldValue } from "firebase-admin/firestore";
-import { blockUser, getUsersByIds } from "@/features/users/api/userService";
+import {
+  blockUser,
+  getUsersByIds,
+} from "@/features/users/api/services/userService";
 import { UserBlockData } from "@/features/users/types/user.type";
 import { deleteImage } from "@/features/images/api/imageService";
 
@@ -60,7 +63,7 @@ export const getModerationQueue = async () => {
 export const reviewPost = async (
   postId: string,
   action: "approve" | "reject" | "quarantine",
-  banAuthor: boolean = false
+  banAuthor: boolean = false,
 ) => {
   const moderator = await ensureModeratorOrAdmin();
 
@@ -115,7 +118,7 @@ export const reviewPost = async (
       }
 
       return { authorId: postData?.userId };
-    }
+    },
   );
 
   if (banAuthor && transactionResult.authorId) {
@@ -128,7 +131,7 @@ export const reviewPost = async (
     } catch (error) {
       console.error(
         `[ReviewPost] Failed to ban user ${transactionResult.authorId} after post review.`,
-        error
+        error,
       );
     }
   }

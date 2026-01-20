@@ -9,7 +9,7 @@ import {
 } from "../types/comment.type";
 import { formatZodErrorFlat } from "@/lib/zod";
 import { performModeration } from "@/features/moderation/utils/assessSafety";
-import { getUsersByIds } from "@/features/users/api/userService";
+import { getUsersByIds } from "@/features/users/api/services/userService";
 
 export const addComment = async (data: AddCommentDto) => {
   const user = await getUserFromSession();
@@ -76,7 +76,7 @@ export const addComment = async (data: AddCommentDto) => {
 };
 
 export const getCommentsByPostId = async (
-  postId: string
+  postId: string,
 ): Promise<Comment[]> => {
   let currentUserUid: string | null = null;
   try {
@@ -97,7 +97,7 @@ export const getCommentsByPostId = async (
   if (commentsSnap.empty) return [];
 
   const commentDocs = commentsSnap.docs.map(
-    (doc) => ({ id: doc.id, ...doc.data() } as Comment)
+    (doc) => ({ id: doc.id, ...doc.data() }) as Comment,
   );
 
   const authorIds = [...new Set(commentDocs.map((c) => c.userId))];
@@ -111,7 +111,7 @@ export const getCommentsByPostId = async (
       .where(
         "parentId",
         "in",
-        commentsSnap.docs.map((d) => d.id)
+        commentsSnap.docs.map((d) => d.id),
       )
       .get();
     likedCommentIds = likesQuery.docs.map((doc) => doc.data().parentId);
