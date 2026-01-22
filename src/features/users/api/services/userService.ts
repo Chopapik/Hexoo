@@ -2,6 +2,7 @@ import { userRepository } from "../repositories";
 import type { User, UserBlockData } from "../types/user.type";
 import { createAppError } from "@/lib/AppError";
 import { ensureModeratorOrAdmin } from "@/features/moderator/api/moderatorService";
+import { logActivity } from "@/features/admin/api/services/activityService";
 
 export async function createUserDocument(
   uid: string,
@@ -64,6 +65,12 @@ export const blockUser = async (data: UserBlockData) => {
   }
 
   await userRepository.blockUser(data);
+
+  await logActivity(
+    data.uidToBlock,
+    "USER_BLOCKED",
+    `Blocked by ${data.bannedBy}. Reason: ${data.bannedReason}`
+  );
 };
 
 export const unblockUser = async (uid: string) => {
@@ -77,6 +84,8 @@ export const unblockUser = async (uid: string) => {
   }
 
   await userRepository.unblockUser(uid);
+
+  await logActivity(uid, "USER_UNBLOCKED", "User account unblocked");
 };
 
 export const unrestrictUser = async (uid: string) => {
@@ -90,6 +99,8 @@ export const unrestrictUser = async (uid: string) => {
   }
 
   await userRepository.updateUserRestriction(uid, false);
+
+  await logActivity(uid, "USER_UNRESTRICTED", "User restriction removed");
 
   return { success: true, uid, status: "active" };
 };
@@ -110,6 +121,12 @@ const _applyRestrictionInternal = async (
     restrictedBy: source,
     restrictedReason: reason,
   });
+
+  await logActivity(
+    uid,
+    "USER_RESTRICTED",
+    `Restricted by ${source}. Reason: ${reason}`
+  );
 
   return { success: true, uid, status: "restricted", source };
 };

@@ -5,6 +5,7 @@ import { createAppError } from "@/lib/AppError";
 import { authRepository } from "@/features/auth/api/repositories";
 import { userRepository } from "@/features/users/api/repositories";
 import admin from "firebase-admin";
+import { logActivity } from "./activityService";
 
 const ensureAdmin = async () => {
   const session = await getUserFromSession();
@@ -33,6 +34,8 @@ export const adminDeleteUser = async (uid: string) => {
       message: "[adminService.adminDeleteUser] No 'uid' provided for deletion",
     });
   }
+
+  await logActivity(uid, "USER_DELETED", "User account deleted by admin");
 
   await authRepository.deleteUser(uid);
   await userRepository.deleteUser(uid);
@@ -67,6 +70,8 @@ export const adminCreateUserAccount = async (data: AdminUserCreate) => {
   });
 
   await userRepository.updateUser(uid, {} as any);
+
+  await logActivity(uid, "USER_CREATED", "Account created by admin");
 
   return {
     uid,
@@ -125,6 +130,19 @@ export const adminUpdateUserAccount = async (
     await authRepository.updateUser(uid, authUpdate);
   }
 
+  const updatedFields = [];
+  if (updatePayload.name) updatedFields.push("name");
+  if (updatePayload.email) updatedFields.push("email");
+  if (updatePayload.role) updatedFields.push("role");
+
+  if (updatedFields.length > 0) {
+    await logActivity(
+      uid,
+      "PROFILE_UPDATED",
+      `Profile updated by admin: ${updatedFields.join(", ")}`
+    );
+  }
+
   return;
 };
 
@@ -151,6 +169,8 @@ export const adminUpdateUserPassword = async (
   }
 
   await authRepository.updateUser(uid, { password: newPassword });
+
+  await logActivity(uid, "PASSWORD_CHANGED", "Password changed by admin");
 
   return;
 };
