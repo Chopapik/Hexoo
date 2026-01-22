@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import axiosInstance from "@/lib/axiosInstance";
+import fetchClient from "@/lib/fetchClient";
 import toast from "react-hot-toast";
 
 export function useModeratorDashboard() {
@@ -14,8 +14,8 @@ export function useModeratorDashboard() {
   } = useQuery({
     queryKey: ["moderator", "queue"],
     queryFn: async () => {
-      const res = await axiosInstance.get("/moderator/queue");
-      return res.data.posts;
+      const res = await fetchClient.get<{ posts: any[] }>("/moderator/queue");
+      return res.posts;
     },
   });
 
@@ -25,7 +25,7 @@ export function useModeratorDashboard() {
       action: "approve" | "reject" | "quarantine";
       banAuthor?: boolean;
     }) => {
-      return axiosInstance.post("/moderator/review", payload);
+      return fetchClient.post("/moderator/review", payload);
     },
     onSuccess: (_, variables) => {
       const messages = {

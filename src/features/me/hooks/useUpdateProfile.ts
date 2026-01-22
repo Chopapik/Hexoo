@@ -1,9 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axiosInstance from "@/lib/axiosInstance";
+import fetchClient from "@/lib/fetchClient";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
 import { setUser } from "@/features/auth/store/authSlice";
 import { useRouter } from "next/navigation";
-import { ApiError } from "@/lib/AppError";
+
 interface UpdateProfileParams {
   name?: string;
   avatarFile?: File;
@@ -22,8 +22,7 @@ export default function useUpdateProfile() {
       if (data.name) formData.append("name", data.name);
       if (data.avatarFile) formData.append("avatarFile", data.avatarFile);
 
-      const response = await axiosInstance.put(`/me/profile`, formData);
-      return response.data;
+      return await fetchClient.put<{ data: any }>(`/me/profile`, formData);
     },
     onSuccess: (response) => {
       const updatedUser = response.data;

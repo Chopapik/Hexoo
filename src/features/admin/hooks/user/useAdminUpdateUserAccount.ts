@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import axiosInstance from "@/lib/axiosInstance";
+import fetchClient from "@/lib/fetchClient";
 import type { UserDataUpdate } from "@/features/users/types/user.type";
 
 type UpdateUserArgs = {
@@ -10,9 +10,7 @@ type UpdateUserArgs = {
 export default function useAdminUpdateUserAccount() {
   const updateMutation = useMutation({
     mutationFn: async ({ uid, data }: UpdateUserArgs) => {
-      const res = await axiosInstance.put(`/admin/user/${uid}/profile`, data);
-
-      return res.data;
+      return await fetchClient.put(`/admin/user/${uid}/profile`, data);
     },
   });
 

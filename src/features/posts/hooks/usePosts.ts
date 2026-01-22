@@ -1,5 +1,5 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import axiosInstance from "@/lib/axiosInstance";
+import fetchClient from "@/lib/fetchClient";
 import type { Post } from "../types/post.type";
 
 type GetPostsResponse = Post[];
@@ -16,8 +16,7 @@ export default function usePosts() {
         params.append("startAfter", pageParam as string);
       }
 
-      const { data } = await axiosInstance.get(`/posts?${params.toString()}`);
-      return data;
+      return await fetchClient.get<GetPostsResponse>(`/posts?${params.toString()}`);
     },
     initialPageParam: undefined,
     getNextPageParam: (lastPage) => {

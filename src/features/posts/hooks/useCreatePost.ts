@@ -1,4 +1,4 @@
-import axiosInstance from "@/lib/axiosInstance";
+import fetchClient from "@/lib/fetchClient";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { CreatePost } from "../types/post.type";
 
@@ -10,18 +10,7 @@ export default function useCreatePost(
 
   const mutation = useMutation({
     mutationFn: async (postData: CreatePost | FormData) => {
-      if (postData instanceof FormData) {
-        const res = await axiosInstance.post("/posts", postData, {
-          withCredentials: true,
-          headers: { "Content-Type": undefined },
-        });
-        return res.data;
-      }
-
-      const res = await axiosInstance.post("/posts", postData, {
-        withCredentials: true,
-      });
-      return res.data;
+      return await fetchClient.post("/posts", postData);
     },
 
     onSuccess: async (data) => {

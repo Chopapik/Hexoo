@@ -1,4 +1,4 @@
-import axiosInstance from "@/lib/axiosInstance";
+import fetchClient from "@/lib/fetchClient";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Post } from "../types/post.type";
 import toast from "react-hot-toast";
@@ -8,7 +8,7 @@ export function useToggleLike() {
 
   const likeMutation = useMutation({
     mutationFn: async (postId: string) => {
-      await axiosInstance.post(`/posts/${postId}/like`);
+      await fetchClient.post(`/posts/${postId}/like`);
     },
     onMutate: async (postId) => {
       await queryClient.cancelQueries({ queryKey: ["posts"] });

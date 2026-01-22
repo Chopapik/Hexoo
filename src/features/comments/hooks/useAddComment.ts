@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axiosInstance from "@/lib/axiosInstance";
+import fetchClient from "@/lib/fetchClient";
 import { AddCommentDto } from "../types/comment.type";
 import toast from "react-hot-toast";
 import { parseCommentErrorMessages } from "../utils/commentFormValidation";
@@ -13,11 +13,7 @@ export default function useAddComment(
 
   const mutation = useMutation({
     mutationFn: async (data: AddCommentDto) => {
-      const res = await axiosInstance.post(
-        `/posts/${data.postId}/comments`,
-        data
-      );
-      return res.data;
+      return await fetchClient.post(`/posts/${data.postId}/comments`, data);
     },
     onSuccess: (_, variables) => {
       toast.success("Komentarz dodany!");

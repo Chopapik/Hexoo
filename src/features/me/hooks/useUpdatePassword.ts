@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import axiosInstance from "@/lib/axiosInstance";
+import fetchClient from "@/lib/fetchClient";
 import { UpdatePasswordData } from "../me.type";
 import useRecaptcha from "@/features/shared/hooks/useRecaptcha";
 import toast from "react-hot-toast";
@@ -24,7 +24,7 @@ export const useUpdatePassword = (onError: ErrorCallback) => {
     mutationFn: async (data: UpdatePasswordData) => {
       const token = await getRecaptchaToken("update_password");
       const payload = { ...data, recaptchaToken: token };
-      await axiosInstance.put(`/me/password`, payload);
+      await fetchClient.put(`/me/password`, payload);
     },
     onError: (error: ApiError) => {
       if (error.code) {
@@ -44,7 +44,7 @@ export const useUpdatePassword = (onError: ErrorCallback) => {
           variables.newPassword
         );
         const idToken = await userCredential.user.getIdToken();
-        await axiosInstance.post("/auth/login", {
+        await fetchClient.post("/auth/login", {
           idToken,
           recaptchaToken: token,
         });

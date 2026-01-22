@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import axiosInstance from "@/lib/axiosInstance";
+import fetchClient from "@/lib/fetchClient";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
@@ -8,8 +8,7 @@ export function useLogout() {
 
   const mutation = useMutation({
     mutationFn: async () => {
-      const res = await axiosInstance.post("/auth/logout");
-      return res.data;
+      return await fetchClient.post("/auth/logout");
     },
     onSuccess: () => {
       router.push("/login");
