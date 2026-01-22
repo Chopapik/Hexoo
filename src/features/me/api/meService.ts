@@ -5,9 +5,17 @@ import { createAppError } from "@/lib/AppError";
 import { formatZodErrorFlat } from "@/lib/zod";
 import { uploadImage, deleteImage } from "@/features/images/api/imageService";
 import { enforceStrictModeration } from "@/features/moderation/utils/assessSafety";
+import { logActivity } from "@/features/admin/api/services/activityService";
 
 export async function deleteAccount() {
   const decoded = await getUserFromSession();
+
+  await logActivity(
+    decoded.uid,
+    "USER_DELETED",
+    "User deleted their own account"
+  );
+
   await adminDb.collection("users").doc(decoded.uid).delete();
   await adminAuth.deleteUser(decoded.uid);
   return;
@@ -77,6 +85,12 @@ export async function updateProfile(data: UpdateProfileData) {
 
   await adminDb.collection("users").doc(uid).set(dbUpdate, { merge: true });
 
+  await logActivity(
+    uid,
+    "PROFILE_UPDATED",
+    `Profile updated: ${name ? "name" : ""}${name && avatarFile ? ", " : ""}${avatarFile ? "avatar" : ""}`
+  );
+
   return {
     uid,
     email: decoded.email,
@@ -111,4 +125,6 @@ export const updatePassword = async (passwordData: any) => {
     .collection("users")
     .doc(decoded.uid)
     .set({ updatedAt: new Date() }, { merge: true });
+
+  await logActivity(decoded.uid, "PASSWORD_CHANGED", "User changed password");
 };

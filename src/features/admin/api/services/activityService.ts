@@ -8,20 +8,20 @@ export type ActivityType =
   | "USER_UNBLOCKED"
   | "USER_DELETED"
   | "PASSWORD_CHANGED"
-  | "PROFILE_UPDATED";
+  | "PROFILE_UPDATED"
+  | "USER_RESTRICTED"
+  | "USER_UNRESTRICTED";
 
 export const logActivity = async (
   userId: string,
   action: ActivityType,
   details: string,
-  ip: string = "unknown",
 ) => {
   try {
     await activityRepository.logActivity({
       userId,
       action,
       details,
-      ip,
     });
   } catch (error) {
     console.error("[ActivityLog] Failed to write log:", error);

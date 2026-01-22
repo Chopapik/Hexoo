@@ -22,7 +22,7 @@ export default function AlertModal({
 
   return (
     <Modal
-      isOpen={isOpen ? true : false}
+      isOpen={isOpen}
       onClose={onClose}
       title={title}
       footer={footerContent}
