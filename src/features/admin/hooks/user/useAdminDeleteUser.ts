@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axiosInstance from "@/lib/axiosInstance";
+import fetchClient from "@/lib/fetchClient";
 import { toast } from "react-hot-toast";
 
 export default function useAdminDeleteUser() {
@@ -7,8 +7,7 @@ export default function useAdminDeleteUser() {
 
   const mutation = useMutation({
     mutationFn: async (uid: string) => {
-      const res = await axiosInstance.delete(`/admin/user/${uid}`);
-      return res.data;
+      return await fetchClient.delete(`/admin/user/${uid}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "allUsers"] });

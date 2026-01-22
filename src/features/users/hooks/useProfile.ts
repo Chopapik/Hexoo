@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import type { UserProfile } from "@/features/users/types/user.type";
-import axiosInstance from "@/lib/axiosInstance";
+import fetchClient from "@/lib/fetchClient";
 
 export default function useProfile(name: string, initialData?: UserProfile) {
   const query = useQuery({
@@ -10,11 +10,12 @@ export default function useProfile(name: string, initialData?: UserProfile) {
     staleTime: 1000 * 60 * 5,
 
     queryFn: async ({ signal }) => {
-      const response = await axiosInstance.get(`/user/profile/${name}`, {
-        signal,
-      });
+      const response = await fetchClient.get<{ user: UserProfile }>(
+        `/user/profile/${name}`,
+        { signal }
+      );
 
-      return response.data.user;
+      return response.user;
     },
   });
 

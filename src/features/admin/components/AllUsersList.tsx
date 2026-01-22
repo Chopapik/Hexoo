@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import axiosInstance from "@/lib/axiosInstance";
+import fetchClient from "@/lib/fetchClient";
 import Button from "@/features/shared/components/ui/Button";
 import type { User } from "@/features/users/types/user.type";
 import AdminUserEditModal from "./AdminUserEditModal";
@@ -48,8 +48,8 @@ export default function AllUsersList() {
   } = useQuery<User[], Error>({
     queryKey: ["admin", "allUsers"],
     queryFn: async () => {
-      const res = await axiosInstance.get<GetUsersResponse>("/admin/users");
-      return res.data.users;
+      const res = await fetchClient.get<GetUsersResponse>("/admin/users");
+      return res.users;
     },
     staleTime: 1000 * 60 * 30,
     retry: 1,

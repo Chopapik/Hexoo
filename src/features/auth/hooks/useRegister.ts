@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { RegisterData, registerFields } from "../types/auth.type";
-import axiosInstance from "@/lib/axiosInstance";
+import fetchClient from "@/lib/fetchClient";
 import { ApiError } from "@/lib/AppError";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
@@ -21,7 +21,7 @@ export default function useRegister(onError: ErrorCallback) {
       name: string;
       email: string;
       recaptchaToken: string;
-    }) => axiosInstance.post("/auth/register", data),
+    }) => fetchClient.post("/auth/register", data),
 
     onSuccess: () => {
       router.push("/");

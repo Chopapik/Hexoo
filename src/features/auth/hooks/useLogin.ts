@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { LoginData } from "../types/auth.type";
-import axiosInstance from "@/lib/axiosInstance";
+import fetchClient from "@/lib/fetchClient";
 import { ApiError } from "@/lib/AppError";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/lib/firebase";
@@ -17,7 +17,7 @@ export default function useLogin(onError: ErrorCallback) {
 
   const sessionMutation = useMutation({
     mutationFn: (payload: { idToken: string; recaptchaToken: string }) =>
-      axiosInstance.post("/auth/login", payload),
+      fetchClient.post("/auth/login", payload),
     onSuccess: () => {
       router.push("/");
     },
@@ -30,7 +30,7 @@ export default function useLogin(onError: ErrorCallback) {
   const handleLogin = async (data: LoginData) => {
     try {
       try {
-        await axiosInstance.post("/security/rate-limit");
+        await fetchClient.post("/security/rate-limit");
       } catch (error: any) {
         if (error.status === 429) {
           onError(error.code || "SECURITY_LOCKOUT", "root", error.data);

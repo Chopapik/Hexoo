@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useState } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { useAppSelector } from "@/lib/store/hooks";
 import {
@@ -11,7 +11,7 @@ import {
 } from "react-icons/bs";
 import ReportPostModal from "./ReportPostModal";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axiosInstance from "@/lib/axiosInstance";
+import fetchClient from "@/lib/fetchClient";
 import toast from "react-hot-toast";
 import ConfirmDeletePostModal from "./ConfirmDeletePostModal";
 
@@ -33,7 +33,7 @@ export default function PostOptions({
 
   const modAction = useMutation({
     mutationFn: async (action: "reject" | "quarantine") => {
-      return axiosInstance.post("/moderator/review", { postId, action });
+      return fetchClient.post("/moderator/review", { postId, action });
     },
     onSuccess: (_, action) => {
       const msg =

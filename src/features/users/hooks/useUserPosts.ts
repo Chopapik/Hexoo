@@ -1,5 +1,5 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import axiosInstance from "@/lib/axiosInstance";
+import fetchClient from "@/lib/fetchClient";
 import type { Post } from "@/features/posts/types/post.type";
 
 export default function useUserPosts(userId: string) {
@@ -9,10 +9,9 @@ export default function useUserPosts(userId: string) {
       const params = new URLSearchParams({ limit: "20" });
       if (pageParam) params.append("startAfter", pageParam as string);
 
-      const { data } = await axiosInstance.get(
+      return await fetchClient.get<Post[]>(
         `/posts/user/${userId}?${params.toString()}`
       );
-      return data;
     },
     initialPageParam: undefined,
     getNextPageParam: (lastPage) => {

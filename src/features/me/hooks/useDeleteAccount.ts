@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import axiosInstance from "@/lib/axiosInstance";
+import fetchClient from "@/lib/fetchClient";
 import { useCriticalError } from "@/features/shared/hooks/useCriticalError";
 import { useRouter } from "next/navigation";
 
@@ -9,8 +9,7 @@ export const useDeleteAccount = () => {
 
   const mutation = useMutation({
     mutationFn: async () => {
-      const response = await axiosInstance.delete(`/me`);
-      return response.data;
+      return await fetchClient.delete(`/me`);
     },
     onSuccess: () => {
       router.push("/login");
