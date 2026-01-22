@@ -4,6 +4,7 @@ import { UpdateProfileData, UpdateProfileSchema } from "../me.type";
 import { createAppError } from "@/lib/AppError";
 import { formatZodErrorFlat } from "@/lib/zod";
 import { uploadImage, deleteImage } from "@/features/images/api/imageService";
+import { enforceStrictModeration } from "@/features/moderation/utils/assessSafety";
 
 export async function deleteAccount() {
   const decoded = await getUserFromSession();
@@ -34,6 +35,13 @@ export async function updateProfile(data: UpdateProfileData) {
       details: { field: "root", reason: "no_update_fields" },
     });
   }
+
+  await enforceStrictModeration(
+    uid,
+    name,
+    avatarFile,
+    "meService.updateProfile"
+  );
 
   const userDoc = await adminDb.collection("users").doc(uid).get();
   const userData = userDoc.data();

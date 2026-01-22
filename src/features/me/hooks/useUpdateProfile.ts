@@ -3,7 +3,6 @@ import axiosInstance from "@/lib/axiosInstance";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
 import { setUser } from "@/features/auth/store/authSlice";
 import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
 import { ApiError } from "@/lib/AppError";
 interface UpdateProfileParams {
   name?: string;
@@ -38,15 +37,6 @@ export default function useUpdateProfile() {
           });
         }
         dispatch(setUser(updatedUser));
-      }
-    },
-    onError: (error) => {
-      if (error instanceof ApiError) {
-        toast.error(
-          `Wystąpił błąd podczas aktualizacji profilu: ${error.code}`
-        );
-      } else {
-        toast.error("Wystąpił nieznany błąd podczas aktualizacji profilu");
       }
     },
   });

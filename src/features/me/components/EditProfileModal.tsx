@@ -11,6 +11,8 @@ import { Avatar } from "@/features/posts/components/Avatar";
 import cameraIcon from "@/features/shared/assets/icons/camera.svg?url";
 import Image from "next/image";
 import toast from "react-hot-toast";
+import AlertModal from "@/features/shared/components/layout/AlertModal";
+import { ApiError } from "@/lib/AppError";
 
 interface EditProfileModalProps {
   user: UserProfile | null;
@@ -26,6 +28,7 @@ export default function EditProfileModal({
     return null;
   }
   const [name, setName] = useState(user.name);
+  const [alertMessage, setAlertMessage] = useState<string | null>(null);
 
   const { imagePreview, fileInputRef, handleFileChange, triggerPicker } =
     useImagePicker({
@@ -48,11 +51,20 @@ export default function EditProfileModal({
   const handleSave = async () => {
     const trimmedName = name.trim();
 
-    await updateProfile({
-      name: trimmedName,
-      avatarFile: selectedFile,
-    });
-    onClose();
+    try {
+      await updateProfile({
+        name: trimmedName,
+        avatarFile: selectedFile,
+      });
+      onClose();
+    } catch (error) {
+      const isPolicyViolation =
+        error instanceof ApiError && error.code === "POLICY_VIOLATION";
+      const message = isPolicyViolation
+        ? "Nie udało się zapisać profilu. Nazwa lub zdjęcie narusza zasady."
+        : "Nie udało się zapisać profilu. Spróbuj ponownie.";
+      setAlertMessage(message);
+    }
   };
 
   const footerContent = (
@@ -142,6 +154,12 @@ export default function EditProfileModal({
           </div>
         </div>
       </div>
+      <AlertModal
+        isOpen={!!alertMessage}
+        onClose={() => setAlertMessage(null)}
+        title="Profil nie został zapisany"
+        message={alertMessage || ""}
+      />
     </Modal>
   );
 }

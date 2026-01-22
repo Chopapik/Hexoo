@@ -11,6 +11,40 @@ export interface ModerationVerdict {
   isNSFW: boolean;
 }
 
+type ModerationFlags = {
+  flaggedReasons: string[];
+  flaggedSource: string[];
+};
+
+const collectModerationFlags = async (
+  text?: string,
+  imageFile?: File | null
+): Promise<ModerationFlags> => {
+  const flaggedReasons: string[] = [];
+  const flaggedSource: string[] = [];
+
+  if (text && text.trim()) {
+    const textResult = await moderateText(text);
+    if (textResult.flagged) {
+      flaggedReasons.push(...textResult.categories);
+      flaggedSource.push("text");
+    }
+  }
+
+  if (hasFile(imageFile) && imageFile instanceof File) {
+    const imageResult = await moderateImage(imageFile);
+    if (imageResult.flagged) {
+      const uniqueCategories = imageResult.categories.filter(
+        (c) => !flaggedReasons.includes(c)
+      );
+      flaggedReasons.push(...uniqueCategories);
+      flaggedSource.push("image");
+    }
+  }
+
+  return { flaggedReasons, flaggedSource };
+};
+
 export const getAiModerationVerdict = (
   categories: string[]
 ): ModerationVerdict => {
@@ -54,6 +88,36 @@ export const getAiModerationVerdict = (
   return { status: "approved", isNSFW: isNSFW };
 };
 
+export const enforceStrictModeration = async (
+  userId: string,
+  text?: string,
+  imageFile?: File | null,
+  contextLabel: string = "content"
+): Promise<ModerationFlags> => {
+  const { flaggedReasons, flaggedSource } = await collectModerationFlags(
+    text,
+    imageFile
+  );
+
+  if (flaggedReasons.length === 0) {
+    return { flaggedReasons, flaggedSource };
+  }
+
+  await logModerationEvent({
+    userId: userId,
+    timestamp: new Date(),
+    verdict: "REJECTED",
+    categories: flaggedReasons,
+    actionTaken: "BLOCKED_CREATION",
+  });
+
+  throw createAppError({
+    code: "POLICY_VIOLATION",
+    message: `[${contextLabel}] Content violates service terms`,
+    data: { reasons: flaggedReasons, source: flaggedSource },
+  });
+};
+
 export const performModeration = async (
   userId: string,
   text?: string,
@@ -64,31 +128,11 @@ export const performModeration = async (
   flaggedReasons: string[];
   flaggedSource: string[];
 }> => {
-  let flaggedReasons: string[] = [];
-  let flaggedSource: string[] = [];
+  const { flaggedReasons, flaggedSource } = await collectModerationFlags(
+    text,
+    imageFile
+  );
 
-  // 1. Text AI Moderation
-  if (text && text.trim()) {
-    const textResult = await moderateText(text);
-    if (textResult.flagged) {
-      flaggedReasons.push(...textResult.categories);
-      flaggedSource.push("text");
-    }
-  }
-
-  // 2. Image AI Moderation
-  if (hasFile(imageFile) && imageFile instanceof File) {
-    const imageResult = await moderateImage(imageFile);
-    if (imageResult.flagged) {
-      const uniqueCategories = imageResult.categories.filter(
-        (c) => !flaggedReasons.includes(c)
-      );
-      flaggedReasons.push(...uniqueCategories);
-      flaggedSource.push("image");
-    }
-  }
-
-  // 3. Verdict
   let moderationStatus: ModerationStatus = "approved";
   let isNSFW = false;
 
@@ -98,7 +142,6 @@ export const performModeration = async (
     moderationStatus = moderationResult.status;
   }
 
-  // 4. Logging
   if (moderationStatus !== "approved") {
     const verdictUpper = moderationStatus.toUpperCase() as
       | "PENDING"
