@@ -1,4 +1,5 @@
 import Modal from "./Modal";
+import Button from "@/features/shared/components/ui/Button";
 
 interface AlertModalProps {
   isOpen: boolean;
@@ -15,18 +16,13 @@ export default function AlertModal({
 }: AlertModalProps) {
   const footerContent = (
     <div className="flex justify-end w-full">
-      <button
-        onClick={onClose}
-        className="px-6 py-2 bg-white text-black rounded-xl hover:opacity-90 font-medium shadow-[0_0_10px_rgba(255,255,255,0.2)] transition-all"
-      >
-        OK
-      </button>
+      <Button onClick={onClose} text="OK" size="sm"  />
     </div>
   );
 
   return (
     <Modal
-      isOpen={isOpen}
+      isOpen={isOpen ? true : false}
       onClose={onClose}
       title={title}
       footer={footerContent}
