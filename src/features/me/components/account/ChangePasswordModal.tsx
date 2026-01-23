@@ -1,8 +1,8 @@
 "use client";
 
 import TextInput from "@/features/shared/components/ui/TextInput";
-import Button from "@/features/shared/components/ui/Button";
 import Modal from "@/features/shared/components/layout/Modal";
+import ModalFooter from "@/features/shared/components/layout/ModalFooter";
 import { useUpdatePassword } from "../../hooks/useUpdatePassword";
 import useUpdatePasswordForm from "../../hooks/useUpdatePasswordForm";
 import { parseErrorMessages } from "../../utils/UpdatePasswordFormValidation";
@@ -29,22 +29,12 @@ export default function ChangePasswordModal({
   });
 
   const footerContent = (
-    <div className="flex gap-3 justify-end w-full">
-      <Button
-        onClick={onClose}
-        text="Anuluj"
-        size="md"
-        variant="secondary"
-        disabled={isPending}
-      />
-      <Button
-        onClick={onSubmit}
-        text="Zapisz zmiany"
-        size="md"
-        variant="gradient-fuchsia"
-        isLoading={isPending}
-      />
-    </div>
+    <ModalFooter
+      confirmText="Zapisz zmiany"
+      onCancel={onClose}
+      onConfirm={onSubmit}
+      isPending={isPending}
+    />
   );
 
   return (

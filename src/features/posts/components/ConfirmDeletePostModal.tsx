@@ -1,7 +1,7 @@
 "use client";
 
-import Button from "@/features/shared/components/ui/Button";
 import Modal from "@/features/shared/components/layout/Modal";
+import ModalFooter from "@/features/shared/components/layout/ModalFooter";
 
 interface ConfirmDeletePostModalProps {
   isOpen: boolean;
@@ -17,22 +17,13 @@ export default function ConfirmDeletePostModal({
   isPending,
 }: ConfirmDeletePostModalProps) {
   const footerContent = (
-    <div className="flex gap-3 justify-end w-full">
-      <Button
-        onClick={onClose}
-        text="Anuluj"
-        size="md"
-        variant="secondary"
-        disabled={isPending}
-      />
-      <Button
-        onClick={onConfirm}
-        text="Tak, usuń"
-        size="md"
-        variant="danger"
-        isLoading={isPending}
-      />
-    </div>
+    <ModalFooter
+      confirmText="Tak, usuń"
+      onCancel={onClose}
+      onConfirm={onConfirm}
+      isPending={isPending}
+      confirmVariant="danger"
+    />
   );
 
   return (
