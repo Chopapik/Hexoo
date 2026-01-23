@@ -36,15 +36,15 @@ export default function ReportPostModal({
     <div className="flex gap-3 justify-end w-full">
       <Button
         text="Anuluj"
-        variant="icon-fuchsia-ghost"
-        size="sm"
+        variant="secondary"
+        size="md"
         onClick={onClose}
         disabled={isPending}
       />
       <Button
         text="Zgłoś post"
         variant="gradient-fuchsia"
-        size="sm"
+        size="md"
         onClick={handleSubmit}
         isLoading={isPending}
       />

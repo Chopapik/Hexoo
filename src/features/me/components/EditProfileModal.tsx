@@ -6,13 +6,13 @@ import Button from "@/features/shared/components/ui/Button";
 import Modal from "@/features/shared/components/layout/Modal";
 import type { UserProfile } from "@/features/users/types/user.type";
 import useUpdateProfile from "../hooks/useUpdateProfile";
-import { useImagePicker } from "@/features/shared/hooks/useImagePicker";
+import { useUpdateProfileForm } from "../hooks/useUpdateProfileForm";
 import { Avatar } from "@/features/posts/components/Avatar";
 import cameraIcon from "@/features/shared/assets/icons/camera.svg?url";
 import Image from "next/image";
-import toast from "react-hot-toast";
-import AlertModal from "@/features/shared/components/layout/AlertModal";
-import { ApiError } from "@/lib/AppError";
+import warningIcoUrl from "@/features/shared/assets/icons/warning.svg?url";
+import { parseUpdateProfileErrorMessages } from "../utils/updateProfileFormValidation";
+import type { UpdateProfileData } from "../me.type";
 
 interface EditProfileModalProps {
   user: UserProfile | null;
@@ -24,47 +24,60 @@ export default function EditProfileModal({
   onClose,
 }: EditProfileModalProps) {
   if (!user) {
-    toast.error("Nie można edytować profilu: brak danych użytkownika.");
     return null;
   }
-  const [name, setName] = useState(user.name);
-  const [alertMessage, setAlertMessage] = useState<string | null>(null);
 
-  const { imagePreview, fileInputRef, handleFileChange, triggerPicker } =
-    useImagePicker({
-      initialPreview: user?.avatarUrl,
-    });
+  const {
+    register,
+    handleSubmit,
+    errors,
+    isDirty,
+    handleServerErrors,
+    prepareFormData,
+    imagePreview,
+    fileInputRef,
+    handleFileChange,
+    triggerPicker,
+    handleRemoveImage,
+    watch,
+  } = useUpdateProfileForm(user);
 
-  const [selectedFile, setSelectedFile] = useState<File | undefined>(undefined);
+  const nameValue = watch("name") || "";
+  const avatarFileValue = watch("avatarFile");
 
-  const { updateProfile, isPending } = useUpdateProfile();
+  const { updateProfile, isPending } = useUpdateProfile(handleServerErrors);
 
-  if (!user) return null;
+  const isNewImage = imagePreview && imagePreview.startsWith("blob:");
+  const hasChanges = isDirty;
+  const hasNameValue = nameValue.trim().length > 0;
+  const canSubmit = hasChanges && hasNameValue;
 
-  const onFileChangeWrapper = (e: React.ChangeEvent<HTMLInputElement>) => {
-    handleFileChange(e);
-    if (e.target.files?.[0]) {
-      setSelectedFile(e.target.files[0]);
+  const onSubmit = async (data: UpdateProfileData) => {
+    const formData = prepareFormData(data);
+    if (!formData) {
+      return;
     }
+
+    const updateData: { name?: string; avatarFile?: File } = {};
+    if (formData.has("name")) {
+      updateData.name = formData.get("name") as string;
+    }
+    if (formData.has("avatarFile")) {
+      updateData.avatarFile = formData.get("avatarFile") as File;
+    }
+
+    await updateProfile(updateData);
+    onClose();
   };
 
-  const handleSave = async () => {
-    const trimmedName = name.trim();
+  const nameError = parseUpdateProfileErrorMessages(errors.name?.message);
+  const avatarFileError = parseUpdateProfileErrorMessages(
+    errors.avatarFile?.message
+  );
+  const rootError = parseUpdateProfileErrorMessages(errors.root?.message);
 
-    try {
-      await updateProfile({
-        name: trimmedName,
-        avatarFile: selectedFile,
-      });
-      onClose();
-    } catch (error) {
-      const isPolicyViolation =
-        error instanceof ApiError && error.code === "POLICY_VIOLATION";
-      const message = isPolicyViolation
-        ? "Nie udało się zapisać profilu. Nazwa lub zdjęcie narusza zasady."
-        : "Nie udało się zapisać profilu. Spróbuj ponownie.";
-      setAlertMessage(message);
-    }
+  const handleSaveClick = () => {
+    handleSubmit(onSubmit)();
   };
 
   const footerContent = (
@@ -72,94 +85,209 @@ export default function EditProfileModal({
       <Button
         onClick={onClose}
         text="Anuluj"
-        size="sm"
-        variant="icon-fuchsia-ghost"
+        size="md"
+        variant="secondary"
         disabled={isPending}
+        type="button"
+      />
+      <Button
+        onClick={handleSaveClick}
+        text="Zapisz"
+        size="md"
+        variant="gradient-fuchsia"
+        disabled={!canSubmit}
+        isLoading={isPending}
+        type="button"
       />
     </div>
   );
 
   return (
-    <Modal
-      isOpen={!!user}
-      onClose={onClose}
-      title={`Edytuj profil — ${user.name}`}
-      footer={footerContent}
-    >
-      <div className="flex flex-col gap-6">
-        <div className="flex flex-col items-center gap-3">
-          <div
-            className="relative group cursor-pointer"
-            onClick={triggerPicker}
-          >
-            <div className="w-24 h-24 rounded-xl overflow-hidden border border-primary-neutral-stroke-default group-hover:border-fuchsia-500 transition-colors">
-              <Avatar
-                src={imagePreview || undefined}
-                alt={user.name}
-                width={96}
-                height={96}
-                className="w-full h-full border-none"
-              />
+    <>
+      <Modal
+        isOpen={!!user}
+        onClose={onClose}
+        title={`Edytuj profil — ${user.name}`}
+        footer={footerContent}
+      >
+        <form
+          id="edit-profile-form"
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col gap-6"
+        >
+          {/* Avatar Section */}
+          <div className="flex flex-col items-center gap-4">
+            <div className="relative">
+              <div
+                className="relative group cursor-pointer animate-in fade-in zoom-in-95 duration-200"
+                onClick={triggerPicker}
+              >
+                <div className="w-24 h-24 rounded-xl p-px bg-[radial-gradient(circle_at_center,#262626_0%,#171717_100%)] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] transition-transform group-hover:scale-105">
+                  <Avatar
+                    src={imagePreview || undefined}
+                    alt={user.name}
+                    width={96}
+                    height={96}
+                    className="w-full h-full rounded-xl border-none"
+                  />
+                </div>
+
+                <div className="absolute inset-0 bg-black/60 rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm">
+                  <div className="flex flex-col items-center gap-1">
+                    <Image
+                      src={cameraIcon}
+                      alt="Zmień"
+                      width={24}
+                      height={24}
+                      className="opacity-90"
+                    />
+                    <span className="text-white text-xs font-medium">
+                      Zmień
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Remove image button - only show if new image was selected */}
+              {isNewImage && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleRemoveImage();
+                  }}
+                  className="absolute -top-2 -right-2 bg-red-600 hover:bg-red-700 text-white rounded-full p-1.5 shadow-lg transition-all opacity-100 hover:scale-110 z-10"
+                  type="button"
+                  title="Usuń zdjęcie"
+                >
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M18 6 6 18" />
+                    <path d="m6 6 12 12" />
+                  </svg>
+                </button>
+              )}
+
+              {/* Change indicator */}
+              {isNewImage && (
+                <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-primary-fuchsia-stroke-default text-white text-[10px] font-semibold px-2 py-0.5 rounded-full whitespace-nowrap animate-in fade-in slide-in-from-bottom-1 duration-200">
+                  Zmieniono
+                </div>
+              )}
             </div>
 
-            <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-              <Image
-                src={cameraIcon}
-                alt="Zmień"
-                width={24}
-                height={24}
-                className="opacity-80"
-              />
+            <div className="flex flex-col items-center gap-1">
+              <p className="text-sm text-text-neutral font-medium">
+                Kliknij, aby zmienić zdjęcie profilowe
+              </p>
+              <p className="text-xs text-text-neutral/60">
+                PNG, JPG lub WEBP (max 5MB)
+              </p>
             </div>
+
+            {avatarFileError.length > 0 && (
+              <div className="px-1 pt-1 inline-flex justify-start items-start gap-2 animate-in fade-in slide-in-from-top-1 duration-200 w-full">
+                <div className="flex justify-start items-start overflow-hidden pt-0.5">
+                  <div data-svg-wrapper className="text-red-500">
+                    <svg
+                      width="13"
+                      height="13"
+                      viewBox="0 0 13 13"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M13 1.30929L11.6907 0L6.5 5.19071L1.30929 0L0 1.30929L5.19071 6.5L0 11.6907L1.30929 13L6.5 7.80929L11.6907 13L13 11.6907L7.80929 6.5L13 1.30929Z"
+                        fill="currentColor"
+                      />
+                    </svg>
+                  </div>
+                </div>
+                <div className="justify-start text-red-500 text-sm font-normal font-Roboto">
+                  {avatarFileError[0].text}
+                </div>
+              </div>
+            )}
+
+            <input
+              type="file"
+              ref={fileInputRef}
+              className="hidden"
+              accept="image/png, image/jpeg, image/webp"
+              onChange={handleFileChange}
+            />
           </div>
-          <p className="text-xs text-text-neutral">
-            Kliknij, aby zmienić zdjęcie
-          </p>
 
-          <input
-            type="file"
-            ref={fileInputRef}
-            className="hidden"
-            accept="image/png, image/jpeg, image/webp"
-            onChange={onFileChangeWrapper}
-          />
-        </div>
-
-        <div className="p-4 rounded-lg border border-primary-neutral-background-default/30">
-          <h3 className="text-lg font-medium mb-3 text-text-main">Nazwa</h3>
-
-          <div className="flex flex-col gap-3">
+          {/* Name Section */}
+          <div className="flex flex-col gap-4 p-4 rounded-xl bg-secondary-neutral-background-default/30 border border-primary-neutral-stroke-default/50">
             <TextInput
               label="Nazwa użytkownika"
-              value={name}
               placeholder="Twoja publiczna nazwa"
-              onChange={(e) => setName(e.target.value)}
+              {...register("name")}
+              messages={nameError}
               showButton={false}
             />
-            <p className="text-sm text-text-neutral">
-              Ta nazwa będzie widoczna publicznie — możesz użyć nicku lub
-              imienia.
-            </p>
-
-            <div className="flex justify-end gap-3 mt-4">
-              <Button
-                onClick={handleSave}
-                text="Zapisz"
-                size="sm"
-                variant="gradient-fuchsia"
-                disabled={!name.trim() && !selectedFile}
-                isLoading={isPending}
-              />
+            <div className="flex flex-col gap-1">
+              <p className="text-sm text-text-neutral ml-1">
+                Ta nazwa będzie widoczna publicznie — możesz użyć nicku lub
+                imienia.
+              </p>
+              <p className="text-xs text-text-neutral/60 ml-1">
+                {nameValue.trim().length} / 30 znaków
+              </p>
             </div>
           </div>
-        </div>
-      </div>
-      <AlertModal
-        isOpen={!!alertMessage}
-        onClose={() => setAlertMessage(null)}
-        title="Profil nie został zapisany"
-        message={alertMessage || ""}
-      />
-    </Modal>
+
+          {/* Root error */}
+          {rootError.length > 0 && (
+            <div className="px-1 pt-1 inline-flex justify-start items-start gap-2 animate-in fade-in slide-in-from-top-1 duration-200 w-full">
+              <div className="flex justify-start items-start overflow-hidden pt-0.5">
+                {rootError[0].type === "Warning" ? (
+                  <div className="relative w-3.5 h-3.5">
+                    <Image
+                      src={warningIcoUrl}
+                      alt="warning"
+                      fill
+                      className="object-contain"
+                    />
+                  </div>
+                ) : (
+                  <div data-svg-wrapper className="text-red-500">
+                    <svg
+                      width="13"
+                      height="13"
+                      viewBox="0 0 13 13"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M13 1.30929L11.6907 0L6.5 5.19071L1.30929 0L0 1.30929L5.19071 6.5L0 11.6907L1.30929 13L6.5 7.80929L11.6907 13L13 11.6907L7.80929 6.5L13 1.30929Z"
+                        fill="currentColor"
+                      />
+                    </svg>
+                  </div>
+                )}
+              </div>
+              <div
+                className={`justify-start text-sm font-normal font-Roboto ${
+                  rootError[0].type === "Warning"
+                    ? "text-yellow-500"
+                    : "text-red-500"
+                }`}
+              >
+                {rootError[0].text}
+              </div>
+            </div>
+          )}
+        </form>
+      </Modal>
+    </>
   );
 }

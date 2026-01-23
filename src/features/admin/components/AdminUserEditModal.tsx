@@ -74,7 +74,7 @@ export default function AdminUserEditModal({
         text="Anuluj i zamknij"
         disabled={isUpdatingData || isUpdatingPassword}
         className="text-text-neutral hover:text-white order-2 md:order-1 border-transparent"
-        variant="icon-fuchsia-ghost"
+        variant="secondary"
         size="sm"
       />
 

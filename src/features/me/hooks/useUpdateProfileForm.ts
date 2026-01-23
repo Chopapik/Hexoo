@@ -11,6 +11,7 @@ export function useUpdateProfileForm(user: UserProfile | null) {
     handleSubmit,
     setValue,
     setError,
+    watch,
     formState: { errors, isDirty },
     reset,
   } = useForm<UpdateProfileData>({
@@ -22,7 +23,7 @@ export function useUpdateProfileForm(user: UserProfile | null) {
     },
   });
 
-  const { imagePreview, fileInputRef, handleFileChange, triggerPicker } =
+  const { imagePreview, fileInputRef, handleFileChange, triggerPicker, removeImage } =
     useImagePicker({
       initialPreview: user?.avatarUrl,
       onImageChanged: (file) => {
@@ -42,6 +43,8 @@ export function useUpdateProfileForm(user: UserProfile | null) {
   const handleServerErrors = (errorCode: string, field?: string) => {
     if (field === "name") {
       setError("name", { type: "server", message: errorCode });
+    } else if (field === "avatarFile") {
+      setError("avatarFile", { type: "server", message: errorCode });
     } else {
       setError("root", { type: "server", message: errorCode });
     }
@@ -64,6 +67,14 @@ export function useUpdateProfileForm(user: UserProfile | null) {
     return hasChanges ? formData : null;
   };
 
+  const handleRemoveImage = () => {
+    removeImage();
+    setValue("avatarFile", undefined, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+  };
+
   return {
     register,
     handleSubmit,
@@ -75,5 +86,7 @@ export function useUpdateProfileForm(user: UserProfile | null) {
     fileInputRef,
     handleFileChange,
     triggerPicker,
+    handleRemoveImage,
+    watch,
   };
 }

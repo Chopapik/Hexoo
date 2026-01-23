@@ -21,14 +21,14 @@ export default function ConfirmDeleteModal({
       <Button
         onClick={onClose}
         text="Anuluj"
-        size="sm"
-        variant="icon-fuchsia-ghost"
+        size="md"
+        variant="secondary"
         disabled={isPending}
       />
       <Button
         onClick={onConfirm}
         text="Tak, usuń konto"
-        size="sm"
+        size="md"
         variant="danger"
         isLoading={isPending}
       />

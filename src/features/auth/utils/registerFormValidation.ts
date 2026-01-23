@@ -1,4 +1,5 @@
 import { ValidationMessage } from "@/features/shared/types/validation.type";
+import { parseUserNameErrorMessages } from "@/features/shared/utils/userNameValidation";
 
 const ERROR_DICTIONARY: Record<string, ValidationMessage> = {
   //zod
@@ -18,21 +19,11 @@ const ERROR_DICTIONARY: Record<string, ValidationMessage> = {
     text: "Wymagany znak specjalny",
     type: "Warning",
   },
-  name_too_short: { text: "Nazwa jest za krótka", type: "Dismiss" },
-  name_too_long: { text: "Nazwa jest za długa", type: "Dismiss" },
-  name_invalid_chars: { text: "Niedozwolone znaki w nazwie", type: "Dismiss" },
-
   terms_required: { text: "Musisz zaakceptować regulamin", type: "Dismiss" },
 
   //Firebase client auth SDK
   "auth/email-already-exists": {
     text: "Ten email jest już zajęty",
-    type: "Dismiss",
-  },
-
-  // API
-  CONFLICT: {
-    text: "Ta nazwa użytkownika jest zajęta",
     type: "Dismiss",
   },
 
@@ -44,6 +35,13 @@ export function parseRegisterErrorMessages(
   errorCode: string | undefined
 ): ValidationMessage[] | [] {
   if (errorCode) {
+    // Check if it's a user name error
+    const userNameError = parseUserNameErrorMessages(errorCode);
+    if (userNameError.length > 0) {
+      return userNameError;
+    }
+
+    // Check other errors
     const message = ERROR_DICTIONARY[errorCode] || {
       ...ERROR_DICTIONARY.default,
       text: errorCode,
