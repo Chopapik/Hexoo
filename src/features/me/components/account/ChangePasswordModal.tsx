@@ -33,14 +33,14 @@ export default function ChangePasswordModal({
       <Button
         onClick={onClose}
         text="Anuluj"
-        size="sm"
-        variant="icon-fuchsia-ghost"
+        size="md"
+        variant="secondary"
         disabled={isPending}
       />
       <Button
         onClick={onSubmit}
         text="Zapisz zmiany"
-        size="sm"
+        size="md"
         variant="gradient-fuchsia"
         isLoading={isPending}
       />

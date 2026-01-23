@@ -3,13 +3,17 @@ import fetchClient from "@/lib/fetchClient";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
 import { setUser } from "@/features/auth/store/authSlice";
 import { useRouter } from "next/navigation";
+import { ApiError } from "@/lib/AppError";
+import toast from "react-hot-toast";
+
+type ErrorCallback = (errorCode: string, field?: string) => void;
 
 interface UpdateProfileParams {
   name?: string;
   avatarFile?: File;
 }
 
-export default function useUpdateProfile() {
+export default function useUpdateProfile(onError?: ErrorCallback) {
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -36,6 +40,40 @@ export default function useUpdateProfile() {
           });
         }
         dispatch(setUser(updatedUser));
+        toast.success("Profil został zaktualizowany!");
+      }
+    },
+    onError: (error: unknown) => {
+      if (error instanceof ApiError) {
+        const errorCode = error.code;
+
+        // Handle specific error codes
+        if (errorCode === "CONFLICT") {
+          onError?.(errorCode, "name");
+        } else if (errorCode === "POLICY_VIOLATION") {
+          onError?.(errorCode, "root");
+        } else if (errorCode === "VALIDATION_ERROR") {
+          // Handle Zod validation errors from API
+          const details = error.details as Record<string, string[]> | undefined;
+          if (details) {
+            // Map Zod field errors to form fields
+            Object.keys(details).forEach((field) => {
+              const messages = details[field];
+              if (messages && messages.length > 0) {
+                // Use the first error code from Zod
+                const zodErrorCode = messages[0];
+                onError?.(zodErrorCode, field);
+              }
+            });
+          } else {
+            onError?.(errorCode, "root");
+          }
+        } else {
+          onError?.(errorCode, "root");
+        }
+      } else {
+        console.error("Unexpected error:", error);
+        toast.error("Wystąpił nieoczekiwany błąd");
       }
     },
   });
