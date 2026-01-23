@@ -10,9 +10,9 @@ import { useUpdateProfileForm } from "../hooks/useUpdateProfileForm";
 import { Avatar } from "@/features/posts/components/Avatar";
 import cameraIcon from "@/features/shared/assets/icons/camera.svg?url";
 import Image from "next/image";
-import warningIcoUrl from "@/features/shared/assets/icons/warning.svg?url";
 import { parseUpdateProfileErrorMessages } from "../utils/updateProfileFormValidation";
 import type { UpdateProfileData } from "../me.type";
+import ValidationMessage from "@/features/shared/components/ui/ValidationMessage";
 
 interface EditProfileModalProps {
   user: UserProfile | null;
@@ -193,27 +193,7 @@ export default function EditProfileModal({
             </div>
 
             {avatarFileError.length > 0 && (
-              <div className="px-1 pt-1 inline-flex justify-start items-start gap-2 animate-in fade-in slide-in-from-top-1 duration-200 w-full">
-                <div className="flex justify-start items-start overflow-hidden pt-0.5">
-                  <div data-svg-wrapper className="text-red-500">
-                    <svg
-                      width="13"
-                      height="13"
-                      viewBox="0 0 13 13"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M13 1.30929L11.6907 0L6.5 5.19071L1.30929 0L0 1.30929L5.19071 6.5L0 11.6907L1.30929 13L6.5 7.80929L11.6907 13L13 11.6907L7.80929 6.5L13 1.30929Z"
-                        fill="currentColor"
-                      />
-                    </svg>
-                  </div>
-                </div>
-                <div className="justify-start text-red-500 text-sm font-normal font-Roboto">
-                  {avatarFileError[0].text}
-                </div>
-              </div>
+              <ValidationMessage message={avatarFileError[0]} />
             )}
 
             <input
@@ -247,44 +227,7 @@ export default function EditProfileModal({
 
           {/* Root error */}
           {rootError.length > 0 && (
-            <div className="px-1 pt-1 inline-flex justify-start items-start gap-2 animate-in fade-in slide-in-from-top-1 duration-200 w-full">
-              <div className="flex justify-start items-start overflow-hidden pt-0.5">
-                {rootError[0].type === "Warning" ? (
-                  <div className="relative w-3.5 h-3.5">
-                    <Image
-                      src={warningIcoUrl}
-                      alt="warning"
-                      fill
-                      className="object-contain"
-                    />
-                  </div>
-                ) : (
-                  <div data-svg-wrapper className="text-red-500">
-                    <svg
-                      width="13"
-                      height="13"
-                      viewBox="0 0 13 13"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M13 1.30929L11.6907 0L6.5 5.19071L1.30929 0L0 1.30929L5.19071 6.5L0 11.6907L1.30929 13L6.5 7.80929L11.6907 13L13 11.6907L7.80929 6.5L13 1.30929Z"
-                        fill="currentColor"
-                      />
-                    </svg>
-                  </div>
-                )}
-              </div>
-              <div
-                className={`justify-start text-sm font-normal font-Roboto ${
-                  rootError[0].type === "Warning"
-                    ? "text-yellow-500"
-                    : "text-red-500"
-                }`}
-              >
-                {rootError[0].text}
-              </div>
-            </div>
+            <ValidationMessage message={rootError[0]} />
           )}
         </form>
       </Modal>
