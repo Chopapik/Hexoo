@@ -19,6 +19,7 @@ import useUnblockUser from "../hooks/user/useUnblockUser";
 import defaultAvatarUrl from "@/features/shared/assets/defaultAvatar.svg?url";
 import useAdminDeleteUser from "../hooks/user/useAdminDeleteUser";
 import { formatDate } from "@/features/shared/utils/dateUtils";
+import { USER_ROLE_OPTIONS } from "@/features/users/constants/userRoleOptions";
 
 export default function AdminUserEditModal({
   user,
@@ -202,11 +203,7 @@ export default function AdminUserEditModal({
                   onChange={(e) =>
                     handleFieldChange("role", e.target.value as UserRole)
                   }
-                  options={[
-                    { value: "user", label: "Użytkownik" },
-                    { value: "moderator", label: "Moderator" },
-                    { value: "admin", label: "Administrator" },
-                  ]}
+                  options={USER_ROLE_OPTIONS}
                   placeholder="— Wybierz rolę —"
                 />
               </div>

@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import Modal from "@/features/shared/components/layout/Modal";
+import ModalFooter from "@/features/shared/components/layout/ModalFooter";
 import TextInput from "@/features/shared/components/ui/TextInput";
 import Select from "@/features/shared/components/ui/Select";
-import Button from "@/features/shared/components/ui/Button";
 import adminCreateUser from "../hooks/user/useAdminCreateUser";
 import type { UserRole } from "@/features/users/types/user.type";
+import { USER_ROLE_OPTIONS } from "@/features/users/constants/userRoleOptions";
 
 export default function AdminUserCreateModal({
   onClose,
@@ -28,24 +28,17 @@ export default function AdminUserCreateModal({
   };
 
   const footer = (
-    <div className="flex gap-3 justify-end w-full">
-      <Button
-        onClick={onClose}
-        text="Anuluj"
-        size="sm"
-        variant="icon-fuchsia-ghost"
-        disabled={isPending}
-        className="text-text-neutral hover:text-white border-transparent"
-      />
-      <Button
-        onClick={handleCreate}
-        text="Utwórz konto"
-        size="sm"
-        variant="gradient-fuchsia"
-        disabled={isPending || !email || !password}
-        isLoading={isPending}
-      />
-    </div>
+    <ModalFooter
+      cancelText="Anuluj"
+      confirmText="Utwórz konto"
+      onCancel={onClose}
+      onConfirm={handleCreate}
+      isPending={isPending}
+      confirmSize="sm"
+      cancelSize="sm"
+      disabled={!email || !password || !name}
+      className="[&_button:first-child]:text-text-neutral [&_button:first-child]:hover:text-white [&_button:first-child]:border-transparent"
+    />
   );
 
   return (
@@ -81,11 +74,7 @@ export default function AdminUserCreateModal({
             label="Rola"
             value={role}
             onChange={(e) => setRole(e.target.value as UserRole)}
-            options={[
-              { value: "user", label: "Użytkownik" },
-              { value: "moderator", label: "Moderator" },
-              { value: "admin", label: "Administrator" },
-            ]}
+            options={USER_ROLE_OPTIONS}
           />
 
           <TextInput
