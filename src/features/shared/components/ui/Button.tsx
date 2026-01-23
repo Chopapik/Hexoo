@@ -26,19 +26,19 @@ const sizeClasses: Record<ButtonSize, string> = {
  * @type {Record<ButtonVariant, string>}
  */
 const variantClasses: Record<ButtonVariant, string> = {
-  // Text button with gradient fill and subtle gradient border
+  // Text button with gradient fill and subtle gradient border - matching Figma design
   "gradient-fuchsia":
-    "text-white border-[0.75px] border-transparent [--btn-fill:linear-gradient(180deg,#C026D3_0%,#86198F_100%)] [background:var(--btn-fill,_linear-gradient(180deg,#C026D3_0%,#86198F_100%))_padding-box,linear-gradient(180deg,#EF72FF_3%,#61006E_100%)_border-box] shadow-sm hover:brightness-90",
-  // Icon-only solid magenta
+    "text-white border-[0.75px] border-transparent [--btn-fill:linear-gradient(180deg,#C026D3_0%,#86198F_100%)] [background:var(--btn-fill,_linear-gradient(180deg,#C026D3_0%,#86198F_100%))_padding-box,linear-gradient(180deg,#EF72FF_3%,#61006E_100%)_border-box] shadow-md hover:brightness-90 hover:shadow-lg transition-all",
+  // Icon-only solid magenta with raised/glossy effect
   "icon-fuchsia-solid":
-    "text-white bg-gradient-to-b from-fuchsia-600 to-fuchsia-800 shadow-sm hover:brightness-90",
+    "text-white bg-gradient-to-b from-fuchsia-600 via-fuchsia-700 to-fuchsia-900 shadow-md hover:brightness-90 hover:shadow-lg transition-all",
   // Icon-only ghost magenta
-  "icon-fuchsia-ghost": "text-white bg-fuchsia-700/20",
+  "icon-fuchsia-ghost": "text-white bg-fuchsia-700/20 hover:bg-fuchsia-700/30 transition-colors",
   // Note: 'glass-card' relies on an external global CSS class for its styling.
   "glass-card": "text-white glass-card",
   // Danger variant for destructive actions
   danger:
-    "text-white bg-gradient-to-b from-red-600 to-red-800 shadow-sm hover:brightness-90",
+    "text-white bg-gradient-to-b from-red-600 to-red-800 shadow-md hover:brightness-90 hover:shadow-lg transition-all",
   // Secondary variant (neutral)
   secondary:
     "bg-white/5 border border-white/10 text-white hover:bg-white/10 shadow-sm backdrop-blur-sm",
