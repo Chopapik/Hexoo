@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Modal from "@/features/shared/components/layout/Modal";
-import Button from "@/features/shared/components/ui/Button";
+import ModalFooter from "@/features/shared/components/layout/ModalFooter";
 import TextInput from "@/features/shared/components/ui/TextInput";
 import useReportPost from "../hooks/useReportPost";
 
@@ -33,22 +33,12 @@ export default function ReportPostModal({
   };
 
   const footer = (
-    <div className="flex gap-3 justify-end w-full">
-      <Button
-        text="Anuluj"
-        variant="secondary"
-        size="md"
-        onClick={onClose}
-        disabled={isPending}
-      />
-      <Button
-        text="Zgłoś post"
-        variant="gradient-fuchsia"
-        size="md"
-        onClick={handleSubmit}
-        isLoading={isPending}
-      />
-    </div>
+    <ModalFooter
+      confirmText="Zgłoś post"
+      onCancel={onClose}
+      onConfirm={handleSubmit}
+      isPending={isPending}
+    />
   );
 
   return (
