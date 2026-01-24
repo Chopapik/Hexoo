@@ -7,6 +7,7 @@ import { useAppSelector } from "@/lib/store/hooks";
 import Modal from "@/features/shared/components/layout/Modal";
 import Button from "@/features/shared/components/ui/Button";
 import AlertModal from "@/features/shared/components/layout/AlertModal";
+import RemoveImageButton from "@/features/shared/components/ui/RemoveImageButton";
 import useCreatePostForm from "../hooks/useCreatePostForm";
 import useCreatePost from "../hooks/useCreatePost";
 import type { CreatePost } from "../types/post.type";
@@ -143,22 +144,12 @@ export default function CreatePostModal({
                 height={200}
                 className="rounded-xl border border-primary-neutral-stroke-default object-cover max-h-64 w-auto"
               />
-              <button
+              <RemoveImageButton
                 onClick={removeImage}
-                className="absolute top-1 right-1 bg-black/70 text-white rounded-full p-1 hover:bg-black transition-colors opacity-0 group-hover:opacity-100"
-              >
-                <svg
-                  width="12"
-                  height="12"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="3"
-                >
-                  <path d="M18 6 6 18" />
-                  <path d="m6 6 12 12" />
-                </svg>
-              </button>
+                variant="dark"
+                position="top-right"
+                showOnHover={true}
+              />
             </div>
           )}
 
