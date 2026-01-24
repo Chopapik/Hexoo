@@ -7,6 +7,14 @@ const PUBLIC_PATHS = ["/login", "/register"];
 
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
+  const isDemoRoute = pathname.startsWith("/demo");
+  const appEnv = process.env.APP_ENV;
+  const isDevApp = appEnv === "development";
+  const isProduction = process.env.NODE_ENV === "production";
+
+  if (isDemoRoute && isProduction && !isDevApp) {
+    return NextResponse.redirect(new URL("/", request.url));
+  }
 
   if (
     pathname.startsWith("/api/security") ||
