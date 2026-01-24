@@ -4,6 +4,7 @@ import { useState } from "react";
 import TextInput from "@/features/shared/components/ui/TextInput";
 import Button from "@/features/shared/components/ui/Button";
 import Modal from "@/features/shared/components/layout/Modal";
+import RemoveImageButton from "@/features/shared/components/ui/RemoveImageButton";
 import type { UserProfile } from "@/features/users/types/user.type";
 import useUpdateProfile from "../hooks/useUpdateProfile";
 import { useUpdateProfileForm } from "../hooks/useUpdateProfileForm";
@@ -150,29 +151,15 @@ export default function EditProfileModal({
 
               {/* Remove image button - only show if new image was selected */}
               {isNewImage && (
-                <button
+                <RemoveImageButton
                   onClick={(e) => {
                     e.stopPropagation();
                     handleRemoveImage();
                   }}
-                  className="absolute -top-2 -right-2 bg-red-600 hover:bg-red-700 text-white rounded-full p-1.5 shadow-lg transition-all opacity-100 hover:scale-110 z-10"
-                  type="button"
-                  title="Usuń zdjęcie"
-                >
-                  <svg
-                    width="12"
-                    height="12"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M18 6 6 18" />
-                    <path d="m6 6 12 12" />
-                  </svg>
-                </button>
+                  variant="dark"
+                  position="top-right"
+                  alwaysVisible={true}
+                />
               )}
 
               {/* Change indicator */}
