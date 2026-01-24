@@ -1,5 +1,6 @@
-import { firestore } from "firebase-admin";
 import z from "zod";
+import { firestore } from "firebase-admin";
+import { ContentBase } from "@/features/shared/types/content.type";
 
 export const POST_MAX_CHARS = 1000;
 
@@ -18,29 +19,17 @@ export interface ImageMeta {
   sizeBytes: number;
 }
 
-export interface Post {
-  id: string;
-  userId: string;
-  userName: string;
-  userAvatarUrl?: string | null;
-  text: string;
+type PostTimestamp = firestore.Timestamp | firestore.FieldValue | Date;
 
+export interface Post extends ContentBase<PostTimestamp> {
   imageUrl?: string | null;
   imageMeta?: ImageMeta | null;
 
   device?: string | null;
-  likesCount: number;
-  isLikedByMe?: boolean;
   commentsCount: number;
-
-  createdAt: firestore.Timestamp | firestore.FieldValue | Date;
-  updatedAt?: firestore.Timestamp | firestore.FieldValue | Date;
 
   userReports?: string[];
   reportsMeta?: ReportDetails[];
-  moderationStatus: "approved" | "pending" | "rejected";
-  flaggedReasons?: string[];
-  isNSFW: boolean;
 
   reviewedBy?: string;
   reviewedAt?: firestore.Timestamp | Date;

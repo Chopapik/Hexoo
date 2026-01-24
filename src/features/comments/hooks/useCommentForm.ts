@@ -8,6 +8,7 @@ export default function useCommentForm(postId: string) {
     handleSubmit,
     reset,
     setError,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<AddCommentDto>({
     resolver: zodResolver(AddCommentSchema),
@@ -32,6 +33,7 @@ export default function useCommentForm(postId: string) {
     register,
     handleSubmit,
     reset,
+    watch,
     errors,
     isSubmitting,
     handleServerErrors,

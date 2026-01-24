@@ -77,7 +77,7 @@ export const PostModal = ({ post, isOpen, onClose }: PostModalProps) => {
             {/* Content - 75% post / 25% comments */}
             <div className="flex-1 flex overflow-hidden">
               {/* Left side - Post content (75%) */}
-              <div className="w-3/4 flex flex-col overflow-y-auto scrollbar-hide border-r border-primary-neutral-stroke-default/60">
+              <div className="w-5/7 flex flex-col overflow-y-auto scrollbar-hide border-r border-primary-neutral-stroke-default/60">
                 {/* Post header */}
                 <div className="p-4 border-b border-primary-neutral-stroke-default/60">
                   <PostMeta post={post} />
@@ -114,7 +114,7 @@ export const PostModal = ({ post, isOpen, onClose }: PostModalProps) => {
               </div>
 
               {/* Right side - Comments (25%) */}
-              <div className="w-1/4 flex flex-col min-w-[280px] border-l border-primary-neutral-stroke-default/60">
+              <div className="w-2/7 flex flex-col min-w-[280px] border-l border-primary-neutral-stroke-default/60">
                 {/* Comments header */}
                 <div className="px-4 py-3 border-b border-primary-neutral-stroke-default/60 bg-secondary-neutral-background-default/60">
                   <h3 className="text-sm font-semibold text-text-main font-Albert_Sans">

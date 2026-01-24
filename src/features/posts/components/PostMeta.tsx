@@ -1,4 +1,5 @@
-﻿import type { Post } from "../types/post.type";
+import React from "react";
+import type { Post } from "../types/post.type";
 import { Avatar } from "./Avatar";
 import "dayjs/locale/pl";
 import PostOptions from "./PostOptions";
@@ -10,10 +11,14 @@ type PostMetaProps = {
 };
 
 export const PostMeta = ({ post }: PostMetaProps) => {
+  const handleLinkClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+  };
+
   return (
     <div className="w-full flex justify-between items-start">
       <div className="inline-flex justify-start items-center gap-2">
-        <div className="size-10">
+        <div className="size-10" onClick={handleLinkClick}>
           <Link href={`/${post.userName}`}>
             <Avatar
               src={post.userAvatarUrl ?? undefined}
@@ -22,8 +27,13 @@ export const PostMeta = ({ post }: PostMetaProps) => {
           </Link>
         </div>
         <div className="self-stretch inline-flex flex-col justify-center items-start">
-          <div className="justify-start text-text-main text-sm font-medium font-Albert_Sans">
-            {post.userName}
+          <div
+            className="justify-start text-text-main text-sm font-medium font-Albert_Sans"
+            onClick={handleLinkClick}
+          >
+            <Link href={`/${post.userName}`} className="hover:underline">
+              {post.userName}
+            </Link>
           </div>
           <div className="inline-flex justify-center items-center gap-1">
             <div className="justify-start text-text-neutral text-xs font-normal font-Albert_Sans">
@@ -33,7 +43,7 @@ export const PostMeta = ({ post }: PostMetaProps) => {
         </div>
       </div>
 
-      <div className="pt-1">
+      <div className="pt-1" onClick={handleLinkClick}>
         <PostOptions postId={post.id} authorId={post.userId} />
       </div>
     </div>
