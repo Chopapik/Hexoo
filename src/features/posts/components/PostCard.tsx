@@ -1,11 +1,11 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect } from "react";
 import type { Post } from "../types/post.type";
 import { PostBody } from "./PostBody";
 import { PostFooter } from "./PostFooter";
 import { PostMeta } from "./PostMeta";
-import AddCommentModal from "@/features/comments/components/AddCommentModal";
+import { PostModal } from "./PostModal";
 import { useAppSelector, useAppDispatch } from "@/lib/store/hooks";
 import { initializeSettings } from "@/features/me/store/settingsSlice";
 
@@ -15,8 +15,7 @@ type PostCardProps = {
 };
 
 export const PostCard = ({ post, revealNSFW }: PostCardProps) => {
-  const [showAddCommentModal, setShowAddCommentModal] = useState(false);
-  const user = useAppSelector((state) => state.auth.user);
+  const [showPostModal, setShowPostModal] = useState(false);
 
   const showNSFW = useAppSelector((state) => state.settings.showNSFW);
   const dispatch = useAppDispatch();
@@ -27,16 +26,23 @@ export const PostCard = ({ post, revealNSFW }: PostCardProps) => {
 
   const isContentVisible = !post.isNSFW || showNSFW || revealNSFW;
 
+  const handleCardClick = () => {
+    if (isContentVisible) {
+      setShowPostModal(true);
+    }
+  };
+
   return (
     <>
-      {showAddCommentModal && (
-        <AddCommentModal
-          post={post}
-          isOpen={showAddCommentModal}
-          onClose={() => setShowAddCommentModal(false)}
-        />
-      )}
-      <div className="w-full max-w-4xl p-4 bg-primary-neutral-background-default rounded-xl border-t-2 border-primary-neutral-stroke-default inline-flex flex-col justify-start items-start gap-4">
+      <PostModal
+        post={post}
+        isOpen={showPostModal}
+        onClose={() => setShowPostModal(false)}
+      />
+      <div
+        onClick={handleCardClick}
+        className="w-full max-w-4xl p-4 bg-primary-neutral-background-default rounded-xl border-t-2 border-primary-neutral-stroke-default inline-flex flex-col justify-start items-start gap-4 cursor-pointer"
+      >
         <PostMeta post={post} />
 
         {isContentVisible ? (
@@ -73,7 +79,7 @@ export const PostCard = ({ post, revealNSFW }: PostCardProps) => {
         )}
         <PostFooter
           post={post}
-          onCommentClick={() => setShowAddCommentModal(true)}
+          onCommentClick={() => setShowPostModal(true)}
         />
       </div>
     </>

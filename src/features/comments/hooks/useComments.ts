@@ -7,12 +7,15 @@ export default function useComments(postId: string, enabled = true) {
     queryKey: ["comments", postId],
     enabled: Boolean(postId) && enabled,
     queryFn: async ({ signal }) => {
-      return fetchClient.get<Comment[]>(`/posts/${postId}/comments`, { signal });
+      return fetchClient.get<Comment[]>(`/posts/${postId}/comments`, {
+        signal,
+      });
     },
   });
 
   return {
     comments: query.data ?? [],
     isLoading: query.isLoading,
+    isError: query.isError,
   };
 }

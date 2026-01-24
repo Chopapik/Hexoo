@@ -1,25 +1,13 @@
 import z from "zod";
 import { firestore } from "firebase-admin";
+import { ContentBase } from "@/features/shared/types/content.type";
 
 export const COMMENT_MAX_CHARS = 500;
 
-export interface Comment {
-  id: string;
+type CommentTimestamp = firestore.Timestamp | firestore.FieldValue;
+
+export interface Comment extends ContentBase<CommentTimestamp> {
   postId: string;
-  userId: string;
-  userName: string;
-  userAvatarUrl?: string | null;
-  text: string;
-  likesCount: number;
-
-  createdAt: firestore.Timestamp | firestore.FieldValue;
-  updatedAt?: firestore.Timestamp | firestore.FieldValue;
-
-  isLikedByMe?: boolean;
-
-  moderationStatus: "approved" | "pending" | "rejected";
-  isNSFW: boolean;
-  flaggedReasons?: string[];
   flaggedSource?: "text" | "image";
 }
 
