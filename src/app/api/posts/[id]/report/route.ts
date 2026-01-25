@@ -1,7 +1,7 @@
-import { reportPost } from "@/features/posts/api/services/postService";
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import { NextRequest } from "next/server";
+import { reportPost } from "@/features/posts/api/services/ index";
 
 export const POST = withErrorHandling(
   async (req: NextRequest, context: { params: Promise<{ id: string }> }) => {

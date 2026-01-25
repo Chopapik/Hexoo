@@ -1,11 +1,9 @@
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
-import {
-  createPost,
-  getPosts,
-} from "@/features/posts/api/services/postService";
+
 import { NextRequest } from "next/server";
-import { CreatePost } from "@/features/posts/types/post.type";
+import { createPost, getPosts } from "@/features/posts/api/services/ index";
+import { CreatePostDto } from "@/features/posts/types/post.dto";
 export const POST = withErrorHandling(async (req: NextRequest) => {
   const contentType = req.headers.get("content-type") || "";
   if (contentType.includes("multipart/form-data")) {
@@ -17,7 +15,7 @@ export const POST = withErrorHandling(async (req: NextRequest) => {
       text,
       device,
       imageFile,
-    } as CreatePost);
+    } as CreatePostDto);
     return handleSuccess(result, 201);
   }
   const body = await req.json();

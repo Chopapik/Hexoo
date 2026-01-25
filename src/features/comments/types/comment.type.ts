@@ -6,7 +6,7 @@ export const COMMENT_MAX_CHARS = 500;
 
 type CommentTimestamp = firestore.Timestamp | firestore.FieldValue;
 
-export interface Comment extends ContentBase<CommentTimestamp> {
+export interface Comment extends ContentBase {
   postId: string;
   flaggedSource?: "text" | "image";
 }

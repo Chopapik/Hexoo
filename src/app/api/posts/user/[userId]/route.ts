@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
-import { getPostsByUserId } from "@/features/posts/api/services/postService";
+import { getPostsByUserId } from "@/features/posts/api/services/ index";
 
 export const GET = withErrorHandling(
   async (

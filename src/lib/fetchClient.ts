@@ -37,7 +37,12 @@ async function handleResponse<T>(response: Response): Promise<T> {
   // If response is OK (2xx status)
   if (response.ok) {
     // If the response has ok: true structure, return only the data
-    if (body && typeof body === "object" && body.ok === true && "data" in body) {
+    if (
+      body &&
+      typeof body === "object" &&
+      body.ok === true &&
+      "data" in body
+    ) {
       return body.data as T;
     }
     return body as T;
@@ -96,7 +101,7 @@ function handleNetworkError(error: unknown): never {
  */
 function createTimeoutController(
   timeout: number,
-  externalSignal?: AbortSignal
+  externalSignal?: AbortSignal,
 ): { controller: AbortController; cleanup: () => void } {
   const controller = new AbortController();
 
@@ -123,9 +128,15 @@ function createTimeoutController(
  */
 async function request<T, TBody = unknown>(
   endpoint: string,
-  config: RequestConfig<TBody> = {}
+  config: RequestConfig<TBody> = {},
 ): Promise<T> {
-  const { method = "GET", body, headers = {}, signal, timeout = DEFAULT_TIMEOUT } = config;
+  const {
+    method = "GET",
+    body,
+    headers = {},
+    signal,
+    timeout = DEFAULT_TIMEOUT,
+  } = config;
 
   const url = endpoint.startsWith("http") ? endpoint : `${BASE_URL}${endpoint}`;
 
@@ -167,22 +178,30 @@ async function request<T, TBody = unknown>(
   }
 }
 
-
 const fetchClient = {
   get: <T>(url: string, options?: FetchOptions) =>
     request<T>(url, { method: "GET", ...options }),
 
-  post: <T, TBody = unknown>(url: string, body?: TBody, options?: FetchOptions) =>
-    request<T, TBody>(url, { method: "POST", body, ...options }),
+  post: <T, TBody = unknown>(
+    url: string,
+    body?: TBody,
+    options?: FetchOptions,
+  ) => request<T, TBody>(url, { method: "POST", body, ...options }),
 
-  put: <T, TBody = unknown>(url: string, body?: TBody, options?: FetchOptions) =>
-    request<T, TBody>(url, { method: "PUT", body, ...options }),
+  put: <T, TBody = unknown>(
+    url: string,
+    body?: TBody,
+    options?: FetchOptions,
+  ) => request<T, TBody>(url, { method: "PUT", body, ...options }),
 
   delete: <T>(url: string, options?: FetchOptions) =>
     request<T>(url, { method: "DELETE", ...options }),
 
-  patch: <T, TBody = unknown>(url: string, body?: TBody, options?: FetchOptions) =>
-    request<T, TBody>(url, { method: "PATCH", body, ...options }),
+  patch: <T, TBody = unknown>(
+    url: string,
+    body?: TBody,
+    options?: FetchOptions,
+  ) => request<T, TBody>(url, { method: "PATCH", body, ...options }),
 };
 
 export default fetchClient;

@@ -1,15 +1,15 @@
 import fetchClient from "@/lib/fetchClient";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type { CreatePost } from "../types/post.type";
+import { CreatePostDto } from "../types/post.dto";
 
 export default function useCreatePost(
   successCallBack?: (data?: any) => void,
-  errorCallBack?: (error?: any) => void
+  errorCallBack?: (error?: any) => void,
 ) {
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: async (postData: CreatePost | FormData) => {
+    mutationFn: async (postData: CreatePostDto | FormData) => {
       return await fetchClient.post("/posts", postData);
     },
 

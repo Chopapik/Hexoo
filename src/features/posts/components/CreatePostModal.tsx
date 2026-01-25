@@ -10,7 +10,7 @@ import AlertModal from "@/features/shared/components/layout/AlertModal";
 import RemoveImageButton from "@/features/shared/components/ui/RemoveImageButton";
 import useCreatePostForm from "../hooks/useCreatePostForm";
 import useCreatePost from "../hooks/useCreatePost";
-import type { CreatePost } from "../types/post.type";
+import { CreatePostDto } from "../types/post.dto";
 import { parseErrorMessages } from "../utils/postFormValidation";
 import { POST_MAX_CHARS } from "../types/post.type";
 
@@ -70,7 +70,7 @@ export default function CreatePostModal({
     },
   );
 
-  const submit = handleSubmit((data: CreatePost) => {
+  const submit = handleSubmit((data: CreatePostDto) => {
     if (isOverLimit) return;
 
     setRootError(null);

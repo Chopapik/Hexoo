@@ -3,7 +3,6 @@
 import React, { useEffect } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import type { Post } from "../types/post.type";
 import { PostMeta } from "./PostMeta";
 import { CommentList } from "@/features/comments/components/CommentList";
 import { CommentForm } from "@/features/comments/components/CommentForm";
@@ -11,9 +10,10 @@ import useComments from "@/features/comments/hooks/useComments";
 import { useAppSelector } from "@/lib/store/hooks";
 import { isAsciiArt } from "../utils/asciiDetector";
 import { useMemo } from "react";
+import { PostResponseDto } from "../types/post.dto";
 
 interface PostModalProps {
-  post: Post;
+  post: PostResponseDto;
   isOpen: boolean;
   onClose: () => void;
 }
@@ -42,9 +42,9 @@ export const PostModal = ({ post, isOpen, onClose }: PostModalProps) => {
   return createPortal(
     <AnimatePresence mode="wait">
       {isOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-100 flex items-center justify-center p-4">
           <motion.div
-            className="absolute inset-0 bg-black/80 backdrop-blur- "
+            className="absolute inset-0 bg-black/80 "
             onClick={onClose}
             aria-hidden="true"
             initial={{ opacity: 0 }}

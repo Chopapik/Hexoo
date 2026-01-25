@@ -1,11 +1,8 @@
-import {
-  getPostById,
-  updatePost,
-} from "@/features/posts/api/services/postService";
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
-import { UpdatePost } from "@/features/posts/types/post.type";
 import { NextRequest } from "next/server";
+import { UpdatePostDto } from "@/features/posts/types/post.dto";
+import { getPostById, updatePost } from "@/features/posts/api/services/ index";
 
 export const GET = withErrorHandling(
   async (req: NextRequest, context: { params: Promise<{ id: string }> }) => {
@@ -30,7 +27,7 @@ export const PUT = withErrorHandling(
         text,
         device,
         imageFile,
-      } as UpdatePost);
+      } as UpdatePostDto);
       return handleSuccess(result, 201);
     }
 
