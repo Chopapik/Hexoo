@@ -57,7 +57,7 @@ import type {
 } from "@/features/shared/types/button.type";
 import type { ValidationMessage as ValidationMessageType } from "@/features/shared/types/validation.type";
 import type { SessionData } from "@/features/me/me.type";
-import type { Post } from "@/features/posts/types/post.type";
+import { Post } from "@/features/posts/types/post.entity";
 import type { User, UserProfile } from "@/features/users/types/user.type";
 import chevronRightUrl from "@/features/shared/assets/icons/chevronRight.svg?url";
 import warningIconUrl from "@/features/shared/assets/icons/warning.svg?url";
@@ -186,7 +186,6 @@ const demoModerationPost: Post = {
     },
   ],
 };
-
 
 const demoStore = configureStore({
   reducer: {

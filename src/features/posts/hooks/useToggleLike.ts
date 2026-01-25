@@ -1,7 +1,7 @@
 import fetchClient from "@/lib/fetchClient";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Post } from "../types/post.type";
 import toast from "react-hot-toast";
+import { PostResponseDto } from "../types/post.dto";
 
 export function useToggleLike() {
   const queryClient = useQueryClient();
@@ -18,7 +18,7 @@ export function useToggleLike() {
         if (!oldData) return oldData;
 
         const newPages = oldData.pages.map((page: any) => {
-          return page.map((post: Post) => {
+          return page.map((post: PostResponseDto) => {
             if (post.id === postId) {
               const wasLiked = post.isLikedByMe;
 

@@ -1,6 +1,6 @@
 export type ModerationStatus = "approved" | "pending" | "rejected";
 
-export interface ContentBase<TTimestamp> {
+export interface ContentBase {
   id: string;
   userId: string;
   userName: string;
@@ -10,8 +10,8 @@ export interface ContentBase<TTimestamp> {
   likesCount: number;
   isLikedByMe?: boolean;
 
-  createdAt: TTimestamp;
-  updatedAt?: TTimestamp;
+  createdAt: Date;
+  updatedAt?: Date;
 
   moderationStatus: ModerationStatus;
   flaggedReasons?: string[];

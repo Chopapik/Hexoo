@@ -1,7 +1,4 @@
-import { FirebasePostRepository } from "./implementations/firebasePostRepository";
-import { IPostRepository } from "./postRepository.interface";
+import { PostFirebaseRepository } from "./post.firebase.repository";
+import { PostRepository } from "./post.repository.interface";
 
-const postRepository: IPostRepository = new FirebasePostRepository();
-
-export { postRepository };
-export type { IPostRepository };
+export const postRepository: PostRepository = new PostFirebaseRepository();

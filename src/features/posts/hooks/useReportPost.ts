@@ -2,16 +2,11 @@ import { useMutation } from "@tanstack/react-query";
 import fetchClient from "@/lib/fetchClient";
 import toast from "react-hot-toast";
 import { ApiError } from "@/lib/AppError";
-
-type ReportPayload = {
-  postId: string;
-  reason: string;
-  details?: string;
-};
+import { PostReportDto } from "../types/post.dto";
 
 export default function useReportPost(onSuccessCallback?: () => void) {
   return useMutation({
-    mutationFn: async ({ postId, reason, details }: ReportPayload) => {
+    mutationFn: async ({ postId, reason, details }: PostReportDto) => {
       await fetchClient.post(`/posts/${postId}/report`, { reason, details });
     },
     onSuccess: () => {
