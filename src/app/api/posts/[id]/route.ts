@@ -2,12 +2,14 @@ import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import { NextRequest } from "next/server";
 import { UpdatePostDto } from "@/features/posts/types/post.dto";
-import { getPostById, updatePost } from "@/features/posts/api/services/ index";
+import { postService } from "@/features/posts/api/services/ index";
+import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
 
 export const GET = withErrorHandling(
   async (req: NextRequest, context: { params: Promise<{ id: string }> }) => {
     const { id } = await context.params;
-    const post = await getPostById(id);
+    const session = await getUserFromSession().catch(() => null);
+    const post = await postService.getPostById(id, session);
     return handleSuccess(post);
   },
 );
@@ -15,6 +17,7 @@ export const GET = withErrorHandling(
 export const PUT = withErrorHandling(
   async (req: NextRequest, context: { params: Promise<{ id: string }> }) => {
     const { id } = await context.params;
+    const session = await getUserFromSession();
     const contentType = req.headers.get("content-type") || "";
 
     if (contentType.includes("multipart/form-data")) {
@@ -23,7 +26,7 @@ export const PUT = withErrorHandling(
       const device = String(form.get("device"));
       const imageFile = form.get("imageFile");
 
-      const result = await updatePost(id, {
+      const result = await postService.updatePost(session, id, {
         text,
         device,
         imageFile,
@@ -32,7 +35,7 @@ export const PUT = withErrorHandling(
     }
 
     const body = await req.json();
-    const result = await updatePost(id, body);
+    const result = await postService.updatePost(session, id, body);
     return handleSuccess(result, 201);
   },
 );
