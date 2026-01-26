@@ -1,22 +1,147 @@
 "use client";
 
+import { useMemo } from "react";
 import Button from "@/features/shared/components/ui/Button";
 import TextInput from "@/features/shared/components/ui/TextInput";
 import keyIconUrl from "@/features/shared/assets/icons/key.svg?url";
 import warningIconUrl from "@/features/shared/assets/icons/warning.svg?url";
 import Image from "next/image";
 import Link from "next/link";
+import { Message } from "@/features/shared/components/ui/TextInput";
 
 import useRegister from "../hooks/useRegister";
 import { RegisterData } from "../types/auth.type";
 import { parseRegisterErrorMessages } from "../utils/registerFormValidation";
 import { useRegisterForm } from "../hooks/useRegisterForm";
+import { useCheckUsername } from "../hooks/useCheckUsername";
+import { useCheckEmail } from "../hooks/useCheckEmail";
 
 export default function RegisterForm() {
-  const { register, handleSubmit, errors, handleServerErrors } =
-    useRegisterForm();
+  const {
+    register,
+    handleSubmit,
+    errors,
+    handleServerErrors,
+    watchedName,
+    watchedEmail,
+    watchedPassword,
+  } = useRegisterForm();
 
   const { handleRegister, isLoading } = useRegister(handleServerErrors);
+  const {
+    isChecking: isCheckingUsername,
+    isAvailable: isUsernameAvailable,
+    error: usernameError,
+  } = useCheckUsername(watchedName || "");
+  const {
+    isChecking: isCheckingEmail,
+    isAvailable: isEmailAvailable,
+    error: emailError,
+  } = useCheckEmail(watchedEmail || "");
+
+  const nameMessages = useMemo((): Message[] => {
+    const validationMessages = parseRegisterErrorMessages(errors.name?.message);
+
+    if (validationMessages.length > 0) {
+      return validationMessages;
+    }
+
+    if (usernameError === "CONFLICT") {
+      return [
+        {
+          type: "Dismiss",
+          text: "Ta nazwa użytkownika jest już zajęta",
+        },
+      ];
+    }
+
+    if (
+      isUsernameAvailable === true &&
+      watchedName &&
+      watchedName.trim().length >= 3 &&
+      !isCheckingUsername
+    ) {
+      return [
+        {
+          type: "Success",
+          text: "Nazwa użytkownika jest dostępna",
+        },
+      ];
+    }
+
+    return [];
+  }, [
+    errors.name?.message,
+    usernameError,
+    isUsernameAvailable,
+    watchedName,
+    isCheckingUsername,
+  ]);
+
+  const emailMessages = useMemo((): Message[] => {
+    const validationMessages = parseRegisterErrorMessages(
+      errors.email?.message,
+    );
+
+    if (validationMessages.length > 0) {
+      return validationMessages;
+    }
+
+    if (emailError === "CONFLICT") {
+      return [
+        {
+          type: "Dismiss",
+          text: "Ten email jest już zajęty",
+        },
+      ];
+    }
+
+    if (
+      isEmailAvailable === true &&
+      watchedEmail &&
+      watchedEmail.trim().length > 0 &&
+      !isCheckingEmail
+    ) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (emailRegex.test(watchedEmail.trim())) {
+        return [
+          {
+            type: "Success",
+            text: "Email jest dostępny",
+          },
+        ];
+      }
+    }
+
+    return [];
+  }, [
+    errors.email?.message,
+    emailError,
+    isEmailAvailable,
+    watchedEmail,
+    isCheckingEmail,
+  ]);
+
+  const passwordMessages = useMemo((): Message[] => {
+    const validationMessages = parseRegisterErrorMessages(
+      errors.password?.message,
+    );
+
+    if (validationMessages.length > 0) {
+      return validationMessages;
+    }
+
+    if (watchedPassword && watchedPassword.length >= 8) {
+      return [
+        {
+          type: "Success",
+          text: "Hasło jest poprawne",
+        },
+      ];
+    }
+
+    return [];
+  }, [errors.password?.message, watchedPassword]);
 
   const onSubmit = async (data: RegisterData) => {
     await handleRegister(data);
@@ -41,7 +166,7 @@ export default function RegisterForm() {
           label="Nazwa użytkownika"
           placeholder="podaj imię"
           {...register("name")}
-          messages={parseRegisterErrorMessages(errors.name?.message)}
+          messages={nameMessages}
         />
 
         <TextInput
@@ -49,7 +174,7 @@ export default function RegisterForm() {
           placeholder="podaj email"
           type="email"
           {...register("email")}
-          messages={parseRegisterErrorMessages(errors.email?.message)}
+          messages={emailMessages}
         />
 
         <TextInput
@@ -57,7 +182,7 @@ export default function RegisterForm() {
           type="password"
           placeholder="podaj hasło"
           {...register("password")}
-          messages={parseRegisterErrorMessages(errors.password?.message)}
+          messages={passwordMessages}
         />
         <div className="self-stretch w-full items-center flex flex-col">
           <label className="flex items-center gap-3 cursor-pointer group">

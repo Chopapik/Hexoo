@@ -16,9 +16,11 @@ export class UserFirebaseRepository implements UserRepository {
       role: string;
     },
   ): Promise<any> {
+    const normalizedName = userData.name.trim().toLowerCase();
     const userDoc = {
       uid,
       name: userData.name,
+      nameLowercase: normalizedName,
       email: userData.email,
       role: userData.role,
       createdAt: FieldValue.serverTimestamp(),
@@ -136,9 +138,16 @@ export class UserFirebaseRepository implements UserRepository {
   }
 
   async updateUser(uid: string, data: Partial<User>): Promise<void> {
-    await this.collection.doc(uid).update({
+    const updateData: any = {
       ...data,
       updatedAt: FieldValue.serverTimestamp(),
-    });
+    };
+
+    // Jeśli aktualizujemy name, zaktualizuj też nameLowercase
+    if (data.name !== undefined) {
+      updateData.nameLowercase = data.name.trim().toLowerCase();
+    }
+
+    await this.collection.doc(uid).update(updateData);
   }
 }

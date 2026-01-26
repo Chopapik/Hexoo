@@ -13,7 +13,8 @@ export default function ValidationMessage({
   className = "",
 }: ValidationMessageProps) {
   let colorClass = "";
-  const sizeClass = "text-sm font-normal font-Roboto";
+  const sizeClass =
+    "text-sm font-normal font-Roboto transition-colors duration-300 ease-in-out";
   let icon = <></>;
 
   switch (message.type) {
@@ -79,9 +80,9 @@ export default function ValidationMessage({
   return (
     <div
       data-type={message.type}
-      className={`px-1 pt-1 inline-flex justify-start items-start gap-2 animate-in fade-in slide-in-from-top-1 duration-200 w-full ${className}`}
+      className={`px-1 pt-1 inline-flex justify-start items-start gap-2 animate-in fade-in slide-in-from-top-1 duration-200 transition-all ease-in-out w-full ${className}`}
     >
-      <div className="flex justify-start items-start overflow-hidden pt-0.5">
+      <div className="flex justify-start items-start overflow-hidden pt-0.5 transition-colors duration-300 ease-in-out">
         {icon}
       </div>
       <div className={`justify-start ${colorClass} ${sizeClass}`}>

@@ -10,8 +10,9 @@ export function useRegisterForm() {
   const {
     register,
     handleSubmit,
-
+    watch,
     setError,
+    clearErrors,
     formState: { errors, isSubmitting },
   } = useForm<RegisterData>({
     resolver: zodResolver(RegisterSchema),
@@ -22,6 +23,10 @@ export function useRegisterForm() {
       password: "",
     },
   });
+
+  const watchedName = watch("name");
+  const watchedEmail = watch("email");
+  const watchedPassword = watch("password");
 
   const handleServerErrors = (errorCode: string, field: registerFields) => {
     console.log(errorCode, field);
@@ -34,8 +39,14 @@ export function useRegisterForm() {
   return {
     register,
     handleSubmit,
+    watch,
+    watchedName,
+    watchedEmail,
+    watchedPassword,
     errors,
     isSubmitting,
     handleServerErrors,
+    setError,
+    clearErrors,
   };
 }
