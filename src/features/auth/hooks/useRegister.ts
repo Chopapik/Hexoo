@@ -35,10 +35,28 @@ export default function useRegister(onError: ErrorCallback) {
     }
 
     try {
+      const checkResponse = await fetchClient.post("/auth/check-username", {
+        username: data.name,
+      });
+      const { available } = checkResponse;
+
+      if (!available) {
+        onError("CONFLICT", "name");
+        return;
+      }
+    } catch (error: unknown) {
+      if (error instanceof ApiError && error.code === "CONFLICT") {
+        onError("CONFLICT", "name");
+        return;
+      }
+      console.error("Failed to check username availability:", error);
+    }
+
+    try {
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         data.email,
-        data.password
+        data.password,
       );
       await updateProfile(userCredential.user, { displayName: data.name });
 
