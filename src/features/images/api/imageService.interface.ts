@@ -6,7 +6,7 @@ export interface ImageUploadResult {
   sizeBytes: number;
 }
 
-export interface IImageService {
+export interface ImageService {
   uploadImage(
     file: File | Blob,
     uid: string,

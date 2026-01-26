@@ -1,6 +1,6 @@
 import { Like } from "@/features/likes/types/like.type";
 
-export interface ILikeRepository {
+export interface LikeRepository {
   toggleLike(
     userId: string,
     parentId: string,

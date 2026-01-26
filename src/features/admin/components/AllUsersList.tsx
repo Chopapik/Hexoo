@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import fetchClient from "@/lib/fetchClient";
 import Button from "@/features/shared/components/ui/Button";
-import type { User } from "@/features/users/types/user.type";
+import type { User } from "@/features/users/types/user.entity";
 import AdminUserEditModal from "./AdminUserEditModal";
 import AdminUserCreateModal from "./AdminUserCreateModal";
 import { formatDate } from "@/features/shared/utils/dateUtils";

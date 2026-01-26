@@ -9,7 +9,7 @@ import {
 } from "../types/comment.type";
 import { formatZodErrorFlat } from "@/lib/zod";
 import { performModeration } from "@/features/moderation/utils/assessSafety";
-import { getUsersByIds } from "@/features/users/api/services/userService";
+import { getUsersByIds } from "@/features/users/api/services";
 
 export const addComment = async (data: AddCommentDto) => {
   const user = await getUserFromSession();

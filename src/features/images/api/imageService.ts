@@ -1,17 +1,17 @@
-import admin from "firebase-admin";
 import { randomUUID } from "crypto";
 import { createAppError } from "@/lib/AppError";
+import { adminStorage } from "@/lib/firebaseAdmin";
 import sharp from "sharp";
 
-const bucket = admin.storage().bucket();
-
-const ensureBucket = () => {
+const getBucket = () => {
+  const bucket = adminStorage.bucket();
   if (!bucket) {
     throw createAppError({
       code: "SERVICE_UNAVAILABLE",
-      message: "[imageService.ensureBucket] Storage bucket is not configured",
+      message: "[imageService.getBucket] Storage bucket is not configured",
     });
   }
+  return bucket;
 };
 
 export const uploadImage = async (
@@ -19,7 +19,7 @@ export const uploadImage = async (
   uid: string,
   storageFolder: string
 ) => {
-  ensureBucket();
+  const bucket = getBucket();
 
   if (!file) {
     throw createAppError({
@@ -103,7 +103,7 @@ export const uploadImage = async (
 
 export const deleteImage = async (storagePath: string | null | undefined) => {
   if (!storagePath) return;
-  ensureBucket();
+  const bucket = getBucket();
   try {
     await bucket
       .file(storagePath)

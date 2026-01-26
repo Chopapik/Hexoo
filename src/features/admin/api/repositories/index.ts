@@ -1,8 +1,8 @@
 import { FirebaseActivityRepository } from "./implementations/firebaseActivityRepository";
-import { IActivityRepository } from "./activityRepository.interface";
+import { ActivityRepository } from "./activityRepository.interface";
 
-const activityRepository: IActivityRepository =
+const activityRepository: ActivityRepository =
   new FirebaseActivityRepository();
 
 export { activityRepository };
-export type { IActivityRepository };
+export type { ActivityRepository };

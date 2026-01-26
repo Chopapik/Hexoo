@@ -1,14 +1,14 @@
 import { adminDb } from "@/lib/firebaseAdmin";
 import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
 import { createAppError } from "@/lib/AppError";
-import { Post } from "@/features/posts/types/post.type";
 import { FieldValue } from "firebase-admin/firestore";
 import {
   blockUser,
   getUsersByIds,
-} from "@/features/users/api/services/userService";
-import { UserBlockData } from "@/features/users/types/user.type";
+} from "@/features/users/api/services";
+import { BlockUserDto } from "@/features/users/types/user.dto";
 import { deleteImage } from "@/features/images/api/imageService";
+import { Post } from "@/features/posts/types/post.entity";
 
 export const ensureModeratorOrAdmin = async () => {
   const session = await getUserFromSession();
@@ -127,7 +127,7 @@ export const reviewPost = async (
         uidToBlock: transactionResult.authorId,
         bannedBy: moderator.uid,
         bannedReason: `Decision on post ${postId}`,
-      } as UserBlockData);
+      } as BlockUserDto);
     } catch (error) {
       console.error(
         `[ReviewPost] Failed to ban user ${transactionResult.authorId} after post review.`,

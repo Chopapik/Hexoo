@@ -6,7 +6,6 @@ import {
 } from "./post.repository.interface";
 import { Post } from "../../types/post.entity";
 import { ReportDetails } from "../../types/post.type";
-import { PostResponseDto } from "../../types/post.dto";
 
 export class PostFirebaseRepository implements PostRepository {
   private get collection() {

@@ -1,7 +1,7 @@
 import { FirebaseLikeRepository } from "./implementations/firebaseLikeRepository";
-import { ILikeRepository } from "./likeRepository.interface";
+import { LikeRepository } from "./likeRepository.interface";
 
-const likeRepository: ILikeRepository = new FirebaseLikeRepository();
+const likeRepository: LikeRepository = new FirebaseLikeRepository();
 
 export { likeRepository };
-export type { ILikeRepository };
+export type { LikeRepository };

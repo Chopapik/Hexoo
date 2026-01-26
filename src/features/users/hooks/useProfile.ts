@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import type { UserProfile } from "@/features/users/types/user.type";
+import type { UserProfileDto } from "@/features/users/types/user.dto";
 import fetchClient from "@/lib/fetchClient";
 
-export default function useProfile(name: string, initialData?: UserProfile) {
+export default function useProfile(name: string, initialData?: UserProfileDto) {
   const query = useQuery({
     queryKey: ["profile", name],
     retry: false,
@@ -10,7 +10,7 @@ export default function useProfile(name: string, initialData?: UserProfile) {
     staleTime: 1000 * 60 * 5,
 
     queryFn: async ({ signal }) => {
-      const response = await fetchClient.get<{ user: UserProfile }>(
+      const response = await fetchClient.get<{ user: UserProfileDto }>(
         `/user/profile/${name}`,
         { signal }
       );

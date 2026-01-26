@@ -1,11 +1,12 @@
-import { IUserRepository } from "../userRepository.interface";
-import { User, UserBlockData } from "@/features/users/types/user.type";
+import { UserRepository, BlockUserDBInput } from "./user.repository.interface";
+import { User } from "../../types/user.entity";
 import { adminDb, adminAuth } from "@/lib/firebaseAdmin";
 import { FieldValue } from "firebase-admin/firestore";
-import { createAppError } from "@/lib/AppError";
 
-export class FirebaseUserRepository implements IUserRepository {
-  private collection = adminDb.collection("users");
+export class UserFirebaseRepository implements UserRepository {
+  private get collection() {
+    return adminDb.collection("users");
+  }
 
   async createUser(
     uid: string,
@@ -80,7 +81,7 @@ export class FirebaseUserRepository implements IUserRepository {
     return usersMap;
   }
 
-  async blockUser(data: UserBlockData): Promise<void> {
+  async blockUser(data: BlockUserDBInput): Promise<void> {
     if (!data.uidToBlock) throw new Error("uidToBlock is required");
 
     await adminAuth.updateUser(data.uidToBlock, { disabled: true });

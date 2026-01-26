@@ -5,7 +5,7 @@ import {
   UpdatePostDto,
 } from "../../types/post.dto";
 
-export interface IPostService {
+export interface PostService {
   reportPost(
     session: SessionData,
     postId: string,
