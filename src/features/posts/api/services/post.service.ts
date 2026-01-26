@@ -4,7 +4,7 @@ import { deleteImage } from "@/features/images/api/imageService";
 import {
   getUsersByIds,
   getUserByUid,
-} from "@/features/users/api/services/userService";
+} from "@/features/users/api/services";
 import { likeRepository } from "@/features/likes/api/repositories";
 
 import { Post } from "../../types/post.entity";

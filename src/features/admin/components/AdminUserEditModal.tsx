@@ -10,8 +10,8 @@ import Button from "@/features/shared/components/ui/Button";
 import type {
   User,
   UserRole,
-  UserDataUpdate,
 } from "@/features/users/types/user.type";
+import type { UpdateUserDto } from "@/features/users/types/user.dto";
 import useAdminUpdateUserAccount from "../hooks/user/useAdminUpdateUserAccount";
 import useAdminUpdateUserPassword from "../hooks/user/useAdminUpdateUserPassword";
 import useBlockUser from "../hooks/user/useBlockUser";
@@ -28,7 +28,7 @@ export default function AdminUserEditModal({
   user: User | null;
   onClose: () => void;
 }) {
-  const [newUserData, setNewUserData] = useState<Partial<UserDataUpdate>>({
+  const [newUserData, setNewUserData] = useState<Partial<UpdateUserDto>>({
     name: "",
     role: undefined,
   });
@@ -54,7 +54,7 @@ export default function AdminUserEditModal({
   }, [user]);
 
   const handleFieldChange = (
-    field: keyof UserDataUpdate,
+    field: keyof UpdateUserDto,
     value: string | UserRole,
   ) => {
     setNewUserData((prev) => ({

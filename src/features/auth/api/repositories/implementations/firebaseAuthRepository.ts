@@ -1,9 +1,9 @@
-import { IAuthRepository } from "../authRepository.interface";
+import { AuthRepository } from "../authRepository.interface";
 import { adminAuth } from "@/lib/firebaseAdmin";
 import { DecodedIdToken } from "firebase-admin/auth";
 import { createAppError } from "@/lib/AppError";
 
-export class FirebaseAuthRepository implements IAuthRepository {
+export class FirebaseAuthRepository implements AuthRepository {
   async verifyIdToken(idToken: string): Promise<DecodedIdToken> {
     try {
       return await adminAuth.verifyIdToken(idToken);

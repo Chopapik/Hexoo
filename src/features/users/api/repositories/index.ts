@@ -1,8 +1,4 @@
-import { FirebaseUserRepository } from "./implementations/firebaseUserRepository";
-import { IUserRepository } from "./userRepository.interface";
+import { UserFirebaseRepository } from "./user.firebase.repository";
+import { UserRepository } from "./user.repository.interface";
 
-// Singleton instance
-const userRepository: IUserRepository = new FirebaseUserRepository();
-
-export { userRepository };
-export type { IUserRepository };
+export const userRepository: UserRepository = new UserFirebaseRepository();

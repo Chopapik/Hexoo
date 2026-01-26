@@ -58,7 +58,8 @@ import type {
 import type { ValidationMessage as ValidationMessageType } from "@/features/shared/types/validation.type";
 import type { SessionData } from "@/features/me/me.type";
 import { Post } from "@/features/posts/types/post.entity";
-import type { User, UserProfile } from "@/features/users/types/user.type";
+import type { User } from "@/features/users/types/user.entity";
+import type { UserProfileDto } from "@/features/users/types/user.dto";
 import chevronRightUrl from "@/features/shared/assets/icons/chevronRight.svg?url";
 import warningIconUrl from "@/features/shared/assets/icons/warning.svg?url";
 import cameraIconUrl from "@/features/shared/assets/icons/camera.svg?url";
@@ -120,7 +121,7 @@ const demoSessionUser: SessionData = {
   avatarUrl: undefined,
 };
 
-const demoUserProfile: UserProfile = {
+const demoUserProfile: UserProfileDto = {
   uid: "profile-1",
   name: "Ola Profile",
   avatarUrl: undefined,

@@ -1,4 +1,4 @@
-import { unblockUser } from "@/features/users/api/services/userService";
+import { unblockUser } from "@/features/users/api/services";
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import { NextRequest } from "next/server";

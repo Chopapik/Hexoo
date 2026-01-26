@@ -10,7 +10,7 @@ export type ActivityType =
   | "USER_RESTRICTED"
   | "USER_UNRESTRICTED";
 
-export interface IActivityService {
+export interface ActivityService {
   logActivity(
     userId: string,
     action: ActivityType,
