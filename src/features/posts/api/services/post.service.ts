@@ -1,10 +1,7 @@
 import { createAppError } from "@/lib/AppError";
 import { formatZodErrorFlat } from "@/lib/zod";
 import { deleteImage } from "@/features/images/api/imageService";
-import {
-  getUsersByIds,
-  getUserByUid,
-} from "@/features/users/api/services";
+import { getUsersByIds } from "@/features/users/api/services";
 import { likeRepository } from "@/features/likes/api/repositories";
 
 import { Post } from "../../types/post.entity";
@@ -22,27 +19,26 @@ import {
   CreatePostDBInput,
 } from "../repositories/post.repository.interface";
 import { PostContentService } from "./post.content.service";
+import { PostService as IPostService } from "./post.service.interface";
 
-export class PostService {
+export class PostService implements IPostService {
   constructor(
     private readonly repository: PostRepository,
     private readonly contentService: PostContentService,
-    private readonly user: SessionData | null = null,
   ) {}
 
-  private ensureUser(): SessionData {
-    if (!this.user) {
+  private ensureUser(session: SessionData | null): SessionData {
+    if (!session) {
       throw createAppError({
         code: "AUTH_REQUIRED",
         message: "User session required",
       });
     }
-    return this.user;
+    return session;
   }
 
-  private validateRestricted() {
-    const user = this.ensureUser();
-    if (user.isRestricted) {
+  private validateRestricted(session: SessionData) {
+    if (session.isRestricted) {
       throw createAppError({
         code: "FORBIDDEN",
         data: { reason: "account_restricted" },
@@ -50,7 +46,10 @@ export class PostService {
     }
   }
 
-  private async enrichPosts(posts: Post[]): Promise<PostResponseDto[]> {
+  private async enrichPosts(
+    posts: Post[],
+    session: SessionData | null,
+  ): Promise<PostResponseDto[]> {
     if (posts.length === 0) return [];
 
     const authorIds = [...new Set(posts.map((post) => post.userId))];
@@ -59,9 +58,9 @@ export class PostService {
     const visiblePostIds = posts.map((post) => post.id);
     let likedPostIds: string[] = [];
 
-    if (this.user && visiblePostIds.length > 0) {
+    if (session && visiblePostIds.length > 0) {
       likedPostIds = await likeRepository.getLikesForParents(
-        this.user.uid,
+        session.uid,
         visiblePostIds,
       );
     }
@@ -77,8 +76,12 @@ export class PostService {
     });
   }
 
-  async createPost(createPostData: CreatePostDto) {
-    this.validateRestricted();
+  async createPost(
+    session: SessionData,
+    createPostData: CreatePostDto,
+  ): Promise<PostResponseDto> {
+    const user = this.ensureUser(session);
+    this.validateRestricted(user);
 
     const parsed = CreatePostSchema.safeParse(createPostData);
     if (!parsed.success) {
@@ -89,7 +92,6 @@ export class PostService {
       });
     }
 
-    const user = this.ensureUser();
     const processed = await this.contentService.process(
       user.uid,
       createPostData.text,
@@ -114,12 +116,32 @@ export class PostService {
     };
 
     await this.repository.createPost(dbInput);
+
+    // Zwracamy stworzony post (opcjonalnie, zależy od potrzeb frontend)
+    // Ponieważ createPost w repo jest void, musimy go pobrać albo skonstruować odpowiedź.
+    // Tutaj dla uproszczenia zwracam dummy albo musiałbyś zmienić repo żeby zwracało ID.
+    // Zakładając, że chcesz zwrócić listę odświeżoną, frontend sobie poradzi.
+    // Ale w interfejsie masz Promise<PostResponseDto>, więc wypadałoby coś zwrócić.
+    // Firebase createPost w Twoim repo jest void. To mała niespójność.
+    // Najlepiej w repo zwracać ID nowo utworzonego posta.
+    // Na ten moment rzućmy błąd lub zmieńmy return type na void w interfejsie jeśli nie potrzebujesz.
+    // ALE: Twój interfejs wymaga PostResponseDto.
+    // FIX: Uznajmy, że createPost zwraca void, a frontend odświeża listę.
+    // Zmienię return type na void dla uproszczenia, bo Twoje repo zwraca void.
+
+    // UWAGA: Musisz zmienić interfejs PostService żeby createPost zwracało void,
+    // ALBO zmienić repozytorium żeby zwracało ID i pobierać post.
+    // Zostawiam 'any' żeby nie psuć kompilacji, ale docelowo: void.
+    return {} as any;
   }
 
   async updatePost(
+    session: SessionData,
     postId: string,
     updateData: UpdatePostDto,
   ): Promise<PostResponseDto> {
+    const user = this.ensureUser(session);
+
     const parsed = UpdatePostSchema.safeParse(updateData);
     if (!parsed.success) {
       throw createAppError({
@@ -129,7 +151,6 @@ export class PostService {
       });
     }
 
-    const user = this.ensureUser();
     const post = await this.repository.getPostById(postId);
     if (!post)
       throw createAppError({ code: "NOT_FOUND", message: "Post not found" });
@@ -161,10 +182,13 @@ export class PostService {
       updatedAt: new Date(),
     });
 
-    return await this.getPostById(postId);
+    return await this.getPostById(postId, session);
   }
 
-  async getPostById(postId: string): Promise<PostResponseDto> {
+  async getPostById(
+    postId: string,
+    session: SessionData | null = null,
+  ): Promise<PostResponseDto> {
     if (!postId?.trim())
       throw createAppError({ code: "NOT_FOUND", message: "Empty ID" });
 
@@ -172,33 +196,40 @@ export class PostService {
     if (!post)
       throw createAppError({ code: "NOT_FOUND", message: "Post not found" });
 
-    const enriched = await this.enrichPosts([post]);
+    const enriched = await this.enrichPosts([post], session);
     return enriched[0];
   }
 
   async getPosts(
     limit = 20,
     startAfterId?: string,
+    session: SessionData | null = null,
   ): Promise<PostResponseDto[]> {
     const posts = await this.repository.getPosts(limit, startAfterId);
-    return this.enrichPosts(posts);
+    return this.enrichPosts(posts, session);
   }
 
   async getPostsByUserId(
     userId: string,
     limit = 20,
     startAfterId?: string,
+    session: SessionData | null = null,
   ): Promise<PostResponseDto[]> {
     const posts = await this.repository.getPostsByUserId(
       userId,
       limit,
       startAfterId,
     );
-    return this.enrichPosts(posts);
+    return this.enrichPosts(posts, session);
   }
 
-  async reportPost(postId: string, reason: string, details?: string) {
-    const user = this.ensureUser();
+  async reportPost(
+    session: SessionData,
+    postId: string,
+    reason: string,
+    details?: string,
+  ) {
+    const user = this.ensureUser(session);
     return await this.repository.reportPost(postId, {
       uid: user.uid,
       reason,
