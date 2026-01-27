@@ -26,10 +26,11 @@ export const POST = withErrorHandling(async (req: NextRequest) => {
 });
 
 export const GET = withErrorHandling(async (req: NextRequest) => {
+  const session = await getUserFromSession();
   const { searchParams } = new URL(req.url);
   const limit = parseInt(searchParams.get("limit") || "20", 10);
   const startAfter = searchParams.get("startAfter") || undefined;
 
-  const result = await postService.getPosts(limit, startAfter);
+  const result = await postService.getPosts(limit, startAfter, session);
   return handleSuccess(result);
 });
