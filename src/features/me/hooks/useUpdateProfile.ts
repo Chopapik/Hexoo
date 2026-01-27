@@ -5,6 +5,7 @@ import { setUser } from "@/features/auth/store/authSlice";
 import { useRouter } from "next/navigation";
 import { ApiError } from "@/lib/AppError";
 import toast from "react-hot-toast";
+import { UserProfileDto } from "@/features/users/types/user.dto";
 
 type ErrorCallback = (errorCode: string, field?: string) => void;
 
@@ -26,20 +27,41 @@ export default function useUpdateProfile(onError?: ErrorCallback) {
       if (data.name) formData.append("name", data.name);
       if (data.avatarFile) formData.append("avatarFile", data.avatarFile);
 
-      return await fetchClient.put<{ data: any }>(`/me/profile`, formData);
+      return await fetchClient.put<{ data: UserProfileDto }>(
+        `/me/profile`,
+        formData,
+      );
     },
-    onSuccess: (response) => {
-      const updatedUser = response.data;
-      if (updatedUser) {
-        if (windowUser && updatedUser.name !== windowUser.name) {
-          router.push(`/profile/${updatedUser.name}`);
+    onSuccess: async (response) => {
+      const updatedProfile = response.data;
+
+      if (updatedProfile && windowUser) {
+        const newSessionData = {
+          ...windowUser,
+          name: updatedProfile.name,
+          avatarUrl: updatedProfile.avatarUrl,
+        };
+
+        dispatch(setUser(newSessionData));
+
+        const previousName = windowUser.name;
+        const nameChanged = updatedProfile.name !== previousName;
+
+        if (nameChanged) {
+          router.push(`/profile/${updatedProfile.name}`);
         } else {
-          router.push(`/profile/${updatedUser.name}`);
-          queryClient.invalidateQueries({
-            queryKey: ["profile", windowUser?.name],
+          await queryClient.invalidateQueries({
+            queryKey: ["profile", updatedProfile.name],
           });
         }
-        dispatch(setUser(updatedUser));
+
+        const uid = updatedProfile.uid || windowUser.uid;
+        if (uid) {
+          await queryClient.invalidateQueries({
+            queryKey: ["posts", "user", uid],
+          });
+        }
+
         toast.success("Profil został zaktualizowany!");
       }
     },
@@ -47,22 +69,17 @@ export default function useUpdateProfile(onError?: ErrorCallback) {
       if (error instanceof ApiError) {
         const errorCode = error.code;
 
-        // Handle specific error codes
         if (errorCode === "CONFLICT") {
           onError?.(errorCode, "name");
         } else if (errorCode === "POLICY_VIOLATION") {
           onError?.(errorCode, "root");
         } else if (errorCode === "VALIDATION_ERROR") {
-          // Handle Zod validation errors from API
           const details = error.details as Record<string, string[]> | undefined;
           if (details) {
-            // Map Zod field errors to form fields
             Object.keys(details).forEach((field) => {
               const messages = details[field];
               if (messages && messages.length > 0) {
-                // Use the first error code from Zod
-                const zodErrorCode = messages[0];
-                onError?.(zodErrorCode, field);
+                onError?.(messages[0], field);
               }
             });
           } else {
