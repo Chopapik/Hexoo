@@ -31,10 +31,10 @@ export type UpdatePasswordData = z.infer<typeof UpdatePasswordSchema>;
 export const UpdateProfileSchema = z.object({
   name: z
     .string()
-    .trim()
     .min(3, { message: "name_too_short" })
     .max(30, { message: "name_too_long" })
     .regex(/^[a-zA-Z0-9_]+$/, { message: "name_invalid_chars" })
+    .trim()
     .optional(),
   avatarFile: z
     .instanceof(File)
@@ -43,7 +43,7 @@ export const UpdateProfileSchema = z.object({
     .refine(
       (file) =>
         !file || ["image/png", "image/jpeg", "image/webp"].includes(file.type),
-      "wrong_file_type"
+      "wrong_file_type",
     ),
 });
 

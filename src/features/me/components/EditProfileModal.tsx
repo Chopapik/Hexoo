@@ -44,6 +44,8 @@ export default function EditProfileModal({
   } = useUpdateProfileForm(user);
 
   const nameValue = watch("name") || "";
+  const nameErrorCode = errors.name?.message as string | undefined;
+  const nameLength = nameValue.trim().length;
   const avatarFileValue = watch("avatarFile");
 
   const { updateProfile, isPending } = useUpdateProfile(handleServerErrors);
@@ -209,9 +211,16 @@ export default function EditProfileModal({
                 Ta nazwa będzie widoczna publicznie — możesz użyć nicku lub
                 imienia.
               </p>
-              <p className="text-xs text-text-neutral/60 ml-1">
-                {nameValue.trim().length} / 30 znaków
-              </p>
+            <p
+              className={`text-xs ml-1 transition-colors ${
+                nameErrorCode === "name_too_short" ||
+                nameErrorCode === "name_too_long"
+                  ? "text-red-500"
+                  : "text-text-neutral/60"
+              }`}
+            >
+              {nameLength} / 30 znaków
+            </p>
             </div>
           </div>
 
