@@ -32,8 +32,6 @@ const variantClasses: Record<ButtonVariant, string> = {
   // Icon-only solid magenta with raised/glossy effect
   "icon-fuchsia-solid":
     "text-white bg-gradient-to-b from-fuchsia-600 via-fuchsia-700 to-fuchsia-900 shadow-md hover:brightness-90 hover:shadow-lg transition-all",
-  // Icon-only ghost magenta
-  "icon-fuchsia-ghost": "text-white bg-fuchsia-700/20 hover:bg-fuchsia-700/30 transition-colors",
   // Note: 'glass-card' relies on an external global CSS class for its styling.
   "glass-card": "text-white glass-card",
   // Danger variant for destructive actions
@@ -45,6 +43,14 @@ const variantClasses: Record<ButtonVariant, string> = {
   // Transparent variant with flat hover
   transparent: "bg-transparent hover:bg-white/10 transition-colors",
 };
+
+/**
+ * Classes used for the disabled/blocked state.
+ * This visually matches the previous "ghost" design,
+ * but is no longer exposed as a public variant.
+ */
+const disabledGhostClasses =
+  "text-white bg-fuchsia-700/20 hover:bg-fuchsia-700/30 transition-colors";
 
 /**
  * A customizable Button component that supports various sizes, visual variants,
@@ -87,8 +93,12 @@ export default function Button({
   const baseClasses =
     "relative inline-flex justify-center items-center gap-2 font-bold font-Plus_Jakarta_Sans leading-tight shrink-0 cursor-pointer overflow-hidden transition-all duration-300 ease-out";
 
+  // When disabled or loading, force the "ghost" look and do not expose it as a variant.
+  const visualClasses =
+    disabled || isLoading ? disabledGhostClasses : variantClasses[variant];
+
   // Ensure className from props overrides default styles
-  const combinedClasses = `${baseClasses} ${sizeClasses[size]} ${variantClasses[variant]} ${className}`;
+  const combinedClasses = `${baseClasses} ${sizeClasses[size]} ${visualClasses} ${className}`;
 
   return (
     <button

@@ -3,7 +3,6 @@ import type { MouseEventHandler, ReactNode } from "react";
 export type ButtonVariant =
   | "gradient-fuchsia"
   | "icon-fuchsia-solid"
-  | "icon-fuchsia-ghost"
   | "glass-card"
   | "danger"
   | "secondary"
