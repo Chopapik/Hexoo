@@ -5,12 +5,11 @@ export type registerFields = "name" | "email" | "password";
 export const RegisterSchema = z.object({
   email: z
     .string()
-    .trim()
     .min(1, { message: "email_required" })
     .max(255)
     .regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, {
       message: "email_invalid",
-    }),
+    }).trim(),
 
   password: z
     .string()
@@ -19,10 +18,10 @@ export const RegisterSchema = z.object({
 
   name: z
     .string()
-    .trim()
     .min(3, { message: "name_too_short" })
     .max(30, { message: "name_too_long" })
-    .regex(/^[a-zA-Z0-9_]+$/, { message: "name_invalid_chars" }),
+    .regex(/^[a-zA-Z0-9_]+$/, { message: "name_invalid_chars" })
+    .trim(),
 
   terms: z.literal(true, {
     error: () => ({ message: "terms_required" }),
@@ -32,7 +31,6 @@ export const RegisterSchema = z.object({
 export const LoginSchema = z.object({
   email: z
     .string()
-    .trim()
     .min(1, { message: "email_required" })
     .regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, {
       message: "email_invalid",

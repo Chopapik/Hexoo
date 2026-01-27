@@ -16,7 +16,10 @@ export function useUpdateProfileForm(user: UserProfileDto | null) {
     reset,
   } = useForm<UpdateProfileData>({
     resolver: zodResolver(UpdateProfileSchema),
-    mode: "onBlur",
+    // Validate on change so that the UI (counter, icon, messages)
+    // reacts immediately when the name becomes too short/too long
+    // or contains invalid characters.
+    mode: "onChange",
     defaultValues: {
       name: user?.name || "",
       avatarFile: undefined,
