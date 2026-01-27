@@ -73,7 +73,7 @@ export default function EditProfileModal({
 
   const nameError = parseUpdateProfileErrorMessages(errors.name?.message);
   const avatarFileError = parseUpdateProfileErrorMessages(
-    errors.avatarFile?.message
+    errors.avatarFile?.message,
   );
   const rootError = parseUpdateProfileErrorMessages(errors.root?.message);
 
@@ -178,18 +178,21 @@ export default function EditProfileModal({
                 PNG, JPG lub WEBP (max 5MB)
               </p>
             </div>
+            <div className="flex flex-col gap-1 h-6">
+              {avatarFileError.length > 0 && (
+                <ValidationMessage message={avatarFileError[0]} />
+              )}
+            </div>
 
-            {avatarFileError.length > 0 && (
-              <ValidationMessage message={avatarFileError[0]} />
-            )}
-
-            <input
-              type="file"
-              ref={fileInputRef}
-              className="hidden"
-              accept="image/png, image/jpeg, image/webp"
-              onChange={handleFileChange}
-            />
+            <div className="flex flex-col gap-1">
+              <input
+                type="file"
+                ref={fileInputRef}
+                className="hidden"
+                accept="image/png, image/jpeg, image/webp"
+                onChange={handleFileChange}
+              />
+            </div>
           </div>
 
           {/* Name Section */}
@@ -213,9 +216,7 @@ export default function EditProfileModal({
           </div>
 
           {/* Root error */}
-          {rootError.length > 0 && (
-            <ValidationMessage message={rootError[0]} />
-          )}
+          {rootError.length > 0 && <ValidationMessage message={rootError[0]} />}
         </form>
       </Modal>
     </>

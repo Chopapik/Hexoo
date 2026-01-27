@@ -1,10 +1,24 @@
 import { z } from "zod";
 import { Post } from "./post.entity";
 
+const MAX_IMAGE_FILE_SIZE_BYTES = 5 * 1024 * 1024;
+
 export const CreatePostSchema = z
   .object({
     text: z.string().max(2000, "text_too_long"),
-    imageFile: z.instanceof(File).optional(),
+    imageFile: z
+      .instanceof(File)
+      .optional()
+      .refine(
+        (file) => !file || file.size <= MAX_IMAGE_FILE_SIZE_BYTES,
+        "file_too_big",
+      )
+      .refine(
+        (file) =>
+          !file ||
+          ["image/png", "image/jpeg", "image/webp"].includes(file.type),
+        "wrong_file_type",
+      ),
   })
   .refine(
     (data) => {
@@ -20,7 +34,18 @@ export const CreatePostSchema = z
 
 export const UpdatePostSchema = z.object({
   text: z.string().min(1).optional(),
-  imageFile: z.instanceof(File).optional(),
+  imageFile: z
+    .instanceof(File)
+    .optional()
+    .refine(
+      (file) => !file || file.size <= MAX_IMAGE_FILE_SIZE_BYTES,
+      "file_too_big",
+    )
+    .refine(
+      (file) =>
+        !file || ["image/png", "image/jpeg", "image/webp"].includes(file.type),
+      "wrong_file_type",
+    ),
 });
 
 export const ReportPostSchema = z.object({
