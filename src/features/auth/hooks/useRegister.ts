@@ -16,15 +16,19 @@ export default function useRegister(onError: ErrorCallback) {
   const { executeRecaptcha } = useGoogleReCaptcha();
 
   const sessionMutation = useMutation({
-    mutationFn: (data: {
+    mutationFn: async (data: {
       idToken: string;
       name: string;
       email: string;
       recaptchaToken: string;
-    }) => fetchClient.post("/auth/register", data),
-
-    onSuccess: () => {
+    }) => {
+      const response = await fetchClient.post("/auth/register", data);
       router.push("/");
+      return response;
+    },
+    onError: (error) => {
+      console.error("Mutation error:", error);
+      toast.error("Wystąpił błąd podczas finalizacji rejestracji.");
     },
   });
 
@@ -63,7 +67,7 @@ export default function useRegister(onError: ErrorCallback) {
       const idToken = await userCredential.user.getIdToken();
       const recaptchaToken = await executeRecaptcha("register");
 
-      await sessionMutation.mutateAsync({
+      sessionMutation.mutate({
         idToken,
         name: data.name,
         email: data.email,
