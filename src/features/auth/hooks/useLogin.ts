@@ -16,10 +16,13 @@ export default function useLogin(onError: ErrorCallback) {
   const router = useRouter();
 
   const sessionMutation = useMutation({
-    mutationFn: (payload: { idToken: string; recaptchaToken: string }) =>
-      fetchClient.post("/auth/login", payload),
-    onSuccess: () => {
+    mutationFn: async (payload: {
+      idToken: string;
+      recaptchaToken: string;
+    }) => {
+      const response = await fetchClient.post("/auth/login", payload);
       router.push("/");
+      return response;
     },
     onError: (error: ApiError) => {
       if (!error) return;
@@ -42,7 +45,7 @@ export default function useLogin(onError: ErrorCallback) {
       const userCredential = await signInWithEmailAndPassword(
         auth,
         data.email,
-        data.password
+        data.password,
       );
 
       const recaptchaToken = await getRecaptchaToken("login");
