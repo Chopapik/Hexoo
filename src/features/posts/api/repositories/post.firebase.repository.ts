@@ -81,13 +81,16 @@ export class PostFirebaseRepository implements PostRepository {
 
       const reportsSnapshot = await reportsRef.count().get();
       const reportsCount = reportsSnapshot.data().count + 1;
-      const hidden = reportsCount >= 5;
+      const shouldHide = reportsCount >= 3;
 
-      if (hidden) {
-        transaction.update(postRef, { isHidden: true });
+      if (shouldHide) {
+        transaction.update(postRef, {
+          isHidden: true,
+          moderationStatus: "pending",
+        });
       }
 
-      return { hidden, reportsCount };
+      return { hidden: shouldHide, reportsCount };
     });
   }
 }
