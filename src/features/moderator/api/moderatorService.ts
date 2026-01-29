@@ -6,6 +6,7 @@ import { blockUser, getUsersByIds } from "@/features/users/api/services";
 import { BlockUserDto } from "@/features/users/types/user.dto";
 import { deleteImage } from "@/features/images/api/imageService";
 import { Post } from "@/features/posts/types/post.entity";
+import { ModerationPostDto } from "@/features/posts/types/post.dto";
 
 export const ensureModeratorOrAdmin = async () => {
   const session = await getUserFromSession();
@@ -21,7 +22,7 @@ export const ensureModeratorOrAdmin = async () => {
 
 import { postService } from "@/features/posts/api/services/ index";
 
-export const getModerationQueue = async () => {
+export const getModerationQueue = async (): Promise<ModerationPostDto[]> => {
   await ensureModeratorOrAdmin();
 
   const postsRef = adminDb.collection("posts");
@@ -47,7 +48,7 @@ export const getModerationQueue = async () => {
 
   const authors = await getUsersByIds(authorIds);
 
-  const postsWithAuthors = postDocs.map((post) => {
+  const postsWithAuthors: ModerationPostDto[] = postDocs.map((post) => {
     const author = authors[post.userId];
     return {
       ...post,

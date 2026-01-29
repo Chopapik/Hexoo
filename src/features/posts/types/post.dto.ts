@@ -57,7 +57,21 @@ export type CreatePostDto = z.infer<typeof CreatePostSchema>;
 export type UpdatePostDto = z.infer<typeof UpdatePostSchema>;
 export type ReportPostDto = z.infer<typeof ReportPostSchema>;
 
-export type PostResponseDto = Post & {
+export type PublicPostDto = Omit<
+  Post,
+  | "flaggedReasons"
+  | "flaggedSource"
+  | "reportsMeta"
+  | "userReports"
+  | "reviewedBy"
+  | "reviewedAt"
+> & {
+  userName: string;
+  userAvatarUrl: string | null;
+  isLikedByMe?: boolean;
+};
+
+export type ModerationPostDto = Post & {
   userName: string;
   userAvatarUrl: string | null;
   isLikedByMe?: boolean;

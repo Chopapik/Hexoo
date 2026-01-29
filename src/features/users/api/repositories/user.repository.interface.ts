@@ -1,16 +1,15 @@
 import { User } from "../../types/user.entity";
 import { BlockUserDto } from "../../types/user.dto";
+import { UserRole } from "../../types/user.type";
 
 export type CreateUserDBInput = Partial<Omit<User, "uid">> & {
   uid: string;
   name: string;
   email: string;
-  role: string;
+  role: UserRole;
 };
 
-export type UpdateUserDBInput = Partial<
-  Omit<User, "uid" | "createdAt">
->;
+export type UpdateUserDBInput = Partial<Omit<User, "uid" | "createdAt">>;
 
 export type BlockUserDBInput = BlockUserDto;
 
@@ -20,7 +19,7 @@ export interface UserRepository {
     data: {
       name: string;
       email: string;
-      role: string;
+      role: UserRole;
     },
   ): Promise<any>;
 

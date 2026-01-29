@@ -1,15 +1,15 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import fetchClient from "@/lib/fetchClient";
-import type { Post } from "@/features/posts/types/post.type";
+import type { PublicPostDto } from "@/features/posts/types/post.dto";
 
 export default function useUserPosts(userId: string) {
-  return useInfiniteQuery<Post[]>({
+  return useInfiniteQuery<PublicPostDto[]>({
     queryKey: ["posts", "user", userId],
     queryFn: async ({ pageParam }) => {
       const params = new URLSearchParams({ limit: "20" });
       if (pageParam) params.append("startAfter", pageParam as string);
 
-      return await fetchClient.get<Post[]>(
+      return await fetchClient.get<PublicPostDto[]>(
         `/posts/user/${userId}?${params.toString()}`
       );
     },

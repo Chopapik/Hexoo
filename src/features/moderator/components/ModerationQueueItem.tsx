@@ -1,5 +1,6 @@
 import { PostCard } from "@/features/posts/components/PostCard";
-import { Post, ReportDetails } from "@/features/posts/types/post.type";
+import { ModerationPostDto } from "@/features/posts/types/post.dto";
+import { ReportDetails } from "@/features/shared/types/report.type";
 import Button from "@/features/shared/components/ui/Button";
 
 export default function ModerationQueueItem({
@@ -7,7 +8,7 @@ export default function ModerationQueueItem({
   onAction,
   isPending,
 }: {
-  post: Post;
+  post: ModerationPostDto;
   onAction: (params: {
     postId: string;
     action: "approve" | "reject";

@@ -5,13 +5,13 @@ import { UserRole } from "./user.type";
 export const CreateUserSchema = z.object({
   name: z.string().min(1).max(50),
   email: z.string().email(),
-  role: z.enum(["admin", "user", "moderator"]),
+  role: z.nativeEnum(UserRole),
 });
 
 export const UpdateUserSchema = z.object({
   name: z.string().min(1).max(50).optional(),
   email: z.string().email().optional(),
-  role: z.enum(["admin", "user", "moderator"]).optional(),
+  role: z.nativeEnum(UserRole).optional(),
   avatarUrl: z.string().url().optional(),
   isActive: z.boolean().optional(),
 });
@@ -32,10 +32,7 @@ export type UpdateUserDto = z.infer<typeof UpdateUserSchema>;
 export type BlockUserDto = z.infer<typeof BlockUserSchema>;
 export type RestrictUserDto = z.infer<typeof RestrictUserSchema>;
 
-export type UserResponseDto = User & {
-  userName?: string;
-  userAvatarUrl?: string | null;
-};
+export type UserResponseDto = User;
 
 export type UserProfileDto = {
   uid: string;

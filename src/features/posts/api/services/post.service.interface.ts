@@ -1,7 +1,7 @@
 import type { SessionData } from "@/features/me/me.type";
 import {
   CreatePostDto,
-  PostResponseDto,
+  PublicPostDto,
   UpdatePostDto,
 } from "../../types/post.dto";
 
@@ -15,22 +15,22 @@ export interface PostService {
   createPost(
     session: SessionData,
     data: CreatePostDto,
-  ): Promise<PostResponseDto>;
+  ): Promise<PublicPostDto>;
   updatePost(
     session: SessionData,
     postId: string,
     data: UpdatePostDto,
-  ): Promise<PostResponseDto>;
-  getPostById(postId: string): Promise<PostResponseDto>;
+  ): Promise<PublicPostDto>;
+  getPostById(postId: string): Promise<PublicPostDto>;
   getPosts(
     limit?: number,
     startAfterId?: string,
     session?: SessionData | null,
-  ): Promise<PostResponseDto[]>;
+  ): Promise<PublicPostDto[]>;
   getPostsByUserId(
     userId: string,
     limit?: number,
     startAfterId?: string,
     session?: SessionData | null,
-  ): Promise<PostResponseDto[]>;
+  ): Promise<PublicPostDto[]>;
 }

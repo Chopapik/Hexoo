@@ -10,10 +10,10 @@ import useComments from "@/features/comments/hooks/useComments";
 import { useAppSelector } from "@/lib/store/hooks";
 import { isAsciiArt } from "../utils/asciiDetector";
 import { useMemo } from "react";
-import { PostResponseDto } from "../types/post.dto";
+import { PublicPostDto } from "../types/post.dto";
 
 interface PostModalProps {
-  post: PostResponseDto;
+  post: PublicPostDto;
   isOpen: boolean;
   onClose: () => void;
 }

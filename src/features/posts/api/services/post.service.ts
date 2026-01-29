@@ -10,7 +10,7 @@ import {
   UpdatePostDto,
   CreatePostSchema,
   UpdatePostSchema,
-  PostResponseDto,
+  PublicPostDto,
 } from "../../types/post.dto";
 import { SessionData } from "@/features/me/me.type";
 
@@ -49,7 +49,7 @@ export class PostService implements IPostService {
   private async enrichPosts(
     posts: Post[],
     session: SessionData | null,
-  ): Promise<PostResponseDto[]> {
+  ): Promise<PublicPostDto[]> {
     if (posts.length === 0) return [];
 
     const authorIds = [...new Set(posts.map((post) => post.userId))];
@@ -79,7 +79,7 @@ export class PostService implements IPostService {
   async createPost(
     session: SessionData,
     createPostData: CreatePostDto,
-  ): Promise<PostResponseDto> {
+  ): Promise<PublicPostDto> {
     const user = this.ensureUser(session);
     this.validateRestricted(user);
 
@@ -107,6 +107,7 @@ export class PostService implements IPostService {
       moderationStatus: processed.moderationStatus,
       isNSFW: processed.isNSFW,
       flaggedReasons: processed.flaggedReasons,
+      flaggedSource: processed.flaggedSource,
       likesCount: 0,
       commentsCount: 0,
       userReports: [],
@@ -134,7 +135,7 @@ export class PostService implements IPostService {
     session: SessionData,
     postId: string,
     updateData: UpdatePostDto,
-  ): Promise<PostResponseDto> {
+  ): Promise<PublicPostDto> {
     const user = this.ensureUser(session);
 
     const parsed = UpdatePostSchema.safeParse(updateData);
@@ -174,6 +175,7 @@ export class PostService implements IPostService {
       moderationStatus: processed.moderationStatus,
       isNSFW: processed.isNSFW,
       flaggedReasons: processed.flaggedReasons,
+      flaggedSource: processed.flaggedSource,
       updatedAt: new Date(),
     });
 
@@ -183,7 +185,7 @@ export class PostService implements IPostService {
   async getPostById(
     postId: string,
     session: SessionData | null = null,
-  ): Promise<PostResponseDto> {
+  ): Promise<PublicPostDto> {
     if (!postId?.trim())
       throw createAppError({ code: "NOT_FOUND", message: "Empty ID" });
 
@@ -199,7 +201,7 @@ export class PostService implements IPostService {
     limit = 20,
     startAfterId?: string,
     session: SessionData | null = null,
-  ): Promise<PostResponseDto[]> {
+  ): Promise<PublicPostDto[]> {
     const posts = await this.repository.getPosts(limit, startAfterId);
     return this.enrichPosts(posts, session);
   }
@@ -209,7 +211,7 @@ export class PostService implements IPostService {
     limit = 20,
     startAfterId?: string,
     session: SessionData | null = null,
-  ): Promise<PostResponseDto[]> {
+  ): Promise<PublicPostDto[]> {
     const posts = await this.repository.getPostsByUserId(
       userId,
       limit,
