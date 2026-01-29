@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { Layout } from "@/features/shared/components/layout/Layout";
 import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
 import { AppError } from "@/lib/AppError";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Hexoo",
@@ -24,8 +25,11 @@ export default async function RootLayout({
     } catch (error: unknown) {
       if (
         error instanceof AppError &&
-        (error.code === "AUTH_REQUIRED" || error.code === "INVALID_SESSION")
+        (error.code === "INVALID_SESSION" || error.code === "USER_NOT_FOUND")
       ) {
+        redirect("/login");
+      }
+      if (error instanceof AppError && error.code === "AUTH_REQUIRED") {
         sessionUserData = null;
       } else {
         throw error;

@@ -3,7 +3,7 @@ import { getClientIp } from "@/lib/serverUtils";
 import { isUserAuthenticated } from "@/lib/session";
 
 const BRUTE_FORCE_PATHS = ["/api/auth/login", "/api/auth/register"];
-const PUBLIC_PATHS = ["/login", "/register"];
+const PUBLIC_PATHS = ["/login", "/register", "/privacy", "/terms"];
 
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
@@ -27,7 +27,7 @@ export async function middleware(request: NextRequest) {
 
   const isPublicPath =
     PUBLIC_PATHS.some(
-      (path) => pathname === path || pathname.startsWith(`${path}/`)
+      (path) => pathname === path || pathname.startsWith(`${path}/`),
     ) || pathname.startsWith("/api/auth");
 
   if (!isLoggedIn && !isPublicPath) {
@@ -85,7 +85,7 @@ export async function middleware(request: NextRequest) {
     if (errorResponse.error?.data) {
       errorPageUrl.searchParams.set(
         "details",
-        JSON.stringify(errorResponse.error.data)
+        JSON.stringify(errorResponse.error.data),
       );
     }
 
