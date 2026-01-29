@@ -27,7 +27,10 @@ export class PostFirebaseRepository implements PostRepository {
   }
 
   async getPosts(limit: number, startAfterId?: string): Promise<Post[]> {
-    let query = this.collection.orderBy("createdAt", "desc").limit(limit);
+    let query = this.collection
+      .where("moderationStatus", "==", "approved")
+      .orderBy("createdAt", "desc")
+      .limit(limit);
 
     if (startAfterId) {
       const lastDoc = await this.collection.doc(startAfterId).get();
@@ -85,12 +88,14 @@ export class PostFirebaseRepository implements PostRepository {
 
       if (shouldHide) {
         transaction.update(postRef, {
-          isHidden: true,
           moderationStatus: "pending",
         });
       }
 
       return { hidden: shouldHide, reportsCount };
     });
+  }
+  async deletePost(postId: string): Promise<void> {
+    await this.collection.doc(postId).delete();
   }
 }

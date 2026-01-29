@@ -13,6 +13,8 @@ export interface PostRepository {
 
   updatePost(postId: string, data: UpdatePostDBInput): Promise<void>;
 
+  deletePost(postId: string): Promise<void>;
+
   getPostById(postId: string): Promise<Post | null>;
 
   getPosts(limit: number, startAfterId?: string): Promise<Post[]>;

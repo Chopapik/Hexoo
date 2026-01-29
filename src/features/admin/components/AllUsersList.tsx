@@ -19,6 +19,11 @@ enum AdminModal {
   CREATE,
 }
 
+const ROLE_STYLES: Record<string, string> = {
+  admin: "bg-red-600 text-white",
+  moderator: "bg-yellow-500 text-white",
+};
+
 export default function AllUsersList() {
   const [modal, setModal] = useState<AdminModal>(AdminModal.NONE);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -153,7 +158,12 @@ export default function AllUsersList() {
                         </td>
 
                         <td className="px-3 py-2">
-                          <span className="inline-block px-2 py-0.5 rounded-md text-xs bg-primary-neutral-stroke-default text-text-neutral">
+                          <span
+                            className={`inline-block px-2 py-0.5 rounded-md text-xs ${
+                              ROLE_STYLES[u.role ?? ""] ??
+                              "bg-primary-neutral-stroke-default text-text-neutral"
+                            }`}
+                          >
                             {u.role ?? "user"}
                           </span>
                         </td>
