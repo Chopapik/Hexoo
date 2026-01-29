@@ -27,11 +27,8 @@ const sizeClasses: Record<ButtonSize, string> = {
  */
 const variantClasses: Record<ButtonVariant, string> = {
   // Text button with gradient fill and subtle gradient border - matching Figma design
-  "gradient-fuchsia":
+  default:
     "text-white border-[0.75px] border-transparent [--btn-fill:linear-gradient(180deg,#C026D3_0%,#86198F_100%)] [background:var(--btn-fill,_linear-gradient(180deg,#C026D3_0%,#86198F_100%))_padding-box,linear-gradient(180deg,#EF72FF_3%,#61006E_100%)_border-box] shadow-md hover:brightness-90 hover:shadow-lg transition-all",
-  // Icon-only solid magenta with raised/glossy effect
-  "icon-fuchsia-solid":
-    "text-white bg-gradient-to-b from-fuchsia-600 via-fuchsia-700 to-fuchsia-900 shadow-md hover:brightness-90 hover:shadow-lg transition-all",
   // Note: 'glass-card' relies on an external global CSS class for its styling.
   "glass-card": "text-white glass-card",
   // Danger variant for destructive actions
@@ -42,6 +39,21 @@ const variantClasses: Record<ButtonVariant, string> = {
     "bg-white/5 border border-white/10 text-white hover:bg-white/10 shadow-sm backdrop-blur-sm",
   // Transparent variant with flat hover
   transparent: "bg-transparent hover:bg-white/10 transition-colors",
+  // Neutral outline
+  outline:
+    "text-white/90 border border-white/20 bg-transparent hover:bg-white/10 transition-colors",
+  // Fuchsia outline
+  "outline-fuchsia":
+    "text-fuchsia-200 border border-fuchsia-500/60 bg-transparent hover:bg-fuchsia-500/10 transition-colors",
+  // Ghost text-only
+  ghost: "text-white/80 bg-transparent hover:bg-white/10 transition-colors",
+  // Status variants
+  success:
+    "text-white bg-gradient-to-b from-emerald-600 to-emerald-800 shadow-md hover:brightness-90 hover:shadow-lg transition-all",
+  warning:
+    "text-white bg-gradient-to-b from-amber-500 to-amber-700 shadow-md hover:brightness-90 hover:shadow-lg transition-all",
+  info:
+    "text-white bg-gradient-to-b from-sky-500 to-sky-700 shadow-md hover:brightness-90 hover:shadow-lg transition-all",
 };
 
 /**
@@ -49,13 +61,22 @@ const variantClasses: Record<ButtonVariant, string> = {
  * Keeps each variant visually distinct when disabled.
  */
 const disabledVariantClasses: Record<ButtonVariant, string> = {
-  "gradient-fuchsia":
+  default:
     "text-white/80 border border-fuchsia-400/20 bg-fuchsia-700/25 shadow-none",
-  "icon-fuchsia-solid": "text-white/70 bg-fuchsia-800/50 shadow-none",
   "glass-card": "text-white/70 glass-card opacity-60 saturate-50",
   danger: "text-white/80 bg-red-900/40 border border-red-500/30 shadow-none",
   secondary: "text-white/60 bg-white/5 border border-white/10 shadow-none",
   transparent: "text-white/50 bg-transparent shadow-none",
+  outline: "text-white/50 border border-white/10 bg-transparent shadow-none",
+  "outline-fuchsia":
+    "text-fuchsia-200/50 border border-fuchsia-500/20 bg-transparent shadow-none",
+  ghost: "text-white/40 bg-transparent shadow-none",
+  success:
+    "text-white/70 bg-emerald-900/40 border border-emerald-500/25 shadow-none",
+  warning:
+    "text-white/70 bg-amber-900/40 border border-amber-500/25 shadow-none",
+  info:
+    "text-white/70 bg-sky-900/40 border border-sky-500/25 shadow-none",
 };
 
 /**
@@ -70,7 +91,7 @@ const disabledVariantClasses: Record<ButtonVariant, string> = {
  * @param {ReactNode} [props.rightIcon] - ReactNode for a right-aligned icon (takes precedence over rightIconUrl).
  * @param {ReactNode} [props.icon] - ReactNode for a central icon (takes precedence over all other icon props).
  * @param {ButtonSize} [props.size='md'] - The size of the button ('sm', 'md', 'lg', 'xl', 'icon', 'iconSm').
- * @param {ButtonVariant} [props.variant='gradient-fuchsia'] - The visual style variant of the button.
+ * @param {ButtonVariant} [props.variant='default'] - The visual style variant of the button.
  * @param {string} [props.className=''] - Additional Tailwind CSS classes for custom styling.
  * @param {MouseEventHandler<HTMLButtonElement>} [props.onClick] - Event handler for button clicks.
  * @param {string} [props.leftIconClassName=''] - Additional Tailwind CSS classes for the left icon.
@@ -86,7 +107,7 @@ export default function Button({
   rightIcon,
   icon, // Added icon prop
   size = "md",
-  variant = "gradient-fuchsia",
+  variant = "default",
   className = "",
   leftIconClassName = "",
   rightIconClassName = "",

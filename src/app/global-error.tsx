@@ -55,7 +55,7 @@ export default function GlobalError({
             onClick={() => reset()}
             text="Spróbuj ponownie"
             size="lg"
-            variant="gradient-fuchsia"
+            variant="default"
             className="w-full"
           />
 

@@ -24,7 +24,7 @@ export default function DangerZoneSection() {
             </p>
           </div>
           <Button
-            variant="icon-fuchsia-solid"
+            variant="default"
             text="Wyloguj się"
             rightIcon={<LogOut className="size-4" />}
             onClick={() => logout()}

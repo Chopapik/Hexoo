@@ -1,12 +1,17 @@
 import type { MouseEventHandler, ReactNode } from "react";
 
 export type ButtonVariant =
-  | "gradient-fuchsia"
-  | "icon-fuchsia-solid"
+  | "default"
   | "glass-card"
   | "danger"
   | "secondary"
-  | "transparent";
+  | "transparent"
+  | "outline"
+  | "outline-fuchsia"
+  | "ghost"
+  | "success"
+  | "warning"
+  | "info";
 export type ButtonSize = "sm" | "md" | "lg" | "xl" | "icon" | "iconSm";
 
 export interface ButtonProps {

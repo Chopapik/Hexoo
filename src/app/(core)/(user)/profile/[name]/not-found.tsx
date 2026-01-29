@@ -26,7 +26,7 @@ export default function ProfileNotFound() {
         <Link href="/">
           <Button
             text="Wróć na Stronę Główną"
-            variant="gradient-fuchsia"
+            variant="default"
             size="md"
             className="w-full sm:w-auto"
           />

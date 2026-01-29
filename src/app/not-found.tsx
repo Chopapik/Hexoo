@@ -39,7 +39,7 @@ export default function NotFound() {
         <Link href="/">
           <Button
             text="Wróć na Stronę Główną"
-            variant="gradient-fuchsia"
+            variant="default"
             size="md"
           />
         </Link>
