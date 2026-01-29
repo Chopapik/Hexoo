@@ -4,7 +4,7 @@ import type {
   ButtonVariant,
 } from "../../types/button.type";
 import Image from "next/image";
-import { Loader2 } from "lucide-react";
+import { Loader } from "lucide-react";
 
 /**
  * Map Tailwind CSS classes to button sizes.
@@ -52,8 +52,7 @@ const variantClasses: Record<ButtonVariant, string> = {
     "text-white bg-gradient-to-b from-emerald-600 to-emerald-800 shadow-md hover:brightness-90 hover:shadow-lg transition-all",
   warning:
     "text-white bg-gradient-to-b from-amber-500 to-amber-700 shadow-md hover:brightness-90 hover:shadow-lg transition-all",
-  info:
-    "text-white bg-gradient-to-b from-sky-500 to-sky-700 shadow-md hover:brightness-90 hover:shadow-lg transition-all",
+  info: "text-white bg-gradient-to-b from-sky-500 to-sky-700 shadow-md hover:brightness-90 hover:shadow-lg transition-all",
 };
 
 /**
@@ -75,8 +74,7 @@ const disabledVariantClasses: Record<ButtonVariant, string> = {
     "text-white/70 bg-emerald-900/40 border border-emerald-500/25 shadow-none",
   warning:
     "text-white/70 bg-amber-900/40 border border-amber-500/25 shadow-none",
-  info:
-    "text-white/70 bg-sky-900/40 border border-sky-500/25 shadow-none",
+  info: "text-white/70 bg-sky-900/40 border border-sky-500/25 shadow-none",
 };
 
 /**
@@ -122,10 +120,14 @@ export default function Button({
 
   // When disabled or loading, use the per-variant blocked look.
   const visualClasses =
-    disabled || isLoading ? disabledVariantClasses[variant] : variantClasses[variant];
+    disabled || isLoading
+      ? disabledVariantClasses[variant]
+      : variantClasses[variant];
 
   // Ensure className from props overrides default styles
-  const combinedClasses = `${baseClasses} ${sizeClasses[size]} ${visualClasses} ${
+  const combinedClasses = `${baseClasses} ${
+    sizeClasses[size]
+  } ${visualClasses} ${
     disabled || isLoading ? "cursor-not-allowed pointer-events-none" : ""
   } ${className}`;
 
@@ -138,7 +140,7 @@ export default function Button({
     >
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center">
-          <Loader2
+          <Loader
             className={`animate-spin ${
               size === "sm" || size === "iconSm" ? "size-3.5" : "size-5"
             }`}
