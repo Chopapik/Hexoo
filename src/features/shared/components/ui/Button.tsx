@@ -45,12 +45,18 @@ const variantClasses: Record<ButtonVariant, string> = {
 };
 
 /**
- * Classes used for the disabled/blocked state.
- * This visually matches the previous "ghost" design,
- * but is no longer exposed as a public variant.
+ * Classes used for the disabled/blocked state by variant.
+ * Keeps each variant visually distinct when disabled.
  */
-const disabledGhostClasses =
-  "text-white bg-fuchsia-700/20 hover:bg-fuchsia-700/30 transition-colors";
+const disabledVariantClasses: Record<ButtonVariant, string> = {
+  "gradient-fuchsia":
+    "text-white/80 border border-fuchsia-400/20 bg-fuchsia-700/25 shadow-none",
+  "icon-fuchsia-solid": "text-white/70 bg-fuchsia-800/50 shadow-none",
+  "glass-card": "text-white/70 glass-card opacity-60 saturate-50",
+  danger: "text-white/80 bg-red-900/40 border border-red-500/30 shadow-none",
+  secondary: "text-white/60 bg-white/5 border border-white/10 shadow-none",
+  transparent: "text-white/50 bg-transparent shadow-none",
+};
 
 /**
  * A customizable Button component that supports various sizes, visual variants,
@@ -93,12 +99,14 @@ export default function Button({
   const baseClasses =
     "relative inline-flex justify-center items-center gap-2 font-bold font-Plus_Jakarta_Sans leading-tight shrink-0 cursor-pointer overflow-hidden transition-all duration-300 ease-out";
 
-  // When disabled or loading, force the "ghost" look and do not expose it as a variant.
+  // When disabled or loading, use the per-variant blocked look.
   const visualClasses =
-    disabled || isLoading ? disabledGhostClasses : variantClasses[variant];
+    disabled || isLoading ? disabledVariantClasses[variant] : variantClasses[variant];
 
   // Ensure className from props overrides default styles
-  const combinedClasses = `${baseClasses} ${sizeClasses[size]} ${visualClasses} ${className}`;
+  const combinedClasses = `${baseClasses} ${sizeClasses[size]} ${visualClasses} ${
+    disabled || isLoading ? "cursor-not-allowed pointer-events-none" : ""
+  } ${className}`;
 
   return (
     <button
