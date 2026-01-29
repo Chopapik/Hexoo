@@ -1,5 +1,6 @@
 import { firestore } from "firebase-admin";
-import { ImageMeta, UserRole } from "./user.type";
+import { ImageMeta } from "@/features/images/types/image.type";
+import { UserRole } from "./user.type";
 
 export interface User {
   uid: string;

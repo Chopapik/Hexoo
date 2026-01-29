@@ -1,14 +1,10 @@
 import z from "zod";
-import { firestore } from "firebase-admin";
 import { ContentBase } from "@/features/shared/types/content.type";
 
 export const COMMENT_MAX_CHARS = 500;
 
-type CommentTimestamp = firestore.Timestamp | firestore.FieldValue;
-
 export interface Comment extends ContentBase {
   postId: string;
-  flaggedSource?: "text" | "image";
 }
 
 export const AddCommentSchema = z.object({

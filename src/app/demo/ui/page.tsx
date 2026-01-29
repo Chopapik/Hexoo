@@ -81,7 +81,6 @@ import {
 const buttonVariants: ButtonVariant[] = [
   "gradient-fuchsia",
   "icon-fuchsia-solid",
-  "icon-fuchsia-ghost",
   "glass-card",
   "danger",
   "secondary",

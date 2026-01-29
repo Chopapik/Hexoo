@@ -4,14 +4,14 @@ import Modal from "@/features/shared/components/layout/Modal";
 import useAddComment from "../hooks/useAddComment";
 import { AddCommentDto } from "../types/comment.type";
 import Button from "@/features/shared/components/ui/Button";
-import type { Post } from "@/features/posts/types/post.type";
+import type { PublicPostDto } from "@/features/posts/types/post.dto";
 import useCommentForm from "../hooks/useCommentForm";
 import { parseCommentErrorMessages } from "../utils/commentFormValidation";
 import warningIconUrl from "@/features/shared/assets/icons/warning.svg?url";
 import Image from "next/image";
 
 interface AddCommentModalProps {
-  post: Post;
+  post: PublicPostDto;
   isOpen: boolean;
   onClose: () => void;
 }

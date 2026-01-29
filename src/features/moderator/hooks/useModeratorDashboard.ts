@@ -3,6 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import fetchClient from "@/lib/fetchClient";
 import toast from "react-hot-toast";
+import type { ModerationPostDto } from "@/features/posts/types/post.dto";
 
 export function useModeratorDashboard() {
   const queryClient = useQueryClient();
@@ -14,7 +15,9 @@ export function useModeratorDashboard() {
   } = useQuery({
     queryKey: ["moderator", "queue"],
     queryFn: async () => {
-      const res = await fetchClient.get<{ posts: any[] }>("/moderator/queue");
+      const res = await fetchClient.get<{ posts: ModerationPostDto[] }>(
+        "/moderator/queue",
+      );
       return res.posts;
     },
   });

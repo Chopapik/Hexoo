@@ -56,6 +56,7 @@ export const addComment = async (data: AddCommentDto) => {
       userId: user.uid,
       text,
       likesCount: 0,
+      commentsCount: 0,
       createdAt: FieldValue.serverTimestamp(),
       updatedAt: FieldValue.serverTimestamp(),
       moderationStatus,

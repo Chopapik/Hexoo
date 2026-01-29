@@ -2,6 +2,7 @@ import { UserRepository, BlockUserDBInput } from "./user.repository.interface";
 import { User } from "../../types/user.entity";
 import { adminDb, adminAuth } from "@/lib/firebaseAdmin";
 import { FieldValue } from "firebase-admin/firestore";
+import { UserResponseDto } from "../../types/user.dto";
 
 export class UserFirebaseRepository implements UserRepository {
   private get collection() {
@@ -15,7 +16,7 @@ export class UserFirebaseRepository implements UserRepository {
       email: string;
       role: string;
     },
-  ): Promise<any> {
+  ): Promise<void> {
     const normalizedName = userData.name.trim().toLowerCase();
     const userDoc = {
       uid,
@@ -27,8 +28,6 @@ export class UserFirebaseRepository implements UserRepository {
     };
 
     await this.collection.doc(uid).set(userDoc, { merge: true });
-    const snap = await this.collection.doc(uid).get();
-    return snap.data();
   }
 
   async getUserByUid(uid: string): Promise<User | null> {
@@ -130,7 +129,7 @@ export class UserFirebaseRepository implements UserRepository {
 
   async getAllUsers(): Promise<User[]> {
     const snapshot = await this.collection.get();
-    return snapshot.docs.map((doc) => ({ uid: doc.id, ...doc.data() }) as User);
+    return snapshot.docs.map((doc) => ({ uid: doc.id, ...doc.data() } as User));
   }
 
   async deleteUser(uid: string): Promise<void> {

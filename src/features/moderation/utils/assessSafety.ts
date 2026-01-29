@@ -13,7 +13,7 @@ export interface ModerationVerdict {
 
 type ModerationFlags = {
   flaggedReasons: string[];
-  flaggedSource: string[];
+  flaggedSource: ("text" | "image")[];
 };
 
 const collectModerationFlags = async (
@@ -21,7 +21,7 @@ const collectModerationFlags = async (
   imageFile?: File | null
 ): Promise<ModerationFlags> => {
   const flaggedReasons: string[] = [];
-  const flaggedSource: string[] = [];
+  const flaggedSource: ("text" | "image")[] = [];
 
   if (text && text.trim()) {
     const textResult = await moderateText(text);
@@ -126,7 +126,7 @@ export const performModeration = async (
   moderationStatus: ModerationStatus;
   isNSFW: boolean;
   flaggedReasons: string[];
-  flaggedSource: string[];
+  flaggedSource: ("text" | "image")[];
 }> => {
   const { flaggedReasons, flaggedSource } = await collectModerationFlags(
     text,

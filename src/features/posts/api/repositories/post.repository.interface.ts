@@ -1,6 +1,5 @@
-import { PostResponseDto } from "../../types/post.dto";
 import { Post } from "../../types/post.entity";
-import { ReportDetails } from "../../types/post.type";
+import { ReportDetails } from "@/features/shared/types/report.type";
 
 export type CreatePostDBInput = Partial<Omit<Post, "id">>;
 

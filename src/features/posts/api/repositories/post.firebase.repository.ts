@@ -5,7 +5,7 @@ import {
   UpdatePostDBInput,
 } from "./post.repository.interface";
 import { Post } from "../../types/post.entity";
-import { ReportDetails } from "../../types/post.type";
+import { ReportDetails } from "@/features/shared/types/report.type";
 
 export class PostFirebaseRepository implements PostRepository {
   private get collection() {
