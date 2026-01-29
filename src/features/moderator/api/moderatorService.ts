@@ -2,10 +2,7 @@ import { adminDb } from "@/lib/firebaseAdmin";
 import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
 import { createAppError } from "@/lib/AppError";
 import { FieldValue } from "firebase-admin/firestore";
-import {
-  blockUser,
-  getUsersByIds,
-} from "@/features/users/api/services";
+import { blockUser, getUsersByIds } from "@/features/users/api/services";
 import { BlockUserDto } from "@/features/users/types/user.dto";
 import { deleteImage } from "@/features/images/api/imageService";
 import { Post } from "@/features/posts/types/post.entity";
@@ -21,6 +18,8 @@ export const ensureModeratorOrAdmin = async () => {
   }
   return session;
 };
+
+import { postService } from "@/features/posts/api/services/ index";
 
 export const getModerationQueue = async () => {
   await ensureModeratorOrAdmin();
@@ -96,12 +95,14 @@ export const reviewPost = async (
       const postData = postDoc.data() as Post;
 
       if (action === "reject") {
-        transaction.update(postRef, {
-          moderationStatus: "rejected",
-          reviewedBy: moderator.uid,
-          reviewedAt: FieldValue.serverTimestamp(),
-        });
-        await deleteImage(postData.imageMeta?.storagePath);
+        if (action === "reject") {
+          transaction.delete(postRef);
+
+          if (postData.imageMeta?.storagePath) {
+            await deleteImage(postData.imageMeta.storagePath);
+          }
+          await deleteImage(postData.imageMeta?.storagePath);
+        }
       } else if (action === "approve") {
         transaction.update(postRef, {
           moderationStatus: "approved",

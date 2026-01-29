@@ -117,22 +117,17 @@ export class PostService implements IPostService {
 
     await this.repository.createPost(dbInput);
 
-    // Zwracamy stworzony post (opcjonalnie, zależy od potrzeb frontend)
-    // Ponieważ createPost w repo jest void, musimy go pobrać albo skonstruować odpowiedź.
-    // Tutaj dla uproszczenia zwracam dummy albo musiałbyś zmienić repo żeby zwracało ID.
-    // Zakładając, że chcesz zwrócić listę odświeżoną, frontend sobie poradzi.
-    // Ale w interfejsie masz Promise<PostResponseDto>, więc wypadałoby coś zwrócić.
-    // Firebase createPost w Twoim repo jest void. To mała niespójność.
-    // Najlepiej w repo zwracać ID nowo utworzonego posta.
-    // Na ten moment rzućmy błąd lub zmieńmy return type na void w interfejsie jeśli nie potrzebujesz.
-    // ALE: Twój interfejs wymaga PostResponseDto.
-    // FIX: Uznajmy, że createPost zwraca void, a frontend odświeża listę.
-    // Zmienię return type na void dla uproszczenia, bo Twoje repo zwraca void.
-
-    // UWAGA: Musisz zmienić interfejs PostService żeby createPost zwracało void,
-    // ALBO zmienić repozytorium żeby zwracało ID i pobierać post.
-    // Zostawiam 'any' żeby nie psuć kompilacji, ale docelowo: void.
     return {} as any;
+  }
+
+  async deletePost(postId: string) {
+    await this.repository.deletePost(postId);
+  }
+
+  async setModerationStatus(postId: string, status: "approved" | "pending") {
+    await this.repository.updatePost(postId, {
+      moderationStatus: status,
+    });
   }
 
   async updatePost(

@@ -41,7 +41,9 @@ export default function PostOptions({
           ? "Post został usunięty."
           : "Post przeniesiony do kwarantanny.";
       toast.success(msg);
+
       queryClient.invalidateQueries({ queryKey: ["posts"] });
+
       if (action === "reject") setIsDeleteModalOpen(false);
     },
     onError: () => {
@@ -49,7 +51,7 @@ export default function PostOptions({
     },
   });
 
-  if (isAuthor && (!isModerator || !isAdmin)) return null;
+  if (isAuthor && !(isModerator || isAdmin)) return null;
 
   return (
     <>
@@ -86,7 +88,7 @@ export default function PostOptions({
             >
               <Menu.Items
                 modal={false}
-                className="absolute  right-0 mt-2 w-56 origin-top-right bg-primary-neutral-background-default border border-primary-neutral-stroke-default rounded-xl shadow-2xl z-50 overflow-hidden focus:outline-none"
+                className="absolute right-0 mt-2 w-56 origin-top-right bg-primary-neutral-background-default border border-primary-neutral-stroke-default rounded-xl shadow-2xl z-50 overflow-hidden focus:outline-none"
               >
                 {!isAuthor && (
                   <div className="p-1">
@@ -107,7 +109,8 @@ export default function PostOptions({
                   </div>
                 )}
 
-                {isModerator && (
+                {/* Tutaj dodana obsługa isAdmin */}
+                {(isModerator || isAdmin) && (
                   <div className="p-1 border-t border-white/10">
                     {!isAuthor && (
                       <div className="px-2 py-1.5 text-[10px] text-text-neutral/50 uppercase tracking-widest font-bold">
