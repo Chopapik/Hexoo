@@ -92,7 +92,7 @@ export default function AddCommentModal({
             type="submit"
             isLoading={isLoading}
             text="Dodaj komentarz"
-            variant="gradient-fuchsia"
+            variant="default"
             size="md"
           />
         </div>

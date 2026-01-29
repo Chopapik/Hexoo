@@ -95,7 +95,7 @@ export default function ModerationQueueItem({
           />
           <Button
             text="Zatwierdź post"
-            variant="gradient-fuchsia"
+            variant="default"
             size="sm"
             onClick={() => onAction({ postId: post.id, action: "approve" })}
             disabled={isPending}

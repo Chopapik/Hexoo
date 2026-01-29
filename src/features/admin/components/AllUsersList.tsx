@@ -102,7 +102,7 @@ export default function AllUsersList() {
               onClick={openCreateModal}
               text="+ Dodaj użytkownika"
               size="sm"
-              variant="gradient-fuchsia"
+              variant="default"
             />
           </div>
         </div>

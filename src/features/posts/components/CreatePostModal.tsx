@@ -119,7 +119,7 @@ export default function CreatePostModal({
         disabled={isOverLimit || !!clientError}
         isLoading={isPending}
         icon={<SendIcon className="w-5 h-5" />}
-        variant="icon-fuchsia-solid"
+        variant="default"
         size="icon"
         type="submit"
       />

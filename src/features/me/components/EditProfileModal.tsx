@@ -97,7 +97,7 @@ export default function EditProfileModal({
         onClick={handleSaveClick}
         text="Zapisz"
         size="md"
-        variant="gradient-fuchsia"
+        variant="default"
         disabled={!canSubmit}
         isLoading={isPending}
         type="button"

@@ -6,7 +6,7 @@ interface ModalFooterProps {
   onCancel: () => void;
   onConfirm: () => void;
   isPending?: boolean;
-  confirmVariant?: "gradient-fuchsia" | "danger" | "secondary";
+  confirmVariant?: "default" | "danger" | "secondary";
   confirmSize?: "sm" | "md" | "lg";
   cancelSize?: "sm" | "md" | "lg";
   disabled?: boolean;
@@ -20,7 +20,7 @@ export default function ModalFooter({
   onCancel,
   onConfirm,
   isPending = false,
-  confirmVariant = "gradient-fuchsia",
+  confirmVariant = "default",
   confirmSize = "md",
   cancelSize = "md",
   disabled = false,

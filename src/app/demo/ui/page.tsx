@@ -57,9 +57,10 @@ import type {
 } from "@/features/shared/types/button.type";
 import type { ValidationMessage as ValidationMessageType } from "@/features/shared/types/validation.type";
 import type { SessionData } from "@/features/me/me.type";
-import { Post } from "@/features/posts/types/post.entity";
+import type { PublicPostDto, ModerationPostDto } from "@/features/posts/types/post.dto";
 import type { User } from "@/features/users/types/user.entity";
 import type { UserProfileDto } from "@/features/users/types/user.dto";
+import { UserRole } from "@/features/users/types/user.type";
 import chevronRightUrl from "@/features/shared/assets/icons/chevronRight.svg?url";
 import warningIconUrl from "@/features/shared/assets/icons/warning.svg?url";
 import cameraIconUrl from "@/features/shared/assets/icons/camera.svg?url";
@@ -79,11 +80,16 @@ import {
 } from "lucide-react";
 
 const buttonVariants: ButtonVariant[] = [
-  "gradient-fuchsia",
-  "icon-fuchsia-solid",
+  "default",
   "glass-card",
   "danger",
+  "success",
+  "warning",
+  "info",
   "secondary",
+  "outline",
+  "outline-fuchsia",
+  "ghost",
   "transparent",
 ];
 
@@ -116,7 +122,7 @@ const demoSessionUser: SessionData = {
   uid: "demo-user-1",
   email: "demo@hexoo.com",
   name: "Kasia Demo",
-  role: "moderator",
+  role: UserRole.Moderator,
   avatarUrl: undefined,
 };
 
@@ -132,14 +138,14 @@ const demoAdminUser: User = {
   uid: "admin-1",
   name: "Admin Hexoo",
   email: "admin@hexoo.com",
-  role: "admin",
+  role: UserRole.Admin,
   avatarUrl: undefined,
   createdAt: new Date("2024-01-15T09:15:00Z"),
   lastOnline: new Date(),
   isBanned: false,
 };
 
-const demoPost: Post = {
+const demoPost: PublicPostDto = {
   id: "post-1",
   userId: "user-2",
   userName: "Ola",
@@ -154,7 +160,7 @@ const demoPost: Post = {
   isNSFW: false,
 };
 
-const demoPostNsfw: Post = {
+const demoPostNsfw: PublicPostDto = {
   ...demoPost,
   id: "post-2",
   userId: "user-3",
@@ -166,7 +172,7 @@ const demoPostNsfw: Post = {
   commentsCount: 0,
 };
 
-const demoModerationPost: Post = {
+const demoModerationPost: ModerationPostDto = {
   ...demoPost,
   id: "post-3",
   moderationStatus: "pending",
@@ -741,7 +747,7 @@ export default function UiDemoPage() {
                     </span>
                     <Button
                       icon={<SendIcon className="w-5 h-5" />}
-                      variant="icon-fuchsia-solid"
+                      variant="default"
                       size="icon"
                       type="button"
                     />
@@ -888,7 +894,7 @@ export default function UiDemoPage() {
                     <Button
                       text="Zapisz"
                       size="md"
-                      variant="gradient-fuchsia"
+                  variant="default"
                       type="button"
                     />
                   </div>
@@ -1134,7 +1140,7 @@ export default function UiDemoPage() {
                           <Button
                             text="Zapisz zmiany"
                             size="sm"
-                            variant="gradient-fuchsia"
+                            variant="default"
                             className="w-full md:w-auto"
                           />
                         </div>
@@ -1162,7 +1168,7 @@ export default function UiDemoPage() {
                           <Button
                             text="Zmień hasło"
                             size="sm"
-                            variant="gradient-fuchsia"
+                            variant="default"
                             className="w-full md:w-auto"
                           />
                         </div>

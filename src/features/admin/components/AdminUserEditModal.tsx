@@ -7,10 +7,8 @@ import Modal from "@/features/shared/components/layout/Modal";
 import TextInput from "@/features/shared/components/ui/TextInput";
 import Select from "@/features/shared/components/ui/Select";
 import Button from "@/features/shared/components/ui/Button";
-import type {
-  User,
-  UserRole,
-} from "@/features/users/types/user.type";
+import type { User } from "@/features/users/types/user.entity";
+import type { UserRole } from "@/features/users/types/user.type";
 import type { UpdateUserDto } from "@/features/users/types/user.dto";
 import useAdminUpdateUserAccount from "../hooks/user/useAdminUpdateUserAccount";
 import useAdminUpdateUserPassword from "../hooks/user/useAdminUpdateUserPassword";
@@ -215,7 +213,7 @@ export default function AdminUserEditModal({
                   }
                   text="Zapisz zmiany"
                   size="sm"
-                  variant="gradient-fuchsia"
+                  variant="default"
                   disabled={isUpdatingData}
                   isLoading={isUpdatingData}
                   className="w-full md:w-auto"
@@ -255,7 +253,7 @@ export default function AdminUserEditModal({
                   }
                   text="Zmień hasło"
                   size="sm"
-                  variant="gradient-fuchsia"
+                  variant="default"
                   disabled={isUpdatingPassword || !newPassword}
                   isLoading={isUpdatingPassword}
                   className="w-full md:w-auto"

@@ -5,8 +5,7 @@ import { Send, Heart, Plus, X, Search, Settings } from "lucide-react";
 import type { ButtonVariant, ButtonSize } from "@/features/shared/types/button.type";
 
 const variants: ButtonVariant[] = [
-  "gradient-fuchsia",
-  "icon-fuchsia-solid",
+  "default",
   "icon-fuchsia-ghost",
   "glass-card",
   "danger",
@@ -215,7 +214,7 @@ export default function ButtonsDemoPage() {
           </h2>
           <div className="flex flex-wrap gap-4">
             <Button
-              variant="gradient-fuchsia"
+              variant="default"
               size="md"
               text="Kliknij mnie"
               onClick={() => alert("Kliknięto!")}

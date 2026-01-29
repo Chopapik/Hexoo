@@ -71,7 +71,7 @@ export const CommentForm = ({ postId }: CommentFormProps) => {
           type="submit"
           isLoading={isLoading}
           icon={<SendIcon className="w-5 h-5" />}
-          variant="icon-fuchsia-solid"
+          variant="default"
           size="icon"
           disabled={isOverLimit || hasContentError}
         />
