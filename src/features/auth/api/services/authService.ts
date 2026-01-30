@@ -5,6 +5,7 @@ import { logActivity } from "@/features/admin/api/services/activityService";
 import { resetIpLimit } from "@/features/security/api/bruteForceProtectionService";
 import { authRepository } from "../repositories";
 import { userRepository } from "@/features/users/api/repositories";
+import { UserRole } from "@/features/users/types/user.type";
 
 const SESSION_EXPIRES_MS = 5 * 24 * 60 * 60 * 1000;
 
@@ -99,10 +100,11 @@ export async function registerUser(data: {
   }
 
   try {
-    await userRepository.createUser(uid, {
+    await userRepository.createUser({
+      uid,
       name,
       email: email ?? "",
-      role: "user",
+      role: UserRole.User,
     });
 
     await logActivity(

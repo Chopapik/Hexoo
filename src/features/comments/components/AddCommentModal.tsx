@@ -38,7 +38,7 @@ export default function AddCommentModal({
       reset();
       onClose();
     },
-    (errorCode) => handleServerErrors(errorCode)
+    (errorCode) => handleServerErrors(errorCode),
   );
 
   const onSubmit = (data: AddCommentDto) => {

@@ -12,10 +12,7 @@ export interface PostService {
     reason: string,
     details?: string,
   ): Promise<{ hidden: boolean; reportsCount: number }>;
-  createPost(
-    session: SessionData,
-    data: CreatePostDto,
-  ): Promise<PublicPostDto>;
+  createPost(session: SessionData, data: CreatePostDto): Promise<PublicPostDto>;
   updatePost(
     session: SessionData,
     postId: string,

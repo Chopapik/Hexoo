@@ -2,7 +2,9 @@ import { User } from "../../types/user.entity";
 import { BlockUserDto } from "../../types/user.dto";
 import { UserRole } from "../../types/user.type";
 
+// Partial User for create, but enforce required core fields.
 export type CreateUserDBInput = Partial<Omit<User, "uid">> & {
+  // uid from Firebase Auth Client SDK
   uid: string;
   name: string;
   email: string;
@@ -14,14 +16,7 @@ export type UpdateUserDBInput = Partial<Omit<User, "uid" | "createdAt">>;
 export type BlockUserDBInput = BlockUserDto;
 
 export interface UserRepository {
-  createUser(
-    uid: string,
-    data: {
-      name: string;
-      email: string;
-      role: UserRole;
-    },
-  ): Promise<any>;
+  createUser(data: CreateUserDBInput): Promise<void>;
 
   getUserByUid(uid: string): Promise<User | null>;
 

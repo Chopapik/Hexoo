@@ -57,7 +57,10 @@ import type {
 } from "@/features/shared/types/button.type";
 import type { ValidationMessage as ValidationMessageType } from "@/features/shared/types/validation.type";
 import type { SessionData } from "@/features/me/me.type";
-import type { PublicPostDto, ModerationPostDto } from "@/features/posts/types/post.dto";
+import type {
+  PublicPostDto,
+  ModerationPostDto,
+} from "@/features/posts/types/post.dto";
 import type { User } from "@/features/users/types/user.entity";
 import type { UserProfileDto } from "@/features/users/types/user.dto";
 import { UserRole } from "@/features/users/types/user.type";
@@ -894,7 +897,7 @@ export default function UiDemoPage() {
                     <Button
                       text="Zapisz"
                       size="md"
-                  variant="default"
+                      variant="default"
                       type="button"
                     />
                   </div>

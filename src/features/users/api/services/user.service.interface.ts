@@ -1,15 +1,13 @@
-import { BlockUserDto, UserProfileDto } from "../../types/user.dto";
+import {
+  BlockUserDto,
+  CreateUserDto,
+  RestrictUserDto,
+  UserProfileDto,
+} from "../../types/user.dto";
 import type { User } from "../../types/user.entity";
 
 export interface UserService {
-  createUserDocument(
-    uid: string,
-    userData: {
-      name: string;
-      email: string;
-      role: string;
-    },
-  ): Promise<any>;
+  createUserDocument(uid: string, data: CreateUserDto): Promise<any>;
   getUserByUid(uid: string): Promise<User | null>;
   getUserProfile(name: string): Promise<{ user: UserProfileDto } | null>;
   getUsersByIds(
@@ -20,10 +18,7 @@ export interface UserService {
   unrestrictUser(
     uid: string,
   ): Promise<{ success: boolean; uid: string; status: string }>;
-  restrictUser(data: {
-    uid: string;
-    reason: string;
-  }): Promise<{
+  restrictUser(data: RestrictUserDto): Promise<{
     success: boolean;
     uid: string;
     status: string;
