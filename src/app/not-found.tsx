@@ -37,11 +37,7 @@ export default function NotFound() {
         </p>
 
         <Link href="/">
-          <Button
-            text="Wróć na Stronę Główną"
-            variant="default"
-            size="md"
-          />
+          <Button text="Wróć na Stronę Główną" variant="default" size="md" />
         </Link>
       </div>
     </div>

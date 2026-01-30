@@ -63,7 +63,8 @@ export const adminCreateUserAccount = async (data: AdminUserCreate) => {
 
   const uid = userRecord.uid;
 
-  await userRepository.createUser(uid, {
+  await userRepository.createUser({
+    uid,
     name: data.name,
     email: data.email,
     role: data.role ?? "user",

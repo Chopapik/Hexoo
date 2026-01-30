@@ -1,8 +1,11 @@
 import type { User } from "../../types/user.entity";
-import type { BlockUserDto } from "../../types/user.dto";
+import type { BlockUserDto, CreateUserDto } from "../../types/user.dto";
 import { createAppError } from "@/lib/AppError";
 import { logActivity } from "@/features/admin/api/services/activityService";
-import { UserRepository } from "../repositories/user.repository.interface";
+import {
+  CreateUserDBInput,
+  UserRepository,
+} from "../repositories/user.repository.interface";
 import type { UserService as IUserService } from "./user.service.interface";
 import { SessionData } from "@/features/me/me.type";
 
@@ -12,15 +15,14 @@ export class UserService implements IUserService {
     private readonly session: SessionData | null = null,
   ) {}
 
-  async createUserDocument(
-    uid: string,
-    userData: {
-      name: string;
-      email: string;
-      role: string;
-    },
-  ) {
-    const data = await this.repository.createUser(uid, userData);
+  async createUserDocument(uid: string, data: CreateUserDto) {
+    const dbInput: CreateUserDBInput = {
+      uid,
+      name: data.name,
+      email: data.email,
+      role: data.role,
+    };
+    const newUser = await this.repository.createUser(dbInput);
 
     if (!data) {
       throw createAppError({

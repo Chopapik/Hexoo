@@ -18,7 +18,7 @@ type ModerationFlags = {
 
 const collectModerationFlags = async (
   text?: string,
-  imageFile?: File | null
+  imageFile?: File | null,
 ): Promise<ModerationFlags> => {
   const flaggedReasons: string[] = [];
   const flaggedSource: ("text" | "image")[] = [];
@@ -35,7 +35,7 @@ const collectModerationFlags = async (
     const imageResult = await moderateImage(imageFile);
     if (imageResult.flagged) {
       const uniqueCategories = imageResult.categories.filter(
-        (c) => !flaggedReasons.includes(c)
+        (c) => !flaggedReasons.includes(c),
       );
       flaggedReasons.push(...uniqueCategories);
       flaggedSource.push("image");
@@ -46,7 +46,7 @@ const collectModerationFlags = async (
 };
 
 export const getAiModerationVerdict = (
-  categories: string[]
+  categories: string[],
 ): ModerationVerdict => {
   const REJECT_FLAGS = [
     "sexual/minors",
@@ -92,11 +92,11 @@ export const enforceStrictModeration = async (
   userId: string,
   text?: string,
   imageFile?: File | null,
-  contextLabel: string = "content"
+  contextLabel: string = "content",
 ): Promise<ModerationFlags> => {
   const { flaggedReasons, flaggedSource } = await collectModerationFlags(
     text,
-    imageFile
+    imageFile,
   );
 
   if (flaggedReasons.length === 0) {
@@ -121,7 +121,7 @@ export const enforceStrictModeration = async (
 export const performModeration = async (
   userId: string,
   text?: string,
-  imageFile?: File | null
+  imageFile?: File | null,
 ): Promise<{
   moderationStatus: ModerationStatus;
   isNSFW: boolean;
@@ -130,7 +130,7 @@ export const performModeration = async (
 }> => {
   const { flaggedReasons, flaggedSource } = await collectModerationFlags(
     text,
-    imageFile
+    imageFile,
   );
 
   let moderationStatus: ModerationStatus = "approved";

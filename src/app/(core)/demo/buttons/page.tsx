@@ -2,7 +2,10 @@
 
 import Button from "@/features/shared/components/ui/Button";
 import { Send, Heart, Plus, X, Search, Settings } from "lucide-react";
-import type { ButtonVariant, ButtonSize } from "@/features/shared/types/button.type";
+import type {
+  ButtonVariant,
+  ButtonSize,
+} from "@/features/shared/types/button.type";
 
 const variants: ButtonVariant[] = [
   "default",
@@ -47,7 +50,10 @@ export default function ButtonsDemoPage() {
                     {sizes
                       .filter((size) => size !== "icon" && size !== "iconSm")
                       .map((size) => (
-                        <div key={size} className="flex flex-col items-center gap-2">
+                        <div
+                          key={size}
+                          className="flex flex-col items-center gap-2"
+                        >
                           <Button
                             variant={variant}
                             size={size}
@@ -68,7 +74,10 @@ export default function ButtonsDemoPage() {
                   </h3>
                   <div className="flex flex-wrap items-center gap-4">
                     {["icon", "iconSm"].map((size) => (
-                      <div key={size} className="flex flex-col items-center gap-2">
+                      <div
+                        key={size}
+                        className="flex flex-col items-center gap-2"
+                      >
                         <Button
                           variant={variant}
                           size={size as "icon" | "iconSm"}
@@ -91,7 +100,10 @@ export default function ButtonsDemoPage() {
                     {sizes
                       .filter((size) => size !== "icon" && size !== "iconSm")
                       .map((size) => (
-                        <div key={size} className="flex flex-col items-center gap-2">
+                        <div
+                          key={size}
+                          className="flex flex-col items-center gap-2"
+                        >
                           <Button
                             variant={variant}
                             size={size}
@@ -115,7 +127,10 @@ export default function ButtonsDemoPage() {
                     {sizes
                       .filter((size) => size !== "icon" && size !== "iconSm")
                       .map((size) => (
-                        <div key={size} className="flex flex-col items-center gap-2">
+                        <div
+                          key={size}
+                          className="flex flex-col items-center gap-2"
+                        >
                           <Button
                             variant={variant}
                             size={size}
@@ -139,7 +154,10 @@ export default function ButtonsDemoPage() {
                     {sizes
                       .filter((size) => size !== "icon" && size !== "iconSm")
                       .map((size) => (
-                        <div key={size} className="flex flex-col items-center gap-2">
+                        <div
+                          key={size}
+                          className="flex flex-col items-center gap-2"
+                        >
                           <Button
                             variant={variant}
                             size={size}
@@ -164,7 +182,10 @@ export default function ButtonsDemoPage() {
                     {sizes
                       .filter((size) => size !== "icon" && size !== "iconSm")
                       .map((size) => (
-                        <div key={size} className="flex flex-col items-center gap-2">
+                        <div
+                          key={size}
+                          className="flex flex-col items-center gap-2"
+                        >
                           <Button
                             variant={variant}
                             size={size}
@@ -188,7 +209,10 @@ export default function ButtonsDemoPage() {
                     {sizes
                       .filter((size) => size !== "icon" && size !== "iconSm")
                       .map((size) => (
-                        <div key={size} className="flex flex-col items-center gap-2">
+                        <div
+                          key={size}
+                          className="flex flex-col items-center gap-2"
+                        >
                           <Button
                             variant={variant}
                             size={size}

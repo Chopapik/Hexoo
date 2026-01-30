@@ -22,8 +22,7 @@ export const CommentForm = ({ postId }: CommentFormProps) => {
     isSubmitting,
   } = useCommentForm(postId);
 
-  const validationErrorRaw =
-    errors.text?.message || errors.root?.message || "";
+  const validationErrorRaw = errors.text?.message || errors.root?.message || "";
   const parsedError = parseCommentErrorMessages(validationErrorRaw);
   const displayError = parsedError?.text;
 

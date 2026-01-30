@@ -10,19 +10,19 @@ export interface User {
   avatarUrl?: string;
   avatarMeta?: ImageMeta;
 
-  createdAt: firestore.Timestamp | Date;
-  updatedAt?: firestore.Timestamp | Date;
-  lastOnline: firestore.Timestamp | Date;
+  createdAt: Date;
+  updatedAt?: Date;
+  lastOnline: Date;
 
   isActive?: boolean;
 
   isBanned?: boolean;
-  bannedAt?: firestore.Timestamp | Date;
+  bannedAt?: Date;
   bannedBy?: string;
   bannedReason?: string;
 
   isRestricted?: boolean;
-  restrictedAt?: firestore.Timestamp | Date;
+  restrictedAt?: Date;
   restrictedBy?: string;
   restrictionReason?: string;
 

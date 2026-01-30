@@ -98,7 +98,7 @@ export const getCommentsByPostId = async (
   if (commentsSnap.empty) return [];
 
   const commentDocs = commentsSnap.docs.map(
-    (doc) => ({ id: doc.id, ...doc.data() }) as Comment,
+    (doc) => ({ id: doc.id, ...doc.data() } as Comment),
   );
 
   const authorIds = [...new Set(commentDocs.map((c) => c.userId))];

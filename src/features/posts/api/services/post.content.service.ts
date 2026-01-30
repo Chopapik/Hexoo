@@ -15,7 +15,7 @@ export class PostContentService {
   async process(
     uid: string,
     text: string,
-    imageFile?: File | null
+    imageFile?: File | null,
   ): Promise<PostContentProcessResult> {
     const moderation = await performModeration(uid, text, imageFile);
 

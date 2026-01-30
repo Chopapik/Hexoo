@@ -211,16 +211,16 @@ export default function EditProfileModal({
                 Ta nazwa będzie widoczna publicznie — możesz użyć nicku lub
                 imienia.
               </p>
-            <p
-              className={`text-xs ml-1 transition-colors ${
-                nameErrorCode === "name_too_short" ||
-                nameErrorCode === "name_too_long"
-                  ? "text-red-500"
-                  : "text-text-neutral/60"
-              }`}
-            >
-              {nameLength} / 30 znaków
-            </p>
+              <p
+                className={`text-xs ml-1 transition-colors ${
+                  nameErrorCode === "name_too_short" ||
+                  nameErrorCode === "name_too_long"
+                    ? "text-red-500"
+                    : "text-text-neutral/60"
+                }`}
+              >
+                {nameLength} / 30 znaków
+              </p>
             </div>
           </div>
 

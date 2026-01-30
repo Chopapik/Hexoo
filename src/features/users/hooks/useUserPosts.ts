@@ -10,7 +10,7 @@ export default function useUserPosts(userId: string) {
       if (pageParam) params.append("startAfter", pageParam as string);
 
       return await fetchClient.get<PublicPostDto[]>(
-        `/posts/user/${userId}?${params.toString()}`
+        `/posts/user/${userId}?${params.toString()}`,
       );
     },
     initialPageParam: undefined,

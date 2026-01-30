@@ -1,39 +1,37 @@
-import { UserRepository, BlockUserDBInput } from "./user.repository.interface";
+import {
+  UserRepository,
+  BlockUserDBInput,
+  CreateUserDBInput,
+} from "./user.repository.interface";
 import { User } from "../../types/user.entity";
 import { adminDb, adminAuth } from "@/lib/firebaseAdmin";
 import { FieldValue } from "firebase-admin/firestore";
 import { UserResponseDto } from "../../types/user.dto";
+import { mapDatesFromFirestore } from "@/features/shared/utils/firestoreMappers";
 
 export class UserFirebaseRepository implements UserRepository {
   private get collection() {
     return adminDb.collection("users");
   }
 
-  async createUser(
-    uid: string,
-    userData: {
-      name: string;
-      email: string;
-      role: string;
-    },
-  ): Promise<void> {
-    const normalizedName = userData.name.trim().toLowerCase();
+  async createUser(data: CreateUserDBInput): Promise<void> {
+    const normalizedName = data.name.trim().toLowerCase();
     const userDoc = {
-      uid,
-      name: userData.name,
+      uid: data.uid,
+      name: data.name,
       nameLowercase: normalizedName,
-      email: userData.email,
-      role: userData.role,
+      email: data.email,
+      role: data.role,
       createdAt: FieldValue.serverTimestamp(),
     };
 
-    await this.collection.doc(uid).set(userDoc, { merge: true });
+    await this.collection.doc(data.uid).set(userDoc, { merge: true });
   }
 
   async getUserByUid(uid: string): Promise<User | null> {
     const doc = await this.collection.doc(uid).get();
     if (!doc.exists) return null;
-    return doc.data() as User;
+    return mapDatesFromFirestore(doc.data()) as User;
   }
 
   async getUserByName(name: string): Promise<User | null> {
@@ -43,7 +41,7 @@ export class UserFirebaseRepository implements UserRepository {
       .get();
 
     if (snapshot.empty) return null;
-    return snapshot.docs[0].data() as User;
+    return mapDatesFromFirestore(snapshot.docs[0].data()) as User;
   }
 
   async getUsersByIds(
@@ -69,7 +67,7 @@ export class UserFirebaseRepository implements UserRepository {
     for (const snapshot of snapshots) {
       if (!snapshot.empty) {
         snapshot.docs.forEach((doc) => {
-          const user = doc.data() as User;
+          const user = mapDatesFromFirestore(doc.data()) as User;
           if (user) {
             usersMap[user.uid] = {
               name: user.name,
@@ -129,7 +127,10 @@ export class UserFirebaseRepository implements UserRepository {
 
   async getAllUsers(): Promise<User[]> {
     const snapshot = await this.collection.get();
-    return snapshot.docs.map((doc) => ({ uid: doc.id, ...doc.data() } as User));
+    return snapshot.docs.map((doc) => {
+      const mapped = mapDatesFromFirestore(doc.data());
+      return { uid: doc.id, ...mapped } as User;
+    });
   }
 
   async deleteUser(uid: string): Promise<void> {

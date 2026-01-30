@@ -6,6 +6,7 @@ import {
 } from "./post.repository.interface";
 import { Post } from "../../types/post.entity";
 import { ReportDetails } from "@/features/shared/types/report.type";
+import { mapDatesFromFirestore } from "@/features/shared/utils/firestoreMappers";
 
 export class PostFirebaseRepository implements PostRepository {
   private get collection() {
@@ -23,7 +24,8 @@ export class PostFirebaseRepository implements PostRepository {
   async getPostById(postId: string): Promise<Post | null> {
     const doc = await this.collection.doc(postId).get();
     if (!doc.exists) return null;
-    return { id: doc.id, ...doc.data() } as Post;
+    const mapped = mapDatesFromFirestore(doc.data());
+    return { id: doc.id, ...mapped } as Post;
   }
 
   async getPosts(limit: number, startAfterId?: string): Promise<Post[]> {
@@ -40,7 +42,10 @@ export class PostFirebaseRepository implements PostRepository {
     }
 
     const snapshot = await query.get();
-    return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Post));
+    return snapshot.docs.map((doc) => {
+      const mapped = mapDatesFromFirestore(doc.data());
+      return { id: doc.id, ...mapped } as Post;
+    });
   }
 
   async getPostsByUserId(
@@ -61,7 +66,10 @@ export class PostFirebaseRepository implements PostRepository {
     }
 
     const snapshot = await query.get();
-    return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Post));
+    return snapshot.docs.map((doc) => {
+      const mapped = mapDatesFromFirestore(doc.data());
+      return { id: doc.id, ...mapped } as Post;
+    });
   }
 
   async reportPost(postId: string, reportDetails: ReportDetails) {
