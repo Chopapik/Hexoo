@@ -6,7 +6,6 @@ import {
 import { User } from "../../types/user.entity";
 import { adminDb, adminAuth } from "@/lib/firebaseAdmin";
 import { FieldValue } from "firebase-admin/firestore";
-import { UserResponseDto } from "../../types/user.dto";
 import { mapDatesFromFirestore } from "@/features/shared/utils/firestoreMappers";
 
 export class UserFirebaseRepository implements UserRepository {

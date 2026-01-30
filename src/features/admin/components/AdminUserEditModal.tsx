@@ -7,7 +7,7 @@ import Modal from "@/features/shared/components/layout/Modal";
 import TextInput from "@/features/shared/components/ui/TextInput";
 import Select from "@/features/shared/components/ui/Select";
 import Button from "@/features/shared/components/ui/Button";
-import type { User } from "@/features/users/types/user.entity";
+import type { PrivateUserResponseDto } from "@/features/users/types/user.dto";
 import type { UserRole } from "@/features/users/types/user.type";
 import type { UpdateUserDto } from "@/features/users/types/user.dto";
 import useAdminUpdateUserAccount from "../hooks/user/useAdminUpdateUserAccount";
@@ -23,7 +23,7 @@ export default function AdminUserEditModal({
   user,
   onClose,
 }: {
-  user: User | null;
+  user: PrivateUserResponseDto | null;
   onClose: () => void;
 }) {
   const [newUserData, setNewUserData] = useState<Partial<UpdateUserDto>>({
@@ -83,8 +83,7 @@ export default function AdminUserEditModal({
             onClick={() => unBlockUser({ uid: user.uid })}
             text="Odblokuj konto"
             size="sm"
-            variant="secondary"
-            className="text-green-400 border-green-500/30 hover:bg-green-500/10"
+            variant="success"
             disabled={isUnblockingUser}
             isLoading={isUnblockingUser}
           />
@@ -93,8 +92,7 @@ export default function AdminUserEditModal({
             onClick={() => blockUser({ uid: user.uid })}
             text="Zablokuj konto"
             size="sm"
-            variant="secondary"
-            className="text-yellow-400 border-yellow-500/30 hover:bg-yellow-500/10"
+            variant="warning"
             disabled={isBlockingUser}
             isLoading={isBlockingUser}
           />

@@ -3,6 +3,7 @@ import { formatZodErrorFlat } from "@/lib/zod";
 import { deleteImage } from "@/features/images/api/imageService";
 import { getUsersByIds } from "@/features/users/api/services";
 import { likeRepository } from "@/features/likes/api/repositories";
+//move likerepository & imagerepostory outside to avoid violating S in SOLID
 
 import { Post } from "../../types/post.entity";
 import {
@@ -79,7 +80,7 @@ export class PostService implements IPostService {
   async createPost(
     session: SessionData,
     createPostData: CreatePostDto,
-  ): Promise<PublicPostDto> {
+  ): Promise<void> {
     const user = this.ensureUser(session);
     this.validateRestricted(user);
 

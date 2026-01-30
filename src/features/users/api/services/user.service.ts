@@ -32,7 +32,6 @@ export class UserService implements IUserService {
       });
     }
 
-    return data;
   }
 
   private ensureModeratorOrAdmin = async () => {

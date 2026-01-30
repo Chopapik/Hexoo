@@ -9,9 +9,11 @@ import type {
 
 const variants: ButtonVariant[] = [
   "default",
-  "icon-fuchsia-ghost",
   "glass-card",
   "danger",
+  "success",
+  "warning",
+  "info",
   "secondary",
   "transparent",
 ];

@@ -61,8 +61,10 @@ import type {
   PublicPostDto,
   ModerationPostDto,
 } from "@/features/posts/types/post.dto";
-import type { User } from "@/features/users/types/user.entity";
-import type { UserProfileDto } from "@/features/users/types/user.dto";
+import type {
+  PublicUserResponseDto,
+  PrivateUserResponseDto,
+} from "@/features/users/types/user.dto";
 import { UserRole } from "@/features/users/types/user.type";
 import chevronRightUrl from "@/features/shared/assets/icons/chevronRight.svg?url";
 import warningIconUrl from "@/features/shared/assets/icons/warning.svg?url";
@@ -129,7 +131,7 @@ const demoSessionUser: SessionData = {
   avatarUrl: undefined,
 };
 
-const demoUserProfile: UserProfileDto = {
+const demoUserProfile: PublicUserResponseDto = {
   uid: "profile-1",
   name: "Ola Profile",
   avatarUrl: undefined,
@@ -137,7 +139,7 @@ const demoUserProfile: UserProfileDto = {
   lastOnline: new Date(),
 };
 
-const demoAdminUser: User = {
+const demoAdminUser: PrivateUserResponseDto = {
   uid: "admin-1",
   name: "Admin Hexoo",
   email: "admin@hexoo.com",
