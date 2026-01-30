@@ -2,10 +2,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UpdateProfileData, UpdateProfileSchema } from "../me.type";
 import { useImagePicker } from "@/features/shared/hooks/useImagePicker";
-import { UserProfileDto } from "@/features/users/types/user.dto";
+import { PublicUserResponseDto } from "@/features/users/types/user.dto";
 import { useEffect } from "react";
 
-export function useUpdateProfileForm(user: UserProfileDto | null) {
+export function useUpdateProfileForm(user: PublicUserResponseDto | null) {
   const {
     register,
     handleSubmit,

@@ -12,7 +12,7 @@ export default function useProfile(name: string, initialData?: UserProfileDto) {
     queryFn: async ({ signal }) => {
       const response = await fetchClient.get<{ user: UserProfileDto }>(
         `/user/profile/${name}`,
-        { signal }
+        { signal },
       );
 
       return response.user;

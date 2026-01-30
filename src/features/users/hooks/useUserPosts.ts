@@ -1,6 +1,6 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import fetchClient from "@/lib/fetchClient";
-import type { PublicPostDto } from "@/features/posts/types/post.dto";
+import { PublicPostDto } from "@/features/posts/types/post.dto";
 
 export default function useUserPosts(userId: string) {
   return useInfiniteQuery<PublicPostDto[]>({

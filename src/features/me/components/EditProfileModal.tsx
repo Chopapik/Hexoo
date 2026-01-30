@@ -5,7 +5,7 @@ import TextInput from "@/features/shared/components/ui/TextInput";
 import Button from "@/features/shared/components/ui/Button";
 import Modal from "@/features/shared/components/layout/Modal";
 import RemoveImageButton from "@/features/shared/components/ui/RemoveImageButton";
-import type { UserProfileDto } from "@/features/users/types/user.dto";
+import type { PublicUserResponseDto } from "@/features/users/types/user.dto";
 import useUpdateProfile from "../hooks/useUpdateProfile";
 import { useUpdateProfileForm } from "../hooks/useUpdateProfileForm";
 import { Avatar } from "@/features/posts/components/Avatar";
@@ -16,7 +16,7 @@ import type { UpdateProfileData } from "../me.type";
 import ValidationMessage from "@/features/shared/components/ui/ValidationMessage";
 
 interface EditProfileModalProps {
-  user: UserProfileDto | null;
+  user: PublicUserResponseDto | null;
   onClose: () => void;
 }
 

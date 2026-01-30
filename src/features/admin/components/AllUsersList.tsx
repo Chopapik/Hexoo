@@ -4,13 +4,13 @@ import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import fetchClient from "@/lib/fetchClient";
 import Button from "@/features/shared/components/ui/Button";
-import type { User } from "@/features/users/types/user.entity";
+import type { PrivateUserResponseDto } from "@/features/users/types/user.dto";
 import AdminUserEditModal from "./AdminUserEditModal";
 import AdminUserCreateModal from "./AdminUserCreateModal";
 import { formatDate } from "@/features/shared/utils/dateUtils";
 
 type GetUsersResponse = {
-  users: User[];
+  users: PrivateUserResponseDto[];
 };
 
 enum AdminModal {
@@ -26,9 +26,10 @@ const ROLE_STYLES: Record<string, string> = {
 
 export default function AllUsersList() {
   const [modal, setModal] = useState<AdminModal>(AdminModal.NONE);
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [selectedUser, setSelectedUser] =
+    useState<PrivateUserResponseDto | null>(null);
 
-  const openEditModal = (user: User) => {
+  const openEditModal = (user: PrivateUserResponseDto) => {
     setSelectedUser(user);
     setModal(AdminModal.EDIT);
   };
@@ -50,7 +51,7 @@ export default function AllUsersList() {
     error,
     refetch,
     isFetching,
-  } = useQuery<User[], Error>({
+  } = useQuery<PrivateUserResponseDto[], Error>({
     queryKey: ["admin", "allUsers"],
     queryFn: async () => {
       const res = await fetchClient.get<GetUsersResponse>("/admin/users");
