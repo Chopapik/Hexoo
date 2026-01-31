@@ -17,7 +17,7 @@ export default function AdminUserCreateModal({
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState<UserRole>("user");
+  const [role, setRole] = useState<UserRole>(USER_ROLE_OPTIONS[0].value);
 
   const { createUser, isPending } = adminCreateUser();
 
