@@ -5,12 +5,12 @@ import { FieldValue } from "firebase-admin/firestore";
 import { blockUser, getUsersByIds } from "@/features/users/api/services";
 import { BlockUserDto } from "@/features/users/types/user.dto";
 import { deleteImage } from "@/features/images/api/imageService";
-import { Post } from "@/features/posts/types/post.entity";
+import { PostEntity } from "@/features/posts/types/post.entity";
 import { ModerationPostDto } from "@/features/posts/types/post.dto";
 
 export const ensureModeratorOrAdmin = async () => {
   const session = await getUserFromSession();
-  if (session.role !== "moderator" && session.role !== "admin") {
+  if (session.role !== UserRole.Moderator && UserRole.Admin) {
     throw createAppError({
       code: "FORBIDDEN",
       message:
@@ -21,6 +21,7 @@ export const ensureModeratorOrAdmin = async () => {
 };
 
 import { postService } from "@/features/posts/api/services/ index";
+import { UserRole } from "@/features/users/types/user.type";
 
 export const getModerationQueue = async (): Promise<ModerationPostDto[]> => {
   await ensureModeratorOrAdmin();
@@ -42,7 +43,7 @@ export const getModerationQueue = async (): Promise<ModerationPostDto[]> => {
     ...doc.data(),
     createdAt: doc.data().createdAt?.toDate(),
     updatedAt: doc.data().updatedAt?.toDate(),
-  })) as Post[];
+  })) as PostEntity[];
 
   const authorIds = [...new Set(postDocs.map((post) => post.userId))];
 
@@ -93,7 +94,7 @@ export const reviewPost = async (
       //   });
       // }
 
-      const postData = postDoc.data() as Post;
+      const postData = postDoc.data() as PostEntity;
 
       if (action === "reject") {
         if (action === "reject") {
@@ -137,6 +138,4 @@ export const reviewPost = async (
       );
     }
   }
-
-  return { success: true, action, postId };
 };

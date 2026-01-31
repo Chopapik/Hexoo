@@ -1,28 +1,23 @@
-import { Post } from "../../types/post.entity";
+import { PostEntity } from "../../types/post.entity";
 import { ReportDetails } from "@/features/shared/types/report.type";
-
-export type CreatePostDBInput = Partial<Omit<Post, "id">>;
-
-export type UpdatePostDBInput = Partial<
-  Omit<Post, "id" | "createdAt" | "userId">
->;
+import { CreatePostPayload, UpdatePostPayload } from "../../types/post.payload";
 
 export interface PostRepository {
-  createPost(data: CreatePostDBInput): Promise<void>;
+  createPost(data: CreatePostPayload): Promise<void>;
 
-  updatePost(postId: string, data: UpdatePostDBInput): Promise<void>;
+  updatePost(postId: string, data: UpdatePostPayload): Promise<void>;
 
   deletePost(postId: string): Promise<void>;
 
-  getPostById(postId: string): Promise<Post | null>;
+  getPostById(postId: string): Promise<PostEntity | null>;
 
-  getPosts(limit: number, startAfterId?: string): Promise<Post[]>;
+  getPosts(limit: number, startAfterId?: string): Promise<PostEntity[]>;
 
   getPostsByUserId(
     userId: string,
     limit: number,
     startAfterId?: string,
-  ): Promise<Post[]>;
+  ): Promise<PostEntity[]>;
 
   reportPost(
     postId: string,

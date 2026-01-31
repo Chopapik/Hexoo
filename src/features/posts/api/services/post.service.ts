@@ -5,7 +5,7 @@ import { getUsersByIds } from "@/features/users/api/services";
 import { likeRepository } from "@/features/likes/api/repositories";
 //move likerepository & imagerepostory outside to avoid violating S in SOLID
 
-import { Post } from "../../types/post.entity";
+import { PostEntity } from "../../types/post.entity";
 import {
   CreatePostDto,
   UpdatePostDto,
@@ -15,12 +15,10 @@ import {
 } from "../../types/post.dto";
 import { SessionData } from "@/features/me/me.type";
 
-import {
-  PostRepository,
-  CreatePostDBInput,
-} from "../repositories/post.repository.interface";
+import { PostRepository } from "../repositories/post.repository.interface";
 import { PostContentService } from "./post.content.service";
 import { PostService as IPostService } from "./post.service.interface";
+import { CreatePostPayload } from "../../types/post.payload";
 
 export class PostService implements IPostService {
   constructor(
@@ -48,7 +46,7 @@ export class PostService implements IPostService {
   }
 
   private async enrichPosts(
-    posts: Post[],
+    posts: PostEntity[],
     session: SessionData | null,
   ): Promise<PublicPostDto[]> {
     if (posts.length === 0) return [];
@@ -99,7 +97,7 @@ export class PostService implements IPostService {
       createPostData.imageFile,
     );
 
-    const dbInput: CreatePostDBInput = {
+    const dbInput: CreatePostPayload = {
       userId: user.uid,
       text: createPostData.text,
       device: "Web",
@@ -118,8 +116,6 @@ export class PostService implements IPostService {
     };
 
     await this.repository.createPost(dbInput);
-
-    return {} as any;
   }
 
   async deletePost(postId: string) {

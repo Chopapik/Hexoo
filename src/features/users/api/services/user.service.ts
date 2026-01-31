@@ -1,13 +1,13 @@
-import type { User } from "../../types/user.entity";
 import type { BlockUserDto, CreateUserDto } from "../../types/user.dto";
 import { createAppError } from "@/lib/AppError";
 import { logActivity } from "@/features/admin/api/services/activityService";
 import {
-  CreateUserDBInput,
+  CreateUserPayload,
   UserRepository,
 } from "../repositories/user.repository.interface";
 import type { UserService as IUserService } from "./user.service.interface";
 import { SessionData } from "@/features/me/me.type";
+import { UserEntity } from "../../types/user.entity";
 
 export class UserService implements IUserService {
   constructor(
@@ -15,23 +15,21 @@ export class UserService implements IUserService {
     private readonly session: SessionData | null = null,
   ) {}
 
-  async createUserDocument(uid: string, data: CreateUserDto) {
-    const dbInput: CreateUserDBInput = {
+  async createUser(uid: string, data: CreateUserDto) {
+    const payload: CreateUserPayload = {
       uid,
       name: data.name,
       email: data.email,
       role: data.role,
     };
-    const newUser = await this.repository.createUser(dbInput);
+    const newUser = await this.repository.createUser(payload);
 
     if (!data) {
       throw createAppError({
         code: "DB_ERROR",
-        message:
-          "[userService.createUserDocument] Missing user data after creation",
+        message: "[userService.createUser] Missing user data after creation",
       });
     }
-
   }
 
   private ensureModeratorOrAdmin = async () => {
@@ -46,7 +44,7 @@ export class UserService implements IUserService {
     return session;
   };
 
-  async getUserByUid(uid: string): Promise<User | null> {
+  async getUserByUid(uid: string): Promise<UserEntity | null> {
     return await this.repository.getUserByUid(uid);
   }
 
@@ -64,12 +62,8 @@ export class UserService implements IUserService {
       uid: userData.uid,
       name: userData.name,
       avatarUrl: userData.avatarUrl,
-      lastOnline: (userData.lastOnline as any)?.toDate
-        ? (userData.lastOnline as any).toDate()
-        : userData.lastOnline,
-      createdAt: (userData.createdAt as any)?.toDate
-        ? (userData.createdAt as any).toDate()
-        : userData.createdAt,
+      lastOnline: userData.lastOnline,
+      createdAt: userData.createdAt,
     };
 
     return { user: userProfile };
@@ -119,11 +113,12 @@ export class UserService implements IUserService {
       });
     }
 
-    await this.repository.updateUserRestriction(uid, false);
+    await this.repository.updateUserRestriction({
+      uid,
+      isRestricted: false,
+    });
 
     await logActivity(uid, "USER_UNRESTRICTED", "User restriction removed");
-
-    return { success: true, uid, status: "active" };
   }
 
   private async _applyRestrictionInternal(
@@ -138,7 +133,9 @@ export class UserService implements IUserService {
       });
     }
 
-    await this.repository.updateUserRestriction(uid, true, {
+    await this.repository.updateUserRestriction({
+      uid,
+      isRestricted: true,
       restrictedBy: source,
       restrictedReason: reason,
     });
@@ -148,20 +145,18 @@ export class UserService implements IUserService {
       "USER_RESTRICTED",
       `Restricted by ${source}. Reason: ${reason}`,
     );
-
-    return { success: true, uid, status: "restricted", source };
   }
 
   async restrictUser(data: { uid: string; reason: string }) {
     await this.ensureModeratorOrAdmin();
 
-    return await this._applyRestrictionInternal(data.uid, data.reason, "ADMIN");
+    await this._applyRestrictionInternal(data.uid, data.reason, "ADMIN");
   }
 
   async restrictUserBySystem(uid: string, reason: string) {
     console.log(`[AI MODERATION] Restricting user ${uid} due to: ${reason}`);
 
-    return await this._applyRestrictionInternal(uid, reason, "AI_SYSTEM");
+    await this._applyRestrictionInternal(uid, reason, "AI_SYSTEM");
   }
 
   async getUsersByIds(

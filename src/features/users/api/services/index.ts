@@ -1,27 +1,28 @@
 import { UserService } from "./user.service";
 import { userRepository } from "../repositories";
 import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
-import type { User } from "../../types/user.entity";
+import type { UserEntity } from "../../types/user.entity";
 import type { BlockUserDto } from "../../types/user.dto";
+import { UserRole } from "../../types/user.type";
 
 export const getUserService = async (): Promise<UserService> => {
   const session = await getUserFromSession().catch(() => null);
   return new UserService(userRepository, session);
 };
 
-export async function createUserDocument(
+export async function createUser(
   uid: string,
   userData: {
     name: string;
     email: string;
-    role: string;
+    role: UserRole;
   },
 ) {
   const service = await getUserService();
-  return await service.createUserDocument(uid, userData);
+  return await service.createUser(uid, userData);
 }
 
-export async function getUserByUid(uid: string): Promise<User | null> {
+export async function getUserByUid(uid: string): Promise<UserEntity | null> {
   const service = await getUserService();
   return await service.getUserByUid(uid);
 }
@@ -64,4 +65,3 @@ export async function restrictUserBySystem(uid: string, reason: string) {
 }
 
 export { UserService };
-export type { User, BlockUserDto };

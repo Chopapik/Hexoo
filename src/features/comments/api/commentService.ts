@@ -72,8 +72,6 @@ export const addComment = async (data: AddCommentDto) => {
       updatedAt: FieldValue.serverTimestamp(),
     });
   });
-
-  return { success: true, postId };
 };
 
 export const getCommentsByPostId = async (

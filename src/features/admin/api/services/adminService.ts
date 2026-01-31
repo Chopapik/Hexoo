@@ -39,8 +39,6 @@ export const adminDeleteUser = async (uid: string) => {
 
   await authRepository.deleteUser(uid);
   await userRepository.deleteUser(uid);
-
-  return { success: true, uid };
 };
 
 export const adminCreateUserAccount = async (data: AdminUserCreate) => {
