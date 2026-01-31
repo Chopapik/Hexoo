@@ -3,6 +3,7 @@ import { formatZodErrorFlat } from "@/lib/zod";
 import { deleteImage } from "@/features/images/api/imageService";
 import { getUsersByIds } from "@/features/users/api/services";
 import { likeRepository } from "@/features/likes/api/repositories";
+import { ModerationStatus } from "@/features/shared/types/content.type";
 //move likerepository & imagerepostory outside to avoid violating S in SOLID
 
 import { PostEntity } from "../../types/post.entity";
@@ -122,7 +123,7 @@ export class PostService implements IPostService {
     await this.repository.deletePost(postId);
   }
 
-  async setModerationStatus(postId: string, status: "approved" | "pending") {
+  async setModerationStatus(postId: string, status: ModerationStatus.Approved | ModerationStatus.Pending) {
     await this.repository.updatePost(postId, {
       moderationStatus: status,
     });

@@ -12,7 +12,7 @@ import useCreatePostForm from "../hooks/useCreatePostForm";
 import useCreatePost from "../hooks/useCreatePost";
 import { CreatePostDto } from "../types/post.dto";
 import { parseErrorMessages } from "../utils/postFormValidation";
-import { POST_MAX_CHARS } from "../types/post.type";
+import { POST_MAX_CHARS } from "../types/post.dto";
 
 interface CreatePostModalProps {
   isOpen: boolean;

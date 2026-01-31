@@ -1,7 +1,11 @@
 import { ImageMeta } from "@/features/images/types/image.type";
 import { ReportDetails } from "@/features/shared/types/report.type";
 
-export type ModerationStatus = "approved" | "pending" | "rejected";
+export enum ModerationStatus {
+  Approved = "approved",
+  Pending = "pending",
+  Rejected = "rejected",
+}
 
 export interface ContentBase {
   id: string;

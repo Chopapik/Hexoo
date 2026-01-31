@@ -3,8 +3,7 @@ import { moderateImage } from "@/features/moderation/api/imageModeration";
 import { moderateText } from "@/features/moderation/api/textModeration";
 import { createAppError } from "@/lib/AppError";
 import { logModerationEvent } from "@/features/moderation/api/moderationLogService";
-
-export type ModerationStatus = "approved" | "pending" | "rejected";
+import { ModerationStatus } from "@/features/shared/types/content.type";
 
 export interface ModerationVerdict {
   status: ModerationStatus;
@@ -71,21 +70,21 @@ export const getAiModerationVerdict = (
 
   // is illegal
   if (categories.some((cat) => REJECT_FLAGS.includes(cat))) {
-    return { status: "rejected", isNSFW: isNSFW };
+    return { status: ModerationStatus.Rejected, isNSFW: isNSFW };
   }
 
   // should be checked by human
   if (categories.some((cat) => PENDING_FLAGS.includes(cat))) {
-    return { status: "pending", isNSFW: isNSFW };
+    return { status: ModerationStatus.Pending, isNSFW: isNSFW };
   }
 
   // is +18
   if (categories.some((cat) => NSFW_FLAGS.includes(cat))) {
-    return { status: "approved", isNSFW: isNSFW };
+    return { status: ModerationStatus.Approved, isNSFW: isNSFW };
   }
 
   // clear
-  return { status: "approved", isNSFW: isNSFW };
+  return { status: ModerationStatus.Approved, isNSFW: isNSFW };
 };
 
 export const enforceStrictModeration = async (
@@ -133,7 +132,7 @@ export const performModeration = async (
     imageFile,
   );
 
-  let moderationStatus: ModerationStatus = "approved";
+  let moderationStatus: ModerationStatus = ModerationStatus.Approved;
   let isNSFW = false;
 
   if (flaggedReasons.length > 0) {
@@ -142,13 +141,13 @@ export const performModeration = async (
     moderationStatus = moderationResult.status;
   }
 
-  if (moderationStatus !== "approved") {
+  if (moderationStatus !== ModerationStatus.Approved) {
     const verdictUpper = moderationStatus.toUpperCase() as
       | "PENDING"
       | "REJECTED";
 
     const actionTaken =
-      moderationStatus === "rejected"
+      moderationStatus === ModerationStatus.Rejected
         ? "BLOCKED_CREATION"
         : "FLAGGED_FOR_REVIEW";
 
@@ -161,7 +160,7 @@ export const performModeration = async (
     });
   }
 
-  if (moderationStatus === "rejected") {
+  if (moderationStatus === ModerationStatus.Rejected) {
     throw createAppError({
       code: "POLICY_VIOLATION",
       message: "[postService] Post content violates service terms",

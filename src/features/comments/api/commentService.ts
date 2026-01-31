@@ -10,6 +10,7 @@ import {
 import { formatZodErrorFlat } from "@/lib/zod";
 import { performModeration } from "@/features/moderation/utils/assessSafety";
 import { getUsersByIds } from "@/features/users/api/services";
+import { ModerationStatus } from "@/features/shared/types/content.type";
 
 export const addComment = async (data: AddCommentDto) => {
   const user = await getUserFromSession();
@@ -89,7 +90,7 @@ export const getCommentsByPostId = async (
     .collection("posts")
     .doc(postId)
     .collection("comments")
-    .where("moderationStatus", "==", "approved")
+    .where("moderationStatus", "==", ModerationStatus.Approved)
     .orderBy("createdAt", "asc")
     .get();
 
