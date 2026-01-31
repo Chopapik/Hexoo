@@ -10,7 +10,7 @@ import { ModerationPostDto } from "@/features/posts/types/post.dto";
 
 export const ensureModeratorOrAdmin = async () => {
   const session = await getUserFromSession();
-  if (session.role !== UserRole.Moderator && UserRole.Admin) {
+  if (session.role !== UserRole.Moderator && session.role !== UserRole.Admin) {
     throw createAppError({
       code: "FORBIDDEN",
       message:
@@ -22,6 +22,7 @@ export const ensureModeratorOrAdmin = async () => {
 
 import { postService } from "@/features/posts/api/services/ index";
 import { UserRole } from "@/features/users/types/user.type";
+import { ModerationStatus } from "@/features/shared/types/content.type";
 
 export const getModerationQueue = async (): Promise<ModerationPostDto[]> => {
   await ensureModeratorOrAdmin();
@@ -29,7 +30,7 @@ export const getModerationQueue = async (): Promise<ModerationPostDto[]> => {
   const postsRef = adminDb.collection("posts");
 
   const pendingSnapshot = await postsRef
-    .where("moderationStatus", "==", "pending")
+    .where("moderationStatus", "==", ModerationStatus.Pending)
     .orderBy("createdAt", "desc")
     .limit(50)
     .get();
@@ -97,24 +98,22 @@ export const reviewPost = async (
       const postData = postDoc.data() as PostEntity;
 
       if (action === "reject") {
-        if (action === "reject") {
-          transaction.delete(postRef);
+        transaction.delete(postRef);
 
-          if (postData.imageMeta?.storagePath) {
-            await deleteImage(postData.imageMeta.storagePath);
-          }
-          await deleteImage(postData.imageMeta?.storagePath);
+        if (postData.imageMeta?.storagePath) {
+          await deleteImage(postData.imageMeta.storagePath);
         }
+        await deleteImage(postData.imageMeta?.storagePath);
       } else if (action === "approve") {
         transaction.update(postRef, {
-          moderationStatus: "approved",
+          moderationStatus: ModerationStatus.Approved,
           flaggedReasons: [],
           reviewedBy: moderator.uid,
           reviewedAt: FieldValue.serverTimestamp(),
         });
       } else if (action === "quarantine") {
         transaction.update(postRef, {
-          moderationStatus: "pending",
+          moderationStatus: ModerationStatus.Pending,
           reviewedBy: moderator.uid,
           reviewedAt: FieldValue.serverTimestamp(),
         });

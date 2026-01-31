@@ -1,6 +1,7 @@
 import admin from "firebase-admin";
 import { PostRepository } from "./post.repository.interface";
 import { ReportDetails } from "@/features/shared/types/report.type";
+import { ModerationStatus } from "@/features/shared/types/content.type";
 import { mapDatesFromFirestore } from "@/features/shared/utils/firestoreMappers";
 import { CreatePostPayload, UpdatePostPayload } from "../../types/post.payload";
 import { PostEntity } from "../../types/post.entity";
@@ -28,7 +29,7 @@ export class PostFirebaseRepository implements PostRepository {
   //create public and private variables
   async getPosts(limit: number, startAfterId?: string): Promise<PostEntity[]> {
     let query = this.collection
-      .where("moderationStatus", "==", "approved")
+      .where("moderationStatus", "==", ModerationStatus.Approved)
       .orderBy("createdAt", "desc")
       .limit(limit);
 
@@ -95,7 +96,7 @@ export class PostFirebaseRepository implements PostRepository {
 
       if (shouldHide) {
         transaction.update(postRef, {
-          moderationStatus: "pending",
+          moderationStatus: ModerationStatus.Pending,
         });
       }
 

@@ -1,11 +1,12 @@
 import { z } from "zod";
 import { PostEntity } from "./post.entity";
 
-const MAX_IMAGE_FILE_SIZE_BYTES = 5 * 1024 * 1024;
+export const MAX_IMAGE_FILE_SIZE_BYTES = 5 * 1024 * 1024;
+export const POST_MAX_CHARS = 1000;
 
 export const CreatePostSchema = z
   .object({
-    text: z.string().max(2000, "text_too_long"),
+    text: z.string().max(POST_MAX_CHARS, "text_too_long"),
     imageFile: z
       .instanceof(File)
       .optional()

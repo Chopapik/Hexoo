@@ -66,6 +66,7 @@ import type {
   PrivateUserResponseDto,
 } from "@/features/users/types/user.dto";
 import { UserRole } from "@/features/users/types/user.type";
+import { ModerationStatus } from "@/features/shared/types/content.type";
 import chevronRightUrl from "@/features/shared/assets/icons/chevronRight.svg?url";
 import warningIconUrl from "@/features/shared/assets/icons/warning.svg?url";
 import cameraIconUrl from "@/features/shared/assets/icons/camera.svg?url";
@@ -161,7 +162,7 @@ const demoPost: PublicPostDto = {
   isLikedByMe: true,
   commentsCount: 5,
   createdAt: new Date(),
-  moderationStatus: "approved",
+  moderationStatus: ModerationStatus.Approved,
   isNSFW: false,
 };
 
@@ -180,7 +181,7 @@ const demoPostNsfw: PublicPostDto = {
 const demoModerationPost: ModerationPostDto = {
   ...demoPost,
   id: "post-3",
-  moderationStatus: "pending",
+  moderationStatus: ModerationStatus.Pending,
   flaggedReasons: ["spam", "hate"],
   reportsMeta: [
     {

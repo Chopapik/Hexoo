@@ -1,9 +1,10 @@
 import { hasFile, uploadImage } from "@/features/images/api/imageService";
 import { performModeration } from "@/features/moderation/utils/assessSafety";
 import type { ImageMeta } from "@/features/images/types/image.type";
+import { ModerationStatus } from "@/features/shared/types/content.type";
 
 type PostContentProcessResult = {
-  moderationStatus: "approved" | "pending" | "rejected";
+  moderationStatus: ModerationStatus;
   isNSFW: boolean;
   flaggedReasons: string[];
   flaggedSource: ("text" | "image")[];
