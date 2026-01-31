@@ -1,7 +1,9 @@
-import {
+import type {
+  BlockUserPayload,
+  CreateUserPayload,
+  UpdateUserPayload,
+  UpdateUserRestrictionPayload,
   UserRepository,
-  BlockUserDBInput,
-  CreateUserDBInput,
 } from "./user.repository.interface";
 import { User } from "../../types/user.entity";
 import { adminDb, adminAuth } from "@/lib/firebaseAdmin";
@@ -13,7 +15,7 @@ export class UserFirebaseRepository implements UserRepository {
     return adminDb.collection("users");
   }
 
-  async createUser(data: CreateUserDBInput): Promise<void> {
+  async createUser(data: CreateUserPayload): Promise<void> {
     const normalizedName = data.name.trim().toLowerCase();
     const userDoc = {
       uid: data.uid,
@@ -79,7 +81,7 @@ export class UserFirebaseRepository implements UserRepository {
     return usersMap;
   }
 
-  async blockUser(data: BlockUserDBInput): Promise<void> {
+  async blockUser(data: BlockUserPayload): Promise<void> {
     if (!data.uidToBlock) throw new Error("uidToBlock is required");
 
     await adminAuth.updateUser(data.uidToBlock, { disabled: true });
@@ -103,19 +105,20 @@ export class UserFirebaseRepository implements UserRepository {
     });
   }
 
-  async updateUserRestriction(
-    uid: string,
-    isRestricted: boolean,
-    metadata?: { restrictedBy?: string; restrictedReason?: string },
-  ): Promise<void> {
+  async updateUserRestriction({
+    uid,
+    isRestricted,
+    restrictedBy,
+    restrictedReason,
+  }: UpdateUserRestrictionPayload): Promise<void> {
     const updateData: any = {
       isRestricted,
       updatedAt: FieldValue.serverTimestamp(),
     };
 
     if (isRestricted) {
-      updateData.restrictedBy = metadata?.restrictedBy;
-      updateData.restrictedReason = metadata?.restrictedReason;
+      updateData.restrictedBy = restrictedBy;
+      updateData.restrictedReason = restrictedReason;
     } else {
       updateData.restrictedBy = FieldValue.delete();
       updateData.restrictedReason = FieldValue.delete();
@@ -136,7 +139,7 @@ export class UserFirebaseRepository implements UserRepository {
     await this.collection.doc(uid).delete();
   }
 
-  async updateUser(uid: string, data: Partial<User>): Promise<void> {
+  async updateUser(uid: string, data: UpdateUserPayload): Promise<void> {
     const updateData: any = {
       ...data,
       updatedAt: FieldValue.serverTimestamp(),

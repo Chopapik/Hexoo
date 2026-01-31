@@ -1,34 +1,32 @@
 import admin from "firebase-admin";
-import {
-  PostRepository,
-  CreatePostDBInput,
-  UpdatePostDBInput,
-} from "./post.repository.interface";
-import { Post } from "../../types/post.entity";
+import { PostRepository } from "./post.repository.interface";
 import { ReportDetails } from "@/features/shared/types/report.type";
 import { mapDatesFromFirestore } from "@/features/shared/utils/firestoreMappers";
+import { CreatePostPayload, UpdatePostPayload } from "../../types/post.payload";
+import { PostEntity } from "../../types/post.entity";
 
 export class PostFirebaseRepository implements PostRepository {
   private get collection() {
     return admin.firestore().collection("posts");
   }
 
-  async createPost(data: CreatePostDBInput): Promise<void> {
+  async createPost(data: CreatePostPayload): Promise<void> {
     await this.collection.add(data);
   }
 
-  async updatePost(postId: string, data: UpdatePostDBInput): Promise<void> {
+  async updatePost(postId: string, data: UpdatePostPayload): Promise<void> {
     await this.collection.doc(postId).update(data);
   }
 
-  async getPostById(postId: string): Promise<Post | null> {
+  async getPostById(postId: string): Promise<PostEntity | null> {
     const doc = await this.collection.doc(postId).get();
     if (!doc.exists) return null;
     const mapped = mapDatesFromFirestore(doc.data());
-    return { id: doc.id, ...mapped } as Post;
+    return { id: doc.id, ...mapped } as PostEntity;
   }
 
-  async getPosts(limit: number, startAfterId?: string): Promise<Post[]> {
+  //create public and private variables
+  async getPosts(limit: number, startAfterId?: string): Promise<PostEntity[]> {
     let query = this.collection
       .where("moderationStatus", "==", "approved")
       .orderBy("createdAt", "desc")
@@ -44,15 +42,16 @@ export class PostFirebaseRepository implements PostRepository {
     const snapshot = await query.get();
     return snapshot.docs.map((doc) => {
       const mapped = mapDatesFromFirestore(doc.data());
-      return { id: doc.id, ...mapped } as Post;
+      return { id: doc.id, ...mapped } as PostEntity;
     });
   }
 
+  //create public and private variables
   async getPostsByUserId(
     userId: string,
     limit: number,
     startAfterId?: string,
-  ): Promise<Post[]> {
+  ): Promise<PostEntity[]> {
     let query = this.collection
       .where("userId", "==", userId)
       .orderBy("createdAt", "desc")
@@ -68,7 +67,7 @@ export class PostFirebaseRepository implements PostRepository {
     const snapshot = await query.get();
     return snapshot.docs.map((doc) => {
       const mapped = mapDatesFromFirestore(doc.data());
-      return { id: doc.id, ...mapped } as Post;
+      return { id: doc.id, ...mapped } as PostEntity;
     });
   }
 

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Post } from "./post.entity";
+import { PostEntity } from "./post.entity";
 
 const MAX_IMAGE_FILE_SIZE_BYTES = 5 * 1024 * 1024;
 
@@ -58,7 +58,7 @@ export type UpdatePostDto = z.infer<typeof UpdatePostSchema>;
 export type ReportPostDto = z.infer<typeof ReportPostSchema>;
 
 export type PublicPostDto = Omit<
-  Post,
+  PostEntity,
   | "flaggedReasons"
   | "flaggedSource"
   | "reportsMeta"
@@ -71,7 +71,7 @@ export type PublicPostDto = Omit<
   isLikedByMe?: boolean;
 };
 
-export type ModerationPostDto = Post & {
+export type ModerationPostDto = PostEntity & {
   userName: string;
   userAvatarUrl: string | null;
   isLikedByMe?: boolean;
