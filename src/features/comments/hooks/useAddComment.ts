@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import fetchClient from "@/lib/fetchClient";
-import { AddCommentDto } from "../types/comment.type";
+import { AddCommentDto } from "../types/comment.dto";
 import toast from "react-hot-toast";
 import { parseCommentErrorMessages } from "../utils/commentFormValidation";
 import { ApiError } from "@/lib/AppError";

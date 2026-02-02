@@ -2,7 +2,7 @@ import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import { NextRequest } from "next/server";
 import { UpdatePostDto } from "@/features/posts/types/post.dto";
-import { postService } from "@/features/posts/api/services/ index";
+import { postService } from "@/features/posts/api/services";
 import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
 
 export const GET = withErrorHandling(
@@ -37,5 +37,14 @@ export const PUT = withErrorHandling(
     const body = await req.json();
     const result = await postService.updatePost(session, id, body);
     return handleSuccess(result, 201);
+  },
+);
+
+export const DELETE = withErrorHandling(
+  async (_req: NextRequest, context: { params: Promise<{ id: string }> }) => {
+    const { id } = await context.params;
+    const session = await getUserFromSession();
+    await postService.deletePost(session, id);
+    return handleSuccess();
   },
 );

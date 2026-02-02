@@ -2,15 +2,15 @@ import { adminDb } from "@/lib/firebaseAdmin";
 import { FieldValue } from "firebase-admin/firestore";
 import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
 import { createAppError } from "@/lib/AppError";
-import {
-  AddCommentSchema,
-  AddCommentDto,
-  Comment,
-} from "../types/comment.type";
+import { AddCommentSchema, AddCommentDto } from "../types/comment.dto";
+import type { CommentEntity } from "../types/comment.entity";
+import type { CreateCommentPayload } from "../types/comment.payload";
 import { formatZodErrorFlat } from "@/lib/zod";
 import { performModeration } from "@/features/moderation/utils/assessSafety";
 import { getUsersByIds } from "@/features/users/api/services";
 import { ModerationStatus } from "@/features/shared/types/content.type";
+import { mapDatesFromFirestore } from "@/features/shared/utils/firestoreMappers";
+import type { PublicCommentDto } from "../types/comment.dto";
 
 export const addComment = async (data: AddCommentDto) => {
   const user = await getUserFromSession();
@@ -51,7 +51,7 @@ export const addComment = async (data: AddCommentDto) => {
 
     const newCommentRef = commentsRef.doc();
 
-    const commentDoc = {
+    const commentDoc: CreateCommentPayload = {
       id: newCommentRef.id,
       postId: postId,
       userId: user.uid,
@@ -77,7 +77,7 @@ export const addComment = async (data: AddCommentDto) => {
 
 export const getCommentsByPostId = async (
   postId: string,
-): Promise<Comment[]> => {
+): Promise<PublicCommentDto[]> => {
   let currentUserUid: string | null = null;
   try {
     const session = await getUserFromSession();
@@ -96,9 +96,10 @@ export const getCommentsByPostId = async (
 
   if (commentsSnap.empty) return [];
 
-  const commentDocs = commentsSnap.docs.map(
-    (doc) => ({ id: doc.id, ...doc.data() } as Comment),
-  );
+  const commentDocs = commentsSnap.docs.map((doc) => {
+    const mapped = mapDatesFromFirestore(doc.data());
+    return { id: doc.id, ...mapped } as CommentEntity;
+  });
 
   const authorIds = [...new Set(commentDocs.map((c) => c.userId))];
   const authors = await getUsersByIds(authorIds);
@@ -124,6 +125,6 @@ export const getCommentsByPostId = async (
       userName: author?.name ?? "Unknown",
       userAvatarUrl: author?.avatarUrl ?? null,
       isLikedByMe: likedCommentIds.includes(doc.id),
-    };
+    } satisfies PublicCommentDto;
   });
 };

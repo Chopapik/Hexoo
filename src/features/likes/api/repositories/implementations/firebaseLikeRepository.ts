@@ -1,17 +1,20 @@
 import { LikeRepository } from "../likeRepository.interface";
-import { Like } from "@/features/likes/types/like.type";
 import { adminDb } from "@/lib/firebaseAdmin";
 import { FieldValue } from "firebase-admin/firestore";
 import { createAppError } from "@/lib/AppError";
+import type {
+  CreateLikePayload,
+  ToggleLikePayload,
+} from "@/features/likes/types/like.payload";
 
 export class FirebaseLikeRepository implements LikeRepository {
   private collection = adminDb.collection("likes");
 
-  async toggleLike(
-    userId: string,
-    parentId: string,
-    parentCollection: "posts" | "comments",
-  ): Promise<void> {
+  async toggleLike({
+    userId,
+    parentId,
+    parentCollection,
+  }: ToggleLikePayload): Promise<void> {
     const parentRef = adminDb.collection(parentCollection).doc(parentId);
     const likeId = `${parentId}_${userId}`;
     const likeRef = this.collection.doc(likeId);
@@ -33,11 +36,12 @@ export class FirebaseLikeRepository implements LikeRepository {
           likesCount: FieldValue.increment(-1),
         });
       } else {
-        transaction.set(likeRef, {
+        const likeDoc: CreateLikePayload = {
           parentId,
           userId,
           likedAt: FieldValue.serverTimestamp(),
-        } as Like);
+        };
+        transaction.set(likeRef, likeDoc);
 
         transaction.update(parentRef, {
           likesCount: FieldValue.increment(1),

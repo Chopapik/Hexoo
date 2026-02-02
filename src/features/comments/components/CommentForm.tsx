@@ -1,6 +1,6 @@
 "use client";
 
-import { AddCommentDto, COMMENT_MAX_CHARS } from "../types/comment.type";
+import { AddCommentDto, COMMENT_MAX_CHARS } from "../types/comment.dto";
 import Button from "@/features/shared/components/ui/Button";
 import useCommentForm from "../hooks/useCommentForm";
 import useAddComment from "../hooks/useAddComment";

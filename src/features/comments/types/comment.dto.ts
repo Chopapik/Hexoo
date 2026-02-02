@@ -1,11 +1,7 @@
-import z from "zod";
-import { ContentBase } from "@/features/shared/types/content.type";
+import { z } from "zod";
+import type { CommentEntity } from "./comment.entity";
 
 export const COMMENT_MAX_CHARS = 500;
-
-export interface Comment extends ContentBase {
-  postId: string;
-}
 
 export const AddCommentSchema = z.object({
   text: z
@@ -17,3 +13,17 @@ export const AddCommentSchema = z.object({
 });
 
 export type AddCommentDto = z.infer<typeof AddCommentSchema>;
+
+export type PublicCommentDto = Omit<
+  CommentEntity,
+  | "flaggedReasons"
+  | "flaggedSource"
+  | "userReports"
+  | "reportsMeta"
+  | "reviewedBy"
+  | "reviewedAt"
+> & {
+  userName: string;
+  userAvatarUrl: string | null;
+  isLikedByMe?: boolean;
+};
