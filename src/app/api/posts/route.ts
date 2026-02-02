@@ -3,7 +3,7 @@ import { handleSuccess } from "@/lib/http/responseHelpers";
 import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
 import { NextRequest } from "next/server";
 import { CreatePostDto } from "@/features/posts/types/post.dto";
-import { postService } from "@/features/posts/api/services/ index";
+import { postService } from "@/features/posts/api/services";
 export const POST = withErrorHandling(async (req: NextRequest) => {
   const session = await getUserFromSession();
 

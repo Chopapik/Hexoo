@@ -1,13 +1,13 @@
 "use client";
 
 import React from "react";
-import { Comment } from "../types/comment.type";
+import type { PublicCommentDto } from "../types/comment.dto";
 import { Avatar } from "@/features/posts/components/Avatar";
 import { formatSmartDate } from "@/features/shared/utils/dateUtils";
 import Link from "next/link";
 
 interface CommentItemProps {
-  comment: Comment;
+  comment: PublicCommentDto;
 }
 
 export const CommentItem = ({ comment }: CommentItemProps) => {

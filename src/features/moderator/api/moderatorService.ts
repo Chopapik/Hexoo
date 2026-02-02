@@ -20,7 +20,6 @@ export const ensureModeratorOrAdmin = async () => {
   return session;
 };
 
-import { postService } from "@/features/posts/api/services/ index";
 import { UserRole } from "@/features/users/types/user.type";
 import { ModerationStatus } from "@/features/shared/types/content.type";
 

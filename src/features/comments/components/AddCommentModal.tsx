@@ -2,7 +2,7 @@
 
 import Modal from "@/features/shared/components/layout/Modal";
 import useAddComment from "../hooks/useAddComment";
-import { AddCommentDto } from "../types/comment.type";
+import { AddCommentDto } from "../types/comment.dto";
 import Button from "@/features/shared/components/ui/Button";
 import type { PublicPostDto } from "@/features/posts/types/post.dto";
 import useCommentForm from "../hooks/useCommentForm";

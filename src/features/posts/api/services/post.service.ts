@@ -1,10 +1,8 @@
 import { createAppError } from "@/lib/AppError";
 import { formatZodErrorFlat } from "@/lib/zod";
-import { deleteImage } from "@/features/images/api/imageService";
 import { getUsersByIds } from "@/features/users/api/services";
-import { likeRepository } from "@/features/likes/api/repositories";
 import { ModerationStatus } from "@/features/shared/types/content.type";
-//move likerepository & imagerepostory outside to avoid violating S in SOLID
+import type { LikeRepository } from "@/features/likes/api/repositories";
 
 import { PostEntity } from "../../types/post.entity";
 import {
@@ -21,10 +19,14 @@ import { PostContentService } from "./post.content.service";
 import { PostService as IPostService } from "./post.service.interface";
 import { CreatePostPayload } from "../../types/post.payload";
 
+type ImageDeleter = (storagePath?: string | null) => Promise<void>;
+
 export class PostService implements IPostService {
   constructor(
     private readonly repository: PostRepository,
     private readonly contentService: PostContentService,
+    private readonly likeRepository: LikeRepository,
+    private readonly imageDeleter: ImageDeleter,
   ) {}
 
   private ensureUser(session: SessionData | null): SessionData {
@@ -59,7 +61,7 @@ export class PostService implements IPostService {
     let likedPostIds: string[] = [];
 
     if (session && visiblePostIds.length > 0) {
-      likedPostIds = await likeRepository.getLikesForParents(
+      likedPostIds = await this.likeRepository.getLikesForParents(
         session.uid,
         visiblePostIds,
       );
@@ -119,7 +121,32 @@ export class PostService implements IPostService {
     await this.repository.createPost(dbInput);
   }
 
-  async deletePost(postId: string) {
+  async deletePost(session: SessionData, postId: string): Promise<void> {
+    const user = this.ensureUser(session);
+
+    if (!postId?.trim()) {
+      throw createAppError({
+        code: "INVALID_INPUT",
+        message: "[postService.deletePost] Empty postId",
+      });
+    }
+
+    const post = await this.repository.getPostById(postId);
+    if (!post) {
+      throw createAppError({ code: "NOT_FOUND", message: "Post not found" });
+    }
+
+    if (post.userId !== user.uid) {
+      throw createAppError({
+        code: "FORBIDDEN",
+        message: "Not author of post",
+      });
+    }
+
+    if (post.imageMeta?.storagePath) {
+      await this.imageDeleter(post.imageMeta.storagePath);
+    }
+
     await this.repository.deletePost(postId);
   }
 
@@ -163,7 +190,7 @@ export class PostService implements IPostService {
     );
 
     if (processed.imageUrl && post.imageMeta?.storagePath) {
-      await deleteImage(post.imageMeta.storagePath);
+      await this.imageDeleter(post.imageMeta.storagePath);
     }
 
     await this.repository.updatePost(postId, {

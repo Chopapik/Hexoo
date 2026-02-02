@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AddCommentDto, AddCommentSchema } from "../types/comment.type";
+import { AddCommentDto, AddCommentSchema } from "../types/comment.dto";
 
 export default function useCommentForm(postId: string) {
   const {
