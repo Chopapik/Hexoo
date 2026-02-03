@@ -1,5 +1,4 @@
 import { adminDb } from "@/lib/firebaseAdmin";
-import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
 import { createAppError } from "@/lib/AppError";
 import { FieldValue } from "firebase-admin/firestore";
 import { blockUser, getUsersByIds } from "@/features/users/api/services";
@@ -7,9 +6,11 @@ import { BlockUserDto } from "@/features/users/types/user.dto";
 import { deleteImage } from "@/features/images/api/imageService";
 import { PostEntity } from "@/features/posts/types/post.entity";
 import { ModerationPostDto } from "@/features/posts/types/post.dto";
+import { UserRole } from "@/features/users/types/user.type";
+import { ModerationStatus } from "@/features/shared/types/content.type";
+import type { SessionData } from "@/features/me/me.type";
 
-export const ensureModeratorOrAdmin = async () => {
-  const session = await getUserFromSession();
+export const ensureModeratorOrAdmin = (session: SessionData) => {
   if (session.role !== UserRole.Moderator && session.role !== UserRole.Admin) {
     throw createAppError({
       code: "FORBIDDEN",
@@ -20,11 +21,10 @@ export const ensureModeratorOrAdmin = async () => {
   return session;
 };
 
-import { UserRole } from "@/features/users/types/user.type";
-import { ModerationStatus } from "@/features/shared/types/content.type";
-
-export const getModerationQueue = async (): Promise<ModerationPostDto[]> => {
-  await ensureModeratorOrAdmin();
+export const getModerationQueue = async (
+  session: SessionData,
+): Promise<ModerationPostDto[]> => {
+  await ensureModeratorOrAdmin(session);
 
   const postsRef = adminDb.collection("posts");
 
@@ -62,11 +62,12 @@ export const getModerationQueue = async (): Promise<ModerationPostDto[]> => {
 };
 
 export const reviewPost = async (
+  session: SessionData,
   postId: string,
   action: "approve" | "reject" | "quarantine",
   banAuthor: boolean = false,
 ) => {
-  const moderator = await ensureModeratorOrAdmin();
+  const moderator = await ensureModeratorOrAdmin(session);
 
   if (!postId)
     throw createAppError({
@@ -124,7 +125,7 @@ export const reviewPost = async (
 
   if (banAuthor && transactionResult.authorId) {
     try {
-      await blockUser({
+      await blockUser(moderator, {
         uidToBlock: transactionResult.authorId,
         bannedBy: moderator.uid,
         bannedReason: `Decision on post ${postId}`,

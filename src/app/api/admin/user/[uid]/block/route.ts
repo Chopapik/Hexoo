@@ -10,7 +10,7 @@ export const PUT = withErrorHandling(
     const user = await getUserFromSession();
     const { reason } = await req.json();
 
-    const result = await blockUser({
+    const result = await blockUser(user, {
       uidToBlock: uid,
       bannedBy: user.uid,
       bannedReason: reason,

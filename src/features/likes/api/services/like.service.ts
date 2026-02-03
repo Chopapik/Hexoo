@@ -1,6 +1,6 @@
 import { createAppError } from "@/lib/AppError";
 import type { SessionData } from "@/features/me/me.type";
-import type { LikeRepository } from "../repositories/likeRepository.interface";
+import type { LikeRepository } from "../repositories/like.repository.interface";
 import type { LikeParentCollection } from "@/features/likes/types/like.dto";
 import type { LikeService as ILikeService } from "./like.service.interface";
 

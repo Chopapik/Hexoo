@@ -3,7 +3,7 @@ import { CommentEntity } from "./comment.entity";
 
 export type CreateCommentPayload = Omit<
   CommentEntity,
-  "createdAt" | "updatedAt"
+  "id" | "createdAt" | "updatedAt"
 > & {
   createdAt: Date | FieldValue;
   updatedAt: Date | FieldValue;
