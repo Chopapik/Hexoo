@@ -1,4 +1,3 @@
-import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
 import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
 import { UpdateProfileData, UpdateProfileSchema } from "../me.type";
 import { createAppError } from "@/lib/AppError";
@@ -6,9 +5,10 @@ import { formatZodErrorFlat } from "@/lib/zod";
 import { uploadImage, deleteImage } from "@/features/images/api/imageService";
 import { enforceStrictModeration } from "@/features/moderation/utils/assessSafety";
 import { logActivity } from "@/features/admin/api/services/activityService";
+import type { SessionData } from "../me.type";
 
-export async function deleteAccount() {
-  const decoded = await getUserFromSession();
+export async function deleteAccount(session: SessionData) {
+  const decoded = session;
 
   await logActivity(
     decoded.uid,
@@ -21,8 +21,11 @@ export async function deleteAccount() {
   return;
 }
 
-export async function updateProfile(data: UpdateProfileData) {
-  const decoded = await getUserFromSession();
+export async function updateProfile(
+  session: SessionData,
+  data: UpdateProfileData,
+) {
+  const decoded = session;
   const uid = decoded.uid;
 
   const parsed = UpdateProfileSchema.safeParse(data);
@@ -102,8 +105,11 @@ export async function updateProfile(data: UpdateProfileData) {
   };
 }
 
-export const updatePassword = async (passwordData: any) => {
-  const decoded = await getUserFromSession();
+export const updatePassword = async (
+  session: SessionData,
+  passwordData: any,
+) => {
+  const decoded = session;
   const { UpdatePasswordSchema } = await import("../me.type");
   const parsed = UpdatePasswordSchema.safeParse(passwordData);
 

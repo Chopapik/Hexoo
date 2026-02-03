@@ -1,7 +1,7 @@
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import { NextRequest } from "next/server";
-import { postService } from "@/features/posts/api/services";
+import { reportPost } from "@/features/posts/api/services";
 import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
 
 export const POST = withErrorHandling(
@@ -12,7 +12,7 @@ export const POST = withErrorHandling(
 
     const { reason, details } = body;
 
-    const result = await postService.reportPost(session, id, reason, details);
+    const result = await reportPost(session, id, reason, details);
 
     return handleSuccess(result);
   },

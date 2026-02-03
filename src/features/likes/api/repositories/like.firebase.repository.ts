@@ -1,13 +1,13 @@
-import { LikeRepository } from "../likeRepository.interface";
 import { adminDb } from "@/lib/firebaseAdmin";
 import { FieldValue } from "firebase-admin/firestore";
 import { createAppError } from "@/lib/AppError";
+import type { LikeRepository } from "./like.repository.interface";
 import type {
   CreateLikePayload,
   ToggleLikePayload,
 } from "@/features/likes/types/like.payload";
 
-export class FirebaseLikeRepository implements LikeRepository {
+export class LikeFirebaseRepository implements LikeRepository {
   private collection = adminDb.collection("likes");
 
   async toggleLike({

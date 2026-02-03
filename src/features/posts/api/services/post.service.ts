@@ -27,16 +27,17 @@ export class PostService implements IPostService {
     private readonly contentService: PostContentService,
     private readonly likeRepository: LikeRepository,
     private readonly imageDeleter: ImageDeleter,
+    private readonly session: SessionData | null = null,
   ) {}
 
-  private ensureUser(session: SessionData | null): SessionData {
-    if (!session) {
+  private ensureUser(): SessionData {
+    if (!this.session) {
       throw createAppError({
         code: "AUTH_REQUIRED",
         message: "User session required",
       });
     }
-    return session;
+    return this.session;
   }
 
   private validateRestricted(session: SessionData) {
@@ -48,10 +49,7 @@ export class PostService implements IPostService {
     }
   }
 
-  private async enrichPosts(
-    posts: PostEntity[],
-    session: SessionData | null,
-  ): Promise<PublicPostDto[]> {
+  private async enrichPosts(posts: PostEntity[]): Promise<PublicPostDto[]> {
     if (posts.length === 0) return [];
 
     const authorIds = [...new Set(posts.map((post) => post.userId))];
@@ -60,9 +58,9 @@ export class PostService implements IPostService {
     const visiblePostIds = posts.map((post) => post.id);
     let likedPostIds: string[] = [];
 
-    if (session && visiblePostIds.length > 0) {
+    if (this.session && visiblePostIds.length > 0) {
       likedPostIds = await this.likeRepository.getLikesForParents(
-        session.uid,
+        this.session.uid,
         visiblePostIds,
       );
     }
@@ -78,11 +76,8 @@ export class PostService implements IPostService {
     });
   }
 
-  async createPost(
-    session: SessionData,
-    createPostData: CreatePostDto,
-  ): Promise<void> {
-    const user = this.ensureUser(session);
+  async createPost(createPostData: CreatePostDto): Promise<void> {
+    const user = this.ensureUser();
     this.validateRestricted(user);
 
     const parsed = CreatePostSchema.safeParse(createPostData);
@@ -121,8 +116,8 @@ export class PostService implements IPostService {
     await this.repository.createPost(dbInput);
   }
 
-  async deletePost(session: SessionData, postId: string): Promise<void> {
-    const user = this.ensureUser(session);
+  async deletePost(postId: string): Promise<void> {
+    const user = this.ensureUser();
 
     if (!postId?.trim()) {
       throw createAppError({
@@ -157,11 +152,10 @@ export class PostService implements IPostService {
   }
 
   async updatePost(
-    session: SessionData,
     postId: string,
     updateData: UpdatePostDto,
   ): Promise<PublicPostDto> {
-    const user = this.ensureUser(session);
+    const user = this.ensureUser();
 
     const parsed = UpdatePostSchema.safeParse(updateData);
     if (!parsed.success) {
@@ -204,13 +198,10 @@ export class PostService implements IPostService {
       updatedAt: new Date(),
     });
 
-    return await this.getPostById(postId, session);
+    return await this.getPostById(postId);
   }
 
-  async getPostById(
-    postId: string,
-    session: SessionData | null = null,
-  ): Promise<PublicPostDto> {
+  async getPostById(postId: string): Promise<PublicPostDto> {
     if (!postId?.trim())
       throw createAppError({ code: "NOT_FOUND", message: "Empty ID" });
 
@@ -218,40 +209,33 @@ export class PostService implements IPostService {
     if (!post)
       throw createAppError({ code: "NOT_FOUND", message: "Post not found" });
 
-    const enriched = await this.enrichPosts([post], session);
+    const enriched = await this.enrichPosts([post]);
     return enriched[0];
   }
 
   async getPosts(
     limit = 20,
     startAfterId?: string,
-    session: SessionData | null = null,
   ): Promise<PublicPostDto[]> {
     const posts = await this.repository.getPosts(limit, startAfterId);
-    return this.enrichPosts(posts, session);
+    return this.enrichPosts(posts);
   }
 
   async getPostsByUserId(
     userId: string,
     limit = 20,
     startAfterId?: string,
-    session: SessionData | null = null,
   ): Promise<PublicPostDto[]> {
     const posts = await this.repository.getPostsByUserId(
       userId,
       limit,
       startAfterId,
     );
-    return this.enrichPosts(posts, session);
+    return this.enrichPosts(posts);
   }
 
-  async reportPost(
-    session: SessionData,
-    postId: string,
-    reason: string,
-    details?: string,
-  ) {
-    const user = this.ensureUser(session);
+  async reportPost(postId: string, reason: string, details?: string) {
+    const user = this.ensureUser();
     return await this.repository.reportPost(postId, {
       uid: user.uid,
       reason,

@@ -1,4 +1,3 @@
-import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
 import maskEmail from "@/features/shared/utils/maskEmail";
 import { AdminUserCreate } from "@/features/admin/types/admin.type";
 import { createAppError } from "@/lib/AppError";
@@ -6,10 +5,9 @@ import { authRepository } from "@/features/auth/api/repositories";
 import { userRepository } from "@/features/users/api/repositories";
 import admin from "firebase-admin";
 import { logActivity } from "./activityService";
+import type { SessionData } from "@/features/me/me.type";
 
-const ensureAdmin = async () => {
-  const session = await getUserFromSession();
-
+const ensureAdmin = (session: SessionData | null) => {
   if (!session) {
     throw createAppError({
       code: "AUTH_REQUIRED",
@@ -25,8 +23,8 @@ const ensureAdmin = async () => {
   }
 };
 
-export const adminDeleteUser = async (uid: string) => {
-  await ensureAdmin();
+export const adminDeleteUser = async (session: SessionData, uid: string) => {
+  ensureAdmin(session);
 
   if (!uid) {
     throw createAppError({
@@ -41,8 +39,11 @@ export const adminDeleteUser = async (uid: string) => {
   await userRepository.deleteUser(uid);
 };
 
-export const adminCreateUserAccount = async (data: AdminUserCreate) => {
-  await ensureAdmin();
+export const adminCreateUserAccount = async (
+  session: SessionData,
+  data: AdminUserCreate,
+) => {
+  ensureAdmin(session);
 
   if (!data?.email || !data?.password || !data?.name) {
     throw createAppError({
@@ -80,8 +81,8 @@ export const adminCreateUserAccount = async (data: AdminUserCreate) => {
   };
 };
 
-export const adminGetAllUsers = async () => {
-  await ensureAdmin();
+export const adminGetAllUsers = async (session: SessionData) => {
+  ensureAdmin(session);
 
   const users = await userRepository.getAllUsers();
 
@@ -98,10 +99,11 @@ export const adminGetAllUsers = async () => {
 };
 
 export const adminUpdateUserAccount = async (
+  session: SessionData,
   uid: string,
   data: { name?: string; email?: string; role?: string },
 ) => {
-  await ensureAdmin();
+  ensureAdmin(session);
 
   if (!uid) {
     throw createAppError({
@@ -146,10 +148,11 @@ export const adminUpdateUserAccount = async (
 };
 
 export const adminUpdateUserPassword = async (
+  session: SessionData,
   uid: string,
   newPassword: string,
 ) => {
-  await ensureAdmin();
+  ensureAdmin(session);
 
   if (!uid) {
     throw createAppError({
