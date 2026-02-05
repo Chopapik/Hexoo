@@ -34,7 +34,14 @@ export class UserService implements IUserService {
 
   private ensureModeratorOrAdmin = async () => {
     const session = this.session;
-    if (session && session.role !== "moderator" && session.role !== "admin") {
+    if (!session) {
+      throw createAppError({
+        code: "AUTH_REQUIRED",
+        message:
+          "[moderatorService.ensureModeratorOrAdmin] No session available",
+      });
+    }
+    if (session.role !== "moderator" && session.role !== "admin") {
       throw createAppError({
         code: "FORBIDDEN",
         message:

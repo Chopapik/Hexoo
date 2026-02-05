@@ -103,7 +103,6 @@ export class ModeratorService implements IModeratorService {
           if (postData.imageMeta?.storagePath) {
             await deleteImage(postData.imageMeta.storagePath);
           }
-          await deleteImage(postData.imageMeta?.storagePath);
         } else if (action === "approve") {
           transaction.update(postRef, {
             moderationStatus: ModerationStatus.Approved,

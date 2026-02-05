@@ -1,7 +1,7 @@
 import { AuthRepository } from "../authRepository.interface";
 import { adminAuth } from "@/lib/firebaseAdmin";
-import { DecodedIdToken } from "firebase-admin/auth";
 import { createAppError } from "@/lib/AppError";
+import { DecodedIdToken, UserRecord } from "firebase-admin/auth";
 
 export class FirebaseAuthRepository implements AuthRepository {
   async verifyIdToken(idToken: string): Promise<DecodedIdToken> {
@@ -31,7 +31,7 @@ export class FirebaseAuthRepository implements AuthRepository {
     }
   }
 
-  async getUserByEmail(email: string): Promise<any | null> {
+  async getUserByEmail(email: string): Promise<UserRecord | null> {
     try {
       return await adminAuth.getUserByEmail(email);
     } catch (error: any) {
