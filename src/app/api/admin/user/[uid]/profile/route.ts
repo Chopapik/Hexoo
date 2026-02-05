@@ -1,4 +1,4 @@
-import { adminUpdateUserAccount } from "@/features/admin/api/services/adminService";
+import { adminUpdateUserAccount } from "@/features/admin/api/services";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { NextRequest } from "next/server";

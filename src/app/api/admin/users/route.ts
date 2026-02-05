@@ -1,4 +1,4 @@
-import { adminGetAllUsers } from "@/features/admin/api/services/adminService";
+import { adminGetAllUsers } from "@/features/admin/api/services";
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import { getUserFromSession } from "@/features/auth/api/utils/verifySession";

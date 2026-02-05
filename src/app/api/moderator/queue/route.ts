@@ -1,4 +1,4 @@
-import { getModerationQueue } from "@/features/moderator/api/moderatorService";
+import { getModerationQueue } from "@/features/moderator/api/services";
 
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";

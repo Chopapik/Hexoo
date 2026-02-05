@@ -1,5 +1,5 @@
 import { withErrorHandling } from "@/lib/http/routeWrapper";
-import { checkThrottle } from "@/features/security/api/throttleService";
+import { checkThrottle } from "@/features/security/api/services";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import { NextRequest } from "next/server";
 

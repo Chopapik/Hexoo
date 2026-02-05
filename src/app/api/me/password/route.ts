@@ -1,4 +1,4 @@
-import { updatePassword } from "@/features/me/api/meService";
+import { updatePassword } from "@/features/me/api/services";
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import { verifyRecaptchaToken } from "@/lib/recaptcha";
