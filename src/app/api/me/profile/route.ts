@@ -1,4 +1,4 @@
-import { updateProfile } from "@/features/me/api/meService";
+import { updateProfile } from "@/features/me/api/services";
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import { NextRequest } from "next/server";

@@ -1,4 +1,4 @@
-import { reviewPost } from "@/features/moderator/api/moderatorService";
+import { reviewPost } from "@/features/moderator/api/services";
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import { NextRequest } from "next/server";

@@ -1,4 +1,4 @@
-import { logoutUser } from "@/features/auth/api/services/authService";
+import { logoutUser } from "@/features/auth/api/services";
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 

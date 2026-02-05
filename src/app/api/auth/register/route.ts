@@ -1,4 +1,4 @@
-import { registerUser } from "@/features/auth/api/services/authService";
+import { registerUser } from "@/features/auth/api/services";
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import { createAppError } from "@/lib/AppError";

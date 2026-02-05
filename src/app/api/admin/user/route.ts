@@ -1,4 +1,4 @@
-import { adminCreateUserAccount } from "@/features/admin/api/services/adminService";
+import { adminCreateUserAccount } from "@/features/admin/api/services";
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import { NextRequest } from "next/server";
