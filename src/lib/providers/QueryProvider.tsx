@@ -24,7 +24,7 @@ const handleGlobalError = (error: any) => {
   const status = error?.status || 500;
 
   // 3. Handle critical errors (429 Rate Limit / 500 Server Error)
-  if (status === 500 || status === 429) {
+  if (status === 429) {
     // From your JSON:
     // error.data -> { ok: false, error: { ... } }
     // error.data.error -> { code: "RATE_LIMIT", data: { ... } }
@@ -59,9 +59,8 @@ export default function QueryProvider({
         mutationCache: new MutationCache({ onError: handleGlobalError }),
         defaultOptions: {
           queries: {
-            // Nie ponawiaj, jeśli mamy 429 lub 500
             retry: (failureCount, error: any) => {
-              if (error?.status === 429 || error?.status === 500) return false;
+              if (error?.status === 429) return false;
               return failureCount < 2;
             },
             refetchOnWindowFocus: false,
