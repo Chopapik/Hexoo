@@ -49,6 +49,10 @@ pubsub-debug.log
 storage-debug.log
 /.firebase/
 
+# Supabase CLI (keep migrations; ignore linked project data and temp)
+supabase/.temp/
+supabase/.branches/
+
 # Local dumps / temp files
 *.json
 !firebase.json
