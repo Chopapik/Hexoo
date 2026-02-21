@@ -16,8 +16,6 @@ create table if not exists public.comments (
   device text,
   flagged_reasons text[],
   flagged_source text[],
-  user_reports text[],
-  reports_meta jsonb,
   reviewed_by text,
   reviewed_at timestamptz
 );
