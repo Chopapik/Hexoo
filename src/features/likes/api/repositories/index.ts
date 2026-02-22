@@ -1,7 +1,7 @@
-import { LikeFirebaseRepository } from "./like.firebase.repository";
+import { LikeSupabaseRepository } from "./like.supabase.repository";
 import type { LikeRepository } from "./like.repository.interface";
 
-const likeRepository: LikeRepository = new LikeFirebaseRepository();
+const likeRepository: LikeRepository = new LikeSupabaseRepository();
 
 export { likeRepository };
 export type { LikeRepository };

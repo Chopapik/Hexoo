@@ -1,4 +1,4 @@
-import { UserFirebaseRepository } from "./user.firebase.repository";
+import { UserSupabaseRepository } from "./user.supabase.repository";
 import { UserRepository } from "./user.repository.interface";
 
-export const userRepository: UserRepository = new UserFirebaseRepository();
+export const userRepository: UserRepository = new UserSupabaseRepository();
