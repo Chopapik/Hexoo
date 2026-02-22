@@ -1,4 +1,4 @@
-export type ValidationStatus = "Dismiss" | "Warning" | "Success";
+export type ValidationStatus = "Default" | "Dismiss" | "Warning" | "Success";
 
 export interface ValidationMessage {
   type: ValidationStatus;

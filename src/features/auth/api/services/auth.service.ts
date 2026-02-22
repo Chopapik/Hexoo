@@ -74,7 +74,7 @@ export class AuthService implements IAuthService {
     return {
       user: {
         uid: userData.uid,
-        email: email,
+        email: email ?? undefined,
         name: userData.name,
         role: userData.role,
         avatarUrl: userData.avatarUrl,
@@ -138,7 +138,7 @@ export class AuthService implements IAuthService {
       user: {
         uid,
         name,
-        email,
+        email: email ?? undefined,
         role: "user" as const,
       },
     };

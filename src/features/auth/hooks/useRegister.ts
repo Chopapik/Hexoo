@@ -37,9 +37,9 @@ export default function useRegister(onError: ErrorCallback) {
     }
 
     try {
-      const checkResponse = await fetchClient.post("/auth/check-username", {
+      const checkResponse = (await fetchClient.post("/auth/check-username", {
         username: data.name,
-      });
+      })) as { available: boolean };
       const { available } = checkResponse;
 
       if (!available) {

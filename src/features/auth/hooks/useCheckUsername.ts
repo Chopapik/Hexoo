@@ -49,9 +49,9 @@ export function useCheckUsername(username: string) {
       setError(null);
 
       try {
-        const response = await fetchClient.post("/auth/check-username", {
+        const response = (await fetchClient.post("/auth/check-username", {
           username: debouncedUsername,
-        });
+        })) as { available: boolean };
 
         setIsAvailable(response.available);
         if (!response.available) {

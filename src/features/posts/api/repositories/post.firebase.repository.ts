@@ -106,4 +106,16 @@ export class PostFirebaseRepository implements PostRepository {
   async deletePost(postId: string): Promise<void> {
     await this.collection.doc(postId).delete();
   }
+
+  async getPostsPendingModeration(limit: number): Promise<PostEntity[]> {
+    const snapshot = await this.collection
+      .where("moderationStatus", "==", ModerationStatus.Pending)
+      .orderBy("createdAt", "desc")
+      .limit(limit)
+      .get();
+    return snapshot.docs.map((doc) => {
+      const mapped = mapDatesFromFirestore(doc.data());
+      return { id: doc.id, ...mapped } as PostEntity;
+    });
+  }
 }

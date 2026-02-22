@@ -1,5 +1,5 @@
 import React from "react";
-import type { Post } from "../types/post.type";
+import type { PublicPostDto } from "../types/post.dto";
 import { Avatar } from "./Avatar";
 import "dayjs/locale/pl";
 import PostOptions from "./PostOptions";
@@ -7,7 +7,7 @@ import Link from "next/link";
 import { formatSmartDate } from "@/features/shared/utils/dateUtils";
 
 type PostMetaProps = {
-  post: Post;
+  post: PublicPostDto;
 };
 
 export const PostMeta = ({ post }: PostMetaProps) => {

@@ -47,9 +47,9 @@ export function useCheckEmail(email: string) {
       setError(null);
 
       try {
-        const response = await fetchClient.post("/auth/check-email", {
+        const response = (await fetchClient.post("/auth/check-email", {
           email: debouncedEmail,
-        });
+        })) as { available: boolean };
 
         setIsAvailable(response.available);
         if (!response.available) {

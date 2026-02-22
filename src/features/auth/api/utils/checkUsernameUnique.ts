@@ -1,62 +1,38 @@
-import { adminDb } from "@/lib/firebaseAdmin";
+import { supabaseAdmin } from "@/lib/supabaseServer";
+
+const USERS_TABLE = "users";
 
 export async function isUsernameTaken(username: string): Promise<boolean> {
   if (!username) return true;
 
-  const normalized = username.trim().toLowerCase();
+  const normalized = username.trim().toLowerCase().replace(/\s+/g, "");
   const trimmed = username.trim();
 
-  // Sprawdź nameLowercase (dla nowych użytkowników z tym polem)
-  const snapshotByLowercase = await adminDb
-    .collection("users")
-    .where("nameLowercase", "==", normalized)
-    .limit(1)
-    .get();
+  // Check name_lowercase (primary index for case-insensitive lookup)
+  const { data: byLower } = await supabaseAdmin
+    .from(USERS_TABLE)
+    .select("uid")
+    .eq("name_lowercase", normalized)
+    .limit(1);
 
-  if (!snapshotByLowercase.empty) {
-    return true;
-  }
+  if (byLower && byLower.length > 0) return true;
 
-  // Sprawdź name dokładnie (dla starych użytkowników bez nameLowercase)
-  const snapshotByName = await adminDb
-    .collection("users")
-    .where("name", "==", trimmed)
-    .limit(1)
-    .get();
+  // Check name exactly (for legacy or if name_lowercase was null)
+  const { data: byName } = await supabaseAdmin
+    .from(USERS_TABLE)
+    .select("uid")
+    .eq("name", trimmed)
+    .limit(1);
 
-  if (!snapshotByName.empty) {
-    return true;
-  }
+  if (byName && byName.length > 0) return true;
 
-  // Sprawdź również znormalizowaną wersję name (dla użytkowników którzy mogą mieć małe litery)
   if (normalized !== trimmed) {
-    const snapshotByNameNormalized = await adminDb
-      .collection("users")
-      .where("name", "==", normalized)
-      .limit(1)
-      .get();
-
-    if (!snapshotByNameNormalized.empty) {
-      return true;
-    }
-  }
-
-  // Ostatnia opcja - pobierz wszystkich użytkowników i sprawdź w pamięci
-  // (tylko jeśli powyższe nie znalazły, aby uniknąć niepotrzebnych operacji)
-  // To jest kosztowne, ale zapewnia 100% dokładność dla starych użytkowników bez nameLowercase
-  const allUsersSnapshot = await adminDb
-    .collection("users")
-    .select("name", "nameLowercase")
-    .get();
-
-  for (const doc of allUsersSnapshot.docs) {
-    const userData = doc.data();
-    const userName = userData.name?.trim().toLowerCase();
-    const userNameLowercase = userData.nameLowercase?.trim().toLowerCase();
-    
-    if (userName === normalized || userNameLowercase === normalized) {
-      return true;
-    }
+    const { data: byNameNorm } = await supabaseAdmin
+      .from(USERS_TABLE)
+      .select("uid")
+      .eq("name", normalized)
+      .limit(1);
+    if (byNameNorm && byNameNorm.length > 0) return true;
   }
 
   return false;
