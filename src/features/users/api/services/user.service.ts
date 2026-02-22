@@ -5,6 +5,7 @@ import {
   CreateUserPayload,
   UserRepository,
 } from "../repositories/user.repository.interface";
+import type { AuthRepository } from "@/features/auth/api/repositories/authRepository.interface";
 import type { UserService as IUserService } from "./user.service.interface";
 import { SessionData } from "@/features/me/me.type";
 import { UserEntity } from "../../types/user.entity";
@@ -13,6 +14,7 @@ export class UserService implements IUserService {
   constructor(
     private readonly repository: UserRepository,
     private readonly session: SessionData | null = null,
+    private readonly authRepository: AuthRepository | null = null,
   ) {}
 
   async createUser(uid: string, data: CreateUserDto) {
@@ -87,6 +89,11 @@ export class UserService implements IUserService {
     }
 
     await this.repository.blockUser(data);
+    try {
+      await this.authRepository?.updateUser(data.uidToBlock, { disabled: true });
+    } catch {
+      // Auth provider may not support disabled; ignore
+    }
 
     await logActivity(
       data.uidToBlock,
@@ -106,6 +113,11 @@ export class UserService implements IUserService {
     }
 
     await this.repository.unblockUser(uid);
+    try {
+      await this.authRepository?.updateUser(uid, { disabled: false });
+    } catch {
+      // Auth provider may not support disabled; ignore
+    }
 
     await logActivity(uid, "USER_UNBLOCKED", "User account unblocked");
   }

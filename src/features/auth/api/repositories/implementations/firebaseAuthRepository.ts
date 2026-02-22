@@ -1,12 +1,12 @@
-import { AuthRepository } from "../authRepository.interface";
+import type { AuthRepository, AuthDecodedToken, AuthUserRecord } from "../authRepository.interface";
 import { adminAuth } from "@/lib/firebaseAdmin";
 import { createAppError } from "@/lib/AppError";
-import { DecodedIdToken, UserRecord } from "firebase-admin/auth";
 
 export class FirebaseAuthRepository implements AuthRepository {
-  async verifyIdToken(idToken: string): Promise<DecodedIdToken> {
+  async verifyIdToken(idToken: string): Promise<AuthDecodedToken> {
     try {
-      return await adminAuth.verifyIdToken(idToken);
+      const decoded = await adminAuth.verifyIdToken(idToken);
+      return { uid: decoded.uid, email: decoded.email ?? null };
     } catch (error) {
       throw createAppError({
         code: "INVALID_CREDENTIALS",
@@ -31,11 +31,13 @@ export class FirebaseAuthRepository implements AuthRepository {
     }
   }
 
-  async getUserByEmail(email: string): Promise<UserRecord | null> {
+  async getUserByEmail(email: string): Promise<AuthUserRecord | null> {
     try {
-      return await adminAuth.getUserByEmail(email);
-    } catch (error: any) {
-      if (error?.code === "auth/user-not-found") {
+      const user = await adminAuth.getUserByEmail(email);
+      return { uid: user.uid, email: user.email ?? null };
+    } catch (error: unknown) {
+      const err = error as { code?: string };
+      if (err?.code === "auth/user-not-found") {
         return null;
       }
       throw createAppError({
@@ -50,11 +52,21 @@ export class FirebaseAuthRepository implements AuthRepository {
     await adminAuth.deleteUser(uid);
   }
 
-  async updateUser(uid: string, properties: any): Promise<void> {
-    await adminAuth.updateUser(uid, properties);
+  async updateUser(uid: string, properties: Record<string, unknown>): Promise<void> {
+    await adminAuth.updateUser(uid, properties as { disabled?: boolean; displayName?: string; photoURL?: string; password?: string });
   }
 
-  async createUser(properties: any): Promise<any> {
-    return await adminAuth.createUser(properties);
+  async createUser(properties: {
+    email: string;
+    password: string;
+    displayName?: string;
+    [key: string]: unknown;
+  }): Promise<{ uid: string }> {
+    const user = await adminAuth.createUser({
+      email: properties.email,
+      password: properties.password,
+      displayName: properties.displayName as string | undefined,
+    });
+    return { uid: user.uid };
   }
 }

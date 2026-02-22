@@ -4,10 +4,8 @@ import { RegisterData, registerFields } from "../types/auth.type";
 import fetchClient from "@/lib/fetchClient";
 import { ApiError } from "@/lib/AppError";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { supabaseClient } from "@/lib/supabaseClient";
 import toast from "react-hot-toast";
-import { FirebaseError } from "firebase/app";
 
 type ErrorCallback = (errorCode: string, field: registerFields) => void;
 
@@ -26,7 +24,7 @@ export default function useRegister(onError: ErrorCallback) {
       router.push("/");
       return response;
     },
-    onError: (error) => {
+    onError: (error: unknown) => {
       console.error("Mutation error:", error);
       toast.error("Wystąpił błąd podczas finalizacji rejestracji.");
     },
@@ -57,45 +55,53 @@ export default function useRegister(onError: ErrorCallback) {
     }
 
     try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        data.email,
-        data.password,
-      );
-      await updateProfile(userCredential.user, { displayName: data.name });
+      const { data: signUpData, error: signUpError } =
+        await supabaseClient.auth.signUp({
+          email: data.email,
+          password: data.password,
+          options: {
+            data: { name: data.name },
+          },
+        });
 
-      const idToken = await userCredential.user.getIdToken();
+      if (signUpError) {
+        const msg = signUpError.message?.toLowerCase() ?? "";
+        if (msg.includes("already") || msg.includes("exists")) {
+          onError("auth/email-already-exists", "email");
+        } else if (msg.includes("password") || msg.includes("weak")) {
+          onError("password_too_short", "password");
+        } else {
+          toast.error(signUpError.message ?? "Błąd rejestracji.");
+        }
+        return;
+      }
+
+      const accessToken = signUpData.session?.access_token;
+      if (!accessToken) {
+        toast.error("Konto utworzone, ale brak sesji. Zaloguj się.");
+        return;
+      }
+
       const recaptchaToken = await executeRecaptcha("register");
 
       sessionMutation.mutate({
-        idToken,
+        idToken: accessToken,
         name: data.name,
         email: data.email,
         recaptchaToken,
       });
     } catch (error: unknown) {
-      if (error instanceof FirebaseError) {
-        const errorCode = error.code;
-
-        if (errorCode === "auth/email-already-in-use") {
-          onError("auth/email-already-exists", "email");
-        } else if (errorCode === "auth/weak-password") {
-          onError("password_too_short", "password");
-        }
-      } else if (error instanceof ApiError) {
-        const errorCode = error.code;
-
-        if (errorCode === "CONFLICT") {
-          onError(errorCode, "name");
+      if (error instanceof ApiError) {
+        if (error.code === "CONFLICT") {
+          onError(error.code, "name");
           return;
         }
-      } else {
-        console.error("API Error during session creation:", error);
-        toast.error("Wystąpił nieznany bład");
-        return;
       }
+      console.error("API Error during session creation:", error);
+      toast.error("Wystąpił nieznany błąd");
     }
   };
+
   return {
     handleRegister,
     isLoading: sessionMutation.isPending,

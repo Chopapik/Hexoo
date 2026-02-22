@@ -1,7 +1,8 @@
-import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
 import { createAppError } from "@/lib/AppError";
 import { getSessionCookie } from "@/lib/session";
 import { SessionData } from "@/features/me/me.type";
+import { authRepository } from "../repositories";
+import { userRepository } from "@/features/users/api/repositories";
 
 export async function getUserFromSession(): Promise<SessionData | never> {
   const sessionCookie = await getSessionCookie();
@@ -13,8 +14,8 @@ export async function getUserFromSession(): Promise<SessionData | never> {
     });
   }
 
-  const decoded = await adminAuth
-    .verifySessionCookie(sessionCookie.value, true)
+  const decoded = await authRepository
+    .verifyIdToken(sessionCookie.value)
     .catch(() => {
       throw createAppError({
         message:
@@ -23,29 +24,22 @@ export async function getUserFromSession(): Promise<SessionData | never> {
       });
     });
 
-  const snap = await adminDb.collection("users").doc(decoded.uid).get();
-  if (!snap.exists) {
+  const userData = await userRepository.getUserByUid(decoded.uid);
+
+  if (!userData) {
     throw createAppError({
       message: "[verifySession.getUserFromSession] User not found in database",
       code: "USER_NOT_FOUND",
     });
   }
 
-  const data = snap.data();
-
-  if (!data) {
-    throw createAppError({
-      message: "[verifySession.getUserFromSession] User document has no data",
-      code: "USER_NOT_FOUND",
-    });
-  }
-
   return {
-    uid: data.uid,
-    email: data.email,
-    name: data.name,
-    role: data.role,
-    avatarUrl: data.avatarUrl,
-    isRestricted: data.isRestricted || false,
+    uid: userData.uid,
+    email: userData.email ?? "",
+    name: userData.name,
+    role: userData.role,
+    avatarUrl: userData.avatarUrl,
+    isRestricted: userData.isRestricted ?? false,
+    isBanned: userData.isBanned,
   };
 }

@@ -1,5 +1,6 @@
 import { UserService } from "./user.service";
 import { userRepository } from "../repositories";
+import { authRepository } from "@/features/auth/api/repositories";
 import type { UserEntity } from "../../types/user.entity";
 import type { BlockUserDto } from "../../types/user.dto";
 import { UserRole } from "../../types/user.type";
@@ -8,7 +9,7 @@ import type { SessionData } from "@/features/me/me.type";
 export const getUserService = (
   session: SessionData | null,
 ): UserService => {
-  return new UserService(userRepository, session);
+  return new UserService(userRepository, session, authRepository);
 };
 
 export async function createUser(
