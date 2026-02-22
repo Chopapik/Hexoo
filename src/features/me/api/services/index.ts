@@ -1,9 +1,11 @@
 import type { SessionData } from "../../me.type";
 import type { UpdateProfileData } from "../../me.type";
 import { MeService } from "./me.service";
+import { authRepository } from "@/features/auth/api/repositories";
+import { userRepository } from "@/features/users/api/repositories";
 
 export const getMeService = (session: SessionData): MeService => {
-  return new MeService(session);
+  return new MeService(session, userRepository, authRepository);
 };
 
 export async function deleteAccount(session: SessionData) {

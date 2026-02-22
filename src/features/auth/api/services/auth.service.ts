@@ -40,7 +40,7 @@ export class AuthService implements IAuthService {
     if (!userData) {
       throw createAppError({
         code: "USER_NOT_FOUND",
-        message: `[authService.createSession] User document for UID ${uid} does not exist in Firestore.`,
+        message: `[authService.createSession] User document for UID ${uid} does not exist in database.`,
       });
     }
 
@@ -131,7 +131,7 @@ export class AuthService implements IAuthService {
       throw createAppError({
         code: "DB_ERROR",
         message:
-          "[authService.registerUser] Failed to create user document in Firestore.",
+          "[authService.registerUser] Failed to create user document in database.",
       });
     }
 

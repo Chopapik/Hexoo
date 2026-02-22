@@ -3,9 +3,7 @@ import { useRouter } from "next/navigation";
 import { LoginData } from "../types/auth.type";
 import fetchClient from "@/lib/fetchClient";
 import { ApiError } from "@/lib/AppError";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/lib/firebase";
-import { FirebaseError } from "firebase/app";
+import { supabaseClient } from "@/lib/supabaseClient";
 import useRecaptcha from "@/features/shared/hooks/useRecaptcha";
 import toast from "react-hot-toast";
 
@@ -34,45 +32,54 @@ export default function useLogin(onError: ErrorCallback) {
     try {
       try {
         await fetchClient.post("/security/rate-limit");
-      } catch (error: any) {
-        if (error.status === 429) {
-          onError(error.code || "SECURITY_LOCKOUT", "root", error.data);
+      } catch (error: unknown) {
+        const err = error as { status?: number; code?: string; data?: unknown };
+        if (err.status === 429) {
+          onError(err.code || "SECURITY_LOCKOUT", "root", err.data);
           return;
         }
         throw error;
       }
 
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        data.email,
-        data.password,
-      );
+      const {
+        data: sessionData,
+        error: signInError,
+      } = await supabaseClient.auth.signInWithPassword({
+        email: data.email,
+        password: data.password,
+      });
 
-      const recaptchaToken = await getRecaptchaToken("login");
-      const idToken = await userCredential.user.getIdToken();
-
-      if (recaptchaToken) {
-        sessionMutation.mutate({ idToken, recaptchaToken });
-      }
-    } catch (error: unknown) {
-      if (error instanceof FirebaseError) {
-        const errorCode = error.code;
-
+      if (signInError) {
+        const msg = signInError.message?.toLowerCase() ?? "";
         if (
-          errorCode === "auth/invalid-credential" ||
-          errorCode === "auth/user-not-found" ||
-          errorCode === "auth/wrong-password"
+          msg.includes("invalid") ||
+          msg.includes("credentials") ||
+          msg.includes("invalid_login_credentials")
         ) {
           onError("INVALID_CREDENTIALS", "root");
-        } else if (errorCode === "auth/too-many-requests") {
+        } else if (msg.includes("too many") || msg.includes("rate")) {
           onError("RATE_LIMIT", "root");
-        } else if (errorCode === "auth/user-disabled") {
+        } else if (msg.includes("disabled") || msg.includes("banned")) {
           onError("ACCOUNT_BANNED", "root");
+        } else {
+          toast.error(signInError.message ?? "Błąd logowania.");
         }
-      } else {
-        console.error(error);
-        toast.error("Wystąpił nieznany błąd.");
+        return;
       }
+
+      const accessToken = sessionData.session?.access_token;
+      if (!accessToken) {
+        toast.error("Brak tokena sesji.");
+        return;
+      }
+
+      const recaptchaToken = await getRecaptchaToken("login");
+      if (recaptchaToken) {
+        sessionMutation.mutate({ idToken: accessToken, recaptchaToken });
+      }
+    } catch (error: unknown) {
+      console.error(error);
+      toast.error("Wystąpił nieznany błąd.");
     }
   };
 

@@ -3,21 +3,14 @@ import fetchClient from "@/lib/fetchClient";
 import { UpdatePasswordData } from "../me.type";
 import useRecaptcha from "@/features/shared/hooks/useRecaptcha";
 import toast from "react-hot-toast";
-import {
-  EmailAuthProvider,
-  reauthenticateWithCredential,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { supabaseClient } from "@/lib/supabaseClient";
 import { useAppSelector } from "@/lib/store/hooks";
 import { ApiError } from "@/lib/AppError";
-import { FirebaseError } from "firebase/app";
 
 type ErrorCallback = (errorCode: string, field?: string) => void;
 
 export const useUpdatePassword = (onError: ErrorCallback) => {
   const { getRecaptchaToken } = useRecaptcha();
-
   const userEmail = useAppSelector((state) => state.auth.user?.email);
 
   const mutation = useMutation({
@@ -33,25 +26,30 @@ export const useUpdatePassword = (onError: ErrorCallback) => {
         toast.error("wystąpił nieznany błąd");
       }
     },
-    onSuccess: async (response, variables) => {
+    onSuccess: async (_response, variables) => {
       if (!userEmail) return;
 
       try {
         const token = await getRecaptchaToken("change_password");
-        const userCredential = await signInWithEmailAndPassword(
-          auth,
-          userEmail,
-          variables.newPassword
-        );
-        const idToken = await userCredential.user.getIdToken();
+        const { data: signInData, error: signInError } =
+          await supabaseClient.auth.signInWithPassword({
+            email: userEmail,
+            password: variables.newPassword,
+          });
+
+        if (signInError || !signInData.session?.access_token) {
+          toast.success("Hasło zmienione. Zaloguj się ponownie.");
+          return;
+        }
+
         await fetchClient.post("/auth/login", {
-          idToken,
+          idToken: signInData.session.access_token,
           recaptchaToken: token,
         });
         toast.success("Hasło zmienione pomyślnie!");
       } catch (err) {
         console.error(err);
-        toast.error("Hasło zmienione, ale wystąpił błąd logowania.");
+        toast.success("Hasło zmienione. Zaloguj się ponownie.");
       }
     },
   });
@@ -59,38 +57,38 @@ export const useUpdatePassword = (onError: ErrorCallback) => {
   const handleUpdatePassword = async (
     data: UpdatePasswordData
   ): Promise<boolean> => {
-    const currentUser = auth.currentUser;
-
-    if (!userEmail || !currentUser) {
+    if (!userEmail) {
       toast.error(
         "Błąd: Brak adresu email użytkownika. Zaloguj się aby wykonać akcję."
       );
       return false;
     }
 
-    const credential = EmailAuthProvider.credential(
-      userEmail,
-      data.oldPassword
-    );
-
     try {
-      await reauthenticateWithCredential(currentUser, credential);
-    } catch (error: unknown) {
-      if (error instanceof FirebaseError) {
+      const { error } = await supabaseClient.auth.signInWithPassword({
+        email: userEmail,
+        password: data.oldPassword,
+      });
+
+      if (error) {
+        const msg = error.message?.toLowerCase() ?? "";
         if (
-          error.code === "auth/invalid-credential" ||
-          error.code === "auth/wrong-password"
+          msg.includes("invalid") ||
+          msg.includes("credentials") ||
+          msg.includes("invalid_login_credentials")
         ) {
           onError("auth/wrong-password", "oldPassword");
-        } else if (error.code === "auth/too-many-requests") {
+        } else if (msg.includes("too many") || msg.includes("rate")) {
           toast.error("Zbyt wiele prób. Spróbuj później.");
         } else {
           toast.error("Nie udało się zweryfikować starego hasła.");
         }
         return false;
       }
+    } catch (error) {
       console.error(error);
       toast.error("Wystąpił nieoczekiwany błąd.");
+      return false;
     }
 
     await mutation.mutateAsync(data);

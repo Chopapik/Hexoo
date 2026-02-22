@@ -1,4 +1,3 @@
-import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
 import { createAppError } from "@/lib/AppError";
 import { formatZodErrorFlat } from "@/lib/zod";
 import { uploadImage, deleteImage } from "@/features/images/api/imageService";
@@ -7,9 +6,15 @@ import { logActivity } from "@/features/admin/api/services/activityService";
 import { UpdateProfileData, UpdateProfileSchema } from "../../me.type";
 import type { SessionData } from "../../me.type";
 import type { MeService as IMeService } from "./me.service.interface";
+import type { AuthRepository } from "@/features/auth/api/repositories/authRepository.interface";
+import type { UserRepository } from "@/features/users/api/repositories/user.repository.interface";
 
 export class MeService implements IMeService {
-  constructor(private readonly session: SessionData) {}
+  constructor(
+    private readonly session: SessionData,
+    private readonly userRepository: UserRepository,
+    private readonly authRepository: AuthRepository,
+  ) {}
 
   async deleteAccount() {
     const decoded = this.session;
@@ -20,9 +25,8 @@ export class MeService implements IMeService {
       "User deleted their own account",
     );
 
-    await adminDb.collection("users").doc(decoded.uid).delete();
-    await adminAuth.deleteUser(decoded.uid);
-    return;
+    await this.userRepository.deleteUser(decoded.uid);
+    await this.authRepository.deleteUser(decoded.uid);
   }
 
   async updateProfile(data: UpdateProfileData) {
@@ -55,12 +59,11 @@ export class MeService implements IMeService {
       "meService.updateProfile",
     );
 
-    const userDoc = await adminDb.collection("users").doc(uid).get();
-    const userData = userDoc.data();
+    const userData = await this.userRepository.getUserByUid(uid);
     const currentStoragePath = userData?.avatarMeta?.storagePath;
 
     const authUpdate: { displayName?: string; photoURL?: string } = {};
-    const dbUpdate: Record<string, any> = { updatedAt: new Date() };
+    const dbUpdate: Record<string, unknown> = { updatedAt: new Date() };
 
     if (name) {
       authUpdate.displayName = name;
@@ -84,10 +87,10 @@ export class MeService implements IMeService {
     }
 
     if (Object.keys(authUpdate).length > 0) {
-      await adminAuth.updateUser(uid, authUpdate);
+      await this.authRepository.updateUser(uid, authUpdate);
     }
 
-    await adminDb.collection("users").doc(uid).set(dbUpdate, { merge: true });
+    await this.userRepository.updateUser(uid, dbUpdate as any);
 
     await logActivity(
       uid,
@@ -101,8 +104,8 @@ export class MeService implements IMeService {
       uid,
       email: decoded.email,
       role: decoded.role,
-      name: dbUpdate.name ?? decoded.name,
-      avatarUrl: dbUpdate.avatarUrl ?? decoded.avatarUrl,
+      name: (dbUpdate.name as string) ?? decoded.name,
+      avatarUrl: (dbUpdate.avatarUrl as string | undefined) ?? decoded.avatarUrl,
       isRestricted: decoded.isRestricted,
       isBanned: decoded.isBanned,
     };
@@ -123,14 +126,13 @@ export class MeService implements IMeService {
 
     const { newPassword } = parsed.data;
 
-    await adminAuth.updateUser(decoded.uid, {
+    await this.authRepository.updateUser(decoded.uid, {
       password: newPassword,
     });
 
-    await adminDb
-      .collection("users")
-      .doc(decoded.uid)
-      .set({ updatedAt: new Date() }, { merge: true });
+    await this.userRepository.updateUser(decoded.uid, {
+      updatedAt: new Date(),
+    } as any);
 
     await logActivity(decoded.uid, "PASSWORD_CHANGED", "User changed password");
   }
