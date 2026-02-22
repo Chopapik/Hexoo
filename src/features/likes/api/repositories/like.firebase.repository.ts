@@ -39,7 +39,7 @@ export class LikeFirebaseRepository implements LikeRepository {
         const likeDoc: CreateLikePayload = {
           parentId,
           userId,
-          likedAt: FieldValue.serverTimestamp(),
+          likedAt: new Date(),
         };
         transaction.set(likeRef, likeDoc);
 

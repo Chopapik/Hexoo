@@ -1,10 +1,10 @@
-﻿import Link from "next/link";
-import type { Post } from "../types/post.type";
+import Link from "next/link";
+import type { PublicPostDto } from "../types/post.dto";
 import { isAsciiArt } from "../utils/asciiDetector";
 import { useMemo } from "react";
 
 type PostBodyProps = {
-  post: Post;
+  post: PublicPostDto;
 };
 
 export const PostBody = ({ post }: PostBodyProps) => {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import type { Post } from "../types/post.type";
+import type { PublicPostDto } from "../types/post.dto";
 import { PostBody } from "./PostBody";
 import { PostFooter } from "./PostFooter";
 import { PostMeta } from "./PostMeta";
@@ -10,7 +10,7 @@ import { useAppSelector, useAppDispatch } from "@/lib/store/hooks";
 import { initializeSettings } from "@/features/me/store/settingsSlice";
 
 type PostCardProps = {
-  post: Post;
+  post: PublicPostDto;
   revealNSFW?: boolean;
 };
 

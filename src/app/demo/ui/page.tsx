@@ -148,7 +148,16 @@ const demoAdminUser: PrivateUserResponseDto = {
   avatarUrl: undefined,
   createdAt: new Date("2024-01-15T09:15:00Z"),
   lastOnline: new Date(),
+  isActive: true,
   isBanned: false,
+  bannedAt: undefined,
+  bannedBy: undefined,
+  bannedReason: undefined,
+  isRestricted: false,
+  restrictedAt: undefined,
+  restrictedBy: undefined,
+  restrictionReason: undefined,
+  lastKnownIp: undefined,
 };
 
 const demoPost: PublicPostDto = {

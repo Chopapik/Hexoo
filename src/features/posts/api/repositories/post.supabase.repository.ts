@@ -243,4 +243,15 @@ export class PostSupabaseRepository implements PostRepository {
 
     return { hidden: shouldHide, reportsCount };
   }
+
+  async getPostsPendingModeration(limit: number): Promise<PostEntity[]> {
+    const { data, error } = await supabaseAdmin
+      .from(TABLE)
+      .select("*")
+      .eq("moderation_status", ModerationStatus.Pending)
+      .order("created_at", { ascending: false })
+      .limit(limit);
+    if (error) throw new Error(error.message ?? "Database error");
+    return (data ?? []).map((row) => rowToEntity(row as PostRow));
+  }
 }

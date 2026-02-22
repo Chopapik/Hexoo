@@ -82,5 +82,5 @@ export interface PostReportDto {
   postId: string;
   reason: string;
   details?: string;
-  createdAt: Date;
+  createdAt?: Date;
 }

@@ -5,7 +5,7 @@ import type {
   UpdateUserRestrictionPayload,
   UserRepository,
 } from "./user.repository.interface";
-import { User } from "../../types/user.entity";
+import type { UserEntity } from "../../types/user.entity";
 import { adminDb, adminAuth } from "@/lib/firebaseAdmin";
 import { FieldValue } from "firebase-admin/firestore";
 import { mapDatesFromFirestore } from "@/features/shared/utils/firestoreMappers";
@@ -29,20 +29,20 @@ export class UserFirebaseRepository implements UserRepository {
     await this.collection.doc(data.uid).set(userDoc, { merge: true });
   }
 
-  async getUserByUid(uid: string): Promise<User | null> {
+  async getUserByUid(uid: string): Promise<UserEntity | null> {
     const doc = await this.collection.doc(uid).get();
     if (!doc.exists) return null;
-    return mapDatesFromFirestore(doc.data()) as User;
+    return mapDatesFromFirestore(doc.data()) as UserEntity;
   }
 
-  async getUserByName(name: string): Promise<User | null> {
+  async getUserByName(name: string): Promise<UserEntity | null> {
     const snapshot = await this.collection
       .where("name", "==", name)
       .limit(1)
       .get();
 
     if (snapshot.empty) return null;
-    return mapDatesFromFirestore(snapshot.docs[0].data()) as User;
+    return mapDatesFromFirestore(snapshot.docs[0].data()) as UserEntity;
   }
 
   async getUsersByIds(
@@ -68,7 +68,7 @@ export class UserFirebaseRepository implements UserRepository {
     for (const snapshot of snapshots) {
       if (!snapshot.empty) {
         snapshot.docs.forEach((doc) => {
-          const user = mapDatesFromFirestore(doc.data()) as User;
+          const user = mapDatesFromFirestore(doc.data()) as UserEntity;
           if (user) {
             usersMap[user.uid] = {
               name: user.name,
@@ -127,11 +127,11 @@ export class UserFirebaseRepository implements UserRepository {
     await this.collection.doc(uid).update(updateData);
   }
 
-  async getAllUsers(): Promise<User[]> {
+  async getAllUsers(): Promise<UserEntity[]> {
     const snapshot = await this.collection.get();
     return snapshot.docs.map((doc) => {
       const mapped = mapDatesFromFirestore(doc.data());
-      return { uid: doc.id, ...mapped } as User;
+      return { uid: doc.id, ...mapped } as UserEntity;
     });
   }
 

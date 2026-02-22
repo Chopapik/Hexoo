@@ -75,7 +75,7 @@ export class AdminService implements IAdminService {
 
     return {
       uid,
-      email: maskEmail(data.email),
+      email: maskEmail(data.email) ?? "",
       displayName: data.name,
       role: data.role ?? "user",
     };
@@ -89,11 +89,12 @@ export class AdminService implements IAdminService {
     return users.map((user) => ({
       uid: user.uid,
       name: user.name ?? null,
-      email: maskEmail(user.email ?? ""),
+      email: maskEmail(user.email ?? "") ?? "",
       role: user.role ?? "user",
-      createdAt: (user.createdAt as any)?.toDate
-        ? (user.createdAt as any).toDate()
-        : user.createdAt,
+      createdAt:
+        user.createdAt instanceof Date
+          ? user.createdAt
+          : new Date((user.createdAt as Date | undefined)?.toString?.() ?? 0),
       isBanned: Boolean(user.isBanned),
     }));
   }

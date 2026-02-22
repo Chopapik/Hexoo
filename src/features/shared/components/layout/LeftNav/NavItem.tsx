@@ -51,11 +51,16 @@ export function NavItem({
         <div className="relative inline-flex flex-col justify-start items-start overflow-hidden">
           <div className="size-6 relative overflow-hidden flex items-center justify-center">
             {Icon ? (
-              <Icon
-                className={iconClasses}
-                strokeWidth={isActive ? 2.5 : 2}
-                fill={isActive ? "currentColor" : "none"}
-              />
+              (() => {
+                const I = Icon as LucideIcon;
+                return (
+                  <I
+                    className={iconClasses}
+                    strokeWidth={isActive ? 2.5 : 2}
+                    fill={isActive ? "currentColor" : "none"}
+                  />
+                );
+              })()
             ) : iconUrl ? (
               <Image
                 src={iconUrl}

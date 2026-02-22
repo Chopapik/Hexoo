@@ -1,4 +1,3 @@
-import { FieldValue } from "firebase-admin/firestore";
 import type { LikeParentCollection } from "./like.dto";
 
 export type ToggleLikePayload = {
@@ -10,5 +9,5 @@ export type ToggleLikePayload = {
 export type CreateLikePayload = {
   parentId: string;
   userId: string;
-  likedAt: Date | FieldValue;
+  likedAt: Date;
 };

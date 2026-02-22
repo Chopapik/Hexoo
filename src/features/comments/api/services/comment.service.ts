@@ -1,4 +1,3 @@
-import { FieldValue } from "firebase-admin/firestore";
 import { createAppError } from "@/lib/AppError";
 import { formatZodErrorFlat } from "@/lib/zod";
 import { performModeration } from "@/features/moderation/utils/assessSafety";
@@ -58,14 +57,15 @@ export class CommentService implements ICommentService {
     const { moderationStatus, isNSFW, flaggedReasons, flaggedSource } =
       await performModeration(user.uid, text);
 
+    const now = new Date();
     const payload: CreateCommentPayload = {
       postId,
       userId: user.uid,
       text,
       likesCount: 0,
       commentsCount: 0,
-      createdAt: FieldValue.serverTimestamp(),
-      updatedAt: FieldValue.serverTimestamp(),
+      createdAt: now,
+      updatedAt: now,
       moderationStatus,
       isNSFW,
       flaggedReasons,

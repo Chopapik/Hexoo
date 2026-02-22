@@ -120,7 +120,7 @@ export class UserSupabaseRepository implements UserRepository {
       })
       .eq("uid", data.uidToBlock);
     if (error) throw new Error(error.message ?? "Database error");
-    // Auth disable: still Firebase until Supabase Auth migration; call adminAuth.updateUser(uid, { disabled: true }) in service if needed.
+    // Ban enforced in app via is_banned; Supabase Auth has no "disabled" flag.
   }
 
   async unblockUser(uid: string): Promise<void> {
@@ -135,7 +135,6 @@ export class UserSupabaseRepository implements UserRepository {
       })
       .eq("uid", uid);
     if (error) throw new Error(error.message ?? "Database error");
-    // Auth enable: still Firebase until migration.
   }
 
   async updateUserRestriction({

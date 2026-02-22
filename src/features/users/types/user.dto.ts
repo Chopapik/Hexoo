@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { User } from "./user.entity";
+import type { UserEntity } from "./user.entity";
 import { UserRole } from "./user.type";
 
 export const CreateUserSchema = z.object({
@@ -33,13 +33,13 @@ export type BlockUserDto = z.infer<typeof BlockUserSchema>;
 export type RestrictUserDto = z.infer<typeof RestrictUserSchema>;
 
 export type PublicUserResponseDto = Pick<
-  User,
+  UserEntity,
   "uid" | "name" | "avatarUrl" | "createdAt" | "lastOnline"
 >;
 
 export type PrivateUserResponseDto = PublicUserResponseDto &
   Pick<
-    User,
+    UserEntity,
     | "email"
     | "role"
     | "isActive"
