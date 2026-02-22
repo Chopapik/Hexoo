@@ -3,6 +3,7 @@
 create table if not exists public.users (
   uid text primary key,
   name text not null,
+  name_lowercase text,
   email text not null,
   role text not null default 'user' check (role in ('admin', 'user', 'moderator')),
   avatar_url text,
@@ -22,6 +23,7 @@ create table if not exists public.users (
   last_known_ip text
 );
 
--- Index for lookups by email and for "last online" ordering.
+-- Indexes: email, last online, and case-insensitive name (profile URL slug).
 create index if not exists users_email on public.users (email);
 create index if not exists users_last_online on public.users (last_online desc);
+create index if not exists users_name_lowercase on public.users (name_lowercase);

@@ -1,4 +1,4 @@
-import { PostFirebaseRepository } from "./post.firebase.repository";
+import { PostSupabaseRepository } from "./post.supabase.repository";
 import { PostRepository } from "./post.repository.interface";
 
-export const postRepository: PostRepository = new PostFirebaseRepository();
+export const postRepository: PostRepository = new PostSupabaseRepository();
