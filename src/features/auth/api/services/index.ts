@@ -1,11 +1,10 @@
 import { authRepository } from "../repositories";
 import { userRepository } from "@/features/users/api/repositories";
-import { resetIpLimit } from "@/features/security/api/services";
 import { logActivity } from "@/features/admin/api/services/activityService";
 import { AuthService } from "./auth.service";
 
 export const getAuthService = (): AuthService => {
-  return new AuthService(authRepository, userRepository, resetIpLimit, logActivity);
+  return new AuthService(authRepository, userRepository, logActivity);
 };
 
 export async function logoutUser() {
