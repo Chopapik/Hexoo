@@ -2,7 +2,6 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getClientIp } from "@/lib/serverUtils";
 import { isUserAuthenticated } from "@/lib/session";
 
-const BRUTE_FORCE_PATHS = ["/api/auth/login", "/api/auth/register"];
 const PUBLIC_PATHS = ["/login", "/register", "/privacy", "/terms"];
 
 export async function middleware(request: NextRequest) {
@@ -40,36 +39,19 @@ export async function middleware(request: NextRequest) {
   const ip = await getClientIp();
   let errorResponse = null;
 
-  if (BRUTE_FORCE_PATHS.includes(pathname)) {
-    try {
-      const checkUrl = new URL("/api/security/rate-limit", request.url);
-      checkUrl.searchParams.set("ip", ip);
-      const response = await fetch(checkUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-      });
+  try {
+    const throttleUrl = new URL("/api/security/throttle", request.url);
+    throttleUrl.searchParams.set("ip", ip);
+    const response = await fetch(throttleUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+    });
 
-      if (response.status === 429) {
-        errorResponse = await response.json();
-      }
-    } catch (error) {
-      console.error("Middleware BF check failed:", error);
+    if (response.status === 429) {
+      errorResponse = await response.json();
     }
-  } else {
-    try {
-      const throttleUrl = new URL("/api/security/throttle", request.url);
-      throttleUrl.searchParams.set("ip", ip);
-      const response = await fetch(throttleUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-      });
-
-      if (response.status === 429) {
-        errorResponse = await response.json();
-      }
-    } catch (error) {
-      console.error("Middleware Throttle check failed:", error);
-    }
+  } catch (error) {
+    console.error("Middleware throttle check failed:", error);
   }
 
   if (errorResponse) {

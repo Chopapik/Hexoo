@@ -14,13 +14,11 @@ type ActivityLogger = (
   action: ActivityType,
   details: string,
 ) => Promise<void>;
-type ResetIpLimit = (ip: string) => Promise<void>;
 
 export class AuthService implements IAuthService {
   constructor(
     private readonly authRepository: AuthRepository,
     private readonly userRepository: UserRepository,
-    private readonly resetIpLimit: ResetIpLimit,
     private readonly logActivity: ActivityLogger,
   ) {}
 
@@ -69,12 +67,6 @@ export class AuthService implements IAuthService {
       );
     } catch (error) {
       console.error("Failed to update user stats or log activity:", error);
-    }
-
-    try {
-      await this.resetIpLimit(ip);
-    } catch (error) {
-      console.error("Failed to reset limits:", error);
     }
 
     await setSessionCookie(sessionCookie);
