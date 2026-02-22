@@ -105,7 +105,7 @@ export const enforceStrictModeration = async (
   await logModerationEvent({
     userId: userId,
     timestamp: new Date(),
-    verdict: "REJECTED",
+    verdict: ModerationStatus.Rejected,
     categories: flaggedReasons,
     actionTaken: "BLOCKED_CREATION",
   });
@@ -142,10 +142,6 @@ export const performModeration = async (
   }
 
   if (moderationStatus !== ModerationStatus.Approved) {
-    const verdictUpper = moderationStatus.toUpperCase() as
-      | "PENDING"
-      | "REJECTED";
-
     const actionTaken =
       moderationStatus === ModerationStatus.Rejected
         ? "BLOCKED_CREATION"
@@ -154,7 +150,7 @@ export const performModeration = async (
     await logModerationEvent({
       userId: userId,
       timestamp: new Date(),
-      verdict: verdictUpper,
+      verdict: moderationStatus,
       categories: flaggedReasons,
       actionTaken: actionTaken,
     });
