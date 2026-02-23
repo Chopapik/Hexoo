@@ -2,7 +2,7 @@ import { hasFile } from "@/features/images/api/image.service";
 import { moderateImage } from "@/features/moderation/api/imageModeration";
 import { moderateText } from "@/features/moderation/api/textModeration";
 import { createAppError } from "@/lib/AppError";
-import { logModerationEvent } from "@/features/moderation/api/moderationLogService";
+import { logModerationEvent } from "@/features/moderation/api/services/moderationLog.service";
 import { ModerationStatus } from "@/features/shared/types/content.type";
 
 export interface ModerationVerdict {
