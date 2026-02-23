@@ -1,4 +1,4 @@
-import { hasFile, uploadImage } from "@/features/images/api/imageService";
+import { hasFile, uploadImage } from "@/features/images/api/image.service";
 import { performModeration } from "@/features/moderation/utils/assessSafety";
 import type { ImageMeta } from "@/features/images/types/image.type";
 import { ModerationStatus } from "@/features/shared/types/content.type";

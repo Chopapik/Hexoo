@@ -1,6 +1,6 @@
 import { createAppError } from "@/lib/AppError";
 import { formatZodErrorFlat } from "@/lib/zod";
-import { uploadImage, deleteImage } from "@/features/images/api/imageService";
+import { uploadImage, deleteImage } from "@/features/images/api/image.service";
 import { enforceStrictModeration } from "@/features/moderation/utils/assessSafety";
 import { logActivity } from "@/features/admin/api/services/activityService";
 import { UpdateProfileData, UpdateProfileSchema } from "../../me.type";
@@ -56,7 +56,7 @@ export class MeService implements IMeService {
       uid,
       name,
       avatarFile,
-      "meService.updateProfile",
+      "meService.updateProfile", 
     );
 
     const userData = await this.userRepository.getUserByUid(uid);

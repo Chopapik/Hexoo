@@ -1,26 +1,15 @@
 import { randomUUID } from "crypto";
 import { createAppError } from "@/lib/AppError";
-import { adminStorage } from "@/lib/firebaseAdmin";
 import sharp from "sharp";
+import { SupabaseImageStorageRepository } from "./image.supabase.repository";
 
-const getBucket = () => {
-  const bucket = adminStorage.bucket();
-  if (!bucket) {
-    throw createAppError({
-      code: "SERVICE_UNAVAILABLE",
-      message: "[imageService.getBucket] Storage bucket is not configured",
-    });
-  }
-  return bucket;
-};
+const storageRepository = new SupabaseImageStorageRepository();
 
 export const uploadImage = async (
   file: File | Blob,
   uid: string,
   storageFolder: string
 ) => {
-  const bucket = getBucket();
-
   if (!file) {
     throw createAppError({
       code: "INVALID_INPUT",
@@ -63,35 +52,18 @@ export const uploadImage = async (
   const downloadToken = randomUUID();
 
   try {
-    const fileRef = bucket.file(storagePath);
-
-    await fileRef.save(processedBuffer, {
-      metadata: {
-        contentType: "image/webp",
-        metadata: {
-          firebaseStorageDownloadTokens: downloadToken,
-        },
-      },
-      resumable: false,
-    });
-
-    const bucketName = bucket.name;
-    const emulatorHost = process.env.FIREBASE_STORAGE_EMULATOR_HOST;
-
-    const publicUrl = emulatorHost
-      ? `http://${emulatorHost}/v0/b/${bucketName}/o/${encodeURIComponent(
-          storagePath
-        )}?alt=media&token=${downloadToken}`
-      : `https://firebasestorage.googleapis.com/v0/b/${bucketName}/o/${encodeURIComponent(
-          storagePath
-        )}?alt=media&token=${downloadToken}`;
+    const result = await storageRepository.uploadObject(
+      storagePath,
+      processedBuffer,
+      "image/webp"
+    );
 
     return {
-      publicUrl,
-      storagePath,
+      publicUrl: result.publicUrl,
+      storagePath: result.storagePath,
       downloadToken,
-      contentType: "image/webp",
-      sizeBytes: processedBuffer.length,
+      contentType: result.contentType,
+      sizeBytes: result.sizeBytes,
     };
   } catch (error) {
     throw createAppError({
@@ -103,15 +75,8 @@ export const uploadImage = async (
 
 export const deleteImage = async (storagePath: string | null | undefined) => {
   if (!storagePath) return;
-  const bucket = getBucket();
   try {
-    await bucket
-      .file(storagePath)
-      .delete()
-      .catch((error: any) => {
-        if (error?.code === 404) return;
-        throw error;
-      });
+    await storageRepository.deleteObject(storagePath);
   } catch (error) {
     throw createAppError({
       code: "EXTERNAL_SERVICE",
@@ -125,3 +90,4 @@ export const hasFile = (f: any): boolean => {
   if (typeof f.size === "number") return f.size > 0;
   return false;
 };
+
