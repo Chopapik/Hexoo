@@ -1,7 +1,7 @@
 import { createAppError } from "@/lib/AppError";
 import { postRepository } from "@/features/posts/api/repositories";
 import { blockUser, getUsersByIds } from "@/features/users/api/services";
-import { deleteImage } from "@/features/images/api/imageService";
+import { deleteImage } from "@/features/images/api/image.service";
 import { ModerationPostDto } from "@/features/posts/types/post.dto";
 import { UserRole } from "@/features/users/types/user.type";
 import { ModerationStatus } from "@/features/shared/types/content.type";

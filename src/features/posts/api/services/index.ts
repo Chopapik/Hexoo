@@ -1,6 +1,6 @@
 import { postRepository } from "../repositories";
 import { likeRepository } from "@/features/likes/api/repositories";
-import { deleteImage } from "@/features/images/api/imageService";
+import { deleteImage } from "@/features/images/api/image.service";
 import { PostContentService } from "./post.content.service";
 import { PostService } from "./post.service";
 import type {

@@ -1,4 +1,4 @@
-import { hasFile } from "@/features/images/api/imageService";
+import { hasFile } from "@/features/images/api/image.service";
 import { moderateImage } from "@/features/moderation/api/imageModeration";
 import { moderateText } from "@/features/moderation/api/textModeration";
 import { createAppError } from "@/lib/AppError";
