@@ -70,6 +70,13 @@ export type PublicPostDto = Omit<
   userName: string;
   userAvatarUrl: string | null;
   isLikedByMe?: boolean;
+  moderationInfo?: {
+    verdict: PostEntity["moderationStatus"];
+    actionTaken: string;
+    categories: string[];
+    reasonSummary?: string;
+    reasonDetails?: string;
+  };
 };
 
 export type ModerationPostDto = PostEntity & {

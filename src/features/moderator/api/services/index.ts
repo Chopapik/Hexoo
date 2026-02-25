@@ -16,10 +16,12 @@ export async function reviewPost(
   session: SessionData | null,
   postId: string,
   action: "approve" | "reject" | "quarantine",
-  banAuthor?: boolean,
+  banAuthor: boolean | undefined,
+  categories: string[],
+  justification: string,
 ) {
   const service = getModeratorService(session);
-  return await service.reviewPost(postId, action, banAuthor);
+  return await service.reviewPost(postId, action, banAuthor, categories, justification);
 }
 
 export { ModeratorService };

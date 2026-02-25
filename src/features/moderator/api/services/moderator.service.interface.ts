@@ -5,6 +5,8 @@ export interface ModeratorService {
   reviewPost(
     postId: string,
     action: "approve" | "reject" | "quarantine",
-    banAuthor?: boolean,
+    banAuthor: boolean | undefined,
+    categories: string[],
+    justification: string,
   ): Promise<void>;
 }

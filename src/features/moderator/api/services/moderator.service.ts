@@ -5,6 +5,7 @@ import { deleteImage } from "@/features/images/api/image.service";
 import { ModerationPostDto } from "@/features/posts/types/post.dto";
 import { UserRole } from "@/features/users/types/user.type";
 import { ModerationStatus } from "@/features/shared/types/content.type";
+import { logModerationEvent } from "@/features/moderation/api/services/moderationLog.service";
 import type { SessionData } from "@/features/me/me.type";
 import type { ModeratorService as IModeratorService } from "./moderator.service.interface";
 
@@ -52,6 +53,8 @@ export class ModeratorService implements IModeratorService {
     postId: string,
     action: "approve" | "reject" | "quarantine",
     banAuthor: boolean = false,
+    categories: string[],
+    justification: string,
   ) {
     const moderator = this.ensureModeratorOrAdmin();
 
@@ -70,25 +73,71 @@ export class ModeratorService implements IModeratorService {
       });
     }
 
+    if (action !== "approve" && !justification?.trim()) {
+      throw createAppError({
+        code: "VALIDATION_ERROR",
+        message: "[moderatorService.reviewPost] justification is required",
+      });
+    }
+
+    const now = new Date();
+
     if (action === "reject") {
       if (post.imageMeta?.storagePath) {
         await deleteImage(post.imageMeta.storagePath);
       }
       await postRepository.deletePost(postId);
+      await logModerationEvent({
+        userId: post.userId,
+        timestamp: now,
+        verdict: ModerationStatus.Rejected,
+        categories: categories,
+        actionTaken: "CONTENT_REMOVED",
+        resourceType: "post",
+        resourceId: postId,
+        source: "moderator",
+        actorId: moderator.uid,
+        reasonSummary: "Post removed by moderator",
+        reasonDetails: justification,
+      });
     } else if (action === "approve") {
-      const now = new Date();
       await postRepository.updatePost(postId, {
         moderationStatus: ModerationStatus.Approved,
         flaggedReasons: [],
         reviewedBy: moderator.uid,
         reviewedAt: now,
       });
+      await logModerationEvent({
+        userId: post.userId,
+        timestamp: now,
+        verdict: ModerationStatus.Approved,
+        categories: categories,
+        actionTaken: "FLAGGED_FOR_REVIEW",
+        resourceType: "post",
+        resourceId: postId,
+        source: "moderator",
+        actorId: moderator.uid,
+        reasonSummary: "Post approved by moderator",
+        reasonDetails: justification,
+      });
     } else if (action === "quarantine") {
-      const now = new Date();
       await postRepository.updatePost(postId, {
         moderationStatus: ModerationStatus.Pending,
         reviewedBy: moderator.uid,
         reviewedAt: now,
+      });
+      await logModerationEvent({
+        userId: post.userId,
+        timestamp: now,
+        verdict: ModerationStatus.Pending,
+        categories: categories,
+        actionTaken: "FLAGGED_FOR_REVIEW",
+        resourceType: "post",
+        resourceId: postId,
+        source: "moderator",
+        actorId: moderator.uid,
+        reasonSummary: "Post moved to quarantine by moderator",
+        reasonDetails: justification,
       });
     }
 
