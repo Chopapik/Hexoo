@@ -3,6 +3,7 @@ import { formatZodErrorFlat } from "@/lib/zod";
 import { getUsersByIds } from "@/features/users/api/services";
 import { ModerationStatus } from "@/features/shared/types/content.type";
 import type { LikeRepository } from "@/features/likes/api/repositories";
+import { getLatestModerationLogForResource } from "@/features/moderation/api/services/moderationLog.service";
 
 import { PostEntity } from "../../types/post.entity";
 import {
@@ -65,6 +66,28 @@ export class PostService implements IPostService {
       );
     }
 
+    const moderationInfoByPostId: Record<string, PublicPostDto["moderationInfo"]> = {};
+
+    if (this.session) {
+      // Preload latest moderation info only for posts authored by current user
+      await Promise.all(
+        posts
+          .filter((post) => post.userId === this.session!.uid)
+          .map(async (post) => {
+            const log = await getLatestModerationLogForResource("post", post.id);
+            if (log) {
+              moderationInfoByPostId[post.id] = {
+                verdict: post.moderationStatus,
+                actionTaken: log.actionTaken,
+                categories: log.categories,
+                reasonSummary: log.reasonSummary,
+                reasonDetails: log.reasonDetails,
+              };
+            }
+          }),
+      );
+    }
+
     return posts.map((post) => {
       const author = authors[post.userId];
       return {
@@ -72,6 +95,10 @@ export class PostService implements IPostService {
         userName: author?.name ?? "Unknown",
         userAvatarUrl: author?.avatarUrl ?? null,
         isLikedByMe: likedPostIds.includes(post.id),
+        moderationInfo:
+          this.session && post.userId === this.session.uid
+            ? moderationInfoByPostId[post.id]
+            : undefined,
       };
     });
   }

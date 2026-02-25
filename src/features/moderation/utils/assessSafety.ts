@@ -108,6 +108,10 @@ export const enforceStrictModeration = async (
     verdict: ModerationStatus.Rejected,
     categories: flaggedReasons,
     actionTaken: "BLOCKED_CREATION",
+    source: "ai",
+    actorId: "system",
+    reasonSummary: `AI moderation blocked content in ${contextLabel}`,
+    reasonDetails: `Categories: ${flaggedReasons.join(", ")}`,
   });
 
   throw createAppError({
@@ -153,6 +157,10 @@ export const performModeration = async (
       verdict: moderationStatus,
       categories: flaggedReasons,
       actionTaken: actionTaken,
+      source: "ai",
+      actorId: "system",
+      reasonSummary: `AI moderation result: ${moderationStatus}`,
+      reasonDetails: `Categories: ${flaggedReasons.join(", ")}`,
     });
   }
 

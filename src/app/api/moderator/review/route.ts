@@ -7,8 +7,21 @@ import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
 export const POST = withErrorHandling(async (req: NextRequest) => {
   const session = await getUserFromSession();
   const body = await req.json();
-  const { postId, action, banAuthor } = body;
+  const {
+    postId,
+    action,
+    banAuthor,
+    categories = [],
+    justification = "",
+  } = body;
 
-  const result = await reviewPost(session, postId, action, banAuthor);
+  const result = await reviewPost(
+    session,
+    postId,
+    action,
+    banAuthor,
+    categories,
+    justification,
+  );
   return handleSuccess(result);
 });
