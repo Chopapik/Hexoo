@@ -1,10 +1,12 @@
 import type { SessionData } from "@/features/me/me.type";
 import { ModeratorService } from "./moderator.service";
+import { ModerationService } from "@/features/moderation/api/services/moderation.service";
 
 export const getModeratorService = (
   session: SessionData | null,
 ): ModeratorService => {
-  return new ModeratorService(session);
+  const moderationService = new ModerationService();
+  return new ModeratorService(session, moderationService);
 };
 
 export async function getModerationQueue(session: SessionData | null) {

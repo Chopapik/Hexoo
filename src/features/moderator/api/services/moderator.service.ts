@@ -1,16 +1,20 @@
 import { createAppError } from "@/lib/AppError";
 import { postRepository } from "@/features/posts/api/repositories";
-import { blockUser, getUsersByIds } from "@/features/users/api/services";
+import { blockUser } from "@/features/users/api/services";
 import { deleteImage } from "@/features/images/api/image.service";
 import { ModerationPostDto } from "@/features/posts/types/post.dto";
 import { UserRole } from "@/features/users/types/user.type";
 import { ModerationStatus } from "@/features/shared/types/content.type";
 import { logModerationEvent } from "@/features/moderation/api/services/moderationLog.service";
+import type { ModerationService as IModerationService } from "@/features/moderation/api/services/moderation.service.interface";
 import type { SessionData } from "@/features/me/me.type";
 import type { ModeratorService as IModeratorService } from "./moderator.service.interface";
 
 export class ModeratorService implements IModeratorService {
-  constructor(private readonly session: SessionData | null) {}
+  constructor(
+    private readonly session: SessionData | null,
+    private readonly moderationService: IModerationService,
+  ) {}
 
   private ensureModeratorOrAdmin(): SessionData {
     const session = this.session;
@@ -20,7 +24,10 @@ export class ModeratorService implements IModeratorService {
         message: "[moderatorService.ensureModeratorOrAdmin] No session found",
       });
     }
-    if (session.role !== UserRole.Moderator && session.role !== UserRole.Admin) {
+    if (
+      session.role !== UserRole.Moderator &&
+      session.role !== UserRole.Admin
+    ) {
       throw createAppError({
         code: "FORBIDDEN",
         message:
@@ -33,20 +40,7 @@ export class ModeratorService implements IModeratorService {
   async getModerationQueue(): Promise<ModerationPostDto[]> {
     this.ensureModeratorOrAdmin();
 
-    const posts = await postRepository.getPostsPendingModeration(50);
-    if (posts.length === 0) return [];
-
-    const authorIds = [...new Set(posts.map((post) => post.userId))];
-    const authors = await getUsersByIds(authorIds);
-
-    return posts.map((post) => {
-      const author = authors[post.userId];
-      return {
-        ...post,
-        userName: author?.name ?? "Unknown",
-        userAvatarUrl: author?.avatarUrl ?? null,
-      };
-    });
+    return this.moderationService.getModerationQueue(50);
   }
 
   async reviewPost(
