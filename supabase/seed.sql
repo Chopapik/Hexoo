@@ -28,7 +28,11 @@ begin
       raw_app_meta_data,
       raw_user_meta_data,
       created_at,
-      updated_at
+      updated_at,
+      confirmation_token,
+      email_change,
+      email_change_token_new,
+      recovery_token
     )
     values (
       admin_id,
@@ -41,7 +45,11 @@ begin
       '{"provider":"email","providers":["email"]}'::jsonb,
       '{"name":"Admin"}'::jsonb,
       now(),
-      now()
+      now(),
+      '',
+      '',
+      '',
+      ''
     );
 
     -- Create corresponding identity entry
