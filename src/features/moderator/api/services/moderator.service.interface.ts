@@ -9,4 +9,5 @@ export interface ModeratorService {
     categories: string[],
     justification: string,
   ): Promise<void>;
+  banUser(uid: string, reason: string): Promise<void>;
 }
