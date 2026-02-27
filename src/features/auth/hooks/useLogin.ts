@@ -30,24 +30,11 @@ export default function useLogin(onError: ErrorCallback) {
 
   const handleLogin = async (data: LoginData) => {
     try {
-      try {
-        await fetchClient.post("/security/rate-limit");
-      } catch (error: unknown) {
-        const err = error as { status?: number; code?: string; data?: unknown };
-        if (err.status === 429) {
-          onError(err.code || "SECURITY_LOCKOUT", "root", err.data);
-          return;
-        }
-        throw error;
-      }
-
-      const {
-        data: sessionData,
-        error: signInError,
-      } = await supabaseClient.auth.signInWithPassword({
-        email: data.email,
-        password: data.password,
-      });
+      const { data: sessionData, error: signInError } =
+        await supabaseClient.auth.signInWithPassword({
+          email: data.email,
+          password: data.password,
+        });
 
       if (signInError) {
         const msg = signInError.message?.toLowerCase() ?? "";
