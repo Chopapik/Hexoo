@@ -25,7 +25,7 @@ export class SecurityService implements ISecurityService {
         .from(TABLE)
         .upsert(
           { ip, window_start: now, request_count: 1 },
-          { onConflict: "ip" }
+          { onConflict: "ip" },
         );
       if (error) throw new Error(error.message);
       return;
