@@ -129,8 +129,6 @@ export class UserService implements IUserService {
   }
 
   async restrictUserBySystem(uid: string, reason: string) {
-    console.log(`[AI MODERATION] Restricting user ${uid} due to: ${reason}`);
-
     await this._applyRestrictionInternal(uid, reason, "AI_SYSTEM");
   }
 
