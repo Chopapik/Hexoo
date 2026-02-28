@@ -1,4 +1,4 @@
-import { blockUser } from "@/features/users/api/services";
+import { blockUser } from "@/features/moderator/api/services";
 import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";

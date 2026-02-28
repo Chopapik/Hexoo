@@ -1,4 +1,4 @@
-import type { BlockUserDto, CreateUserDto } from "../../types/user.dto";
+import type { CreateUserDto } from "../../types/user.dto";
 import { createAppError } from "@/lib/AppError";
 import { logActivity } from "@/features/admin/api/services/activityService";
 import {
@@ -76,50 +76,6 @@ export class UserService implements IUserService {
     };
 
     return { user: userProfile };
-  }
-
-  async blockUser(data: BlockUserDto) {
-    await this.ensureModeratorOrAdmin();
-
-    if (!data.uidToBlock) {
-      throw createAppError({
-        code: "INVALID_INPUT",
-        message: "[userService.blockUser] No 'uidToBlock' provided",
-      });
-    }
-
-    await this.repository.blockUser(data);
-    try {
-      await this.authRepository?.updateUser(data.uidToBlock, { disabled: true });
-    } catch {
-      // Auth provider may not support disabled; ignore
-    }
-
-    await logActivity(
-      data.uidToBlock,
-      "USER_BLOCKED",
-      `Blocked by ${data.bannedBy}. Reason: ${data.bannedReason}`,
-    );
-  }
-
-  async unblockUser(uid: string) {
-    await this.ensureModeratorOrAdmin();
-
-    if (!uid) {
-      throw createAppError({
-        code: "INVALID_INPUT",
-        message: "[userService.unblockUser] No 'uid' provided",
-      });
-    }
-
-    await this.repository.unblockUser(uid);
-    try {
-      await this.authRepository?.updateUser(uid, { disabled: false });
-    } catch {
-      // Auth provider may not support disabled; ignore
-    }
-
-    await logActivity(uid, "USER_UNBLOCKED", "User account unblocked");
   }
 
   async unrestrictUser(uid: string) {

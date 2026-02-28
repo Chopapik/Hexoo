@@ -1,19 +1,24 @@
 import { createAppError } from "@/lib/AppError";
 import { postRepository } from "@/features/posts/api/repositories";
-import { blockUser } from "@/features/users/api/services";
 import { deleteImage } from "@/features/images/api/image.service";
+import { logActivity } from "@/features/admin/api/services/activityService";
 import { ModerationPostDto } from "@/features/posts/types/post.dto";
 import { UserRole } from "@/features/users/types/user.type";
+import type { BlockUserDto } from "@/features/users/types/user.dto";
 import { ModerationStatus } from "@/features/shared/types/content.type";
 import { logModerationEvent } from "@/features/moderation/api/services/moderationLog.service";
 import type { ModerationService as IModerationService } from "@/features/moderation/api/services/moderation.service.interface";
 import type { SessionData } from "@/features/me/me.type";
 import type { ModeratorService as IModeratorService } from "./moderator.service.interface";
+import type { UserRepository } from "@/features/users/api/repositories/user.repository.interface";
+import type { AuthRepository } from "@/features/auth/api/repositories/authRepository.interface";
 
 export class ModeratorService implements IModeratorService {
   constructor(
     private readonly session: SessionData | null,
     private readonly moderationService: IModerationService,
+    private readonly userRepository: UserRepository,
+    private readonly authRepository: AuthRepository | null,
   ) {}
 
   private ensureModeratorOrAdmin(): SessionData {
@@ -60,11 +65,55 @@ export class ModeratorService implements IModeratorService {
       });
     }
 
-    await blockUser(moderator, {
+    await this.blockUser({
       uidToBlock: uid,
       bannedBy: moderator.uid,
       bannedReason: reason,
     });
+  }
+
+  async blockUser(data: BlockUserDto): Promise<void> {
+    this.ensureModeratorOrAdmin();
+
+    if (!data.uidToBlock) {
+      throw createAppError({
+        code: "INVALID_INPUT",
+        message: "[moderatorService.blockUser] No 'uidToBlock' provided",
+      });
+    }
+
+    await this.userRepository.blockUser(data);
+    try {
+      await this.authRepository?.updateUser(data.uidToBlock, { disabled: true });
+    } catch {
+      // Auth provider may not support disabled; ignore
+    }
+
+    await logActivity(
+      data.uidToBlock,
+      "USER_BLOCKED",
+      `Blocked by ${data.bannedBy}. Reason: ${data.bannedReason}`,
+    );
+  }
+
+  async unblockUser(uid: string): Promise<void> {
+    this.ensureModeratorOrAdmin();
+
+    if (!uid) {
+      throw createAppError({
+        code: "INVALID_INPUT",
+        message: "[moderatorService.unblockUser] No 'uid' provided",
+      });
+    }
+
+    await this.userRepository.unblockUser(uid);
+    try {
+      await this.authRepository?.updateUser(uid, { disabled: false });
+    } catch {
+      // Auth provider may not support disabled; ignore
+    }
+
+    await logActivity(uid, "USER_UNBLOCKED", "User account unblocked");
   }
 
   async reviewPost(

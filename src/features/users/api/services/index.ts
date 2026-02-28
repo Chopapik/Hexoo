@@ -2,7 +2,6 @@ import { UserService } from "./user.service";
 import { userRepository } from "../repositories";
 import { authRepository } from "@/features/auth/api/repositories";
 import type { UserEntity } from "../../types/user.entity";
-import type { BlockUserDto } from "../../types/user.dto";
 import { UserRole } from "../../types/user.type";
 import type { SessionData } from "@/features/me/me.type";
 
@@ -39,16 +38,6 @@ export async function getUsersByIds(
 ): Promise<Record<string, { name: string; avatarUrl?: string | null }>> {
   const service = getUserService(null);
   return await service.getUsersByIds(uids);
-}
-
-export async function blockUser(session: SessionData | null, data: BlockUserDto) {
-  const service = getUserService(session);
-  return await service.blockUser(data);
-}
-
-export async function unblockUser(session: SessionData | null, uid: string) {
-  const service = getUserService(session);
-  return await service.unblockUser(uid);
 }
 
 export async function unrestrictUser(session: SessionData | null, uid: string) {
