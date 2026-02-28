@@ -48,30 +48,6 @@ export class ModeratorService implements IModeratorService {
     return this.moderationService.getModerationQueue(50);
   }
 
-  async banUser(uid: string, reason: string): Promise<void> {
-    const moderator = this.ensureModeratorOrAdmin();
-
-    if (!uid) {
-      throw createAppError({
-        code: "INVALID_INPUT",
-        message: "[moderatorService.banUser] uid was empty",
-      });
-    }
-
-    if (!reason?.trim()) {
-      throw createAppError({
-        code: "VALIDATION_ERROR",
-        message: "[moderatorService.banUser] bannedReason is required",
-      });
-    }
-
-    await this.blockUser({
-      uidToBlock: uid,
-      bannedBy: moderator.uid,
-      bannedReason: reason,
-    });
-  }
-
   async blockUser(data: BlockUserDto): Promise<void> {
     this.ensureModeratorOrAdmin();
 
@@ -210,10 +186,14 @@ export class ModeratorService implements IModeratorService {
 
     if (banAuthor && post.userId) {
       try {
-        await this.banUser(post.userId, `Decision on post ${postId}`);
+        await this.blockUser({
+          uidToBlock: post.userId,
+          bannedBy: moderator.uid,
+          bannedReason: `Decision on post ${postId}`,
+        });
       } catch (error) {
         console.error(
-          `[ReviewPost] Failed to ban user ${post.userId} after post review.`,
+          `[ReviewPost] Failed to block user ${post.userId} after post review.`,
           error,
         );
       }
