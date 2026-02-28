@@ -1,3 +1,4 @@
+import { createAppError } from "@/lib/AppError";
 import { SupabaseModerationLogRepository } from "../repositories/moderationLog.supabase.repository";
 import type { ModerationLogPayload } from "../repositories/moderationLog.repository.interface";
 
@@ -9,7 +10,11 @@ export const logModerationEvent = async (payload: ModerationLogPayload) => {
   try {
     await moderationLogRepository.log(payload);
   } catch (error) {
-    console.error("[ModerationLog] Failed to log event:", error);
+    throw createAppError({
+      code: "DB_ERROR",
+      message: "[ModerationLog] Failed to log event",
+      details: error,
+    });
   }
 };
 
@@ -23,10 +28,10 @@ export const getLatestModerationLogForResource = async (
       resourceId,
     );
   } catch (error) {
-    console.error(
-      "[ModerationLog] Failed to read latest log for resource:",
-      error,
-    );
-    return null;
+    throw createAppError({
+      code: "DB_ERROR",
+      message: "[ModerationLog] Failed to read latest log for resource",
+      details: error,
+    });
   }
 };

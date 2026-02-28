@@ -192,10 +192,11 @@ export class ModeratorService implements IModeratorService {
           bannedReason: `Decision on post ${postId}`,
         });
       } catch (error) {
-        console.error(
-          `[ReviewPost] Failed to block user ${post.userId} after post review.`,
-          error,
-        );
+        throw createAppError({
+          code: "INTERNAL_ERROR",
+          message: `[ReviewPost] Failed to block user ${post.userId} after post review`,
+          details: error,
+        });
       }
     }
   }

@@ -1,3 +1,4 @@
+import { createAppError } from "@/lib/AppError";
 import { activityRepository } from "../repositories";
 
 export type ActivityType =
@@ -24,6 +25,10 @@ export const logActivity = async (
       details,
     });
   } catch (error) {
-    console.error("[ActivityLog] Failed to write log:", error);
+    throw createAppError({
+      code: "DB_ERROR",
+      message: "[ActivityLog] Failed to write log",
+      details: error,
+    });
   }
 };

@@ -66,7 +66,11 @@ export class AuthService implements IAuthService {
         "User logged in via Client SDK flow",
       );
     } catch (error) {
-      console.error("Failed to update user stats or log activity:", error);
+      throw createAppError({
+        code: "INTERNAL_ERROR",
+        message: "Failed to update user stats or log activity",
+        details: error,
+      });
     }
 
     await setSessionCookie(sessionCookie);
@@ -93,10 +97,11 @@ export class AuthService implements IAuthService {
       try {
         await this.authRepository.deleteUser(uid);
       } catch (cleanupErr) {
-        console.error(
-          "Failed to cleanup user from Auth after username conflict:",
-          cleanupErr,
-        );
+        throw createAppError({
+          code: "INTERNAL_ERROR",
+          message: "Failed to cleanup user from Auth after username conflict",
+          details: cleanupErr,
+        });
       }
 
       throw createAppError({
