@@ -1,5 +1,4 @@
 import {
-  BlockUserDto,
   CreateUserDto,
   RestrictUserDto,
   UserProfileDto,
@@ -13,8 +12,6 @@ export interface UserService {
   getUsersByIds(
     uids: string[],
   ): Promise<Record<string, { name: string; avatarUrl?: string | null }>>;
-  blockUser(data: BlockUserDto): Promise<void>;
-  unblockUser(uid: string): Promise<void>;
   unrestrictUser(uid: string): Promise<void>;
   restrictUser(data: RestrictUserDto): Promise<void>;
   restrictUserBySystem(uid: string, reason: string): Promise<void>;

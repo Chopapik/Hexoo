@@ -1,4 +1,5 @@
 import type { ModerationPostDto } from "@/features/posts/types/post.dto";
+import type { BlockUserDto } from "@/features/users/types/user.dto";
 
 export interface ModeratorService {
   getModerationQueue(): Promise<ModerationPostDto[]>;
@@ -10,4 +11,6 @@ export interface ModeratorService {
     justification: string,
   ): Promise<void>;
   banUser(uid: string, reason: string): Promise<void>;
+  blockUser(data: BlockUserDto): Promise<void>;
+  unblockUser(uid: string): Promise<void>;
 }
