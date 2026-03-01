@@ -1,4 +1,4 @@
-import type { ActivityLogInput } from "@/features/admin/types/activity.type";
+import type { ActivityLogInput } from "@/features/activity/types/activity.type";
 
 export interface ActivityRepository {
   logActivity(logData: ActivityLogInput): Promise<void>;

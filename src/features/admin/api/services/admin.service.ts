@@ -2,7 +2,7 @@ import maskEmail from "@/features/shared/utils/maskEmail";
 import { createAppError } from "@/lib/AppError";
 import { authRepository } from "@/features/auth/api/repositories";
 import { userRepository } from "@/features/users/api/repositories";
-import { logActivity } from "./activityService";
+import { logActivity } from "@/features/activity/api/services";
 import type { SessionData } from "@/features/me/me.type";
 import type { AdminUserCreate } from "@/features/admin/types/admin.type";
 import type { AdminService as IAdminService } from "./admin.service.interface";

@@ -1,4 +1,4 @@
-import type { ActivityLogInput } from "@/features/admin/types/activity.type";
+import type { ActivityLogInput } from "@/features/activity/types/activity.type";
 import { ActivityRepository } from "../activityRepository.interface";
 import { supabaseAdmin } from "@/lib/supabaseServer";
 

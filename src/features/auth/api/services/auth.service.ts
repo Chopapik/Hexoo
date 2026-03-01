@@ -1,7 +1,7 @@
 import { createAppError } from "@/lib/AppError";
 import { setSessionCookie, clearSessionCookie } from "@/lib/session";
 import { isUsernameTaken } from "../utils/checkUsernameUnique";
-import type { ActivityType } from "@/features/admin/api/services/activityService";
+import type { ActivityType } from "@/features/activity/api/services";
 import type { AuthRepository } from "../repositories/authRepository.interface";
 import type { UserRepository } from "@/features/users/api/repositories/user.repository.interface";
 import { UserRole } from "@/features/users/types/user.type";

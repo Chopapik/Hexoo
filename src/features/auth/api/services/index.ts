@@ -1,6 +1,6 @@
 import { authRepository } from "../repositories";
 import { userRepository } from "@/features/users/api/repositories";
-import { logActivity } from "@/features/admin/api/services/activityService";
+import { logActivity } from "@/features/activity/api/services";
 import { AuthService } from "./auth.service";
 
 export const getAuthService = (): AuthService => {
