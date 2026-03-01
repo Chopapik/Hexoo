@@ -1,5 +1,9 @@
 import { createAppError } from "@/lib/AppError";
-import { setSessionCookie, clearSessionCookie } from "@/lib/session";
+import {
+  setSessionCookie,
+  clearSessionCookie,
+  getSessionCookie,
+} from "@/lib/session";
 import { isUsernameTaken } from "../utils/checkUsernameUnique";
 import type { ActivityType } from "@/features/activity/api/services";
 import type { AuthRepository } from "../repositories/authRepository.interface";
@@ -23,6 +27,15 @@ export class AuthService implements IAuthService {
   ) {}
 
   async logoutUser() {
+    try {
+      const session = await getSessionCookie();
+      if (session.session && session.value) {
+        const decoded = await this.authRepository.verifyIdToken(session.value);
+        await this.logActivity(decoded.uid, "LOGOUT", "User logged out");
+      }
+    } catch {
+      // Ignore: no valid session to log
+    }
     await clearSessionCookie();
     return { message: "Session cleared" };
   }
@@ -36,6 +49,11 @@ export class AuthService implements IAuthService {
     const userData = await this.userRepository.getUserByUid(uid);
 
     if (!userData) {
+      await this.logActivity(
+        uid,
+        "LOGIN_FAILED",
+        "Login attempt for non-existent user record",
+      );
       throw createAppError({
         code: "USER_NOT_FOUND",
         message: `[authService.createSession] User document for UID ${uid} does not exist in database.`,
@@ -96,6 +114,11 @@ export class AuthService implements IAuthService {
     if (await isUsernameTaken(name)) {
       try {
         await this.authRepository.deleteUser(uid);
+        await this.logActivity(
+          uid,
+          "LOGIN_FAILED",
+          "User cleanup after username conflict",
+        );
       } catch (cleanupErr) {
         throw createAppError({
           code: "INTERNAL_ERROR",

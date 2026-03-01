@@ -1,6 +1,7 @@
 export type ActivityType =
   | "LOGIN_SUCCESS"
   | "LOGIN_FAILED"
+  | "LOGOUT"
   | "USER_CREATED"
   | "USER_BLOCKED"
   | "USER_UNBLOCKED"
