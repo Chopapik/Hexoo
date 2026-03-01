@@ -2,7 +2,7 @@ import { createAppError } from "@/lib/AppError";
 import { formatZodErrorFlat } from "@/lib/zod";
 import { uploadImage, deleteImage } from "@/features/images/api/image.service";
 import { enforceStrictModeration } from "@/features/moderation/utils/assessSafety";
-import { logActivity } from "@/features/admin/api/services/activityService";
+import { logActivity } from "@/features/activity/api/services";
 import { UpdateProfileData, UpdateProfileSchema } from "../../me.type";
 import type { SessionData } from "../../me.type";
 import type { MeService as IMeService } from "./me.service.interface";

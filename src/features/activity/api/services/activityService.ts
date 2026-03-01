@@ -1,17 +1,6 @@
 import { createAppError } from "@/lib/AppError";
 import { activityRepository } from "../repositories";
-
-export type ActivityType =
-  | "LOGIN_SUCCESS"
-  | "LOGIN_FAILED"
-  | "USER_CREATED"
-  | "USER_BLOCKED"
-  | "USER_UNBLOCKED"
-  | "USER_DELETED"
-  | "PASSWORD_CHANGED"
-  | "PROFILE_UPDATED"
-  | "USER_RESTRICTED"
-  | "USER_UNRESTRICTED";
+import type { ActivityType } from "../../types/activity.type";
 
 export const logActivity = async (
   userId: string,

@@ -1,6 +1,6 @@
 import type { CreateUserDto } from "../../types/user.dto";
 import { createAppError } from "@/lib/AppError";
-import { logActivity } from "@/features/admin/api/services/activityService";
+import { logActivity } from "@/features/activity/api/services";
 import {
   CreateUserPayload,
   UserRepository,
