@@ -3,7 +3,6 @@ import { UserRole } from "./user.type";
 
 // Partial User for create, but enforce required core fields.
 export type CreateUserPayload = Partial<Omit<UserEntity, "uid">> & {
-  // uid from Firebase Auth Client SDK
   uid: string;
   name: string;
   email: string;
