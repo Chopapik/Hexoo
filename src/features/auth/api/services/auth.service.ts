@@ -63,7 +63,7 @@ export class AuthService implements IAuthService {
       await this.logActivity(
         uid,
         "LOGIN_SUCCESS",
-        "User logged in via Client SDK flow",
+        "User logged in",
       );
     } catch (error) {
       throw createAppError({
@@ -122,7 +122,7 @@ export class AuthService implements IAuthService {
       await this.logActivity(
         uid,
         "USER_CREATED",
-        "Account created via Client SDK flow",
+        "Account created",
       );
     } catch (error) {
       throw createAppError({
