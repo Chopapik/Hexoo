@@ -1,8 +1,8 @@
-import { FirebaseActivityRepository } from "./implementations/firebaseActivityRepository";
+import { SupabaseActivityRepository } from "./implementations/supabaseActivityRepository";
 import { ActivityRepository } from "./activityRepository.interface";
 
 const activityRepository: ActivityRepository =
-  new FirebaseActivityRepository();
+  new SupabaseActivityRepository();
 
 export { activityRepository };
 export type { ActivityRepository };
