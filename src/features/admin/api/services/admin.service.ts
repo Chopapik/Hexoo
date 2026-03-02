@@ -32,11 +32,17 @@ export class AdminService implements IAdminService {
     if (!uid) {
       throw createAppError({
         code: "INVALID_INPUT",
-        message: "[adminService.adminDeleteUser] No 'uid' provided for deletion",
+        message:
+          "[adminService.adminDeleteUser] No 'uid' provided for deletion",
       });
     }
 
     await logActivity(uid, "USER_DELETED", "User account deleted by admin");
+    await logActivity(
+      this.session!.uid,
+      "ADMIN_DELETED_USER",
+      `Deleted user ${uid}`,
+    );
 
     await authRepository.deleteUser(uid);
     await userRepository.deleteUser(uid);
@@ -72,6 +78,11 @@ export class AdminService implements IAdminService {
     await userRepository.updateUser(uid, {} as any);
 
     await logActivity(uid, "USER_CREATED", "Account created by admin");
+    await logActivity(
+      this.session!.uid,
+      "ADMIN_CREATED_USER",
+      `Created user ${uid}`,
+    );
 
     return {
       uid,
@@ -141,6 +152,11 @@ export class AdminService implements IAdminService {
         "PROFILE_UPDATED",
         `Profile updated by admin: ${updatedFields.join(", ")}`,
       );
+      await logActivity(
+        this.session!.uid,
+        "ADMIN_UPDATED_USER",
+        `Updated user ${uid}: ${updatedFields.join(", ")}`,
+      );
     }
   }
 
@@ -166,5 +182,10 @@ export class AdminService implements IAdminService {
     await authRepository.updateUser(uid, { password: newPassword });
 
     await logActivity(uid, "PASSWORD_CHANGED", "Password changed by admin");
+    await logActivity(
+      this.session!.uid,
+      "ADMIN_CHANGED_PASSWORD",
+      `Changed password for user ${uid}`,
+    );
   }
 }

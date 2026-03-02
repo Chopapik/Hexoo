@@ -43,13 +43,19 @@ export class ModeratorService implements IModeratorService {
   }
 
   async getModerationQueue(): Promise<ModerationPostDto[]> {
-    this.ensureModeratorOrAdmin();
+    const session = this.ensureModeratorOrAdmin();
+
+    await logActivity(
+      session.uid,
+      "MODERATOR_VIEWED_QUEUE",
+      "Viewed moderation queue",
+    );
 
     return this.moderationService.getModerationQueue(50);
   }
 
   async blockUser(data: BlockUserDto): Promise<void> {
-    this.ensureModeratorOrAdmin();
+    const session = this.ensureModeratorOrAdmin();
 
     if (!data.uidToBlock) {
       throw createAppError({
@@ -70,10 +76,15 @@ export class ModeratorService implements IModeratorService {
       "USER_BLOCKED",
       `Blocked by ${data.bannedBy}. Reason: ${data.bannedReason}`,
     );
+    await logActivity(
+      session.uid,
+      "MODERATOR_BLOCKED_USER",
+      `Blocked user ${data.uidToBlock}`,
+    );
   }
 
   async unblockUser(uid: string): Promise<void> {
-    this.ensureModeratorOrAdmin();
+    const session = this.ensureModeratorOrAdmin();
 
     if (!uid) {
       throw createAppError({
@@ -90,6 +101,11 @@ export class ModeratorService implements IModeratorService {
     }
 
     await logActivity(uid, "USER_UNBLOCKED", "User account unblocked");
+    await logActivity(
+      session.uid,
+      "MODERATOR_UNBLOCKED_USER",
+      `Unblocked user ${uid}`,
+    );
   }
 
   async reviewPost(
@@ -143,6 +159,13 @@ export class ModeratorService implements IModeratorService {
         reasonSummary: "Post removed by moderator",
         reasonDetails: justification,
       });
+      if (post.userId) {
+        await logActivity(
+          post.userId,
+          "POST_REJECTED",
+          `Post ${postId} rejected by moderator`,
+        );
+      }
     } else if (action === "approve") {
       await postRepository.updatePost(postId, {
         moderationStatus: ModerationStatus.Approved,
@@ -163,6 +186,13 @@ export class ModeratorService implements IModeratorService {
         reasonSummary: "Post approved by moderator",
         reasonDetails: justification,
       });
+      if (post.userId) {
+        await logActivity(
+          post.userId,
+          "POST_APPROVED",
+          `Post ${postId} approved by moderator`,
+        );
+      }
     } else if (action === "quarantine") {
       await postRepository.updatePost(postId, {
         moderationStatus: ModerationStatus.Pending,
@@ -182,6 +212,13 @@ export class ModeratorService implements IModeratorService {
         reasonSummary: "Post moved to quarantine by moderator",
         reasonDetails: justification,
       });
+      if (post.userId) {
+        await logActivity(
+          post.userId,
+          "POST_QUARANTINED",
+          `Post ${postId} moved to quarantine by moderator`,
+        );
+      }
     }
 
     if (banAuthor && post.userId) {
