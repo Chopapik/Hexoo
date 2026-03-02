@@ -141,6 +141,12 @@ export class ModeratorService implements IModeratorService {
 
     const now = new Date();
 
+    await logActivity(
+      moderator.uid,
+      "MODERATOR_REVIEWED_POST",
+      `Reviewed post ${postId} with action ${action}`,
+    );
+
     if (action === "reject") {
       if (post.imageMeta?.storagePath) {
         await deleteImage(post.imageMeta.storagePath);

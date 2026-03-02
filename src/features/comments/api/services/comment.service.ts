@@ -12,6 +12,7 @@ import type {
 import { AddCommentSchema } from "../../types/comment.dto";
 import type { CreateCommentPayload } from "../../types/comment.payload";
 import type { CommentService as ICommentService } from "./comment.service.interface";
+import { logActivity } from "@/features/activity/api/services";
 
 export class CommentService implements ICommentService {
   constructor(
@@ -73,6 +74,12 @@ export class CommentService implements ICommentService {
     };
 
     await this.repository.createComment(postId, payload);
+
+    await logActivity(
+      user.uid,
+      "COMMENT_ADDED",
+      `User added a comment to post ${postId}`,
+    );
   }
 
   async getCommentsByPostId(postId: string): Promise<PublicCommentDto[]> {

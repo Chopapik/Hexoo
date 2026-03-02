@@ -19,6 +19,7 @@ import { PostRepository } from "../repositories/post.repository.interface";
 import { PostContentService } from "./post.content.service";
 import { PostService as IPostService } from "./post.service.interface";
 import { CreatePostPayload } from "../../types/post.payload";
+import { logActivity } from "@/features/activity/api/services";
 
 type ImageDeleter = (storagePath?: string | null) => Promise<void>;
 
@@ -66,7 +67,10 @@ export class PostService implements IPostService {
       );
     }
 
-    const moderationInfoByPostId: Record<string, PublicPostDto["moderationInfo"]> = {};
+    const moderationInfoByPostId: Record<
+      string,
+      PublicPostDto["moderationInfo"]
+    > = {};
 
     if (this.session) {
       // Preload latest moderation info only for posts authored by current user
@@ -74,7 +78,10 @@ export class PostService implements IPostService {
         posts
           .filter((post) => post.userId === this.session!.uid)
           .map(async (post) => {
-            const log = await getLatestModerationLogForResource("post", post.id);
+            const log = await getLatestModerationLogForResource(
+              "post",
+              post.id,
+            );
             if (log) {
               moderationInfoByPostId[post.id] = {
                 verdict: post.moderationStatus,
@@ -141,6 +148,8 @@ export class PostService implements IPostService {
     };
 
     await this.repository.createPost(dbInput);
+
+    await logActivity(user.uid, "POST_CREATED", "User created a new post");
   }
 
   async deletePost(postId: string): Promise<void> {
@@ -170,12 +179,30 @@ export class PostService implements IPostService {
     }
 
     await this.repository.deletePost(postId);
+
+    await logActivity(user.uid, "POST_DELETED", `User deleted post ${postId}`);
   }
 
-  async setModerationStatus(postId: string, status: ModerationStatus.Approved | ModerationStatus.Pending) {
+  async setModerationStatus(
+    postId: string,
+    status: ModerationStatus.Approved | ModerationStatus.Pending,
+  ) {
+    const post = await this.repository.getPostById(postId);
+    if (!post) {
+      throw createAppError({ code: "NOT_FOUND", message: "Post not found" });
+    }
+
     await this.repository.updatePost(postId, {
       moderationStatus: status,
     });
+
+    if (post.userId) {
+      await logActivity(
+        post.userId,
+        "POST_MODERATION_STATUS_CHANGED",
+        `Moderation status of post ${postId} changed to ${status}`,
+      );
+    }
   }
 
   async updatePost(
@@ -225,6 +252,8 @@ export class PostService implements IPostService {
       updatedAt: new Date(),
     });
 
+    await logActivity(user.uid, "POST_UPDATED", `User updated post ${postId}`);
+
     return await this.getPostById(postId);
   }
 
@@ -240,10 +269,7 @@ export class PostService implements IPostService {
     return enriched[0];
   }
 
-  async getPosts(
-    limit = 20,
-    startAfterId?: string,
-  ): Promise<PublicPostDto[]> {
+  async getPosts(limit = 20, startAfterId?: string): Promise<PublicPostDto[]> {
     const posts = await this.repository.getPosts(limit, startAfterId);
     return this.enrichPosts(posts);
   }
@@ -263,11 +289,20 @@ export class PostService implements IPostService {
 
   async reportPost(postId: string, reason: string, details?: string) {
     const user = this.ensureUser();
-    return await this.repository.reportPost(postId, {
+
+    const result = await this.repository.reportPost(postId, {
       uid: user.uid,
       reason,
       details,
       createdAt: new Date(),
     });
+
+    await logActivity(
+      user.uid,
+      "POST_REPORTED",
+      `User reported post ${postId} for: ${reason}`,
+    );
+
+    return result;
   }
 }

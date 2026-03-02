@@ -3,6 +3,7 @@ import type { SessionData } from "@/features/me/me.type";
 import type { LikeRepository } from "../repositories/like.repository.interface";
 import type { LikeParentCollection } from "@/features/likes/types/like.dto";
 import type { LikeService as ILikeService } from "./like.service.interface";
+import { logActivity } from "@/features/activity/api/services";
 
 export class LikeService implements ILikeService {
   constructor(
@@ -38,6 +39,12 @@ export class LikeService implements ILikeService {
       parentId,
       parentCollection,
     });
+
+    await logActivity(
+      user.uid,
+      "LIKE_TOGGLED",
+      `User toggled like on ${parentCollection} (${parentId})`,
+    );
   }
 
   async getLikesForParents(
