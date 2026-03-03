@@ -96,8 +96,9 @@ export default function AllUsersList() {
           <div className="flex items-center gap-3">
             <Button
               onClick={() => refetch()}
-              text={isFetching ? "Odświeżanie..." : "Odśwież"}
+              text="Odśwież"
               size="sm"
+              isLoading={isFetching}
             />
             <Button
               onClick={openCreateModal}

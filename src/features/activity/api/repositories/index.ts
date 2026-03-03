@@ -1,5 +1,5 @@
-import { SupabaseActivityRepository } from "./implementations/supabaseActivityRepository";
-import { ActivityRepository } from "./activityRepository.interface";
+import { SupabaseActivityRepository } from "./implementations/activity.supabase.repository";
+import { ActivityRepository } from "./activity.repository.interface";
 
 const activityRepository: ActivityRepository =
   new SupabaseActivityRepository();
