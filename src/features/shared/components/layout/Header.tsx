@@ -7,7 +7,7 @@ import { SessionData } from "@/features/me/me.type";
 
 export const Header = ({ user }: { user: SessionData | null }) => {
   return (
-    <div className="h-14 w-full px-4 bg-primary-neutral-background-default rounded-xl border-t-2 border-primary-neutral-stroke-default inline-flex justify-between items-center shadow-lg">
+    <div className="h-14 w-full bg-primary-neutral-background-default rounded-xl border-t-2 border-primary-neutral-stroke-default inline-flex justify-between items-center shadow-lg">
       <Link
         href="/"
         className="block h-fit w-fit transition-transform duration-200"
