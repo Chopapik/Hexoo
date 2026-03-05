@@ -9,6 +9,7 @@ import type { AuthRepository } from "@/features/auth/api/repositories/authReposi
 import type { UserService as IUserService } from "./user.service.interface";
 import { SessionData } from "@/features/me/me.type";
 import { UserEntity } from "../../types/user.entity";
+import { UserRole } from "../../types/user.type";
 
 export class UserService implements IUserService {
   constructor(
@@ -24,14 +25,7 @@ export class UserService implements IUserService {
       email: data.email,
       role: data.role,
     };
-    const newUser = await this.repository.createUser(payload);
-
-    if (!data) {
-      throw createAppError({
-        code: "DB_ERROR",
-        message: "[userService.createUser] Missing user data after creation",
-      });
-    }
+    await this.repository.createUser(payload);
   }
 
   private ensureModeratorOrAdmin = async () => {
@@ -39,15 +33,14 @@ export class UserService implements IUserService {
     if (!session) {
       throw createAppError({
         code: "AUTH_REQUIRED",
-        message:
-          "[moderatorService.ensureModeratorOrAdmin] No session available",
+        message: "[userService.ensureModeratorOrAdmin] No session available",
       });
     }
-    if (session.role !== "moderator" && session.role !== "admin") {
+    if (session.role !== UserRole.Moderator && session.role !== UserRole.Admin) {
       throw createAppError({
         code: "FORBIDDEN",
         message:
-          "[moderatorService.ensureModeratorOrAdmin] Missing moderator/admin role",
+          "[userService.ensureModeratorOrAdmin] Missing moderator/admin role",
       });
     }
     return session;
