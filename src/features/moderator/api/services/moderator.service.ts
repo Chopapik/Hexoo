@@ -42,6 +42,111 @@ export class ModeratorService implements IModeratorService {
     return session;
   }
 
+  private async handleRejectAction(
+    postId: string,
+    post: NonNullable<Awaited<ReturnType<typeof postRepository.getPostById>>>,
+    moderatorUid: string,
+    categories: string[],
+    justification: string,
+    now: Date,
+  ) {
+    if (post?.imageMeta?.storagePath) {
+      await deleteImage(post.imageMeta.storagePath);
+    }
+    await postRepository.deletePost(postId);
+    await logModerationEvent({
+      userId: post.userId,
+      timestamp: now,
+      verdict: ModerationStatus.Rejected,
+      categories,
+      actionTaken: "CONTENT_REMOVED",
+      resourceType: "post",
+      resourceId: postId,
+      source: "moderator",
+      actorId: moderatorUid,
+      reasonSummary: "Post removed by moderator",
+      reasonDetails: justification,
+    });
+    if (post.userId) {
+      await logActivity(
+        post.userId,
+        "POST_REJECTED",
+        `Post ${postId} rejected by moderator`,
+      );
+    }
+  }
+
+  private async handleApproveAction(
+    postId: string,
+    post: NonNullable<Awaited<ReturnType<typeof postRepository.getPostById>>>,
+    moderatorUid: string,
+    categories: string[],
+    justification: string,
+    now: Date,
+  ) {
+    await postRepository.updatePost(postId, {
+      moderationStatus: ModerationStatus.Approved,
+      flaggedReasons: [],
+      reviewedBy: moderatorUid,
+      reviewedAt: now,
+    });
+    await logModerationEvent({
+      userId: post.userId,
+      timestamp: now,
+      verdict: ModerationStatus.Approved,
+      categories,
+      actionTaken: "FLAGGED_FOR_REVIEW",
+      resourceType: "post",
+      resourceId: postId,
+      source: "moderator",
+      actorId: moderatorUid,
+      reasonSummary: "Post approved by moderator",
+      reasonDetails: justification,
+    });
+    if (post.userId) {
+      await logActivity(
+        post.userId,
+        "POST_APPROVED",
+        `Post ${postId} approved by moderator`,
+      );
+    }
+  }
+
+  private async handleQuarantineAction(
+    postId: string,
+    post: NonNullable<Awaited<ReturnType<typeof postRepository.getPostById>>>,
+    moderatorUid: string,
+    categories: string[],
+    justification: string,
+    now: Date,
+  ) {
+    await postRepository.updatePost(postId, {
+      moderationStatus: ModerationStatus.Pending,
+      reviewedBy: moderatorUid,
+      reviewedAt: now,
+    });
+    await logModerationEvent({
+      userId: post.userId,
+      timestamp: now,
+      verdict: ModerationStatus.Pending,
+      categories,
+      actionTaken: "FLAGGED_FOR_REVIEW",
+      resourceType: "post",
+      resourceId: postId,
+      source: "moderator",
+      actorId: moderatorUid,
+      reasonSummary: "Post moved to quarantine by moderator",
+      reasonDetails: justification,
+    });
+    if (post.userId) {
+      await logActivity(
+        post.userId,
+        "POST_QUARANTINED",
+        `Post ${postId} moved to quarantine by moderator`,
+      );
+    }
+  }
+
   async getModerationQueue(): Promise<ModerationPostDto[]> {
     const session = this.ensureModeratorOrAdmin();
 
@@ -148,83 +253,32 @@ export class ModeratorService implements IModeratorService {
     );
 
     if (action === "reject") {
-      if (post.imageMeta?.storagePath) {
-        await deleteImage(post.imageMeta.storagePath);
-      }
-      await postRepository.deletePost(postId);
-      await logModerationEvent({
-        userId: post.userId,
-        timestamp: now,
-        verdict: ModerationStatus.Rejected,
-        categories: categories,
-        actionTaken: "CONTENT_REMOVED",
-        resourceType: "post",
-        resourceId: postId,
-        source: "moderator",
-        actorId: moderator.uid,
-        reasonSummary: "Post removed by moderator",
-        reasonDetails: justification,
-      });
-      if (post.userId) {
-        await logActivity(
-          post.userId,
-          "POST_REJECTED",
-          `Post ${postId} rejected by moderator`,
-        );
-      }
+      await this.handleRejectAction(
+        postId,
+        post,
+        moderator.uid,
+        categories,
+        justification,
+        now,
+      );
     } else if (action === "approve") {
-      await postRepository.updatePost(postId, {
-        moderationStatus: ModerationStatus.Approved,
-        flaggedReasons: [],
-        reviewedBy: moderator.uid,
-        reviewedAt: now,
-      });
-      await logModerationEvent({
-        userId: post.userId,
-        timestamp: now,
-        verdict: ModerationStatus.Approved,
-        categories: categories,
-        actionTaken: "FLAGGED_FOR_REVIEW",
-        resourceType: "post",
-        resourceId: postId,
-        source: "moderator",
-        actorId: moderator.uid,
-        reasonSummary: "Post approved by moderator",
-        reasonDetails: justification,
-      });
-      if (post.userId) {
-        await logActivity(
-          post.userId,
-          "POST_APPROVED",
-          `Post ${postId} approved by moderator`,
-        );
-      }
+      await this.handleApproveAction(
+        postId,
+        post,
+        moderator.uid,
+        categories,
+        justification,
+        now,
+      );
     } else if (action === "quarantine") {
-      await postRepository.updatePost(postId, {
-        moderationStatus: ModerationStatus.Pending,
-        reviewedBy: moderator.uid,
-        reviewedAt: now,
-      });
-      await logModerationEvent({
-        userId: post.userId,
-        timestamp: now,
-        verdict: ModerationStatus.Pending,
-        categories: categories,
-        actionTaken: "FLAGGED_FOR_REVIEW",
-        resourceType: "post",
-        resourceId: postId,
-        source: "moderator",
-        actorId: moderator.uid,
-        reasonSummary: "Post moved to quarantine by moderator",
-        reasonDetails: justification,
-      });
-      if (post.userId) {
-        await logActivity(
-          post.userId,
-          "POST_QUARANTINED",
-          `Post ${postId} moved to quarantine by moderator`,
-        );
-      }
+      await this.handleQuarantineAction(
+        postId,
+        post,
+        moderator.uid,
+        categories,
+        justification,
+        now,
+      );
     }
 
     if (banAuthor && post.userId) {
