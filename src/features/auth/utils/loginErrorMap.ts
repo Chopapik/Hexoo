@@ -31,6 +31,11 @@ const LOGIN_ERROR_MAP: Record<string, ValidationMessage> = {
     field: "root",
     type: "Dismiss",
   },
+  default: {
+    text: "Wystąpił błąd logowania",
+    field: "root",
+    type: "Dismiss",
+  },
 };
 
 export function parseErrorMessages(

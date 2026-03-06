@@ -1,7 +1,4 @@
-import {
-  ValidationMessage,
-  ValidationStatus,
-} from "@/features/shared/types/validation.type";
+import { ValidationStatus } from "@/features/shared/types/validation.type";
 
 const COMMENT_ERROR_MAP: Record<
   string,
@@ -39,6 +36,11 @@ const COMMENT_ERROR_MAP: Record<
   FORBIDDEN: {
     type: "Dismiss",
     text: "Twoje konto ma zablokowaną możliwość komentowania.",
+    field: "root",
+  },
+  default: {
+    type: "Dismiss",
+    text: "Nie udało się dodać komentarza.",
     field: "root",
   },
 };
