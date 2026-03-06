@@ -1,49 +1,5 @@
 import { ValidationStatus } from "@/features/shared/types/validation.type";
-
-const COMMENT_ERROR_MAP: Record<
-  string,
-  {
-    type: ValidationStatus;
-    text: string;
-    field: "content" | "root";
-  }
-> = {
-  comment_empty: {
-    type: "Dismiss",
-    text: "Komentarz nie może być pusty.",
-    field: "content",
-  },
-  comment_too_long: {
-    type: "Dismiss",
-    text: `Komentarz jest za długi (maks. 500 znaków).`,
-    field: "content",
-  },
-  post_id_required: {
-    type: "Dismiss",
-    text: "Wystąpił błąd: brak identyfikatora posta.",
-    field: "root",
-  },
-  NOT_FOUND: {
-    type: "Dismiss",
-    text: "Post, który próbujesz skomentować, już nie istnieje.",
-    field: "root",
-  },
-  AUTH_REQUIRED: {
-    type: "Dismiss",
-    text: "Wymagane logowanie.",
-    field: "root",
-  },
-  FORBIDDEN: {
-    type: "Dismiss",
-    text: "Twoje konto ma zablokowaną możliwość komentowania.",
-    field: "root",
-  },
-  default: {
-    type: "Dismiss",
-    text: "Nie udało się dodać komentarza.",
-    field: "root",
-  },
-};
+import { getErrorEntry } from "@/i18n/errorCatalog";
 
 export function parseCommentErrorMessages(errorCode: string):
   | {
@@ -52,8 +8,25 @@ export function parseCommentErrorMessages(errorCode: string):
       field: "content" | "root";
     }
   | undefined {
-  if (errorCode) {
-    return COMMENT_ERROR_MAP[errorCode] || COMMENT_ERROR_MAP.default;
+  if (!errorCode) return;
+
+  const entry = getErrorEntry(errorCode);
+  const type = entry.validationType ?? "Dismiss";
+  const field =
+    (entry.field as "content" | "root" | undefined) ?? "root";
+
+  if (field === "content" || field === "root") {
+    return {
+      type,
+      text: entry.message.pl,
+      field,
+    };
   }
+
+  return {
+    type,
+    text: entry.message.pl,
+    field: "root",
+  };
 }
 

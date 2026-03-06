@@ -1,41 +1,5 @@
 import { ValidationStatus } from "@/features/shared/types/validation.type";
-
-const POST_ERROR_MAP: Record<
-  string,
-  {
-    type: ValidationStatus;
-    text: string;
-    field: "text" | "imageFile" | "root";
-  }
-> = {
-  text_too_long: {
-    type: "Dismiss",
-    text: "Treść jest zbyt długa.",
-    field: "text",
-  },
-
-  file_too_big: {
-    type: "Dismiss",
-    text: "Plik ma zbyt duży rozmiar (maksymalnie 5 MB).",
-    field: "imageFile",
-  },
-
-  wrong_file_type: {
-    type: "Dismiss",
-    text: "Niedozwolony format pliku.",
-    field: "imageFile",
-  },
-  post_empty: {
-    type: "Dismiss",
-    text: "Post nie może być pusty. Dodaj tekst lub zdjęcie.",
-    field: "text",
-  },
-  default: {
-    type: "Dismiss",
-    text: "Nie udało się utworzyć posta.",
-    field: "root",
-  },
-};
+import { getErrorEntry } from "@/i18n/errorCatalog";
 
 export function parseErrorMessages(errorCode: string):
   | {
@@ -44,8 +8,25 @@ export function parseErrorMessages(errorCode: string):
       field: "text" | "imageFile" | "root";
     }
   | undefined {
-  if (errorCode) {
-    return POST_ERROR_MAP[errorCode] || POST_ERROR_MAP.default;
+  if (!errorCode) return;
+
+  const entry = getErrorEntry(errorCode);
+  const type = entry.validationType ?? "Dismiss";
+  const field =
+    (entry.field as "text" | "imageFile" | "root" | undefined) ?? "root";
+
+  if (field === "text" || field === "imageFile" || field === "root") {
+    return {
+      type,
+      text: entry.message.pl,
+      field,
+    };
   }
+
+  return {
+    type,
+    text: entry.message.pl,
+    field: "root",
+  };
 }
 
