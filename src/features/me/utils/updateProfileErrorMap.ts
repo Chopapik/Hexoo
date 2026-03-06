@@ -1,12 +1,12 @@
 import { ValidationMessage } from "@/features/shared/types/validation.type";
 import {
   parseUserNameErrorMessages,
-} from "@/features/shared/utils/userNameValidation";
+} from "@/features/shared/utils/userNameErrorMap";
 import {
   parseAvatarFileErrorMessages,
-} from "./avatarFileValidation";
+} from "./avatarFileErrorMap";
 
-const ERROR_DICTIONARY: Record<string, ValidationMessage> = {
+const UPDATE_PROFILE_ERROR_MAP: Record<string, ValidationMessage> = {
   // API errors
   POLICY_VIOLATION: {
     text: "Nazwa lub zdjęcie narusza zasady serwisu",
@@ -33,7 +33,7 @@ const ERROR_DICTIONARY: Record<string, ValidationMessage> = {
 };
 
 export function parseUpdateProfileErrorMessages(
-  errorCode: string | undefined
+  errorCode: string | undefined,
 ): ValidationMessage[] | [] {
   if (errorCode) {
     // Check if it's a user name error
@@ -49,8 +49,10 @@ export function parseUpdateProfileErrorMessages(
     }
 
     // Check other errors
-    const message = ERROR_DICTIONARY[errorCode] || ERROR_DICTIONARY.default;
+    const message =
+      UPDATE_PROFILE_ERROR_MAP[errorCode] || UPDATE_PROFILE_ERROR_MAP.default;
     return [message];
   }
   return [];
 }
+

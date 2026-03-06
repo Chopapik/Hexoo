@@ -1,6 +1,6 @@
 import { ValidationMessage } from "@/features/shared/types/validation.type";
 
-export const AVATAR_FILE_ERROR_DICTIONARY: Record<string, ValidationMessage> = {
+export const AVATAR_FILE_ERROR_MAP: Record<string, ValidationMessage> = {
   // Zod validation errors
   file_too_big: {
     text: "Plik ma zbyt duży rozmiar (maksymalnie 5 MB)",
@@ -15,13 +15,14 @@ export const AVATAR_FILE_ERROR_DICTIONARY: Record<string, ValidationMessage> = {
 };
 
 export function parseAvatarFileErrorMessages(
-  errorCode: string | undefined
+  errorCode: string | undefined,
 ): ValidationMessage[] | [] {
   if (errorCode) {
-    const message = AVATAR_FILE_ERROR_DICTIONARY[errorCode];
+    const message = AVATAR_FILE_ERROR_MAP[errorCode];
     if (message) {
       return [message];
     }
   }
   return [];
 }
+

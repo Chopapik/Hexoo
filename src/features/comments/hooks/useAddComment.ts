@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import fetchClient from "@/lib/fetchClient";
 import { AddCommentDto } from "../types/comment.dto";
 import toast from "react-hot-toast";
-import { parseCommentErrorMessages } from "../utils/commentFormValidation";
+import { parseCommentErrorMessages } from "../utils/commentErrorMap";
 import { ApiError } from "@/lib/AppError";
 
 export default function useAddComment(

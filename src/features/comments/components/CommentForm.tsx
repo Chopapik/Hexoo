@@ -4,7 +4,7 @@ import { AddCommentDto, COMMENT_MAX_CHARS } from "../types/comment.dto";
 import Button from "@/features/shared/components/ui/Button";
 import useCommentForm from "../hooks/useCommentForm";
 import useAddComment from "../hooks/useAddComment";
-import { parseCommentErrorMessages } from "../utils/commentFormValidation";
+import { parseCommentErrorMessages } from "../utils/commentErrorMap";
 import { SendIcon } from "@/features/posts/icons/SendIcon";
 
 interface CommentFormProps {

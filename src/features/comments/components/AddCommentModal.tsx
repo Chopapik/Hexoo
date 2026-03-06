@@ -6,7 +6,7 @@ import { AddCommentDto } from "../types/comment.dto";
 import Button from "@/features/shared/components/ui/Button";
 import type { PublicPostDto } from "@/features/posts/types/post.dto";
 import useCommentForm from "../hooks/useCommentForm";
-import { parseCommentErrorMessages } from "../utils/commentFormValidation";
+import { parseCommentErrorMessages } from "../utils/commentErrorMap";
 import warningIconUrl from "@/features/shared/assets/icons/warning.svg?url";
 import Image from "next/image";
 

@@ -1,7 +1,7 @@
 import { ValidationMessage } from "@/features/shared/types/validation.type";
-import { parseUserNameErrorMessages } from "@/features/shared/utils/userNameValidation";
+import { parseUserNameErrorMessages } from "@/features/shared/utils/userNameErrorMap";
 
-const ERROR_DICTIONARY: Record<string, ValidationMessage> = {
+const REGISTER_ERROR_MAP: Record<string, ValidationMessage> = {
   //zod
   email_required: { text: "Email jest wymagany", type: "Dismiss" },
   email_invalid: { text: "Nieprawidłowy format Email", type: "Dismiss" },
@@ -32,7 +32,7 @@ const ERROR_DICTIONARY: Record<string, ValidationMessage> = {
 };
 
 export function parseRegisterErrorMessages(
-  errorCode: string | undefined
+  errorCode: string | undefined,
 ): ValidationMessage[] | [] {
   if (errorCode) {
     // Check if it's a user name error
@@ -42,11 +42,12 @@ export function parseRegisterErrorMessages(
     }
 
     // Check other errors
-    const message = ERROR_DICTIONARY[errorCode] || {
-      ...ERROR_DICTIONARY.default,
+    const message = REGISTER_ERROR_MAP[errorCode] || {
+      ...REGISTER_ERROR_MAP.default,
       text: errorCode,
     };
     return [message];
   }
   return [];
 }
+

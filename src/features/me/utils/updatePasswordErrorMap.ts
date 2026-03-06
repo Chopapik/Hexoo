@@ -1,6 +1,6 @@
 import { ValidationMessage } from "@/features/shared/types/validation.type";
 
-const ERROR_DICTIONARY: Record<string, ValidationMessage> = {
+const UPDATE_PASSWORD_ERROR_MAP: Record<string, ValidationMessage> = {
   newPassword_too_short: {
     text: "Hasło za krótkie",
     field: "newPassword",
@@ -50,11 +50,13 @@ const ERROR_DICTIONARY: Record<string, ValidationMessage> = {
 };
 
 export function parseErrorMessages(
-  errorCode: string | undefined
+  errorCode: string | undefined,
 ): ValidationMessage[] | [] {
   if (errorCode) {
-    const message = ERROR_DICTIONARY[errorCode] || ERROR_DICTIONARY.default;
+    const message =
+      UPDATE_PASSWORD_ERROR_MAP[errorCode] || UPDATE_PASSWORD_ERROR_MAP.default;
     return [message];
   }
   return [];
 }
+

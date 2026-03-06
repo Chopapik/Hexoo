@@ -11,7 +11,7 @@ import RemoveImageButton from "@/features/shared/components/ui/RemoveImageButton
 import useCreatePostForm from "../hooks/useCreatePostForm";
 import useCreatePost from "../hooks/useCreatePost";
 import { CreatePostDto } from "../types/post.dto";
-import { parseErrorMessages } from "../utils/postFormValidation";
+import { parseErrorMessages } from "../utils/postErrorMap";
 import { POST_MAX_CHARS } from "../types/post.dto";
 
 interface CreatePostModalProps {

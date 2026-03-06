@@ -10,7 +10,7 @@ import Image from "next/image";
 import { useLoginForm } from "../hooks/useLoginForm";
 import useLogin from "../hooks/useLogin";
 import { LoginData } from "../types/auth.type";
-import { parseErrorMessages } from "../utils/loginFormValidation";
+import { parseErrorMessages } from "../utils/loginErrorMap";
 import { AuthBlockData } from "@/features/shared/components/security/AuthBlockDisplay";
 import { BsShieldLockFill } from "react-icons/bs";
 

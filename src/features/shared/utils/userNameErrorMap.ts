@@ -1,6 +1,6 @@
 import { ValidationMessage } from "@/features/shared/types/validation.type";
 
-export const USER_NAME_ERROR_DICTIONARY: Record<string, ValidationMessage> = {
+export const USER_NAME_ERROR_MAP: Record<string, ValidationMessage> = {
   // Zod validation errors
   name_too_short: {
     text: "Nazwa jest za krótka (min. 3 znaki)",
@@ -27,13 +27,14 @@ export const USER_NAME_ERROR_DICTIONARY: Record<string, ValidationMessage> = {
 };
 
 export function parseUserNameErrorMessages(
-  errorCode: string | undefined
+  errorCode: string | undefined,
 ): ValidationMessage[] | [] {
   if (errorCode) {
-    const message = USER_NAME_ERROR_DICTIONARY[errorCode];
+    const message = USER_NAME_ERROR_MAP[errorCode];
     if (message) {
       return [message];
     }
   }
   return [];
 }
+
