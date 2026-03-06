@@ -11,7 +11,7 @@ import { useUpdateProfileForm } from "../hooks/useUpdateProfileForm";
 import { Avatar } from "@/features/posts/components/Avatar";
 import cameraIcon from "@/features/shared/assets/icons/camera.svg?url";
 import Image from "next/image";
-import { parseUpdateProfileErrorMessages } from "../utils/updateProfileFormValidation";
+import { parseUpdateProfileErrorMessages } from "../utils/updateProfileErrorMap";
 import type { UpdateProfileData } from "../me.type";
 import ValidationMessage from "@/features/shared/components/ui/ValidationMessage";
 

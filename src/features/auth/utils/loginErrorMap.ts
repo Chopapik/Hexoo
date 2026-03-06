@@ -1,6 +1,6 @@
 import { ValidationMessage } from "@/features/shared/types/validation.type";
 
-const ERROR_DICTIONARY: Record<string, ValidationMessage> = {
+const LOGIN_ERROR_MAP: Record<string, ValidationMessage> = {
   email_required: {
     text: "Email jest wymagany",
     field: "email",
@@ -34,11 +34,12 @@ const ERROR_DICTIONARY: Record<string, ValidationMessage> = {
 };
 
 export function parseErrorMessages(
-  errorCode: string | undefined
+  errorCode: string | undefined,
 ): ValidationMessage[] | [] {
   if (errorCode) {
-    const message = ERROR_DICTIONARY[errorCode] || ERROR_DICTIONARY.default;
+    const message = LOGIN_ERROR_MAP[errorCode] || LOGIN_ERROR_MAP.default;
     return [message];
   }
   return [];
 }
+

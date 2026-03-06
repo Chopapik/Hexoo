@@ -3,7 +3,7 @@ import {
   ValidationStatus,
 } from "@/features/shared/types/validation.type";
 
-const ERROR_DICTIONARY: Record<
+const COMMENT_ERROR_MAP: Record<
   string,
   {
     type: ValidationStatus;
@@ -51,6 +51,7 @@ export function parseCommentErrorMessages(errorCode: string):
     }
   | undefined {
   if (errorCode) {
-    return ERROR_DICTIONARY[errorCode] || ERROR_DICTIONARY.default;
+    return COMMENT_ERROR_MAP[errorCode] || COMMENT_ERROR_MAP.default;
   }
 }
+

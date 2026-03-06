@@ -5,7 +5,7 @@ import Modal from "@/features/shared/components/layout/Modal";
 import ModalFooter from "@/features/shared/components/layout/ModalFooter";
 import { useUpdatePassword } from "../../hooks/useUpdatePassword";
 import useUpdatePasswordForm from "../../hooks/useUpdatePasswordForm";
-import { parseErrorMessages } from "../../utils/UpdatePasswordFormValidation";
+import { parseErrorMessages } from "../../utils/updatePasswordErrorMap";
 
 interface ChangePasswordModalProps {
   isOpen: boolean;

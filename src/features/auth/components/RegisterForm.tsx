@@ -11,7 +11,7 @@ import { Message } from "@/features/shared/components/ui/TextInput";
 
 import useRegister from "../hooks/useRegister";
 import { RegisterData } from "../types/auth.type";
-import { parseRegisterErrorMessages } from "../utils/registerFormValidation";
+import { parseRegisterErrorMessages } from "../utils/registerErrorMap";
 import { useRegisterForm } from "../hooks/useRegisterForm";
 import { useCheckUsername } from "../hooks/useCheckUsername";
 import { useCheckEmail } from "../hooks/useCheckEmail";
