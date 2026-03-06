@@ -1,7 +1,4 @@
-import {
-  ValidationMessage,
-  ValidationStatus,
-} from "@/features/shared/types/validation.type";
+import { ValidationStatus } from "@/features/shared/types/validation.type";
 
 const POST_ERROR_MAP: Record<
   string,
@@ -32,6 +29,11 @@ const POST_ERROR_MAP: Record<
     type: "Dismiss",
     text: "Post nie może być pusty. Dodaj tekst lub zdjęcie.",
     field: "text",
+  },
+  default: {
+    type: "Dismiss",
+    text: "Nie udało się utworzyć posta.",
+    field: "root",
   },
 };
 
