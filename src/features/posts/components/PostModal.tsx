@@ -37,7 +37,7 @@ export const PostModal = ({
       title="Post"
       className="max-w-6xl max-h-[90vh]"
     >
-      <div className="flex flex-row overflow-hidden min-h-[400px] max-h-[70vh]">
+      <div className="flex flex-row overflow-hidden min-h-[50vh] max-h-[70vh]">
         <div className="min-w-0 flex-[5_2_0%] flex flex-col border-r border-primary-neutral-stroke-default/60">
           <div className="p-4 border-b border-primary-neutral-stroke-default/60">
             <PostMeta post={post} />
