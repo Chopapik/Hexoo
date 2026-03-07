@@ -78,7 +78,7 @@ export default function Modal({
               </div>
             )}
 
-            <div className="p-4 overflow-y-auto max-h-[70vh] scrollbar-hide">
+            <div className=" overflow-y-auto max-h-[70vh] scrollbar-hide">
               {children}
             </div>
 
@@ -91,6 +91,6 @@ export default function Modal({
         </div>
       )}
     </AnimatePresence>,
-    document.body
+    document.body,
   );
 }

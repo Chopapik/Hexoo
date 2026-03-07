@@ -134,9 +134,9 @@ export default function CreatePostModal({
         onClose={onClose}
         footer={footerContent}
       >
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 p-4">
           {imagePreview && (
-            <div className="relative w-fit group animate-in fade-in zoom-in-95 duration-200">
+            <div className="relative w-fit group animate-in fade-in zoom-in-95 duration-200 ">
               <img
                 src={imagePreview}
                 alt="Preview"
