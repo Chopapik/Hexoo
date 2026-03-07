@@ -43,11 +43,19 @@ export const CommentForm = ({ postId }: CommentFormProps) => {
   const isOverLimit = currentLength > COMMENT_MAX_CHARS;
   const hasContentError = parsedError?.field === "content";
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit(onSubmit)();
+    }
+  };
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
       <div className="relative w-full group">
         <textarea
           {...register("text")}
+          onKeyDown={handleKeyDown}
           placeholder="Napisz komentarz..."
           className="w-full bg-transparent text-text-main placeholder:text-text-neutral/50 text-base resize-none outline-none min-h-[90px] scrollbar-hide leading-relaxed pb-6"
         />
