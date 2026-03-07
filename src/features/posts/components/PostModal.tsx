@@ -11,17 +11,26 @@ import { useAppSelector } from "@/lib/store/hooks";
 import { isAsciiArt } from "../utils/asciiDetector";
 import { useMemo } from "react";
 import { PublicPostDto } from "../types/post.dto";
+import { PostNsfwNotice } from "./PostNsfwNotice";
 
 interface PostModalProps {
   post: PublicPostDto;
   isOpen: boolean;
   onClose: () => void;
+  revealNSFW?: boolean;
 }
 
-export const PostModal = ({ post, isOpen, onClose }: PostModalProps) => {
+export const PostModal = ({
+  post,
+  isOpen,
+  onClose,
+  revealNSFW,
+}: PostModalProps) => {
   const user = useAppSelector((state) => state.auth.user);
+  const showNSFW = useAppSelector((state) => state.settings.showNSFW);
   const { comments, isLoading } = useComments(post.id, isOpen);
   const isAscii = useMemo(() => isAsciiArt(post.text), [post.text]);
+  const isContentVisible = !post.isNSFW || showNSFW || revealNSFW;
 
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
@@ -85,29 +94,37 @@ export const PostModal = ({ post, isOpen, onClose }: PostModalProps) => {
 
                 {/* Post content */}
                 <div className="flex-1 flex flex-col">
-                  {/* Text content */}
-                  {post.text && (
-                    <div className="p-4">
-                      <p
-                        className={`text-text-main text-base ${
-                          isAscii
-                            ? "ascii-art"
-                            : "font-Albert_Sans whitespace-pre-wrap break-words"
-                        }`}
-                      >
-                        {post.text}
-                      </p>
-                    </div>
-                  )}
+                  {isContentVisible ? (
+                    <>
+                      {/* Text content */}
+                      {post.text && (
+                        <div className="p-4">
+                          <p
+                            className={`text-text-main text-base ${
+                              isAscii
+                                ? "ascii-art"
+                                : "font-Albert_Sans whitespace-pre-wrap wrap-break-word"
+                            }`}
+                          >
+                            {post.text}
+                          </p>
+                        </div>
+                      )}
 
-                  {/* Image - stretched to fill available space */}
-                  {post.imageUrl && (
-                    <div className="flex-1 flex items-center justify-center p-4 pt-0">
-                      <img
-                        className="w-full max-h-[60vh] object-contain rounded-xl"
-                        src={post.imageUrl}
-                        alt="Post content"
-                      />
+                      {/* Image - stretched to fill available space */}
+                      {post.imageUrl && (
+                        <div className="flex-1 flex items-center justify-center p-4 pt-0">
+                          <img
+                            className="w-full max-h-[60vh] object-contain rounded-xl"
+                            src={post.imageUrl}
+                            alt="Post content"
+                          />
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <div className="p-4">
+                      <PostNsfwNotice />
                     </div>
                   )}
                 </div>
