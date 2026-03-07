@@ -44,7 +44,7 @@ export default function ChangePasswordModal({
       title="Zmiana hasła"
       footer={footerContent}
     >
-      <div className="flex flex-col gap-4 pt-2">
+      <div className="flex flex-col gap-4 pt-2 p-4">
         <TextInput
           type="password"
           label="Aktualne hasło"
