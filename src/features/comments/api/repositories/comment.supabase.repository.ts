@@ -40,7 +40,7 @@ function rowToEntity(row: CommentRow): CommentEntity {
 
 function createPayloadToRow(
   postId: string,
-  data: CreateCommentPayload
+  data: CreateCommentPayload,
 ): Record<string, unknown> {
   const row: Record<string, unknown> = {
     post_id: postId,
@@ -71,7 +71,7 @@ function createPayloadToRow(
 export class CommentSupabaseRepository implements CommentRepository {
   async createComment(
     postId: string,
-    data: CreateCommentPayload
+    data: CreateCommentPayload,
   ): Promise<void> {
     const row = createPayloadToRow(postId, data);
     const { error: insertError } = await supabaseAdmin
@@ -84,7 +84,8 @@ export class CommentSupabaseRepository implements CommentRepository {
       .select("comments_count")
       .eq("id", postId)
       .single();
-    const cur = (postRow as { comments_count: number } | null)?.comments_count ?? 0;
+    const cur =
+      (postRow as { comments_count: number } | null)?.comments_count ?? 0;
     const { error: updateError } = await supabaseAdmin
       .from(POSTS_TABLE)
       .update({
@@ -101,7 +102,7 @@ export class CommentSupabaseRepository implements CommentRepository {
       .select("*")
       .eq("post_id", postId)
       .eq("moderation_status", ModerationStatus.Approved)
-      .order("created_at", { ascending: true });
+      .order("created_at", { ascending: false });
     if (error) throw new Error(error.message ?? "Database error");
     return (data ?? []).map((row) => rowToEntity(row as CommentRow));
   }
