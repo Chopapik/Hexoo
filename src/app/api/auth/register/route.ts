@@ -6,7 +6,7 @@ import { verifyRecaptchaToken } from "@/lib/recaptcha";
 
 export const POST = withErrorHandling(async (req) => {
   const body = await req.json();
-  const { idToken, name, email, recaptchaToken } = body;
+  const { idToken, refreshToken, name, email, recaptchaToken } = body;
 
   if (!recaptchaToken) {
     throw createAppError({
@@ -17,6 +17,6 @@ export const POST = withErrorHandling(async (req) => {
 
   await verifyRecaptchaToken(recaptchaToken);
 
-  const resp = await registerUser({ idToken, name, email });
+  const resp = await registerUser({ idToken, refreshToken, name, email });
   return handleSuccess(resp);
 });

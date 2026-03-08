@@ -1,7 +1,16 @@
 import { createAppError } from "@/lib/AppError";
 import { supabaseAdmin } from "@/lib/supabaseServer";
-import type { AuthRepository } from "../authRepository.interface";
-import type { AuthDecodedToken, AuthUserRecord } from "../authRepository.interface";
+import type {
+  AuthRepository,
+  AuthDecodedToken,
+  AuthUserRecord,
+  RefreshTokens,
+} from "../authRepository.interface";
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey =
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ??
+  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
 export class SupabaseAuthRepository implements AuthRepository {
   async verifyIdToken(idToken: string): Promise<AuthDecodedToken> {
@@ -33,6 +42,45 @@ export class SupabaseAuthRepository implements AuthRepository {
 
   async createSessionCookie(idToken: string, _expiresIn: number): Promise<string> {
     return idToken;
+  }
+
+  async refreshSession(refreshToken: string): Promise<RefreshTokens> {
+    if (!supabaseUrl || !supabaseAnonKey) {
+      throw createAppError({
+        code: "INTERNAL_ERROR",
+        message: "Supabase URL or anon key missing for refresh.",
+      });
+    }
+    const res = await fetch(`${supabaseUrl}/auth/v1/token?grant_type=refresh_token`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        apikey: supabaseAnonKey,
+      },
+      body: JSON.stringify({ refresh_token: refreshToken }),
+    });
+    if (!res.ok) {
+      const errBody = await res.text();
+      throw createAppError({
+        code: "INVALID_CREDENTIALS",
+        message: "Failed to refresh Supabase session.",
+        details: { status: res.status, body: errBody },
+      });
+    }
+    const data = (await res.json()) as {
+      access_token?: string;
+      refresh_token?: string;
+    };
+    if (!data?.access_token || !data?.refresh_token) {
+      throw createAppError({
+        code: "INVALID_CREDENTIALS",
+        message: "Supabase refresh response missing tokens.",
+      });
+    }
+    return {
+      access_token: data.access_token,
+      refresh_token: data.refresh_token,
+    };
   }
 
   async getUserByEmail(email: string): Promise<AuthUserRecord | null> {

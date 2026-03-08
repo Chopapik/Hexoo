@@ -16,6 +16,7 @@ export default function useLogin(onError: ErrorCallback) {
   const sessionMutation = useMutation({
     mutationFn: async (payload: {
       idToken: string;
+      refreshToken?: string;
       recaptchaToken: string;
     }) => {
       const response = await fetchClient.post("/auth/login", payload);
@@ -62,7 +63,11 @@ export default function useLogin(onError: ErrorCallback) {
 
       const recaptchaToken = await getRecaptchaToken("login");
       if (recaptchaToken) {
-        sessionMutation.mutate({ idToken: accessToken, recaptchaToken });
+        sessionMutation.mutate({
+          idToken: accessToken,
+          refreshToken: sessionData.session?.refresh_token,
+          recaptchaToken,
+        });
       }
     } catch (error: unknown) {
       console.error(error);

@@ -1,4 +1,9 @@
-import type { AuthRepository, AuthDecodedToken, AuthUserRecord } from "../authRepository.interface";
+import type {
+  AuthRepository,
+  AuthDecodedToken,
+  AuthUserRecord,
+  RefreshTokens,
+} from "../authRepository.interface";
 import { adminAuth } from "@/lib/firebaseAdmin";
 import { createAppError } from "@/lib/AppError";
 
@@ -29,6 +34,13 @@ export class FirebaseAuthRepository implements AuthRepository {
         details: error,
       });
     }
+  }
+
+  async refreshSession(_refreshToken: string): Promise<RefreshTokens> {
+    throw createAppError({
+      code: "NOT_SUPPORTED",
+      message: "Session refresh is not supported for Firebase Auth.",
+    });
   }
 
   async getUserByEmail(email: string): Promise<AuthUserRecord | null> {

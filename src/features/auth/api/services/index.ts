@@ -12,15 +12,25 @@ export async function logoutUser() {
   return await service.logoutUser();
 }
 
-export async function createSession(idToken: string, ip: string) {
+export async function createSession(
+  idToken: string,
+  ip: string,
+  refreshToken?: string
+) {
   const service = getAuthService();
-  return await service.createSession(idToken, ip);
+  return await service.createSession(idToken, ip, refreshToken);
+}
+
+export async function tryRefreshSession() {
+  const service = getAuthService();
+  return await service.tryRefreshSession();
 }
 
 export async function registerUser(data: {
   idToken: string;
   name: string;
   email: string;
+  refreshToken?: string;
 }) {
   const service = getAuthService();
   return await service.registerUser(data);

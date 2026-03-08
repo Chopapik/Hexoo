@@ -26,6 +26,12 @@ export const Layout: React.FC<{
     dispatch(setReady(true));
   }, [user, dispatch]);
 
+  // Sliding session: re-set cookies in Route Handler so expiry extends 1 year from this visit
+  useEffect(() => {
+    if (!user) return;
+    fetch("/api/auth/slide", { credentials: "include" }).catch(() => {});
+  }, [user]);
+
   const effectiveUser = ready ? userFromStore : user;
 
   return (

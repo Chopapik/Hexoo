@@ -1,8 +1,10 @@
 import { createAppError } from "@/lib/AppError";
 import {
   setSessionCookie,
-  clearSessionCookie,
+  setRefreshCookie,
+  clearAllAuthCookies,
   getSessionCookie,
+  getRefreshCookie,
 } from "@/lib/session";
 import { isUsernameTaken } from "../utils/checkUsernameUnique";
 import type { ActivityType } from "@/features/activity/api/services";
@@ -10,6 +12,7 @@ import type { AuthRepository } from "../repositories/authRepository.interface";
 import type { UserRepository } from "@/features/users/api/repositories/user.repository.interface";
 import { UserRole } from "@/features/users/types/user.type";
 import type { AuthService as IAuthService } from "./auth.service.interface";
+import type { SessionData } from "@/features/me/me.type";
 
 const SESSION_EXPIRES_MS = 5 * 24 * 60 * 60 * 1000;
 
@@ -36,11 +39,37 @@ export class AuthService implements IAuthService {
     } catch {
       // Ignore: no valid session to log
     }
-    await clearSessionCookie();
+    await clearAllAuthCookies();
     return { message: "Session cleared" };
   }
 
-  async createSession(idToken: string, ip: string) {
+  /** Try to refresh session using refresh token cookie. Returns user data or null; clears cookies on failure. */
+  async tryRefreshSession(): Promise<SessionData | null> {
+    const refresh = await getRefreshCookie();
+    if (!refresh.hasRefresh) return null;
+    try {
+      const tokens = await this.authRepository.refreshSession(refresh.value);
+      await setSessionCookie(tokens.access_token);
+      await setRefreshCookie(tokens.refresh_token);
+      const decoded = await this.authRepository.verifyIdToken(tokens.access_token);
+      const userData = await this.userRepository.getUserByUid(decoded.uid);
+      if (!userData || userData.isBanned) return null;
+      return {
+        uid: userData.uid,
+        email: userData.email ?? "",
+        name: userData.name,
+        role: userData.role,
+        avatarUrl: userData.avatarUrl,
+        isRestricted: userData.isRestricted ?? false,
+        isBanned: userData.isBanned,
+      };
+    } catch {
+      await clearAllAuthCookies();
+      return null;
+    }
+  }
+
+  async createSession(idToken: string, ip: string, refreshToken?: string) {
     const decodedToken = await this.authRepository.verifyIdToken(idToken);
 
     const uid = decodedToken.uid;
@@ -92,6 +121,7 @@ export class AuthService implements IAuthService {
     }
 
     await setSessionCookie(sessionCookie);
+    if (refreshToken) await setRefreshCookie(refreshToken);
 
     return {
       user: {
@@ -104,7 +134,12 @@ export class AuthService implements IAuthService {
     };
   }
 
-  async registerUser(data: { idToken: string; name: string; email: string }) {
+  async registerUser(data: {
+    idToken: string;
+    name: string;
+    email: string;
+    refreshToken?: string;
+  }) {
     const { idToken, name } = data;
 
     const decodedToken = await this.authRepository.verifyIdToken(idToken);
@@ -161,6 +196,7 @@ export class AuthService implements IAuthService {
     );
 
     await setSessionCookie(sessionCookie);
+    if (data.refreshToken) await setRefreshCookie(data.refreshToken);
 
     return {
       user: {
