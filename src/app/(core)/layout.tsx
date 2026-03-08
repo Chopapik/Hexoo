@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
 import { Layout } from "@/features/shared/components/layout/Layout";
 import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
+import { getSessionCookie, getRefreshCookie } from "@/lib/session";
 import { AppError } from "@/lib/AppError";
 import { redirect } from "next/navigation";
 
@@ -16,18 +16,20 @@ export default async function RootLayout({
 }) {
   let sessionUserData = null;
 
-  const cookieStore = await cookies();
-  const hasSessionCookie = cookieStore.has("session");
+  const sessionCookie = await getSessionCookie();
+  const refreshCookie = await getRefreshCookie();
 
-  if (hasSessionCookie) {
+  if (sessionCookie.session && sessionCookie.value) {
     try {
       sessionUserData = await getUserFromSession();
+      // Sliding: cookies are re-set from client via GET /api/auth/slide (Route Handler)
     } catch (error: unknown) {
       if (
         error instanceof AppError &&
         (error.code === "INVALID_SESSION" || error.code === "USER_NOT_FOUND")
       ) {
-        redirect("/login");
+        // JWT expired; refresh runs in Route Handler where cookies can be set
+        redirect("/api/auth/refresh");
       }
       if (error instanceof AppError && error.code === "AUTH_REQUIRED") {
         sessionUserData = null;
@@ -35,6 +37,8 @@ export default async function RootLayout({
         throw error;
       }
     }
+  } else if (refreshCookie.hasRefresh) {
+    redirect("/api/auth/refresh");
   }
 
   return <Layout user={sessionUserData}>{children}</Layout>;

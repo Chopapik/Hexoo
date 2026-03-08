@@ -16,6 +16,7 @@ export default function useRegister(onError: ErrorCallback) {
   const sessionMutation = useMutation({
     mutationFn: async (data: {
       idToken: string;
+      refreshToken?: string;
       name: string;
       email: string;
       recaptchaToken: string;
@@ -86,6 +87,7 @@ export default function useRegister(onError: ErrorCallback) {
 
       sessionMutation.mutate({
         idToken: accessToken,
+        refreshToken: signUpData.session?.refresh_token,
         name: data.name,
         email: data.email,
         recaptchaToken,

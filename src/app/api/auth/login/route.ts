@@ -8,7 +8,7 @@ import { getClientIp } from "@/lib/serverUtils";
 
 export const POST = withErrorHandling(async (req: NextRequest) => {
   const body = await req.json();
-  const { idToken, recaptchaToken } = body;
+  const { idToken, refreshToken, recaptchaToken } = body;
 
   if (!recaptchaToken) {
     throw createAppError({
@@ -28,7 +28,7 @@ export const POST = withErrorHandling(async (req: NextRequest) => {
 
   const ip = await getClientIp();
 
-  const result = await createSession(idToken, ip);
+  const result = await createSession(idToken, ip, refreshToken);
 
   return handleSuccess(result);
 });

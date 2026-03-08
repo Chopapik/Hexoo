@@ -1,8 +1,13 @@
+import type { SessionData } from "@/features/me/me.type";
+
 export interface AuthService {
   logoutUser(): Promise<{ message: string }>;
+  /** Try to restore session using refresh token; returns user or null, clears cookies on failure. */
+  tryRefreshSession(): Promise<SessionData | null>;
   createSession(
     idToken: string,
     ip: string,
+    refreshToken?: string,
   ): Promise<{
     user: {
       uid: string;
@@ -16,6 +21,7 @@ export interface AuthService {
     idToken: string;
     name: string;
     email: string;
+    refreshToken?: string;
   }): Promise<{
     user: {
       uid: string;
