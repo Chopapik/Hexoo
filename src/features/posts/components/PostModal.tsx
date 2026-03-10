@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import Modal from "@/features/shared/components/layout/Modal";
 import { PostMeta } from "./PostMeta";
 import { CommentList } from "@/features/comments/components/CommentList";
@@ -30,58 +30,83 @@ export const PostModal = ({
   const isAscii = useMemo(() => isAsciiArt(post.text), [post.text]);
   const isContentVisible = !post.isNSFW || showNSFW || revealNSFW;
 
+  const hasImage = !!post.imageUrl;
+  const [isWideImage, setIsWideImage] = useState(false);
+
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
       title="Post"
-      className="max-w-6xl max-h-[90vh]"
+      className="
+        w-[calc(100vw-4rem)]
+        h-[calc(100dvh-4rem)]
+        max-w-7xl
+        max-h-none
+        overflow-hidden
+      "
     >
-      <div className="flex flex-row overflow-hidden min-h-[50vh] max-h-[70vh]">
-        <div className="min-w-0 flex-[5_2_0%] flex flex-col border-r border-primary-neutral-stroke-default/60">
-          <div className="p-4 border-b border-primary-neutral-stroke-default/60">
-            <PostMeta post={post} />
-          </div>
-          <div className="flex-1 min-h-0 overflow-y-auto scrollbar-hide">
+      <div className="flex h-full min-h-0 flex-row overflow-hidden">
+        {hasImage && (
+          <div className="flex min-w-0 flex-1 items-center justify-center overflow-hidden bg-black/20 ">
             {isContentVisible ? (
-              <>
-                {post.text && (
-                  <div className="p-4">
-                    <p
-                      className={`text-text-main text-base ${
-                        isAscii
-                          ? "ascii-art"
-                          : "font-Albert_Sans whitespace-pre-wrap break-words"
-                      }`}
-                    >
-                      {post.text}
-                    </p>
-                  </div>
-                )}
-                {post.imageUrl && (
-                  <div className="flex items-center justify-center p-4 pt-0">
-                    <img
-                      className="w-full max-h-[60vh] object-contain rounded-xl"
-                      src={post.imageUrl}
-                      alt="Post content"
-                    />
-                  </div>
-                )}
-              </>
+              <img
+                src={post.imageUrl}
+                alt="Post content"
+                className={`h-full w-full ${
+                  isWideImage ? "object-cover" : "object-contain"
+                }`}
+                onLoad={(e) => {
+                  const img = e.currentTarget;
+                  if (img.naturalWidth && img.naturalHeight) {
+                    setIsWideImage(img.naturalWidth / img.naturalHeight >= 1.4);
+                  }
+                }}
+              />
             ) : (
-              <div className="flex items-center justify-center p-4 min-h-[200px]">
+              <div className="flex h-full w-full items-center justify-center">
                 <PostNsfwNotice />
               </div>
             )}
           </div>
-        </div>
+        )}
 
-        <div className="flex flex-col flex-[2_2_0%] min-w-[280px] min-h-0 shrink-0 ">
-          <div className="flex-1 min-h-0 overflow-y-auto scrollbar-hide p-4 ">
+        <div
+          className={`
+            flex min-h-0 flex-col border-l border-primary-neutral-stroke-default/60
+            ${hasImage ? "w-[420px]  min-w-[320px] shrink-0" : "w-full"}
+          `}
+        >
+          <div className="shrink-0 border-b border-primary-neutral-stroke-default/60 p-4">
+            <PostMeta post={post} />
+          </div>
+
+          {isContentVisible && post.text && (
+            <div className="shrink-0 border-b border-primary-neutral-stroke-default/60 p-4">
+              <p
+                className={`text-text-main text-base ${
+                  isAscii
+                    ? "ascii-art"
+                    : "font-Albert_Sans whitespace-pre-wrap break-words"
+                }`}
+              >
+                {post.text}
+              </p>
+            </div>
+          )}
+
+          {!isContentVisible && !hasImage && (
+            <div className="flex items-center justify-center p-4">
+              <PostNsfwNotice />
+            </div>
+          )}
+
+          <div className="min-h-0 flex-1 overflow-y-auto p-4 scrollbar-hide">
             <CommentList comments={comments} isLoading={isLoading} />
           </div>
+
           {user && (
-            <div className="p-4 border-t border-primary-neutral-stroke-default/60 shrink-0 bg-secondary-neutral-background-default/60">
+            <div className="shrink-0 border-t border-primary-neutral-stroke-default/60 bg-secondary-neutral-background-default/60 p-4">
               <CommentForm postId={post.id} />
             </div>
           )}
