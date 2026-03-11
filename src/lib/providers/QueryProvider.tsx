@@ -6,7 +6,6 @@ import {
   MutationCache,
   QueryClientProvider,
 } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { translateApiError } from "@/i18n/errorTranslator";
@@ -72,7 +71,6 @@ export default function QueryProvider({
   return (
     <QueryClientProvider client={queryClient}>
       {children}
-      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 }

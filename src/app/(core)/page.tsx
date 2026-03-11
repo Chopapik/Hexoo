@@ -1,22 +1,18 @@
 "use client";
 
-import CreatePostModal from "@/features/posts/components/CreatePostModal";
 import CreatePostButton from "@/features/posts/components/CreatePostButton";
 import PostList from "@/features/posts/components/PostList";
-import { useState } from "react";
+import { useAppDispatch } from "@/lib/store/hooks";
+import { openCreatePostModal } from "@/features/posts/store/createPostModalSlice";
 
 export default function HomePage() {
-  const [isCreateModalOpen, setCreateModalOpen] = useState(false);
+  const dispatch = useAppDispatch();
 
   return (
     <div className="relative">
       <div className="w-full max-w-4xl mb-4 flex justify-end">
-        <CreatePostButton onClick={() => setCreateModalOpen(true)} />
+        <CreatePostButton onClick={() => dispatch(openCreatePostModal())} />
       </div>
-      <CreatePostModal
-        isOpen={isCreateModalOpen}
-        onClose={() => setCreateModalOpen(false)}
-      />
       <PostList />
     </div>
   );

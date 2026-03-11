@@ -8,6 +8,8 @@ import { RightNavSidebar, RightNavOverlay } from "./RightNav/RightNav";
 import { setUser, setReady } from "@/features/auth/store/authSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
 import { SessionData } from "@/features/me/me.type";
+import CreatePostModal from "@/features/posts/components/CreatePostModal";
+import { closeCreatePostModal } from "@/features/posts/store/createPostModalSlice";
 
 export const Layout: React.FC<{
   children: React.ReactNode;
@@ -20,6 +22,9 @@ export const Layout: React.FC<{
   const dispatch = useAppDispatch();
 
   const { user: userFromStore, ready } = useAppSelector((state) => state.auth);
+  const isCreatePostModalOpen = useAppSelector(
+    (state) => state.createPostModal.isOpen,
+  );
 
   useEffect(() => {
     dispatch(setUser(user));
@@ -59,6 +64,10 @@ export const Layout: React.FC<{
           </div>
         </div>
         <RightNavOverlay open={isRightNavOpen} onClose={closeRight} />
+        <CreatePostModal
+          isOpen={isCreatePostModalOpen}
+          onClose={() => dispatch(closeCreatePostModal())}
+        />
       </div>
     </div>
   );
