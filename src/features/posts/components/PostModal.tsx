@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Modal from "@/features/shared/components/layout/Modal";
+import Button from "@/features/shared/components/ui/Button";
 import { PostMeta } from "./PostMeta";
 import { CommentList } from "@/features/comments/components/CommentList";
 import { CommentForm } from "@/features/comments/components/CommentForm";
@@ -31,7 +32,13 @@ export const PostModal = ({
   const isContentVisible = !post.isNSFW || showNSFW || revealNSFW;
 
   const hasImage = !!post.imageUrl;
-  const [isWideImage, setIsWideImage] = useState(false);
+  const [showCommentsMobile, setShowCommentsMobile] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      setShowCommentsMobile(false);
+    }
+  }, [isOpen, post.id]);
 
   return (
     <Modal
@@ -45,22 +52,15 @@ export const PostModal = ({
         ${hasImage ? "max-w-[calc(100vw-2rem)]" : ""}
       `}
     >
-      <div className="flex h-full min-h-0 overflow-hidden">
+      <div className="flex h-full min-h-0 flex-col overflow-hidden md:flex-row">
+        {/* DESKTOP IMAGE */}
         {hasImage && (
-          <div className="flex h-full min-w-0 flex-1 items-center justify-center overflow-hidden bg-black/20">
+          <div className="hidden md:flex md:h-full md:max-h-full md:min-w-0 md:flex-1 md:items-center md:justify-center md:overflow-hidden md:bg-black/20">
             {isContentVisible ? (
               <img
                 src={post.imageUrl ?? ""}
                 alt="Post content"
-                className={`block h-full max-w-full ${
-                  isWideImage ? "w-full object-cover" : "w-auto object-contain"
-                }`}
-                onLoad={(e) => {
-                  const img = e.currentTarget;
-                  if (img.naturalWidth && img.naturalHeight) {
-                    setIsWideImage(img.naturalWidth / img.naturalHeight >= 1.4);
-                  }
-                }}
+                className="block md:h-full md:max-h-full md:w-auto md:max-w-full md:object-contain"
               />
             ) : (
               <div className="flex h-full w-full items-center justify-center">
@@ -73,42 +73,125 @@ export const PostModal = ({
         <div
           className={`
             flex h-full min-h-0 flex-col border-l border-primary-neutral-stroke-default/60
-            ${hasImage ? "w-[420px] min-w-[420px] shrink-0" : "w-full max-w-full"}
+            ${
+              hasImage
+                ? "w-full max-w-full border-l-0 md:w-[420px] md:min-w-[420px] md:shrink-0 md:border-l"
+                : "w-full max-w-full"
+            }
           `}
         >
           <div className="shrink-0 border-b border-primary-neutral-stroke-default/60 p-4">
             <PostMeta post={post} />
           </div>
 
-          {isContentVisible && post.text && (
-            <div className="shrink-0 border-b border-primary-neutral-stroke-default/60 p-4">
-              <p
-                className={`text-text-main text-base ${
-                  isAscii
-                    ? "ascii-art"
-                    : "font-Albert_Sans whitespace-pre-wrap wrap-break-word"
-                }`}
-              >
-                {post.text}
-              </p>
+          {/* MOBILE: WIDOK POSTA */}
+          {!showCommentsMobile && (
+            <div className="flex min-h-0 flex-1 flex-col md:hidden">
+              {hasImage && (
+                <div className="flex w-full items-center justify-center overflow-hidden bg-black/20 max-h-[60vh]">
+                  {isContentVisible ? (
+                    <img
+                      src={post.imageUrl ?? ""}
+                      alt="Post content"
+                      className="block max-h-[60vh] w-auto max-w-full object-contain"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center p-4">
+                      <PostNsfwNotice />
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {isContentVisible && post.text && (
+                <div className="shrink-0 border-b border-primary-neutral-stroke-default/60 p-4">
+                  <p
+                    className={`text-text-main text-base ${
+                      isAscii
+                        ? "ascii-art"
+                        : "font-Albert_Sans whitespace-pre-wrap wrap-break-word"
+                    }`}
+                  >
+                    {post.text}
+                  </p>
+                </div>
+              )}
+
+              {!isContentVisible && !hasImage && (
+                <div className="flex items-center justify-center p-4">
+                  <PostNsfwNotice />
+                </div>
+              )}
+
+              <div className="mt-auto shrink-0 p-4">
+                <Button
+                  text="Pokaż komentarze"
+                  size="xl"
+                  variant="secondary"
+                  className="border border-primary-neutral-stroke-default/60 text-sm font-medium"
+                  onClick={() => setShowCommentsMobile(true)}
+                />
+              </div>
             </div>
           )}
 
-          {!isContentVisible && !hasImage && (
-            <div className="flex items-center justify-center p-4">
-              <PostNsfwNotice />
+          {/* MOBILE: WIDOK KOMENTARZY */}
+          {showCommentsMobile && (
+            <div className="flex min-h-0 flex-1 flex-col md:hidden">
+              <div className="shrink-0 border-b border-primary-neutral-stroke-default/60 p-4">
+                <Button
+                  text="Wróć do posta"
+                  size="xl"
+                  variant="secondary"
+                  className="border border-primary-neutral-stroke-default/60 text-sm font-medium"
+                  onClick={() => setShowCommentsMobile(false)}
+                />
+              </div>
+
+              <div className="min-h-0 flex-1 overflow-y-auto p-4 scrollbar-hide">
+                <CommentList comments={comments} isLoading={isLoading} />
+              </div>
+
+              {user && (
+                <div className="shrink-0 border-t border-primary-neutral-stroke-default/60 bg-secondary-neutral-background-default/60 p-4">
+                  <CommentForm postId={post.id} />
+                </div>
+              )}
             </div>
           )}
 
-          <div className="min-h-0 flex-1 overflow-y-auto p-4 scrollbar-hide">
-            <CommentList comments={comments} isLoading={isLoading} />
+          {/* DESKTOP: standardowy widok */}
+          <div className="hidden min-h-0 flex-1 md:flex md:flex-col">
+            {isContentVisible && post.text && (
+              <div className="shrink-0 border-b border-primary-neutral-stroke-default/60 p-4">
+                <p
+                  className={`text-text-main text-base ${
+                    isAscii
+                      ? "ascii-art"
+                      : "font-Albert_Sans whitespace-pre-wrap wrap-break-word"
+                  }`}
+                >
+                  {post.text}
+                </p>
+              </div>
+            )}
+
+            {!isContentVisible && !hasImage && (
+              <div className="flex items-center justify-center p-4">
+                <PostNsfwNotice />
+              </div>
+            )}
+
+            <div className="min-h-0 flex-1 overflow-y-auto p-4 scrollbar-hide">
+              <CommentList comments={comments} isLoading={isLoading} />
+            </div>
+
+            {user && (
+              <div className="shrink-0 border-t border-primary-neutral-stroke-default/60 bg-secondary-neutral-background-default/60 p-4">
+                <CommentForm postId={post.id} />
+              </div>
+            )}
           </div>
-
-          {user && (
-            <div className="shrink-0 border-t border-primary-neutral-stroke-default/60 bg-secondary-neutral-background-default/60 p-4">
-              <CommentForm postId={post.id} />
-            </div>
-          )}
         </div>
       </div>
     </Modal>
