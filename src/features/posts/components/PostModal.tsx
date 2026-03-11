@@ -38,20 +38,19 @@ export const PostModal = ({
       isOpen={isOpen}
       onClose={onClose}
       title="Post"
-      className="
+      className={`
         h-[calc(100dvh-2rem)]
         max-h-[calc(100dvh-2rem)]
-        w-auto
-        max-w-[calc(100vw-2rem)]
         overflow-hidden
-      "
+        ${hasImage ? "max-w-[calc(100vw-2rem)]" : ""}
+      `}
     >
       <div className="flex h-full min-h-0 overflow-hidden">
         {hasImage && (
           <div className="flex h-full min-w-0 flex-1 items-center justify-center overflow-hidden bg-black/20">
             {isContentVisible ? (
               <img
-                src={post.imageUrl}
+                src={post.imageUrl ?? ""}
                 alt="Post content"
                 className={`block h-full max-w-full ${
                   isWideImage ? "w-full object-cover" : "w-auto object-contain"
@@ -74,7 +73,7 @@ export const PostModal = ({
         <div
           className={`
             flex h-full min-h-0 flex-col border-l border-primary-neutral-stroke-default/60
-            ${hasImage ? "w-[420px] min-w-[420px] shrink-0" : "w-[420px] min-w-[420px] max-w-full"}
+            ${hasImage ? "w-[420px] min-w-[420px] shrink-0" : "w-full max-w-full"}
           `}
         >
           <div className="shrink-0 border-b border-primary-neutral-stroke-default/60 p-4">
@@ -87,7 +86,7 @@ export const PostModal = ({
                 className={`text-text-main text-base ${
                   isAscii
                     ? "ascii-art"
-                    : "font-Albert_Sans whitespace-pre-wrap break-words"
+                    : "font-Albert_Sans whitespace-pre-wrap wrap-break-word"
                 }`}
               >
                 {post.text}
