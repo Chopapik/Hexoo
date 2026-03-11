@@ -31,7 +31,7 @@ export const PostBody = ({ post, isNSFW = false }: PostBodyProps) => {
 
         {post.imageUrl && (
           <img
-            className="w-full max-w-[450px] relative rounded-xl object-cover"
+            className="w-full max-w-[95%] relative rounded-xl object-cover"
             src={post.imageUrl}
             alt="Post content"
           />

@@ -48,7 +48,7 @@ export const PostModal = ({
     >
       <div className="flex h-full min-h-0 flex-row overflow-hidden">
         {hasImage && (
-          <div className="flex min-w-0 flex-1 items-center justify-center overflow-hidden bg-black/20 ">
+          <div className="flex items-center justify-center overflow-hidden bg-black/20 ">
             {isContentVisible ? (
               <img
                 src={post.imageUrl}
