@@ -39,22 +39,22 @@ export const PostModal = ({
       onClose={onClose}
       title="Post"
       className="
-        w-[calc(100vw-4rem)]
-        h-[calc(100dvh-4rem)]
-        max-w-7xl
-        max-h-none
+        h-[calc(100dvh-2rem)]
+        max-h-[calc(100dvh-2rem)]
+        w-auto
+        max-w-[calc(100vw-2rem)]
         overflow-hidden
       "
     >
-      <div className="flex h-full min-h-0 flex-row overflow-hidden">
+      <div className="flex h-full min-h-0 overflow-hidden">
         {hasImage && (
-          <div className="flex items-center justify-center overflow-hidden bg-black/20 ">
+          <div className="flex h-full min-w-0 flex-1 items-center justify-center overflow-hidden bg-black/20">
             {isContentVisible ? (
               <img
                 src={post.imageUrl}
                 alt="Post content"
-                className={`h-full w-full ${
-                  isWideImage ? "object-cover" : "object-contain"
+                className={`block h-full max-w-full ${
+                  isWideImage ? "w-full object-cover" : "w-auto object-contain"
                 }`}
                 onLoad={(e) => {
                   const img = e.currentTarget;
@@ -73,8 +73,8 @@ export const PostModal = ({
 
         <div
           className={`
-            flex min-h-0 flex-col border-l border-primary-neutral-stroke-default/60
-            ${hasImage ? "w-[420px]  min-w-[320px] shrink-0" : "w-full"}
+            flex h-full min-h-0 flex-col border-l border-primary-neutral-stroke-default/60
+            ${hasImage ? "w-[420px] min-w-[420px] shrink-0" : "w-[420px] min-w-[420px] max-w-full"}
           `}
         >
           <div className="shrink-0 border-b border-primary-neutral-stroke-default/60 p-4">
