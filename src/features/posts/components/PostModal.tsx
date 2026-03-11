@@ -52,15 +52,15 @@ export const PostModal = ({
         ${hasImage ? "max-w-[calc(100vw-2rem)]" : ""}
       `}
     >
-      <div className="flex h-full min-h-0 flex-col overflow-hidden md:flex-row">
+      <div className="flex h-full min-h-0 flex-col overflow-hidden lg:flex-row">
         {/* DESKTOP IMAGE */}
         {hasImage && (
-          <div className="hidden md:flex md:h-full md:max-h-full md:min-w-0 md:flex-1 md:items-center md:justify-center md:overflow-hidden md:bg-black/20">
+          <div className="hidden lg:flex lg:h-full lg:max-h-full lg:min-w-0 lg:flex-1 lg:items-center lg:justify-center lg:overflow-hidden lg:bg-black/20">
             {isContentVisible ? (
               <img
                 src={post.imageUrl ?? ""}
                 alt="Post content"
-                className="block md:h-full md:max-h-full md:w-auto md:max-w-full md:object-contain"
+                className="block lg:h-full lg:max-h-full lg:w-auto lg:max-w-full lg:object-contain"
               />
             ) : (
               <div className="flex h-full w-full items-center justify-center">
@@ -75,7 +75,7 @@ export const PostModal = ({
             flex h-full min-h-0 flex-col border-l border-primary-neutral-stroke-default/60
             ${
               hasImage
-                ? "w-full max-w-full border-l-0 md:w-[420px] md:min-w-[420px] md:shrink-0 md:border-l"
+                ? "w-full max-w-full border-l-0 lg:w-[420px] lg:min-w-[420px] lg:shrink-0 lg:border-l"
                 : "w-full max-w-full"
             }
           `}
@@ -86,7 +86,21 @@ export const PostModal = ({
 
           {/* MOBILE: WIDOK POSTA */}
           {!showCommentsMobile && (
-            <div className="flex min-h-0 flex-1 flex-col md:hidden">
+            <div className="flex min-h-0 flex-1 flex-col lg:hidden">
+              {isContentVisible && post.text && (
+                <div className="shrink-0 border-b border-primary-neutral-stroke-default/60 p-4">
+                  <p
+                    className={`text-text-main text-base ${
+                      isAscii
+                        ? "ascii-art"
+                        : "font-Albert_Sans whitespace-pre-wrap wrap-break-word"
+                    }`}
+                  >
+                    {post.text}
+                  </p>
+                </div>
+              )}
+
               {hasImage && (
                 <div className="flex w-full items-center justify-center overflow-hidden bg-black/20 max-h-[60vh]">
                   {isContentVisible ? (
@@ -100,20 +114,6 @@ export const PostModal = ({
                       <PostNsfwNotice />
                     </div>
                   )}
-                </div>
-              )}
-
-              {isContentVisible && post.text && (
-                <div className="shrink-0 border-b border-primary-neutral-stroke-default/60 p-4">
-                  <p
-                    className={`text-text-main text-base ${
-                      isAscii
-                        ? "ascii-art"
-                        : "font-Albert_Sans whitespace-pre-wrap wrap-break-word"
-                    }`}
-                  >
-                    {post.text}
-                  </p>
                 </div>
               )}
 
@@ -137,7 +137,7 @@ export const PostModal = ({
 
           {/* MOBILE: WIDOK KOMENTARZY */}
           {showCommentsMobile && (
-            <div className="flex min-h-0 flex-1 flex-col md:hidden">
+            <div className="flex min-h-0 flex-1 flex-col lg:hidden">
               <div className="shrink-0 border-b border-primary-neutral-stroke-default/60 p-4">
                 <Button
                   text="Wróć do posta"
@@ -161,7 +161,7 @@ export const PostModal = ({
           )}
 
           {/* DESKTOP: standardowy widok */}
-          <div className="hidden min-h-0 flex-1 md:flex md:flex-col">
+          <div className="hidden min-h-0 flex-1 lg:flex lg:flex-col">
             {isContentVisible && post.text && (
               <div className="shrink-0 border-b border-primary-neutral-stroke-default/60 p-4">
                 <p
