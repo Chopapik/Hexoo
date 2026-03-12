@@ -32,7 +32,7 @@ export function LeftNav({ onOpenRight, user }: LeftNavProps) {
             text="Dodaj post"
             size="xl"
             variant="secondary"
-            leftIcon={<Plus className="size-5" />}
+            rightIcon={<Plus className="size-5" />}
             className="w-full justify-center font-semibold"
             onClick={() => dispatch(openCreatePostModal())}
           />

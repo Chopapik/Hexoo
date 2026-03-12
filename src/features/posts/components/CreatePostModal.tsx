@@ -133,10 +133,11 @@ export default function CreatePostModal({
         title="Nowy post"
         onClose={onClose}
         footer={footerContent}
+        className="w-full h-full lg:h-fit lg:w-full lg:max-w-3xl "
       >
-        <div className="flex flex-col gap-4 p-4">
+        <div className="flex flex-col gap-4 p-4 w-full">
           {imagePreview && (
-            <div className="relative w-fit group animate-in fade-in zoom-in-95 duration-200 ">
+            <div className="relative w-fit group animate-in fade-in zoom-in-95 duration-200">
               <img
                 src={imagePreview}
                 alt="Preview"
@@ -160,7 +161,7 @@ export default function CreatePostModal({
               placeholder={
                 user ? `Co u Ciebie słychać, ${user.name}?` : "Napisz coś..."
               }
-              className="w-full bg-transparent text-text-main placeholder:text-text-neutral/50 text-base resize-none outline-none min-h-[100px] scrollbar-hide leading-relaxed pb-6"
+              className="w-full bg-transparent text-text-main placeholder:text-text-neutral/50 text-base resize-none outline-none min-h-[425px] leading-relaxed pb-6"
               autoFocus
             />
 
@@ -179,6 +180,7 @@ export default function CreatePostModal({
           </div>
         </div>
       </Modal>
+
       <AlertModal
         isOpen={!!moderationBlockReason}
         onClose={() => setModerationBlockReason(null)}
