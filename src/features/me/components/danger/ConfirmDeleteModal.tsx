@@ -33,8 +33,8 @@ export default function ConfirmDeleteModal({
       title="Czy na pewno chcesz usunąć konto?"
       footer={footerContent}
     >
-      <div className="flex flex-col gap-4 pt-2">
-        <p className="text-sm text-text-neutral">
+      <div className="flex flex-col gap-4 p-6">
+        <p className="text-text-neutral">
           Ta operacja jest nieodwracalna. Wszystkie Twoje dane, w tym posty,
           komentarze i ustawienia, zostaną trwale usunięte.
         </p>

@@ -116,16 +116,16 @@ export default function EditProfileModal({
         <form
           id="edit-profile-form"
           onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col gap-6"
+          className="flex flex-col gap-6 p-12"
         >
           {/* Avatar Section */}
-          <div className="flex flex-col items-center gap-4">
+          <div className="flex flex-col items-center gap-3">
             <div className="relative">
               <div
                 className="relative group cursor-pointer animate-in fade-in zoom-in-95 duration-200"
                 onClick={triggerPicker}
               >
-                <div className="w-24 h-24 rounded-xl p-px bg-[radial-gradient(circle_at_center,#262626_0%,#171717_100%)] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] transition-transform group-hover:scale-105">
+                <div className="w-32 h-32 rounded-xl p-px bg-[radial-gradient(circle_at_center,#262626_0%,#171717_100%)] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] transition-transform group-hover:scale-105">
                   <Avatar
                     src={imagePreview || undefined}
                     alt={user.name}
@@ -172,12 +172,9 @@ export default function EditProfileModal({
               )}
             </div>
 
-            <div className="flex flex-col items-center gap-1">
+            <div className="flex flex-col items-center ">
               <p className="text-sm text-text-neutral font-medium">
                 Kliknij, aby zmienić zdjęcie profilowe
-              </p>
-              <p className="text-xs text-text-neutral/60">
-                PNG, JPG lub WEBP (max 5MB)
               </p>
             </div>
             <div className="flex flex-col gap-1 h-6">
