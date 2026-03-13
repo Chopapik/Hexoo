@@ -13,6 +13,7 @@ export default function useCreatePostForm() {
     getValues,
     formState,
     watch,
+    trigger,
   } = useForm<CreatePostDto>({
     resolver: zodResolver(CreatePostSchema),
     mode: "onSubmit",
@@ -32,9 +33,12 @@ export default function useCreatePostForm() {
     onImageChanged: (file) => {
       if (file) {
         setValue("imageFile", file, { shouldValidate: true });
+        clearErrors("text");
+        trigger();
       } else {
         setValue("imageFile", undefined, { shouldValidate: true });
         clearErrors("imageFile");
+        trigger();
       }
     },
   });
