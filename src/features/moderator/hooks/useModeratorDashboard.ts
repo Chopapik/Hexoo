@@ -29,6 +29,8 @@ export function useModeratorDashboard() {
       postId: string;
       action: "approve" | "reject" | "quarantine";
       banAuthor?: boolean;
+      justification?: string;
+      categories?: string[];
     }) => {
       return fetchClient.post("/moderator/review", payload);
     },
