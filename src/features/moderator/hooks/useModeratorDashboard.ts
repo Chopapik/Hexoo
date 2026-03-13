@@ -12,6 +12,8 @@ export function useModeratorDashboard() {
     data: posts,
     isLoading,
     isError,
+    refetch,
+    isFetching,
   } = useQuery({
     queryKey: ["moderator", "queue"],
     queryFn: async () => {
@@ -48,6 +50,8 @@ export function useModeratorDashboard() {
     posts,
     isLoading,
     isError,
+    refetch,
+    isFetching,
     performAction: actionMutation.mutate,
     isActionPending: actionMutation.isPending,
   };

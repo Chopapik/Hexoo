@@ -6,49 +6,72 @@ import { ModerationPostDto } from "@/features/posts/types/post.dto";
 import ModerationQueueItem from "./ModerationQueueItem";
 
 export default function ModeratorDashboard() {
-  const { posts, isLoading, performAction, isActionPending } =
+  const { posts, isLoading, isError, refetch, isFetching, performAction, isActionPending } =
     useModeratorDashboard();
 
-  if (isLoading)
-    return (
-      <div className="text-white p-10 text-center animate-pulse">
-        Ładowanie zgłoszeń...
-      </div>
-    );
-
   return (
-    <div className="w-full max-w-4xl mx-auto pt-6 flex flex-col gap-6 pb-20">
-      <div className="glass-card p-6 rounded-xl border border-primary-fuchsia-stroke-default bg-black/40 backdrop-blur-md">
-        <h1 className="text-2xl font-bold text-text-main font-Albert_Sans">
+    <div className="w-full flex flex-col p-10 gap-10">
+      <div className="w-full flex items-center justify-between gap-4">
+        <span className="text-text-main text-xl font-semibold">
           Panel Moderatora
-        </h1>
-        <p className="text-text-neutral text-sm mt-1">
-          Kolejka postów oflagowanych przez AI oraz zgłoszonych przez
-          użytkowników.
-          <br />
-          Liczba oczekujących:{" "}
-          <span className="text-fuchsia-400 font-bold">
-            {posts?.length || 0}
-          </span>
-        </p>
+        </span>
       </div>
 
-      {posts?.length === 0 && (
-        <div className="text-center text-text-neutral py-20 bg-white/5 rounded-xl border border-dashed border-secondary-neutral-background-default">
-          <p className="text-sm mt-2 opacity-60">
-            Brak postów wymagających uwagi.
-          </p>
-        </div>
-      )}
+      <div className="w-full flex justify-center">
+        <div className="w-full p-6 glass-card rounded-2xl border border-primary-neutral-stroke-default max-w-[1300px]">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex flex-col">
+              <h2 className="text-lg font-Albert_Sans font-semibold">
+                Kolejka Oczekujących
+              </h2>
+              <div className="text-sm text-text-neutral">
+                Posty oflagowane przez AI lub zgłoszone przez użytkowników. Liczba:{" "}
+                <span className="text-fuchsia-400 font-bold">
+                  {posts?.length || 0}
+                </span>
+              </div>
+            </div>
 
-      {posts?.map((post: ModerationPostDto) => (
-        <ModerationQueueItem
-          key={post.id}
-          post={post}
-          onAction={performAction}
-          isPending={isActionPending}
-        />
-      ))}
+            <div className="flex items-center gap-3">
+              <Button
+                onClick={() => refetch()}
+                text="Odśwież"
+                size="sm"
+                isLoading={isFetching}
+              />
+            </div>
+          </div>
+
+          {isLoading ? (
+            <div className="py-12 text-center text-text-neutral animate-pulse">
+              Ładowanie zgłoszeń...
+            </div>
+          ) : isError ? (
+            <div className="py-6 text-center text-red-500">
+              Błąd podczas pobierania zgłoszeń
+            </div>
+          ) : (
+            <div className="flex flex-col gap-4 mt-6">
+              {posts?.length === 0 && (
+                <div className="text-center text-text-neutral py-20 bg-white/5 rounded-xl border border-dashed border-secondary-neutral-background-default">
+                  <p className="text-sm mt-2 opacity-60">
+                    Brak postów wymagających uwagi.
+                  </p>
+                </div>
+              )}
+
+              {posts?.map((post: ModerationPostDto) => (
+                <ModerationQueueItem
+                  key={post.id}
+                  post={post}
+                  onAction={performAction}
+                  isPending={isActionPending}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
