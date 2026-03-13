@@ -34,11 +34,10 @@ export default function useCreatePostForm() {
       if (file) {
         setValue("imageFile", file, { shouldValidate: true });
         clearErrors("text");
-        trigger();
+        trigger("imageFile");
       } else {
         setValue("imageFile", undefined, { shouldValidate: true });
         clearErrors("imageFile");
-        trigger();
       }
     },
   });

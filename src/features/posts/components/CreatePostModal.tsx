@@ -161,7 +161,11 @@ export default function CreatePostModal({
               placeholder={
                 user ? `Co u Ciebie słychać, ${user.name}?` : "Napisz coś..."
               }
-              className="w-full bg-transparent text-text-main placeholder:text-text-neutral/50 text-base resize-none outline-none min-h-[425px] leading-relaxed pb-6"
+              className={`w-full bg-transparent text-text-main placeholder:text-text-neutral/50 text-base resize-none outline-none leading-relaxed pb-6 transition-all duration-300 ${
+                imagePreview && !textValue.trim()
+                  ? "min-h-[150px]"
+                  : "min-h-[425px]"
+              }`}
               autoFocus
             />
 
