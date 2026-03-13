@@ -2,6 +2,10 @@ import { PostCard } from "@/features/posts/components/PostCard";
 import { ModerationPostDto } from "@/features/posts/types/post.dto";
 import { ReportDetails } from "@/features/shared/types/report.type";
 import Button from "@/features/shared/components/ui/Button";
+import ModerationReasonModal from "@/features/posts/components/ModerationReasonModal";
+import { useState } from "react";
+
+type ModerationAction = "approve" | "reject" | "quarantine" | "reject-ban";
 
 export default function ModerationQueueItem({
   post,
@@ -11,13 +15,36 @@ export default function ModerationQueueItem({
   post: ModerationPostDto;
   onAction: (params: {
     postId: string;
-    action: "approve" | "reject";
+    action: "approve" | "reject" | "quarantine";
     banAuthor?: boolean;
+    justification?: string;
   }) => void;
   isPending: boolean;
 }) {
+  const [pendingAction, setPendingAction] = useState<ModerationAction | null>(null);
+
+  const handleReasonConfirm = (justification: string) => {
+    if (!pendingAction || pendingAction === "approve") return;
+    if (pendingAction === "reject-ban") {
+      onAction({ postId: post.id, action: "reject", banAuthor: true, justification });
+    } else {
+      onAction({ postId: post.id, action: pendingAction, justification });
+    }
+    setPendingAction(null);
+  };
+
   return (
     <div className="relative group animate-in fade-in slide-in-from-bottom-4 duration-300">
+      {pendingAction && pendingAction !== "approve" && (
+        <ModerationReasonModal
+          isOpen={true}
+          action={pendingAction}
+          isPending={isPending}
+          onClose={() => setPendingAction(null)}
+          onConfirm={handleReasonConfirm}
+        />
+      )}
+
       <div className="border-2 border-primary-neutral-background-default rounded-xl overflow-hidden relative ">
         <div className=" p-4 border-b ">
           <div className="flex flex-wrap gap-3 mb-3 font-mono text-xs">
@@ -80,9 +107,7 @@ export default function ModerationQueueItem({
             text="Banuj Autora & Usuń"
             variant="danger"
             size="sm"
-            onClick={() =>
-              onAction({ postId: post.id, action: "reject", banAuthor: true })
-            }
+            onClick={() => setPendingAction("reject-ban")}
             disabled={isPending}
           />
           <Button
@@ -90,7 +115,14 @@ export default function ModerationQueueItem({
             variant="danger"
             className="border-red-500/50 text-red-500 hover:bg-red-500/10"
             size="sm"
-            onClick={() => onAction({ postId: post.id, action: "reject" })}
+            onClick={() => setPendingAction("reject")}
+            disabled={isPending}
+          />
+          <Button
+            text="Kwarantanna"
+            variant="secondary"
+            size="sm"
+            onClick={() => setPendingAction("quarantine")}
             disabled={isPending}
           />
           <Button
