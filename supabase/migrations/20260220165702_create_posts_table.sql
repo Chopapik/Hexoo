@@ -1,5 +1,5 @@
 -- Posts table (from PostRow / ContentBase).
--- Main feed content with moderation and report metadata.
+-- Main feed content with minimal moderation status fields.
 create table if not exists public.posts (
   id uuid primary key default gen_random_uuid(),
   user_id text not null,
@@ -8,18 +8,14 @@ create table if not exists public.posts (
   comments_count int not null default 0,
   created_at timestamptz not null default now(),
   updated_at timestamptz,
-  moderation_status text not null default 'approved' check (moderation_status in ('approved', 'pending', 'rejected')),
   is_nsfw boolean not null default false,
+  is_pending boolean not null default false,
   image_url text,
   image_meta jsonb,
-  device text,
-  flagged_reasons text[],
-  flagged_source text[],
-  reviewed_by text,
-  reviewed_at timestamptz
+  device text
 );
 
--- Indexes for feed listing and filtering by user or status.
+-- Indexes for feed listing and filtering by user and pending state.
 create index if not exists posts_created_at_desc on public.posts (created_at desc);
 create index if not exists posts_user_id_created_at on public.posts (user_id, created_at desc);
-create index if not exists posts_moderation_status on public.posts (moderation_status);
+create index if not exists posts_is_pending on public.posts (is_pending);

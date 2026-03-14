@@ -3,7 +3,10 @@ import { formatZodErrorFlat } from "@/lib/zod";
 import { getUsersByIds } from "@/features/users/api/services";
 import { ModerationStatus } from "@/features/shared/types/content.type";
 import type { LikeRepository } from "@/features/likes/api/repositories";
-import { getLatestModerationLogForResource } from "@/features/moderation/api/services/moderationLog.service";
+import {
+  getLatestModerationLogForResource,
+  logModerationEvent,
+} from "@/features/moderation/api/services/moderationLog.service";
 
 import { PostEntity } from "../../types/post.entity";
 import {
@@ -84,7 +87,7 @@ export class PostService implements IPostService {
             );
             if (log) {
               moderationInfoByPostId[post.id] = {
-                verdict: post.moderationStatus,
+                verdict: log.verdict,
                 actionTaken: log.actionTaken,
                 categories: log.categories,
                 reasonSummary: log.reasonSummary,
@@ -135,10 +138,8 @@ export class PostService implements IPostService {
       device: "Web",
       imageUrl: processed.imageUrl ?? null,
       imageMeta: processed.imageMeta ?? null,
-      moderationStatus: processed.moderationStatus,
+      isPending: processed.isPending,
       isNSFW: processed.isNSFW,
-      flaggedReasons: processed.flaggedReasons,
-      flaggedSource: processed.flaggedSource,
       likesCount: 0,
       commentsCount: 0,
       userReports: [],
@@ -147,7 +148,15 @@ export class PostService implements IPostService {
       updatedAt: new Date(),
     };
 
-    await this.repository.createPost(dbInput);
+    const postId = await this.repository.createPost(dbInput);
+
+    if (processed.moderationLogPayloadForResource) {
+      await logModerationEvent({
+        ...processed.moderationLogPayloadForResource,
+        resourceType: "post",
+        resourceId: postId,
+      });
+    }
 
     await logActivity(user.uid, "POST_CREATED", "User created a new post");
   }
@@ -193,7 +202,7 @@ export class PostService implements IPostService {
     }
 
     await this.repository.updatePost(postId, {
-      moderationStatus: status,
+      isPending: status === ModerationStatus.Pending,
     });
 
     if (post.userId) {
@@ -237,6 +246,14 @@ export class PostService implements IPostService {
       updateData.imageFile,
     );
 
+    if (processed.moderationLogPayloadForResource) {
+      await logModerationEvent({
+        ...processed.moderationLogPayloadForResource,
+        resourceType: "post",
+        resourceId: postId,
+      });
+    }
+
     if (processed.imageUrl && post.imageMeta?.storagePath) {
       await this.imageDeleter(post.imageMeta.storagePath);
     }
@@ -245,10 +262,8 @@ export class PostService implements IPostService {
       text: updateData.text ?? post.text,
       imageUrl: processed.imageUrl ?? post.imageUrl,
       imageMeta: processed.imageMeta ?? post.imageMeta,
-      moderationStatus: processed.moderationStatus,
+      isPending: processed.isPending,
       isNSFW: processed.isNSFW,
-      flaggedReasons: processed.flaggedReasons,
-      flaggedSource: processed.flaggedSource,
       updatedAt: new Date(),
     });
 
@@ -290,11 +305,33 @@ export class PostService implements IPostService {
   async reportPost(postId: string, reason: string, details?: string) {
     const user = this.ensureUser();
 
+    const post = await this.repository.getPostById(postId);
+    if (!post) {
+      throw createAppError({
+        code: "NOT_FOUND",
+        message: "[postService.reportPost] Post not found",
+      });
+    }
+
     const result = await this.repository.reportPost(postId, {
       uid: user.uid,
       reason,
       details,
       createdAt: new Date(),
+    });
+
+    await logModerationEvent({
+      userId: post.userId,
+      timestamp: new Date(),
+      verdict: ModerationStatus.Pending,
+      categories: [reason],
+      actionTaken: "FLAGGED_FOR_REVIEW",
+      resourceType: "post",
+      resourceId: postId,
+      source: "user_report",
+      actorId: user.uid,
+      reasonSummary: "Post reported by user",
+      reasonDetails: details ? `${reason}: ${details}` : reason,
     });
 
     await logActivity(

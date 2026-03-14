@@ -29,17 +29,13 @@ function rowToEntity(row: PostRow): PostEntity {
     commentsCount: row.comments_count,
     createdAt: parseDate(row.created_at) ?? new Date(0),
     updatedAt: parseDate(row.updated_at),
-    moderationStatus: row.moderation_status,
+    isPending: row.is_pending,
     isNSFW: row.is_nsfw,
     imageUrl: row.image_url ?? undefined,
     imageMeta: row.image_meta ?? undefined,
     device: row.device ?? undefined,
-    flaggedReasons: row.flagged_reasons ?? undefined,
-    flaggedSource: row.flagged_source ?? undefined,
     userReports: undefined,
     reportsMeta: undefined,
-    reviewedBy: row.reviewed_by ?? undefined,
-    reviewedAt: parseDate(row.reviewed_at),
   };
 }
 
@@ -59,20 +55,11 @@ function createPayloadToRow(data: CreatePostPayload): Record<string, unknown> {
       data.updatedAt instanceof Date
         ? data.updatedAt.toISOString()
         : data.updatedAt;
-  if (data.moderationStatus != null)
-    row.moderation_status = data.moderationStatus;
   if (data.isNSFW != null) row.is_nsfw = data.isNSFW;
+  if (data.isPending != null) row.is_pending = data.isPending;
   if (data.imageUrl !== undefined) row.image_url = data.imageUrl;
   if (data.imageMeta !== undefined) row.image_meta = data.imageMeta;
   if (data.device !== undefined) row.device = data.device;
-  if (data.flaggedReasons != null) row.flagged_reasons = data.flaggedReasons;
-  if (data.flaggedSource != null) row.flagged_source = data.flaggedSource;
-  if (data.reviewedBy !== undefined) row.reviewed_by = data.reviewedBy;
-  if (data.reviewedAt != null)
-    row.reviewed_at =
-      data.reviewedAt instanceof Date
-        ? data.reviewedAt.toISOString()
-        : data.reviewedAt;
   return row;
 }
 
@@ -86,28 +73,24 @@ function updatePayloadToRow(data: UpdatePostPayload): Record<string, unknown> {
       data.updatedAt instanceof Date
         ? data.updatedAt.toISOString()
         : data.updatedAt;
-  if (data.moderationStatus != null)
-    row.moderation_status = data.moderationStatus;
   if (data.isNSFW != null) row.is_nsfw = data.isNSFW;
+  if (data.isPending != null) row.is_pending = data.isPending;
   if (data.imageUrl !== undefined) row.image_url = data.imageUrl;
   if (data.imageMeta !== undefined) row.image_meta = data.imageMeta;
   if (data.device !== undefined) row.device = data.device;
-  if (data.flaggedReasons != null) row.flagged_reasons = data.flaggedReasons;
-  if (data.flaggedSource != null) row.flagged_source = data.flaggedSource;
-  if (data.reviewedBy !== undefined) row.reviewed_by = data.reviewedBy;
-  if (data.reviewedAt != null)
-    row.reviewed_at =
-      data.reviewedAt instanceof Date
-        ? data.reviewedAt.toISOString()
-        : data.reviewedAt;
   return row;
 }
 
 export class PostSupabaseRepository implements PostRepository {
-  async createPost(data: CreatePostPayload): Promise<void> {
+  async createPost(data: CreatePostPayload): Promise<string> {
     const row = createPayloadToRow(data);
-    const { error } = await supabaseAdmin.from(TABLE).insert(row);
+    const { data: inserted, error } = await supabaseAdmin
+      .from(TABLE)
+      .insert(row)
+      .select("id")
+      .single();
     if (error) throw new Error(error.message ?? "Database error");
+    return (inserted as { id: string }).id;
   }
 
   async updatePost(postId: string, data: UpdatePostPayload): Promise<void> {
@@ -139,7 +122,7 @@ export class PostSupabaseRepository implements PostRepository {
     let query = supabaseAdmin
       .from(TABLE)
       .select("*")
-      .eq("moderation_status", ModerationStatus.Approved)
+      .eq("is_pending", false)
       .order("created_at", { ascending: false })
       .limit(limit);
 
@@ -238,7 +221,7 @@ export class PostSupabaseRepository implements PostRepository {
 
     if (shouldHide) {
       await this.updatePost(postId, {
-        moderationStatus: ModerationStatus.Pending,
+        isPending: true,
       });
 
       // Log threshold-based moderation triggered by user reports
@@ -264,7 +247,7 @@ export class PostSupabaseRepository implements PostRepository {
     const { data, error } = await supabaseAdmin
       .from(TABLE)
       .select("*")
-      .eq("moderation_status", ModerationStatus.Pending)
+      .eq("is_pending", true)
       .order("created_at", { ascending: false })
       .limit(limit);
     if (error) throw new Error(error.message ?? "Database error");

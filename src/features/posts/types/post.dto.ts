@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { PostEntity } from "./post.entity";
+import { ModerationStatus } from "@/features/shared/types/content.type";
 
 export const MAX_IMAGE_FILE_SIZE_BYTES = 5 * 1024 * 1024;
 export const POST_MAX_CHARS = 1000;
@@ -71,15 +72,28 @@ export type PublicPostDto = Omit<
   userAvatarUrl: string | null;
   isLikedByMe?: boolean;
   moderationInfo?: {
-    verdict: PostEntity["moderationStatus"];
+    verdict: ModerationStatus;
     actionTaken: string;
     categories: string[];
     reasonSummary?: string;
     reasonDetails?: string;
+    source?: string;
+    actorId?: string;
   };
 };
 
 export type ModerationPostDto = PostEntity & {
+  moderationStatus: ModerationStatus;
+  flaggedReasons?: string[];
+  moderationInfo?: {
+    verdict: ModerationStatus;
+    actionTaken: string;
+    categories: string[];
+    reasonSummary?: string;
+    reasonDetails?: string;
+    source?: string;
+    actorId?: string;
+  };
   userName: string;
   userAvatarUrl: string | null;
   isLikedByMe?: boolean;

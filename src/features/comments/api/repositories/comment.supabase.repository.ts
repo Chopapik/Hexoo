@@ -1,5 +1,4 @@
 import { supabaseAdmin } from "@/lib/supabaseServer";
-import { ModerationStatus } from "@/features/shared/types/content.type";
 import type { CommentRepository } from "./comment.repository.interface";
 import type { CreateCommentPayload } from "../../types/comment.payload";
 import type { CommentEntity } from "../../types/comment.entity";
@@ -24,17 +23,13 @@ function rowToEntity(row: CommentRow): CommentEntity {
     commentsCount: row.comments_count,
     createdAt: parseDate(row.created_at) ?? new Date(0),
     updatedAt: parseDate(row.updated_at),
-    moderationStatus: row.moderation_status,
     isNSFW: row.is_nsfw,
+    isPending: row.is_pending,
     imageUrl: row.image_url ?? undefined,
     imageMeta: row.image_meta ?? undefined,
     device: row.device ?? undefined,
-    flaggedReasons: row.flagged_reasons ?? undefined,
-    flaggedSource: row.flagged_source ?? undefined,
     userReports: undefined,
     reportsMeta: undefined,
-    reviewedBy: row.reviewed_by ?? undefined,
-    reviewedAt: parseDate(row.reviewed_at),
   };
 }
 
@@ -48,8 +43,8 @@ function createPayloadToRow(
     text: data.text ?? "",
     likes_count: data.likesCount ?? 0,
     comments_count: data.commentsCount ?? 0,
-    moderation_status: data.moderationStatus ?? ModerationStatus.Approved,
     is_nsfw: data.isNSFW ?? false,
+    is_pending: data.isPending ?? false,
   };
   row.created_at =
     data.createdAt instanceof Date
@@ -63,8 +58,6 @@ function createPayloadToRow(
   if (data.imageUrl !== undefined) row.image_url = data.imageUrl;
   if (data.imageMeta !== undefined) row.image_meta = data.imageMeta;
   if (data.device !== undefined) row.device = data.device;
-  if (data.flaggedReasons != null) row.flagged_reasons = data.flaggedReasons;
-  if (data.flaggedSource != null) row.flagged_source = data.flaggedSource;
   return row;
 }
 
@@ -101,7 +94,7 @@ export class CommentSupabaseRepository implements CommentRepository {
       .from(COMMENTS_TABLE)
       .select("*")
       .eq("post_id", postId)
-      .eq("moderation_status", ModerationStatus.Approved)
+      .eq("is_pending", false)
       .order("created_at", { ascending: false });
     if (error) throw new Error(error.message ?? "Database error");
     return (data ?? []).map((row) => rowToEntity(row as CommentRow));

@@ -2,7 +2,6 @@ import { adminDb } from "@/lib/firebaseAdmin";
 import { FieldValue } from "firebase-admin/firestore";
 import { createAppError } from "@/lib/AppError";
 import { mapDatesFromFirestore } from "@/features/shared/utils/firestoreMappers";
-import { ModerationStatus } from "@/features/shared/types/content.type";
 import type { CommentRepository } from "./comment.repository.interface";
 import type { CreateCommentPayload } from "../../types/comment.payload";
 import type { CommentEntity } from "../../types/comment.entity";
@@ -48,7 +47,7 @@ export class CommentFirebaseRepository implements CommentRepository {
     const commentsSnap = await this.postsCollection
       .doc(postId)
       .collection("comments")
-      .where("moderationStatus", "==", ModerationStatus.Approved)
+      .where("isPending", "==", false)
       .orderBy("createdAt", "asc")
       .get();
 

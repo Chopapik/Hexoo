@@ -55,8 +55,7 @@ export class CommentService implements ICommentService {
 
     const { text, postId } = parsed.data;
 
-    const { moderationStatus, isNSFW, flaggedReasons, flaggedSource } =
-      await performModeration(user.uid, text);
+    const { isPending, isNSFW } = await performModeration(user.uid, text);
 
     const now = new Date();
     const payload: CreateCommentPayload = {
@@ -67,10 +66,8 @@ export class CommentService implements ICommentService {
       commentsCount: 0,
       createdAt: now,
       updatedAt: now,
-      moderationStatus,
+      isPending,
       isNSFW,
-      flaggedReasons,
-      flaggedSource,
     };
 
     await this.repository.createComment(postId, payload);

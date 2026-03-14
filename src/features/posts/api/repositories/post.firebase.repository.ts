@@ -1,7 +1,6 @@
 import admin from "firebase-admin";
 import { PostRepository } from "./post.repository.interface";
 import { ReportDetails } from "@/features/shared/types/report.type";
-import { ModerationStatus } from "@/features/shared/types/content.type";
 import { mapDatesFromFirestore } from "@/features/shared/utils/firestoreMappers";
 import { CreatePostPayload, UpdatePostPayload } from "../../types/post.payload";
 import { PostEntity } from "../../types/post.entity";
@@ -11,8 +10,9 @@ export class PostFirebaseRepository implements PostRepository {
     return admin.firestore().collection("posts");
   }
 
-  async createPost(data: CreatePostPayload): Promise<void> {
-    await this.collection.add(data);
+  async createPost(data: CreatePostPayload): Promise<string> {
+    const ref = await this.collection.add(data);
+    return ref.id;
   }
 
   async updatePost(postId: string, data: UpdatePostPayload): Promise<void> {
@@ -29,7 +29,7 @@ export class PostFirebaseRepository implements PostRepository {
   //create public and private variables
   async getPosts(limit: number, startAfterId?: string): Promise<PostEntity[]> {
     let query = this.collection
-      .where("moderationStatus", "==", ModerationStatus.Approved)
+      .where("isPending", "==", false)
       .orderBy("createdAt", "desc")
       .limit(limit);
 
@@ -96,7 +96,7 @@ export class PostFirebaseRepository implements PostRepository {
 
       if (shouldHide) {
         transaction.update(postRef, {
-          moderationStatus: ModerationStatus.Pending,
+          isPending: true,
         });
       }
 
@@ -109,7 +109,7 @@ export class PostFirebaseRepository implements PostRepository {
 
   async getPostsPendingModeration(limit: number): Promise<PostEntity[]> {
     const snapshot = await this.collection
-      .where("moderationStatus", "==", ModerationStatus.Pending)
+      .where("isPending", "==", true)
       .orderBy("createdAt", "desc")
       .limit(limit)
       .get();
