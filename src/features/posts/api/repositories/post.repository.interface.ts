@@ -3,7 +3,7 @@ import { ReportDetails } from "@/features/shared/types/report.type";
 import { CreatePostPayload, UpdatePostPayload } from "../../types/post.payload";
 
 export interface PostRepository {
-  createPost(data: CreatePostPayload): Promise<void>;
+  createPost(data: CreatePostPayload): Promise<string>;
 
   updatePost(postId: string, data: UpdatePostPayload): Promise<void>;
 

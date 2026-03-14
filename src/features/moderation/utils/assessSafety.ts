@@ -3,7 +3,14 @@ import { moderateImage } from "@/features/moderation/api/imageModeration";
 import { moderateText } from "@/features/moderation/api/textModeration";
 import { createAppError } from "@/lib/AppError";
 import { logModerationEvent } from "@/features/moderation/api/services/moderationLog.service";
+import type { ModerationLogPayload } from "@/features/moderation/api/services/moderationLog.service";
 import { ModerationStatus } from "@/features/shared/types/content.type";
+
+/** Payload to log later with resourceType/resourceId (e.g. after post is created). */
+export type ModerationLogPayloadForResource = Omit<
+  ModerationLogPayload,
+  "resourceType" | "resourceId"
+>;
 
 export interface ModerationVerdict {
   status: ModerationStatus;
@@ -62,6 +69,8 @@ export const getAiModerationVerdict = (
     "harassment/threatening",
     "illicit",
     "illicit/violent",
+    "sexual", 
+    "violence"
   ];
 
   const NSFW_FLAGS = ["sexual", "violence"];
@@ -70,21 +79,16 @@ export const getAiModerationVerdict = (
 
   // is illegal
   if (categories.some((cat) => REJECT_FLAGS.includes(cat))) {
-    return { status: ModerationStatus.Rejected, isNSFW: isNSFW };
+    return { status: ModerationStatus.Rejected, isNSFW };
   }
 
   // should be checked by human
   if (categories.some((cat) => PENDING_FLAGS.includes(cat))) {
-    return { status: ModerationStatus.Pending, isNSFW: isNSFW };
-  }
-
-  // is +18
-  if (categories.some((cat) => NSFW_FLAGS.includes(cat))) {
-    return { status: ModerationStatus.Approved, isNSFW: isNSFW };
+    return { status: ModerationStatus.Pending, isNSFW };
   }
 
   // clear
-  return { status: ModerationStatus.Approved, isNSFW: isNSFW };
+  return { status: ModerationStatus.Approved, isNSFW };
 };
 
 export const enforceStrictModeration = async (
@@ -127,9 +131,12 @@ export const performModeration = async (
   imageFile?: File | null,
 ): Promise<{
   moderationStatus: ModerationStatus;
-  isNSFW: boolean;
   flaggedReasons: string[];
   flaggedSource: ("text" | "image")[];
+  isNSFW: boolean;
+  isPending: boolean;
+  /** When isPending: payload to log with resourceType "post" and resourceId after post is created/updated. */
+  moderationLogPayloadForResource?: ModerationLogPayloadForResource;
 }> => {
   const { flaggedReasons, flaggedSource } = await collectModerationFlags(
     text,
@@ -141,30 +148,30 @@ export const performModeration = async (
 
   if (flaggedReasons.length > 0) {
     const moderationResult = getAiModerationVerdict(flaggedReasons);
-    isNSFW = moderationResult.isNSFW;
     moderationStatus = moderationResult.status;
+    isNSFW = moderationResult.isNSFW;
   }
 
-  if (moderationStatus !== ModerationStatus.Approved) {
-    const actionTaken =
-      moderationStatus === ModerationStatus.Rejected
-        ? "BLOCKED_CREATION"
-        : "FLAGGED_FOR_REVIEW";
-
-    await logModerationEvent({
-      userId: userId,
-      timestamp: new Date(),
-      verdict: moderationStatus,
-      categories: flaggedReasons,
-      actionTaken: actionTaken,
-      source: "ai",
-      actorId: "system",
-      reasonSummary: `AI moderation result: ${moderationStatus}`,
-      reasonDetails: `Categories: ${flaggedReasons.join(", ")}`,
-    });
-  }
+  const moderationLogPayloadForResource: ModerationLogPayloadForResource | undefined =
+    moderationStatus !== ModerationStatus.Approved
+      ? {
+          userId,
+          timestamp: new Date(),
+          verdict: moderationStatus,
+          categories: flaggedReasons,
+          actionTaken:
+            moderationStatus === ModerationStatus.Rejected
+              ? "BLOCKED_CREATION"
+              : "FLAGGED_FOR_REVIEW",
+          source: "ai",
+          actorId: "system",
+          reasonSummary: `AI moderation result: ${moderationStatus}`,
+          reasonDetails: `Categories: ${flaggedReasons.join(", ")} (Sources: ${flaggedSource.join(", ")})`,
+        }
+      : undefined;
 
   if (moderationStatus === ModerationStatus.Rejected) {
+    await logModerationEvent(moderationLogPayloadForResource!);
     throw createAppError({
       code: "POLICY_VIOLATION",
       message: "[postService] Post content violates service terms",
@@ -172,5 +179,15 @@ export const performModeration = async (
     });
   }
 
-  return { moderationStatus, isNSFW, flaggedReasons, flaggedSource };
+  const isPending = moderationStatus === ModerationStatus.Pending;
+  return {
+    moderationStatus,
+    flaggedReasons,
+    flaggedSource,
+    isNSFW,
+    isPending,
+    moderationLogPayloadForResource: isPending
+      ? moderationLogPayloadForResource
+      : undefined,
+  };
 };

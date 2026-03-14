@@ -1,4 +1,5 @@
 import type { ModerationStatus } from "@/features/shared/types/content.type";
+import type { ModerationResourceType } from "@/features/moderation/types/moderation.type";
 
 export type ModerationActionTaken =
   | "BLOCKED_CREATION"
@@ -11,7 +12,7 @@ export interface ModerationLogPayload {
   verdict: ModerationStatus;
   categories: string[];
   actionTaken: ModerationActionTaken;
-  resourceType?: "post" | "comment";
+  resourceType?: ModerationResourceType;
   resourceId?: string;
   source?: "ai" | "user_report" | "moderator";
   actorId?: string;
@@ -23,12 +24,12 @@ export interface ModerationLogRepository {
   log(payload: ModerationLogPayload): Promise<void>;
 
   getLatestForResource(
-    resourceType: string,
+    resourceType: ModerationResourceType,
     resourceId: string,
   ): Promise<ModerationLogPayload | null>;
 
   getAllForResource(
-    resourceType: string,
+    resourceType: ModerationResourceType,
     resourceId: string,
   ): Promise<ModerationLogPayload[]>;
 
@@ -39,12 +40,13 @@ export interface ModerationLogRepository {
   getAllForUser(
     userId: string
   ): Promise<ModerationLogPayload[]>;
-}
 
-export interface ModerationLogRepository {
-  log(payload: ModerationLogPayload): Promise<void>;
-  getLatestForResource(
-    resourceType: string,
-    resourceId: string,
-  ): Promise<ModerationLogPayload | null>;
+  /**
+   * Returns the latest moderation log per resourceId for the given resourceType.
+   * The returned array contains at most one entry per resourceId.
+   */
+  getLatestForResources(
+    resourceType: ModerationResourceType,
+    resourceIds: string[],
+  ): Promise<ModerationLogPayload[]>;
 }

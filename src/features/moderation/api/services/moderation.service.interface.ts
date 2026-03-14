@@ -1,6 +1,10 @@
 import type { ModerationPostDto } from "@/features/posts/types/post.dto";
+import type { ModerationResourceType } from "@/features/moderation/types/moderation.type";
 
 export interface ModerationService {
-  getModerationQueue(limit?: number): Promise<ModerationPostDto[]>;
+  getModerationQueue(
+    resourceType: ModerationResourceType,
+    limit?: number,
+  ): Promise<ModerationPostDto[]>;
 }
 

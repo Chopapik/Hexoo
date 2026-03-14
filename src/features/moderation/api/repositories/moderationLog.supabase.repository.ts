@@ -3,6 +3,7 @@ import type {
   ModerationLogRepository,
   ModerationLogPayload,
 } from "./moderationLog.repository.interface";
+import type { ModerationResourceType } from "@/features/moderation/types/moderation.type";
 
 const TABLE = "moderation_logs";
 
@@ -50,7 +51,7 @@ export class SupabaseModerationLogRepository implements ModerationLogRepository 
   }
 
   async getLatestForResource(
-    resourceType: string,
+    resourceType: ModerationResourceType,
     resourceId: string,
   ): Promise<ModerationLogPayload | null> {
     const { data, error } = await supabaseAdmin
@@ -71,7 +72,7 @@ export class SupabaseModerationLogRepository implements ModerationLogRepository 
   }
 
   async getAllForResource(
-    resourceType: string,
+    resourceType: ModerationResourceType,
     resourceId: string,
   ): Promise<ModerationLogPayload[]> {
     const { data, error } = await supabaseAdmin
@@ -117,5 +118,36 @@ export class SupabaseModerationLogRepository implements ModerationLogRepository 
     }
 
     return (data ?? []).map((row) => rowToPayload(row));
+  }
+
+  async getLatestForResources(
+    resourceType: ModerationResourceType,
+    resourceIds: string[],
+  ): Promise<ModerationLogPayload[]> {
+    if (resourceIds.length === 0) return [];
+
+    const { data, error } = await supabaseAdmin
+      .from(TABLE)
+      .select("*")
+      .eq("resource_type", resourceType)
+      .in("resource_id", resourceIds)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      throw error;
+    }
+
+    const latestByResourceId = new Map<string, ModerationLogPayload>();
+
+    for (const row of data ?? []) {
+      const payload = rowToPayload(row);
+      const id = payload.resourceId;
+      if (!id) continue;
+      if (!latestByResourceId.has(id)) {
+        latestByResourceId.set(id, payload);
+      }
+    }
+
+    return Array.from(latestByResourceId.values());
   }
 }

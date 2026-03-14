@@ -1,15 +1,17 @@
 import { hasFile, uploadImage } from "@/features/images/api/image.service";
-import { performModeration } from "@/features/moderation/utils/assessSafety";
+import {
+  performModeration,
+  type ModerationLogPayloadForResource,
+} from "@/features/moderation/utils/assessSafety";
 import type { ImageMeta } from "@/features/images/types/image.type";
-import { ModerationStatus } from "@/features/shared/types/content.type";
 
 type PostContentProcessResult = {
-  moderationStatus: ModerationStatus;
+  isPending: boolean;
   isNSFW: boolean;
-  flaggedReasons: string[];
-  flaggedSource: ("text" | "image")[];
   imageUrl?: string | null;
   imageMeta?: ImageMeta | null;
+  /** When isPending: log with resourceType "post" and resourceId after create/update. */
+  moderationLogPayloadForResource?: ModerationLogPayloadForResource;
 };
 
 export class PostContentService {

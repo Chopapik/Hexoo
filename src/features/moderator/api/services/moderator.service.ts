@@ -85,10 +85,7 @@ export class ModeratorService implements IModeratorService {
     now: Date,
   ) {
     await postRepository.updatePost(postId, {
-      moderationStatus: ModerationStatus.Approved,
-      flaggedReasons: [],
-      reviewedBy: moderatorUid,
-      reviewedAt: now,
+      isPending: false,
     });
     await logModerationEvent({
       userId: post.userId,
@@ -121,9 +118,7 @@ export class ModeratorService implements IModeratorService {
     now: Date,
   ) {
     await postRepository.updatePost(postId, {
-      moderationStatus: ModerationStatus.Pending,
-      reviewedBy: moderatorUid,
-      reviewedAt: now,
+      isPending: true,
     });
     await logModerationEvent({
       userId: post.userId,
@@ -156,7 +151,8 @@ export class ModeratorService implements IModeratorService {
       "Viewed moderation queue",
     );
 
-    return this.moderationService.getModerationQueue(50);
+    // For now we only support posts in the moderation queue.
+    return this.moderationService.getModerationQueue("post", 50);
   }
 
   async blockUser(data: BlockUserDto): Promise<void> {

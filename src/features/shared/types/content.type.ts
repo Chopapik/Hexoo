@@ -18,9 +18,7 @@ export interface ContentBase {
   createdAt: Date;
   updatedAt?: Date;
 
-  moderationStatus: ModerationStatus;
-  flaggedReasons?: string[];
-  flaggedSource?: ("text" | "image")[];
+  isPending?: boolean;
   isNSFW: boolean;
 
   imageUrl?: string | null;

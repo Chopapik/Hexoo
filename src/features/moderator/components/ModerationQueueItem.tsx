@@ -56,7 +56,40 @@ export default function ModerationQueueItem({
                 FLAGA: {post.flaggedReasons.join(", ")}
               </span>
             )}
+            {post.moderationInfo?.source && (
+              <span className="text-cyan-200 bg-cyan-500/20 px-2 py-0.5 rounded">
+                ŹRÓDŁO:{" "}
+                {post.moderationInfo.source === "ai"
+                  ? "AI"
+                  : post.moderationInfo.source === "moderator"
+                  ? "Moderator"
+                  : post.moderationInfo.source === "user_report"
+                  ? "Zgłoszenie użytkownika"
+                  : post.moderationInfo.source}
+              </span>
+            )}
           </div>
+
+          {post.moderationInfo && (
+            <div className="mt-2 text-xs text-text-neutral space-y-1">
+              {post.moderationInfo.reasonSummary && (
+                <p className="font-semibold">
+                  Powód:{" "}
+                  <span className="font-normal">
+                    {post.moderationInfo.reasonSummary}
+                  </span>
+                </p>
+              )}
+              {post.moderationInfo.reasonDetails && (
+                <p className="text-[11px] opacity-80 wrap-break-word">
+                  Szczegóły:{" "}
+                  <span className="italic">
+                    {post.moderationInfo.reasonDetails}
+                  </span>
+                </p>
+              )}
+            </div>
+          )}
 
           {post.reportsMeta && post.reportsMeta.length > 0 ? (
             <div className="mt-3 pt-3">
