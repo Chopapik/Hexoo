@@ -1,3 +1,4 @@
+import "server-only";
 import { createAppError } from "@/lib/AppError";
 import OpenAI from "openai";
 

@@ -84,7 +84,7 @@ export async function getRefreshCookie(): Promise<RefreshCookie> {
 
 export async function getSessionCookie(): Promise<Session> {
   const cookieStore = await cookies();
-  const sessionValue = cookieStore.get("session")?.value;
+  const sessionValue = cookieStore.get(SESSION_COOKIE_NAME)?.value;
 
   if (!sessionValue) {
     return { session: false };

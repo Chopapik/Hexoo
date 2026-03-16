@@ -1,75 +1,62 @@
 <p align="center">
-<img src="logo-animated.svg" alt="Grok Animated Logo" width="100%">
-</p>
-<p align="center">
-  A modern social platform designed for seamless content sharing and community interaction.
+  <img src="logo-animated.svg" alt="Hexoo logo" width="100%">
 </p>
 
-## Overview
+Hexoo is a social platform built with Next.js and Supabase. Users can create posts, comment, like content, and manage profiles, with moderat≠=ion and security protections built into the API layer.
 
-Hexoo is a web-based application that allows users to create posts, engage with others through likes and comments, and manage their personal profiles. The project focuses on providing a clean user interface and a secure environment, featuring built-in moderation tools and security measures such as rate limiting and content assessment.
+## Tech Stack
 
-## Technical Stack
+- Next.js 16 + React 19
+- Supabase (Auth, Postgres, Storage)
+- TanStack React Query + Redux Toolkit
+- Tailwind CSS 4
+- Zod
+- Google reCAPTCHA v3
+- OpenAI moderation integration
 
-The project is built using a modern full-stack architecture:
+## Prerequisites
 
-- **Frontend**: Next.js 16, React 19, Tailwind CSS 4
-- **State Management**: Redux Toolkit & React Redux
-- **Backend Services**: Firebase (Authentication, Firestore, Storage) & Firebase Admin SDK
-- **Security & Moderation**: OpenAI API (Content Moderation), Google reCAPTCHA v3
-- **Data Validation**: Zod
-- **API Communication**: Axios
+- Node.js (latest LTS recommended)
+- npm
+- Supabase project
+- reCAPTCHA v3 keys
 
-## Getting Started
+## Setup
 
-### Prerequisites
+1. Install dependencies:
 
-- Node.js (latest LTS version)
-- npm (comes with Node.js)
-- A Firebase Project created in the Firebase Console
+```bash
+npm install
+```
 
-### Installation and Setup
+2. Create `.env.local` from `.env.sample` and fill required values.
 
-1.  **Clone the repository**:
+3. Start development server:
 
-    ```bash
-    git clone [https://github.com/chopapik/hexoo.git](https://github.com/chopapik/hexoo.git)
-    cd hexoo
-    ```
+```bash
+npm run dev
+```
 
-2.  **Install dependencies**:
-    This will install all necessary packages, including Firebase and OpenAI SDKs:
+## Environment Variables
 
-    ```bash
-    npm install
-    ```
-
-3.  **Firebase CLI (Optional)**:
-    If you need to manage Firebase resources via terminal, install the Firebase CLI globally:
-    ```bash
-    npm install -g firebase-tools
-    ```
-
-### Environment Configuration
-
-Before running the application, you must configure your Firebase credentials. Create a `.env.local` file in the root directory and fill it with your data based on the provided template:
+Use `.env.sample` as the source of truth. Main required variables:
 
 ```env
-# Firebase Public Configuration
-NEXT_PUBLIC_API_KEY=your_api_key
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project_id.firebaseapp.com
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project_id.firebasestorage.app
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
-NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+NEXT_PUBLIC_API_URL=http://localhost:3000/api
+APP_ENV=development
 
-# Firebase Admin Configuration (Server-side)
-FIREBASE_PROJECT_ID=your_project_id
-FIREBASE_CLIENT_EMAIL=your_admin_email
-FIREBASE_PRIVATE_KEY=your_private_key
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+SUPABASE_STORAGE_BUCKET=
 
-# Security and Services
-NEXT_PUBLIC_RECAPTCHA_SITE_KEY=your_site_key
-RECAPTCHA_SECRET_KEY=your_secret_key
-OPENAI_API_KEY=your_openai_api_key
+NEXT_PUBLIC_RECAPTCHA_SITE_KEY=
+RECAPTCHA_SECRET_KEY=
+
+OPENAI_API_KEY=
 ```
+
+## Notes
+
+- `SUPABASE_SERVICE_ROLE_KEY` must only be used in server-side code.
+- Never expose secrets with the `NEXT_PUBLIC_` prefix.
