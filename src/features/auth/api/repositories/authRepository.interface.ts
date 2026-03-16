@@ -1,10 +1,10 @@
-/** Provider-agnostic decoded token (Firebase ID token or Supabase JWT). */
+/** Provider-agnostic decoded token (Supabase JWT). */
 export type AuthDecodedToken = {
   uid: string;
   email?: string | null;
 };
 
-/** Minimal auth user record for e.g. checkEmailAvailability (Firebase UserRecord or Supabase User). */
+/** Minimal auth user record for e.g. checkEmailAvailability. */
 export type AuthUserRecord = {
   uid: string;
   email?: string | null;
@@ -18,7 +18,7 @@ export type RefreshTokens = {
 export interface AuthRepository {
   verifyIdToken(idToken: string): Promise<AuthDecodedToken>;
   createSessionCookie(idToken: string, expiresIn: number): Promise<string>;
-  /** Exchange refresh token for new access + refresh tokens. Supabase only; Firebase throws. */
+  /** Exchange refresh token for new access + refresh tokens. */
   refreshSession(refreshToken: string): Promise<RefreshTokens>;
   getUserByEmail(email: string): Promise<AuthUserRecord | null>;
   deleteUser(uid: string): Promise<void>;

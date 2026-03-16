@@ -1,5 +1,5 @@
 {
-  "name": "my-app",
+  "name": "hexoo",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -26,14 +26,11 @@
     "@types/mdx": "^2.0.13",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.19",
-    "firebase": "^12.8.0",
-    "firebase-admin": "^13.6.0",
     "framer-motion": "^12.23.26",
     "lucide-react": "^0.560.0",
     "next": "16.1.4",
     "openai": "^6.9.1",
     "react": "19.2.0",
-    "react-device-detect": "^2.2.3",
     "react-dom": "19.2.0",
     "react-google-recaptcha-v3": "^1.11.0",
     "react-hook-form": "^7.66.1",

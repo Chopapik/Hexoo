@@ -41,21 +41,10 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# Firebase emulator logs
-firebase-debug.log
-firestore-debug.log
-database-debug.log
-pubsub-debug.log
-storage-debug.log
-/.firebase/
-
 # Supabase CLI (keep migrations; ignore linked project data and temp)
 supabase/.temp/
 supabase/.branches/
 
 # Local dumps / temp files
 *.json
-!firebase.json
-!firestore.rules
-!firestore.indexes.json
 dump_src.py
