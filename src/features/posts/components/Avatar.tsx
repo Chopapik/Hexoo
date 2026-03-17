@@ -1,4 +1,3 @@
-import React from "react";
 import Image from "next/image";
 import defaultAvatarUrl from "@/features/shared/assets/defaultAvatar.svg?url";
 import { cn } from "@/features/shared/utils/utils";
