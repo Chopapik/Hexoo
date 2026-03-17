@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { PublicPostDto } from "../types/post.dto";
 import { isAsciiArt } from "../utils/asciiDetector";
 import { useMemo } from "react";
+import Image from "next/image";
 
 type PostBodyProps = {
   post: PublicPostDto;
@@ -30,10 +31,13 @@ export const PostBody = ({ post, isNSFW = false }: PostBodyProps) => {
         </div>
 
         {post.imageUrl && (
-          <img
-            className="w-full max-w-[95%] relative rounded-xl object-cover"
+          <Image
+            className="w-full max-w-[95%] relative rounded-xl object-cover h-auto"
             src={post.imageUrl}
             alt="Post content"
+            width={1200}
+            height={1200}
+            sizes="(max-width: 768px) 95vw, (max-width: 1200px) 70vw, 800px"
           />
         )}
       </div>

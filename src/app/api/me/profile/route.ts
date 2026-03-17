@@ -17,5 +17,5 @@ export const PUT = withErrorHandling(async (req: NextRequest) => {
 
   const updated = await updateProfile(session, data);
 
-  return handleSuccess({ message: "Profile updated", data: updated });
+  return handleSuccess(updated);
 });

@@ -5,7 +5,7 @@ import { setUser } from "@/features/auth/store/authSlice";
 import { useRouter } from "next/navigation";
 import { ApiError } from "@/lib/AppError";
 import toast from "react-hot-toast";
-import { UserProfileDto } from "@/features/users/types/user.dto";
+import type { SessionData } from "@/features/me/me.type";
 
 type ErrorCallback = (errorCode: string, field?: string) => void;
 
@@ -27,13 +27,13 @@ export default function useUpdateProfile(onError?: ErrorCallback) {
       if (data.name) formData.append("name", data.name);
       if (data.avatarFile) formData.append("avatarFile", data.avatarFile);
 
-      return await fetchClient.put<{ data: UserProfileDto }>(
+      return await fetchClient.put<SessionData>(
         `/me/profile`,
         formData,
       );
     },
     onSuccess: async (response) => {
-      const updatedProfile = response.data;
+      const updatedProfile = response;
 
       if (updatedProfile && windowUser) {
         const newSessionData = {
