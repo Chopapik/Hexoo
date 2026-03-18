@@ -5,7 +5,7 @@ type PostNsfwNoticeProps = {
 export const PostNsfwNotice = ({ className = "" }: PostNsfwNoticeProps) => {
   return (
     <div
-      className={`flex flex-col items-center justify-center gap-3 transition-colors group ${className}`.trim()}
+      className={`flex flex-col items-center justify-center gap-3 transition-colors group w-full h-full ${className}`.trim()}
     >
       <div className="p-3  rounded-full bg-red-500/10 text-red-500 transition-colors">
         <svg
