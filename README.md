@@ -60,3 +60,8 @@ OPENAI_API_KEY=
 
 - `SUPABASE_SERVICE_ROLE_KEY` must only be used in server-side code.
 - Never expose secrets with the `NEXT_PUBLIC_` prefix.
+
+## License
+
+This repository is source-available for viewing and reference only.
+No permission is granted to copy, modify, redistribute, or use this code, in whole or in part, without prior written permission from the author.
