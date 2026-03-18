@@ -1,6 +1,6 @@
 import { postRepository } from "@/features/posts/api/repositories";
 import { getUsersByIds } from "@/features/users/api/services";
-import type { ModerationPostDto } from "@/features/posts/types/post.dto";
+import type { ModerationPostResponseDto as ModerationPostResponse } from "@/features/posts/types/post.dto";
 import { ModerationStatus } from "@/features/shared/types/content.type";
 import type { ModerationResourceType } from "@/features/moderation/types/moderation.type";
 import { getModerationLogsForResource } from "./moderationLog.service";
@@ -10,7 +10,7 @@ export class ModerationService implements IModerationService {
   async getModerationQueue(
     resourceType: ModerationResourceType,
     limit: number = 50,
-  ): Promise<ModerationPostDto[]> {
+  ): Promise<ModerationPostResponse[]> {
     // Currently only posts are supported; comments can be added later.
     if (resourceType !== "post") {
       throw new Error(

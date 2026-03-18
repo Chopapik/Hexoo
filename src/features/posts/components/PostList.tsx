@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
-import type { PublicPostDto } from "../types/post.dto";
+import type { PublicPostResponseDto } from "../types/post.dto";
 import { PostCard } from "./PostCard";
 import usePosts from "../hooks/usePosts";
 
@@ -83,7 +83,7 @@ export default function PostList({ className = "" }: PostListProps) {
       <div className="space-y-4">
         {data?.pages.map((group, i) => (
           <React.Fragment key={i}>
-            {group.map((post: PublicPostDto) => (
+            {group.map((post: PublicPostResponseDto) => (
               <PostCard key={post.id} post={post} />
             ))}
           </React.Fragment>

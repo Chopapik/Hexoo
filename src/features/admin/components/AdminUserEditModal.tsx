@@ -9,7 +9,7 @@ import Select from "@/features/shared/components/ui/Select";
 import Button from "@/features/shared/components/ui/Button";
 import type { PrivateUserResponseDto } from "@/features/users/types/user.dto";
 import type { UserRole } from "@/features/users/types/user.type";
-import type { UpdateUserDto } from "@/features/users/types/user.dto";
+import type { UpdateUserRequestDto } from "@/features/users/types/user.dto";
 import useAdminUpdateUserAccount from "../hooks/user/useAdminUpdateUserAccount";
 import useAdminUpdateUserPassword from "../hooks/user/useAdminUpdateUserPassword";
 import useBlockUser from "../hooks/user/useBlockUser";
@@ -26,7 +26,7 @@ export default function AdminUserEditModal({
   user: PrivateUserResponseDto | null;
   onClose: () => void;
 }) {
-  const [newUserData, setNewUserData] = useState<Partial<UpdateUserDto>>({
+  const [newUserData, setNewUserData] = useState<Partial<UpdateUserRequestDto>>({
     name: "",
     role: undefined,
   });
@@ -52,7 +52,7 @@ export default function AdminUserEditModal({
   }, [user]);
 
   const handleFieldChange = (
-    field: keyof UpdateUserDto,
+    field: keyof UpdateUserRequestDto,
     value: string | UserRole,
   ) => {
     setNewUserData((prev) => ({

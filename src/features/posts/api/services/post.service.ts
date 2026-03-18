@@ -10,12 +10,12 @@ import {
 
 import { PostEntity } from "../../types/post.entity";
 import {
-  CreatePostDto,
-  CreatePostResultDto,
-  UpdatePostDto,
+  CreatePostRequestDto as CreatePostRequest,
+  CreatePostResponseDto as CreatePostResponse,
+  UpdatePostRequestDto as UpdatePostRequest,
   CreatePostSchema,
   UpdatePostSchema,
-  PublicPostDto,
+  PublicPostResponseDto as PublicPostResponse,
 } from "../../types/post.dto";
 import { SessionData } from "@/features/me/me.type";
 
@@ -24,6 +24,11 @@ import { PostContentService } from "./post.content.service";
 import { PostService as IPostService } from "./post.service.interface";
 import { CreatePostPayload } from "../../types/post.payload";
 import { logActivity } from "@/features/activity/api/services";
+
+type CreatePostInput = CreatePostRequest;
+type CreatePostResult = CreatePostResponse;
+type UpdatePostInput = UpdatePostRequest;
+type PublicPost = PublicPostResponse;
 
 type ImageDeleter = (storagePath?: string | null) => Promise<void>;
 
@@ -55,7 +60,7 @@ export class PostService implements IPostService {
     }
   }
 
-  private async enrichPosts(posts: PostEntity[]): Promise<PublicPostDto[]> {
+  private async enrichPosts(posts: PostEntity[]): Promise<PublicPost[]> {
     if (posts.length === 0) return [];
 
     const authorIds = [...new Set(posts.map((post) => post.userId))];
@@ -73,7 +78,7 @@ export class PostService implements IPostService {
 
     const moderationInfoByPostId: Record<
       string,
-      PublicPostDto["moderationInfo"]
+      PublicPost["moderationInfo"]
     > = {};
 
     if (this.session) {
@@ -114,7 +119,7 @@ export class PostService implements IPostService {
     });
   }
 
-  async createPost(createPostData: CreatePostDto): Promise<CreatePostResultDto> {
+  async createPost(createPostData: CreatePostInput): Promise<CreatePostResult> {
     const user = this.ensureUser();
     this.validateRestricted(user);
 
@@ -223,8 +228,8 @@ export class PostService implements IPostService {
 
   async updatePost(
     postId: string,
-    updateData: UpdatePostDto,
-  ): Promise<PublicPostDto> {
+    updateData: UpdatePostInput,
+  ): Promise<PublicPost> {
     const user = this.ensureUser();
 
     const parsed = UpdatePostSchema.safeParse(updateData);
@@ -279,7 +284,7 @@ export class PostService implements IPostService {
     return await this.getPostById(postId);
   }
 
-  async getPostById(postId: string): Promise<PublicPostDto> {
+  async getPostById(postId: string): Promise<PublicPost> {
     if (!postId?.trim())
       throw createAppError({ code: "NOT_FOUND", message: "Empty ID" });
 
@@ -291,7 +296,7 @@ export class PostService implements IPostService {
     return enriched[0];
   }
 
-  async getPosts(limit = 20, startAfterId?: string): Promise<PublicPostDto[]> {
+  async getPosts(limit = 20, startAfterId?: string): Promise<PublicPost[]> {
     const posts = await this.repository.getPosts(limit, startAfterId);
     return this.enrichPosts(posts);
   }
@@ -300,7 +305,7 @@ export class PostService implements IPostService {
     userId: string,
     limit = 20,
     startAfterId?: string,
-  ): Promise<PublicPostDto[]> {
+  ): Promise<PublicPost[]> {
     const posts = await this.repository.getPostsByUserId(
       userId,
       limit,

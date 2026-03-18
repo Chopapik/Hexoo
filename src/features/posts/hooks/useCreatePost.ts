@@ -1,6 +1,9 @@
 import fetchClient from "@/lib/fetchClient";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { CreatePostDto, CreatePostResultDto } from "../types/post.dto";
+import {
+  CreatePostRequestDto,
+  CreatePostResponseDto,
+} from "../types/post.dto";
 import toast from "react-hot-toast";
 import { useAppSelector } from "@/lib/store/hooks";
 
@@ -16,8 +19,8 @@ export default function useCreatePost(
   );
 
   const mutation = useMutation({
-    mutationFn: async (postData: CreatePostDto | FormData) => {
-      return await fetchClient.post<CreatePostResultDto>("/posts", postData);
+    mutationFn: async (postData: CreatePostRequestDto | FormData) => {
+      return await fetchClient.post<CreatePostResponseDto>("/posts", postData);
     },
 
     onSuccess: async (data) => {

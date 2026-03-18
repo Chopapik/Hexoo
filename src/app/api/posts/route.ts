@@ -2,7 +2,7 @@ import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
 import { NextRequest } from "next/server";
-import { CreatePostDto } from "@/features/posts/types/post.dto";
+import { CreatePostRequestDto } from "@/features/posts/types/post.dto";
 import { createPost, getPosts } from "@/features/posts/api/services";
 export const POST = withErrorHandling(async (req: NextRequest) => {
   const session = await getUserFromSession();
@@ -16,7 +16,7 @@ export const POST = withErrorHandling(async (req: NextRequest) => {
       text,
       device,
       imageFile,
-    } as CreatePostDto);
+    } as CreatePostRequestDto);
     return handleSuccess(result, 201);
   }
   const body = await req.json();

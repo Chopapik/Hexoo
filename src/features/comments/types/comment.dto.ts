@@ -33,13 +33,13 @@ export const AddCommentSchema = z
     },
   );
 
-export type AddCommentDto = z.infer<typeof AddCommentSchema>;
-export type AddCommentResultDto = {
+export type AddCommentRequestDto = z.infer<typeof AddCommentSchema>;
+export type AddCommentResponseDto = {
   isPending: boolean;
   isNSFW: boolean;
 };
 
-export type PublicCommentDto = Omit<
+export type PublicCommentResponseDto = Omit<
   CommentEntity,
   | "flaggedReasons"
   | "flaggedSource"

@@ -55,16 +55,16 @@ export const ReportPostSchema = z.object({
   details: z.string().optional(),
 });
 
-export type CreatePostDto = z.infer<typeof CreatePostSchema>;
-export type UpdatePostDto = z.infer<typeof UpdatePostSchema>;
-export type ReportPostDto = z.infer<typeof ReportPostSchema>;
-export type CreatePostResultDto = {
+export type CreatePostRequestDto = z.infer<typeof CreatePostSchema>;
+export type UpdatePostRequestDto = z.infer<typeof UpdatePostSchema>;
+export type ReportPostRequestDto = z.infer<typeof ReportPostSchema>;
+export type CreatePostResponseDto = {
   postId: string;
   isPending: boolean;
   isNSFW: boolean;
 };
 
-export type PublicPostDto = Omit<
+export type PublicPostResponseDto = Omit<
   PostEntity,
   | "flaggedReasons"
   | "flaggedSource"
@@ -87,7 +87,7 @@ export type PublicPostDto = Omit<
   };
 };
 
-export type ModerationPostDto = PostEntity & {
+export type ModerationPostResponseDto = PostEntity & {
   moderationStatus: ModerationStatus;
   flaggedReasons?: string[];
   moderationInfo?: {
@@ -104,7 +104,7 @@ export type ModerationPostDto = PostEntity & {
   isLikedByMe?: boolean;
 };
 
-export interface PostReportDto {
+export interface PostReportRequestDto {
   postId: string;
   reason: string;
   details?: string;

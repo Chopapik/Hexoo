@@ -27,10 +27,10 @@ export const RestrictUserSchema = z.object({
   reason: z.string().min(1),
 });
 
-export type CreateUserDto = z.infer<typeof CreateUserSchema>;
-export type UpdateUserDto = z.infer<typeof UpdateUserSchema>;
-export type BlockUserDto = z.infer<typeof BlockUserSchema>;
-export type RestrictUserDto = z.infer<typeof RestrictUserSchema>;
+export type CreateUserRequestDto = z.infer<typeof CreateUserSchema>;
+export type UpdateUserRequestDto = z.infer<typeof UpdateUserSchema>;
+export type BlockUserRequestDto = z.infer<typeof BlockUserSchema>;
+export type RestrictUserRequestDto = z.infer<typeof RestrictUserSchema>;
 
 export type PublicUserResponseDto = Pick<
   UserEntity,
@@ -54,4 +54,4 @@ export type PrivateUserResponseDto = PublicUserResponseDto &
     | "lastKnownIp"
   >;
 
-export type UserProfileDto = PublicUserResponseDto;
+export type UserProfileResponseDto = PublicUserResponseDto;

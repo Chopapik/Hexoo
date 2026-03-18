@@ -1,12 +1,12 @@
 "use client";
 
-import type { PublicPostDto } from "../types/post.dto";
+import type { PublicPostResponseDto } from "../types/post.dto";
 import { CommentIcon } from "../icons/CommentIcon";
 import { LikeIcon } from "../icons/LikeIcon";
 import { useToggleLike } from "../hooks/useToggleLike";
 
 type PostFooterProps = {
-  post: PublicPostDto;
+  post: PublicPostResponseDto;
   onCommentClick: () => void;
 };
 

@@ -1,11 +1,11 @@
 import Link from "next/link";
-import type { PublicPostDto } from "../types/post.dto";
+import type { PublicPostResponseDto } from "../types/post.dto";
 import { isAsciiArt } from "../utils/asciiDetector";
 import { useMemo } from "react";
 import Image from "next/image";
 
 type PostBodyProps = {
-  post: PublicPostDto;
+  post: PublicPostResponseDto;
   isNSFW?: boolean;
 };
 

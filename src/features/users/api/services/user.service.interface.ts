@@ -1,18 +1,18 @@
 import {
-  CreateUserDto,
-  RestrictUserDto,
-  UserProfileDto,
+  CreateUserRequestDto as CreateUserRequest,
+  RestrictUserRequestDto as RestrictUserRequest,
+  UserProfileResponseDto as UserProfileResponse,
 } from "../../types/user.dto";
 import type { UserEntity } from "../../types/user.entity";
 
 export interface UserService {
-  createUser(uid: string, data: CreateUserDto): Promise<void>;
+  createUser(uid: string, data: CreateUserRequest): Promise<void>;
   getUserByUid(uid: string): Promise<UserEntity | null>;
-  getUserProfile(name: string): Promise<{ user: UserProfileDto } | null>;
+  getUserProfile(name: string): Promise<{ user: UserProfileResponse } | null>;
   getUsersByIds(
     uids: string[],
   ): Promise<Record<string, { name: string; avatarUrl?: string | null }>>;
   unrestrictUser(uid: string): Promise<void>;
-  restrictUser(data: RestrictUserDto): Promise<void>;
+  restrictUser(data: RestrictUserRequest): Promise<void>;
   restrictUserBySystem(uid: string, reason: string): Promise<void>;
 }

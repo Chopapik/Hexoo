@@ -8,7 +8,7 @@ import Button from "@/features/shared/components/ui/Button";
 import EditProfileModal from "../../me/components/EditProfileModal";
 import "dayjs/locale/pl";
 import { formatDate } from "@/features/shared/utils/dateUtils";
-import { UserProfileDto } from "@/features/users/types/user.dto";
+import { UserProfileResponseDto } from "@/features/users/types/user.dto";
 
 const status = "Offline";
 
@@ -19,7 +19,7 @@ export const UserProfileCard = ({
 }: {
   username: string;
   enableEditProfile: boolean;
-  initialUser?: UserProfileDto;
+  initialUser?: UserProfileResponseDto;
 }) => {
   const { userProfileData } = useProfile(username, initialUser);
 

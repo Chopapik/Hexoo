@@ -2,7 +2,7 @@
 
 import Button from "@/features/shared/components/ui/Button";
 import { useModeratorDashboard } from "../hooks/useModeratorDashboard";
-import { ModerationPostDto } from "@/features/posts/types/post.dto";
+import { ModerationPostResponseDto } from "@/features/posts/types/post.dto";
 import ModerationQueueItem from "./ModerationQueueItem";
 
 export default function ModeratorDashboard() {
@@ -60,7 +60,7 @@ export default function ModeratorDashboard() {
                 </div>
               )}
 
-              {posts?.map((post: ModerationPostDto) => (
+              {posts?.map((post: ModerationPostResponseDto) => (
                 <ModerationQueueItem
                   key={post.id}
                   post={post}

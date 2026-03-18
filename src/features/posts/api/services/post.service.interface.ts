@@ -1,9 +1,9 @@
 import { ModerationStatus } from "@/features/shared/types/content.type";
 import {
-  CreatePostDto,
-  CreatePostResultDto,
-  PublicPostDto,
-  UpdatePostDto,
+  CreatePostRequestDto as CreatePostRequest,
+  CreatePostResponseDto as CreatePostResponse,
+  PublicPostResponseDto as PublicPostResponse,
+  UpdatePostRequestDto as UpdatePostRequest,
 } from "../../types/post.dto";
 
 export interface PostService {
@@ -12,18 +12,24 @@ export interface PostService {
     reason: string,
     details?: string,
   ): Promise<{ hidden: boolean; reportsCount: number }>;
-  createPost(data: CreatePostDto): Promise<CreatePostResultDto>;
-  updatePost(postId: string, data: UpdatePostDto): Promise<PublicPostDto>;
+  createPost(data: CreatePostRequest): Promise<CreatePostResponse>;
+  updatePost(
+    postId: string,
+    data: UpdatePostRequest,
+  ): Promise<PublicPostResponse>;
   deletePost(postId: string): Promise<void>;
   setModerationStatus(
     postId: string,
     status: ModerationStatus.Approved | ModerationStatus.Pending,
   ): Promise<void>;
-  getPostById(postId: string): Promise<PublicPostDto>;
-  getPosts(limit?: number, startAfterId?: string): Promise<PublicPostDto[]>;
+  getPostById(postId: string): Promise<PublicPostResponse>;
+  getPosts(
+    limit?: number,
+    startAfterId?: string,
+  ): Promise<PublicPostResponse[]>;
   getPostsByUserId(
     userId: string,
     limit?: number,
     startAfterId?: string,
-  ): Promise<PublicPostDto[]>;
+  ): Promise<PublicPostResponse[]>;
 }

@@ -1,11 +1,11 @@
-import type { ModerationPostDto } from "@/features/posts/types/post.dto";
+import type { ModerationPostResponseDto as ModerationPostResponse } from "@/features/posts/types/post.dto";
 import type { ModerationResourceType } from "@/features/moderation/types/moderation.type";
-import type { BlockUserDto } from "@/features/users/types/user.dto";
+import type { BlockUserRequestDto as BlockUserRequest } from "@/features/users/types/user.dto";
 
 export interface ModeratorService {
   getModerationQueue(
     resourceType: ModerationResourceType,
-  ): Promise<ModerationPostDto[]>;
+  ): Promise<ModerationPostResponse[]>;
   reviewPost(
     postId: string,
     action: "approve" | "reject" | "quarantine",
@@ -13,6 +13,6 @@ export interface ModeratorService {
     categories: string[],
     justification: string,
   ): Promise<void>;
-  blockUser(data: BlockUserDto): Promise<void>;
+  blockUser(data: BlockUserRequest): Promise<void>;
   unblockUser(uid: string): Promise<void>;
 }

@@ -1,11 +1,11 @@
 "use client";
 
-import type { PublicCommentDto } from "../types/comment.dto";
+import type { PublicCommentResponseDto } from "../types/comment.dto";
 import { CommentItem } from "./CommentItem";
 import { Loader2 } from "lucide-react";
 
 interface CommentListProps {
-  comments: PublicCommentDto[];
+  comments: PublicCommentResponseDto[];
   isLoading: boolean;
 }
 

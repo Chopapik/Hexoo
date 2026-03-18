@@ -9,11 +9,11 @@ import { CommentForm } from "@/features/comments/components/CommentForm";
 import useComments from "@/features/comments/hooks/useComments";
 import { useAppSelector } from "@/lib/store/hooks";
 import { isAsciiArt } from "../utils/asciiDetector";
-import { PublicPostDto } from "../types/post.dto";
+import { PublicPostResponseDto } from "../types/post.dto";
 import { PostNsfwNotice } from "./PostNsfwNotice";
 
 interface PostModalProps {
-  post: PublicPostDto;
+  post: PublicPostResponseDto;
   isOpen: boolean;
   onClose: () => void;
   revealNSFW?: boolean;

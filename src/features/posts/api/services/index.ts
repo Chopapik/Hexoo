@@ -4,10 +4,10 @@ import { deleteImage } from "@/features/images/api/image.service";
 import { PostContentService } from "./post.content.service";
 import { PostService } from "./post.service";
 import type {
-  CreatePostDto,
-  CreatePostResultDto,
-  UpdatePostDto,
-  PublicPostDto,
+  CreatePostRequestDto as CreatePostRequest,
+  CreatePostResponseDto as CreatePostResponse,
+  UpdatePostRequestDto as UpdatePostRequest,
+  PublicPostResponseDto as PublicPostResponse,
 } from "../../types/post.dto";
 import type { ModerationStatus } from "@/features/shared/types/content.type";
 import type { SessionData } from "@/features/me/me.type";
@@ -28,8 +28,8 @@ export const getPostService = (
 
 export async function createPost(
   session: SessionData | null,
-  data: CreatePostDto,
-): Promise<CreatePostResultDto> {
+  data: CreatePostRequest,
+): Promise<CreatePostResponse> {
   const service = getPostService(session);
   return await service.createPost(data);
 }
@@ -37,8 +37,8 @@ export async function createPost(
 export async function updatePost(
   session: SessionData | null,
   postId: string,
-  data: UpdatePostDto,
-): Promise<PublicPostDto> {
+  data: UpdatePostRequest,
+): Promise<PublicPostResponse> {
   const service = getPostService(session);
   return await service.updatePost(postId, data);
 }
@@ -54,7 +54,7 @@ export async function deletePost(
 export async function getPostById(
   session: SessionData | null,
   postId: string,
-): Promise<PublicPostDto> {
+): Promise<PublicPostResponse> {
   const service = getPostService(session);
   return await service.getPostById(postId);
 }
@@ -63,7 +63,7 @@ export async function getPosts(
   session: SessionData | null,
   limit?: number,
   startAfterId?: string,
-): Promise<PublicPostDto[]> {
+): Promise<PublicPostResponse[]> {
   const service = getPostService(session);
   return await service.getPosts(limit, startAfterId);
 }
@@ -73,7 +73,7 @@ export async function getPostsByUserId(
   userId: string,
   limit?: number,
   startAfterId?: string,
-): Promise<PublicPostDto[]> {
+): Promise<PublicPostResponse[]> {
   const service = getPostService(session);
   return await service.getPostsByUserId(userId, limit, startAfterId);
 }
