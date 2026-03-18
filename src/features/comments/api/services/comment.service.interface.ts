@@ -1,10 +1,10 @@
 import type {
-  AddCommentDto,
-  AddCommentResultDto,
-  PublicCommentDto,
+  AddCommentRequestDto as AddCommentRequest,
+  AddCommentResponseDto as AddCommentResponse,
+  PublicCommentResponseDto as PublicCommentResponse,
 } from "../../types/comment.dto";
 
 export interface CommentService {
-  addComment(data: AddCommentDto): Promise<AddCommentResultDto>;
-  getCommentsByPostId(postId: string): Promise<PublicCommentDto[]>;
+  addComment(data: AddCommentRequest): Promise<AddCommentResponse>;
+  getCommentsByPostId(postId: string): Promise<PublicCommentResponse[]>;
 }

@@ -1,4 +1,4 @@
-export interface UpdateProfileDto {
+export interface UpdateProfileRequestDto {
   name?: string;
   avatarFile?: File;
 }

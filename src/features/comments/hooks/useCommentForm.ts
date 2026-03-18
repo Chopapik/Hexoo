@@ -1,6 +1,9 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AddCommentDto, AddCommentSchema } from "../types/comment.dto";
+import {
+  AddCommentRequestDto,
+  AddCommentSchema,
+} from "../types/comment.dto";
 import { useImagePicker } from "@/features/shared/hooks/useImagePicker";
 
 export default function useCommentForm(postId: string) {
@@ -15,7 +18,7 @@ export default function useCommentForm(postId: string) {
     setError,
     watch,
     formState: { errors, isSubmitting },
-  } = useForm<AddCommentDto>({
+  } = useForm<AddCommentRequestDto>({
     resolver: zodResolver(AddCommentSchema),
     defaultValues: {
       text: "",
@@ -49,7 +52,7 @@ export default function useCommentForm(postId: string) {
     clearErrors("imageFile");
   };
 
-  const checkFormat = (rawData: AddCommentDto) => {
+  const checkFormat = (rawData: AddCommentRequestDto) => {
     const values = rawData ?? getValues();
     const imageFile: File | undefined = values.imageFile;
     const text: string = values.text ?? "";

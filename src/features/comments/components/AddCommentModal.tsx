@@ -2,9 +2,9 @@
 
 import Modal from "@/features/shared/components/layout/Modal";
 import useAddComment from "../hooks/useAddComment";
-import { AddCommentDto } from "../types/comment.dto";
+import { AddCommentRequestDto } from "../types/comment.dto";
 import Button from "@/features/shared/components/ui/Button";
-import type { PublicPostDto } from "@/features/posts/types/post.dto";
+import type { PublicPostResponseDto } from "@/features/posts/types/post.dto";
 import useCommentForm from "../hooks/useCommentForm";
 import { parseCommentErrorMessages } from "../utils/commentErrorMap";
 import warningIconUrl from "@/features/shared/assets/icons/warning.svg?url";
@@ -13,7 +13,7 @@ import RemoveImageButton from "@/features/shared/components/ui/RemoveImageButton
 import { PaperclipIcon } from "@/features/posts/icons/PaperclipIcon";
 
 interface AddCommentModalProps {
-  post: PublicPostDto;
+  post: PublicPostResponseDto;
   isOpen: boolean;
   onClose: () => void;
 }
@@ -51,7 +51,7 @@ export default function AddCommentModal({
     (errorCode) => handleServerErrors(errorCode),
   );
 
-  const onSubmit = (data: AddCommentDto) => {
+  const onSubmit = (data: AddCommentRequestDto) => {
     const formatted = checkFormat({ ...data, postId: post.id });
     addComment(formatted);
   };

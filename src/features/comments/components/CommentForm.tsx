@@ -1,6 +1,6 @@
 "use client";
 
-import { AddCommentDto, COMMENT_MAX_CHARS } from "../types/comment.dto";
+import { AddCommentRequestDto, COMMENT_MAX_CHARS } from "../types/comment.dto";
 import Button from "@/features/shared/components/ui/Button";
 import useCommentForm from "../hooks/useCommentForm";
 import useAddComment from "../hooks/useAddComment";
@@ -42,7 +42,7 @@ export const CommentForm = ({ postId }: CommentFormProps) => {
     (errorCode) => handleServerErrors(errorCode),
   );
 
-  const onSubmit = (data: AddCommentDto) => {
+  const onSubmit = (data: AddCommentRequestDto) => {
     const formatted = checkFormat({ ...data, postId });
     addComment(formatted);
   };

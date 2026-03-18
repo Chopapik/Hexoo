@@ -1,6 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import fetchClient from "@/lib/fetchClient";
-import { AddCommentDto, AddCommentResultDto } from "../types/comment.dto";
+import {
+  AddCommentRequestDto,
+  AddCommentResponseDto,
+} from "../types/comment.dto";
 import toast from "react-hot-toast";
 import { parseCommentErrorMessages } from "../utils/commentErrorMap";
 import { ApiError } from "@/lib/AppError";
@@ -18,12 +21,12 @@ export default function useAddComment(
   );
 
   const mutation = useMutation({
-    mutationFn: async (data: AddCommentDto | FormData) => {
+    mutationFn: async (data: AddCommentRequestDto | FormData) => {
       const postId =
         data instanceof FormData
           ? String(data.get("postId") || "")
           : String(data.postId || "");
-      return await fetchClient.post<AddCommentResultDto>(
+      return await fetchClient.post<AddCommentResponseDto>(
         `/posts/${postId}/comments`,
         data,
       );

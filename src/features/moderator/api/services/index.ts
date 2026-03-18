@@ -3,7 +3,7 @@ import { ModeratorService } from "./moderator.service";
 import { ModerationService } from "@/features/moderation/api/services/moderation.service";
 import { userRepository } from "@/features/users/api/repositories";
 import { authRepository } from "@/features/auth/api/repositories";
-import type { BlockUserDto } from "@/features/users/types/user.dto";
+import type { BlockUserRequestDto as BlockUserRequest } from "@/features/users/types/user.dto";
 
 export const getModeratorService = (
   session: SessionData | null,
@@ -34,7 +34,10 @@ export async function reviewPost(
   return await service.reviewPost(postId, action, banAuthor, categories, justification);
 }
 
-export async function blockUser(session: SessionData | null, data: BlockUserDto) {
+export async function blockUser(
+  session: SessionData | null,
+  data: BlockUserRequest,
+) {
   const service = getModeratorService(session);
   return await service.blockUser(data);
 }

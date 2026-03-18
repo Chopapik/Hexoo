@@ -1,7 +1,7 @@
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import { NextRequest } from "next/server";
-import { UpdatePostDto } from "@/features/posts/types/post.dto";
+import { UpdatePostRequestDto } from "@/features/posts/types/post.dto";
 import {
   deletePost,
   getPostById,
@@ -34,7 +34,7 @@ export const PUT = withErrorHandling(
         text,
         device,
         imageFile,
-      } as UpdatePostDto);
+      } as UpdatePostRequestDto);
       return handleSuccess(result, 201);
     }
 

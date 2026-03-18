@@ -7,14 +7,18 @@ import type { SessionData } from "@/features/me/me.type";
 import type { LikeRepository } from "@/features/likes/api/repositories";
 import type { CommentRepository } from "../repositories/comment.repository.interface";
 import type {
-  AddCommentDto,
-  AddCommentResultDto,
-  PublicCommentDto,
+  AddCommentRequestDto as AddCommentRequest,
+  AddCommentResponseDto as AddCommentResponse,
+  PublicCommentResponseDto as PublicCommentResponse,
 } from "../../types/comment.dto";
 import { AddCommentSchema } from "../../types/comment.dto";
 import type { CreateCommentPayload } from "../../types/comment.payload";
 import type { CommentService as ICommentService } from "./comment.service.interface";
 import { logActivity } from "@/features/activity/api/services";
+
+type AddCommentInput = AddCommentRequest;
+type AddCommentResult = AddCommentResponse;
+type PublicComment = PublicCommentResponse;
 
 export class CommentService implements ICommentService {
   constructor(
@@ -42,7 +46,7 @@ export class CommentService implements ICommentService {
     }
   }
 
-  async addComment(data: AddCommentDto): Promise<AddCommentResultDto> {
+  async addComment(data: AddCommentInput): Promise<AddCommentResult> {
     const user = this.ensureUser();
     this.validateRestricted(user);
 
@@ -105,7 +109,7 @@ export class CommentService implements ICommentService {
     };
   }
 
-  async getCommentsByPostId(postId: string): Promise<PublicCommentDto[]> {
+  async getCommentsByPostId(postId: string): Promise<PublicComment[]> {
     if (!postId?.trim()) {
       throw createAppError({
         code: "INVALID_INPUT",
@@ -134,7 +138,7 @@ export class CommentService implements ICommentService {
         userName: author?.name ?? "Unknown",
         userAvatarUrl: author?.avatarUrl ?? null,
         isLikedByMe: likedCommentIds.includes(doc.id),
-      } satisfies PublicCommentDto;
+      } satisfies PublicComment;
     });
   }
 }

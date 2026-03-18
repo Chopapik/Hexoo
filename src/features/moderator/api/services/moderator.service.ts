@@ -2,9 +2,9 @@ import { createAppError } from "@/lib/AppError";
 import { postRepository } from "@/features/posts/api/repositories";
 import { deleteImage } from "@/features/images/api/image.service";
 import { logActivity } from "@/features/activity/api/services";
-import { ModerationPostDto } from "@/features/posts/types/post.dto";
+import { ModerationPostResponseDto as ModerationPostResponse } from "@/features/posts/types/post.dto";
 import { UserRole } from "@/features/users/types/user.type";
-import type { BlockUserDto } from "@/features/users/types/user.dto";
+import type { BlockUserRequestDto as BlockUserRequest } from "@/features/users/types/user.dto";
 import { ModerationStatus } from "@/features/shared/types/content.type";
 import { logModerationEvent } from "@/features/moderation/api/services/moderationLog.service";
 import type { ModerationService as IModerationService } from "@/features/moderation/api/services/moderation.service.interface";
@@ -142,7 +142,7 @@ export class ModeratorService implements IModeratorService {
     }
   }
 
-  async getModerationQueue(): Promise<ModerationPostDto[]> {
+  async getModerationQueue(): Promise<ModerationPostResponse[]> {
     const session = this.ensureModeratorOrAdmin();
 
     await logActivity(
@@ -155,7 +155,7 @@ export class ModeratorService implements IModeratorService {
     return this.moderationService.getModerationQueue("post", 50);
   }
 
-  async blockUser(data: BlockUserDto): Promise<void> {
+  async blockUser(data: BlockUserRequest): Promise<void> {
     const session = this.ensureModeratorOrAdmin();
 
     if (!data.uidToBlock) {

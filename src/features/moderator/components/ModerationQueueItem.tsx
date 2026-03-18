@@ -1,5 +1,5 @@
 import { PostCard } from "@/features/posts/components/PostCard";
-import { ModerationPostDto } from "@/features/posts/types/post.dto";
+import { ModerationPostResponseDto } from "@/features/posts/types/post.dto";
 import { ReportDetails } from "@/features/shared/types/report.type";
 import Button from "@/features/shared/components/ui/Button";
 import ModerationReasonModal from "@/features/posts/components/ModerationReasonModal";
@@ -12,7 +12,7 @@ export default function ModerationQueueItem({
   onAction,
   isPending,
 }: {
-  post: ModerationPostDto;
+  post: ModerationPostResponseDto;
   onAction: (params: {
     postId: string;
     action: "approve" | "reject" | "quarantine";
@@ -133,7 +133,7 @@ export default function ModerationQueueItem({
           )}
         </div>
 
-        <PostCard post={post} />
+        <PostCard post={post} revealNSFW={true} />
 
         <div className="bg-secondary-neutral-background-default p-3 flex flex-wrap justify-end gap-3 border-t border-white/10 shadow-[0_-5px_15px_rgba(0,0,0,0.5)]">
           <Button

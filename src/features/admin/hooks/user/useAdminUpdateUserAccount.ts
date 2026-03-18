@@ -1,10 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
 import fetchClient from "@/lib/fetchClient";
-import type { UpdateUserDto } from "@/features/users/types/user.dto";
+import type { UpdateUserRequestDto } from "@/features/users/types/user.dto";
 
 type UpdateUserArgs = {
   uid: string;
-  data: UpdateUserDto;
+  data: UpdateUserRequestDto;
 };
 
 export default function useAdminUpdateUserAccount() {

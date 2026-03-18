@@ -58,8 +58,8 @@ import type {
 import type { ValidationMessage as ValidationMessageType } from "@/features/shared/types/validation.type";
 import type { SessionData } from "@/features/me/me.type";
 import type {
-  PublicPostDto,
-  ModerationPostDto,
+  PublicPostResponseDto,
+  ModerationPostResponseDto,
 } from "@/features/posts/types/post.dto";
 import type {
   PublicUserResponseDto,
@@ -160,7 +160,7 @@ const demoAdminUser: PrivateUserResponseDto = {
   lastKnownIp: undefined,
 };
 
-const demoPost: PublicPostDto = {
+const demoPost: PublicPostResponseDto = {
   id: "post-1",
   userId: "user-2",
   userName: "Ola",
@@ -174,7 +174,7 @@ const demoPost: PublicPostDto = {
   isNSFW: false,
 };
 
-const demoPostNsfw: PublicPostDto = {
+const demoPostNsfw: PublicPostResponseDto = {
   ...demoPost,
   id: "post-2",
   userId: "user-3",
@@ -186,7 +186,7 @@ const demoPostNsfw: PublicPostDto = {
   commentsCount: 0,
 };
 
-const demoModerationPost: ModerationPostDto = {
+const demoModerationPost: ModerationPostResponseDto = {
   ...demoPost,
   id: "post-3",
   moderationStatus: ModerationStatus.Pending,

@@ -1,4 +1,4 @@
-import type { CreateUserDto } from "../../types/user.dto";
+import type { CreateUserRequestDto as CreateUserRequest } from "../../types/user.dto";
 import { createAppError } from "@/lib/AppError";
 import { logActivity } from "@/features/activity/api/services";
 import {
@@ -11,6 +11,8 @@ import { SessionData } from "@/features/me/me.type";
 import { UserEntity } from "../../types/user.entity";
 import { UserRole } from "../../types/user.type";
 
+type CreateUserInput = CreateUserRequest;
+
 export class UserService implements IUserService {
   constructor(
     private readonly repository: UserRepository,
@@ -18,7 +20,7 @@ export class UserService implements IUserService {
     private readonly authRepository: AuthRepository | null = null,
   ) {}
 
-  async createUser(uid: string, data: CreateUserDto) {
+  async createUser(uid: string, data: CreateUserInput) {
     const payload: CreateUserPayload = {
       uid,
       name: data.name,

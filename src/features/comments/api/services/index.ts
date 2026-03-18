@@ -1,7 +1,10 @@
 import { commentRepository } from "../repositories";
 import { likeRepository } from "@/features/likes/api/repositories";
 import { CommentService } from "./comment.service";
-import type { AddCommentDto, AddCommentResultDto } from "../../types/comment.dto";
+import type {
+  AddCommentRequestDto as AddCommentRequest,
+  AddCommentResponseDto as AddCommentResponse,
+} from "../../types/comment.dto";
 import type { SessionData } from "@/features/me/me.type";
 
 export const getCommentService = (
@@ -12,8 +15,8 @@ export const getCommentService = (
 
 export async function addComment(
   session: SessionData | null,
-  data: AddCommentDto,
-): Promise<AddCommentResultDto> {
+  data: AddCommentRequest,
+): Promise<AddCommentResponse> {
   const service = getCommentService(session);
   return await service.addComment(data);
 }
