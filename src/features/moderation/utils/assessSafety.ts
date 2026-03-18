@@ -63,17 +63,15 @@ export const getAiModerationVerdict = (
     "hate/threatening",
   ];
 
-  const PENDING_FLAGS = [
-    "hate",
-    "harassment",
-    "harassment/threatening",
-    "illicit",
-    "illicit/violent",
-    "sexual", 
-    "violence"
-  ];
+const PENDING_FLAGS = [
+  "hate",
+  "harassment",
+  "harassment/threatening",
+  "illicit",
+  "illicit/violent",
+];
 
-  const NSFW_FLAGS = ["sexual", "violence"];
+const NSFW_FLAGS = ["sexual", "violence"];
 
   const isNSFW = categories.some((cat) => NSFW_FLAGS.includes(cat));
 

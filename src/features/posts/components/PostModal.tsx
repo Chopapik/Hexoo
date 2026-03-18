@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import Modal from "@/features/shared/components/layout/Modal";
 import Button from "@/features/shared/components/ui/Button";
 import { PostMeta } from "./PostMeta";
@@ -27,33 +27,41 @@ export const PostModal = ({
 }: PostModalProps) => {
   const user = useAppSelector((state) => state.auth.user);
   const showNSFW = useAppSelector((state) => state.settings.showNSFW);
-  const { comments, isLoading } = useComments(post.id, isOpen);
-  const isAscii = useMemo(() => isAsciiArt(post.text), [post.text]);
-  const isContentVisible = !post.isNSFW || showNSFW || revealNSFW;
 
-  const hasImage = !!post.imageUrl;
+  const { comments, isLoading } = useComments(post.id, isOpen);
+
   const [showCommentsMobile, setShowCommentsMobile] = useState(false);
 
-  useEffect(() => {
-    if (isOpen) {
-      setShowCommentsMobile(false);
-    }
-  }, [isOpen, post.id]);
+  const isAscii = useMemo(() => isAsciiArt(post.text), [post.text]);
+
+  const hasImage = !!post.imageUrl;
+  const isContentVisible = !post.isNSFW || showNSFW || revealNSFW;
+
+  const textClassName = `text-text-main text-base ${
+    isAscii
+      ? "ascii-art"
+      : "font-Albert_Sans whitespace-pre-wrap wrap-break-word"
+  }`;
+
+  const sidebarClassName = hasImage
+    ? "w-full max-w-full border-l-0 lg:w-[420px] lg:min-w-[420px] lg:shrink-0 lg:border-l"
+    : "w-full max-w-full";
+
+  const modalClassName = `
+    h-[calc(100dvh-2rem)]
+    max-h-[calc(100dvh-2rem)]
+    overflow-hidden
+    ${hasImage ? "max-w-[calc(100vw-2rem)]" : ""}
+  `;
 
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
       title="Post"
-      className={`
-        h-[calc(100dvh-2rem)]
-        max-h-[calc(100dvh-2rem)]
-        overflow-hidden
-        ${hasImage ? "max-w-[calc(100vw-2rem)]" : ""}
-      `}
+      className={modalClassName}
     >
       <div className="flex h-full min-h-0 flex-col overflow-hidden lg:flex-row">
-        {/* DESKTOP IMAGE */}
         {hasImage && (
           <div className="hidden lg:flex lg:h-full lg:max-h-full lg:min-w-0 lg:flex-1 lg:items-center lg:justify-center lg:overflow-hidden lg:bg-black/20">
             {isContentVisible ? (
@@ -71,38 +79,22 @@ export const PostModal = ({
         )}
 
         <div
-          className={`
-            flex h-full min-h-0 flex-col border-l border-primary-neutral-stroke-default/60
-            ${
-              hasImage
-                ? "w-full max-w-full border-l-0 lg:w-[420px] lg:min-w-[420px] lg:shrink-0 lg:border-l"
-                : "w-full max-w-full"
-            }
-          `}
+          className={`flex h-full min-h-0 flex-col border-primary-neutral-stroke-default/60 ${sidebarClassName}`}
         >
           <div className="shrink-0 border-b border-primary-neutral-stroke-default/60 p-4">
             <PostMeta post={post} />
           </div>
 
-          {/* MOBILE: WIDOK POSTA */}
           {!showCommentsMobile && (
             <div className="flex min-h-0 flex-1 flex-col lg:hidden">
               {isContentVisible && post.text && (
                 <div className="shrink-0 border-b border-primary-neutral-stroke-default/60 p-4">
-                  <p
-                    className={`text-text-main text-base ${
-                      isAscii
-                        ? "ascii-art"
-                        : "font-Albert_Sans whitespace-pre-wrap wrap-break-word"
-                    }`}
-                  >
-                    {post.text}
-                  </p>
+                  <p className={textClassName}>{post.text}</p>
                 </div>
               )}
 
               {hasImage && (
-                <div className="flex w-full items-center justify-center overflow-hidden bg-black/20 max-h-[60vh]">
+                <div className="flex max-h-[60vh] w-full items-center justify-center overflow-hidden bg-black/20">
                   {isContentVisible ? (
                     <img
                       src={post.imageUrl ?? ""}
@@ -135,7 +127,6 @@ export const PostModal = ({
             </div>
           )}
 
-          {/* MOBILE: WIDOK KOMENTARZY */}
           {showCommentsMobile && (
             <div className="flex min-h-0 flex-1 flex-col lg:hidden">
               <div className="shrink-0 border-b border-primary-neutral-stroke-default/60 p-4">
@@ -160,19 +151,10 @@ export const PostModal = ({
             </div>
           )}
 
-          {/* DESKTOP: standardowy widok */}
           <div className="hidden min-h-0 flex-1 lg:flex lg:flex-col">
             {isContentVisible && post.text && (
               <div className="shrink-0 border-b border-primary-neutral-stroke-default/60 p-4">
-                <p
-                  className={`text-text-main text-base ${
-                    isAscii
-                      ? "ascii-art"
-                      : "font-Albert_Sans whitespace-pre-wrap wrap-break-word"
-                  }`}
-                >
-                  {post.text}
-                </p>
+                <p className={textClassName}>{post.text}</p>
               </div>
             )}
 
