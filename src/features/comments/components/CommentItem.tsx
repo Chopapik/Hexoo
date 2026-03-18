@@ -43,9 +43,16 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
           </span>
         </div>
 
-        <p className="text-text-main text-sm font-Albert_Sans whitespace-pre-wrap break-words">
+        <p className="text-text-main text-sm font-Albert_Sans whitespace-pre-wrap wrap-break-word">
           {comment.text}
         </p>
+        {comment.imageUrl && (
+          <img
+            src={comment.imageUrl}
+            alt="Zdjęcie komentarza"
+            className="mt-2 w-full max-w-xs rounded-xl border border-primary-neutral-stroke-default object-cover"
+          />
+        )}
       </div>
     </div>
   );

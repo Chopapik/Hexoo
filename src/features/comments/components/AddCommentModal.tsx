@@ -9,6 +9,8 @@ import useCommentForm from "../hooks/useCommentForm";
 import { parseCommentErrorMessages } from "../utils/commentErrorMap";
 import warningIconUrl from "@/features/shared/assets/icons/warning.svg?url";
 import Image from "next/image";
+import RemoveImageButton from "@/features/shared/components/ui/RemoveImageButton";
+import { PaperclipIcon } from "@/features/posts/icons/PaperclipIcon";
 
 interface AddCommentModalProps {
   post: PublicPostDto;
@@ -28,9 +30,17 @@ export default function AddCommentModal({
     errors,
     handleServerErrors,
     isSubmitting,
+    fileInputRef,
+    imagePreview,
+    removeImage,
+    handleFileChange,
+    checkFormat,
+    triggerPicker,
   } = useCommentForm(post.id);
 
-  const textError = parseCommentErrorMessages(errors.text?.message ?? "");
+  const textError = parseCommentErrorMessages(
+    errors.text?.message ?? errors.imageFile?.message ?? "",
+  );
   const rootError = parseCommentErrorMessages(errors.root?.message ?? "");
 
   const { addComment, isPending } = useAddComment(
@@ -42,7 +52,8 @@ export default function AddCommentModal({
   );
 
   const onSubmit = (data: AddCommentDto) => {
-    addComment({ ...data, postId: post.id });
+    const formatted = checkFormat({ ...data, postId: post.id });
+    addComment(formatted);
   };
 
   const isLoading = isPending || isSubmitting;
@@ -62,6 +73,24 @@ export default function AddCommentModal({
         </div>
 
         <div className="flex flex-col gap-2">
+          {imagePreview && (
+            <div className="relative w-fit group animate-in fade-in zoom-in-95 duration-200">
+              <img
+                src={imagePreview}
+                alt="Podgląd zdjęcia komentarza"
+                width={200}
+                height={200}
+                className="rounded-xl border border-primary-neutral-stroke-default object-cover max-h-48 w-auto"
+              />
+              <RemoveImageButton
+                onClick={removeImage}
+                variant="dark"
+                position="top-right"
+                showOnHover={true}
+              />
+            </div>
+          )}
+
           <textarea
             {...register("text")}
             placeholder="Wpisz swój komentarz..."
@@ -88,6 +117,21 @@ export default function AddCommentModal({
         )}
 
         <div className="flex justify-end gap-3">
+          <input
+            type="file"
+            ref={fileInputRef}
+            accept="image/png, image/jpeg, image/webp"
+            onChange={handleFileChange}
+            className="hidden"
+          />
+          <Button
+            onClick={triggerPicker}
+            icon={<PaperclipIcon className="w-5 h-5" />}
+            variant="transparent"
+            size="icon"
+            className="text-text-neutral hover:text-white"
+            type="button"
+          />
           <Button
             type="submit"
             isLoading={isLoading}
