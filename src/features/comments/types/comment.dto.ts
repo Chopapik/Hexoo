@@ -34,6 +34,10 @@ export const AddCommentSchema = z
   );
 
 export type AddCommentDto = z.infer<typeof AddCommentSchema>;
+export type AddCommentResultDto = {
+  isPending: boolean;
+  isNSFW: boolean;
+};
 
 export type PublicCommentDto = Omit<
   CommentEntity,

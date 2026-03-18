@@ -6,6 +6,7 @@ import { LuEye, LuEyeOff } from "react-icons/lu";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
 import {
   setNsfwVisibility,
+  setCommentsNsfwVisibility,
   initializeSettings,
 } from "@/features/me/store/settingsSlice";
 import SettingsSection from "../SettingsSection";
@@ -34,7 +35,10 @@ const NsfwToggleIcon = ({ isVisible }: { isVisible: boolean }) => {
 export default function ContentSection() {
   const [isMounted, setMounted] = useState(false);
   const dispatch = useAppDispatch();
-  const showNSFW = useAppSelector((state) => state.settings.showNSFW);
+  const showNSFWPosts = useAppSelector((state) => state.settings.showNSFWPosts);
+  const showNSFWComments = useAppSelector(
+    (state) => state.settings.showNSFWComments,
+  );
 
   useEffect(() => {
     dispatch(initializeSettings());
@@ -42,31 +46,62 @@ export default function ContentSection() {
   }, [dispatch]);
 
   const handleNsfwToggle = () => {
-    const newValue = !showNSFW;
+    const newValue = !showNSFWPosts;
     dispatch(setNsfwVisibility(newValue));
+    localStorage.setItem("user_settings_nsfw_posts", JSON.stringify(newValue));
     localStorage.setItem("user_settings_nsfw", JSON.stringify(newValue));
+  };
+
+  const handleCommentsNsfwToggle = () => {
+    const newValue = !showNSFWComments;
+    dispatch(setCommentsNsfwVisibility(newValue));
+    localStorage.setItem("user_settings_nsfw_comments", JSON.stringify(newValue));
   };
 
   return (
     <SettingsSection title="Treści">
-      <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-        <div>
-          <h4 className="font-semibold text-text-main">Treści wrażliwe</h4>
-          <p className="text-sm text-text-neutral">
-            Włącz, aby automatycznie odsłaniać posty oznaczone jako NSFW.
-          </p>
+      <div className="flex flex-col gap-6">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+          <div>
+            <h4 className="font-semibold text-text-main">Treści NSFW w postach</h4>
+            <p className="text-sm text-text-neutral">
+              Włącz, aby automatycznie odsłaniać posty oznaczone jako NSFW.
+            </p>
+          </div>
+          <Button
+            leftIcon={
+              isMounted ? (
+                <NsfwToggleIcon isVisible={showNSFWPosts} />
+              ) : (
+                <div className="w-5 h-5" />
+              )
+            }
+            onClick={handleNsfwToggle}
+            className="w-fit"
+          />
         </div>
-        <Button
-          leftIcon={
-            isMounted ? (
-              <NsfwToggleIcon isVisible={showNSFW} />
-            ) : (
-              <div className="w-5 h-5" />
-            )
-          }
-          onClick={handleNsfwToggle}
-          className="w-fit"
-        />
+
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+          <div>
+            <h4 className="font-semibold text-text-main">
+              Treści NSFW w komentarzach
+            </h4>
+            <p className="text-sm text-text-neutral">
+              Włącz, aby pokazywać komentarze oznaczone jako NSFW.
+            </p>
+          </div>
+          <Button
+            leftIcon={
+              isMounted ? (
+                <NsfwToggleIcon isVisible={showNSFWComments} />
+              ) : (
+                <div className="w-5 h-5" />
+              )
+            }
+            onClick={handleCommentsNsfwToggle}
+            className="w-fit"
+          />
+        </div>
       </div>
     </SettingsSection>
   );

@@ -11,6 +11,7 @@ import {
 import { PostEntity } from "../../types/post.entity";
 import {
   CreatePostDto,
+  CreatePostResultDto,
   UpdatePostDto,
   CreatePostSchema,
   UpdatePostSchema,
@@ -113,7 +114,7 @@ export class PostService implements IPostService {
     });
   }
 
-  async createPost(createPostData: CreatePostDto): Promise<void> {
+  async createPost(createPostData: CreatePostDto): Promise<CreatePostResultDto> {
     const user = this.ensureUser();
     this.validateRestricted(user);
 
@@ -159,6 +160,12 @@ export class PostService implements IPostService {
     }
 
     await logActivity(user.uid, "POST_CREATED", "User created a new post");
+
+    return {
+      postId,
+      isPending: processed.isPending,
+      isNSFW: processed.isNSFW,
+    };
   }
 
   async deletePost(postId: string): Promise<void> {

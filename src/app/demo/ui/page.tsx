@@ -171,7 +171,6 @@ const demoPost: PublicPostDto = {
   isLikedByMe: true,
   commentsCount: 5,
   createdAt: new Date(),
-  moderationStatus: ModerationStatus.Approved,
   isNSFW: false,
 };
 
@@ -219,7 +218,8 @@ const demoStore = configureStore({
       ready: true,
     },
     settings: {
-      showNSFW: true,
+      showNSFWPosts: true,
+      showNSFWComments: true,
     },
   },
 });

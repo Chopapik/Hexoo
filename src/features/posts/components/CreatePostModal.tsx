@@ -34,6 +34,7 @@ export default function CreatePostModal({
     formState,
     watch,
     triggerPicker,
+    resetForm,
   } = useCreatePostForm();
 
   const [rootError, setRootError] = useState<string | null>(null);
@@ -52,7 +53,9 @@ export default function CreatePostModal({
 
   const { createPost, isPending } = useCreatePost(
     () => {
-      removeImage();
+      resetForm();
+      setRootError(null);
+      setModerationBlockReason(null);
       onClose();
     },
     (error) => {

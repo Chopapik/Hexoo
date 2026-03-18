@@ -20,8 +20,8 @@ export const POST = withErrorHandling(async (req: NextRequest) => {
     return handleSuccess(result, 201);
   }
   const body = await req.json();
-  await createPost(session, body);
-  return handleSuccess();
+  const result = await createPost(session, body);
+  return handleSuccess(result, 201);
 });
 
 export const GET = withErrorHandling(async (req: NextRequest) => {

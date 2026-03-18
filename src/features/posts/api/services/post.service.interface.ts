@@ -1,6 +1,7 @@
 import { ModerationStatus } from "@/features/shared/types/content.type";
 import {
   CreatePostDto,
+  CreatePostResultDto,
   PublicPostDto,
   UpdatePostDto,
 } from "../../types/post.dto";
@@ -11,7 +12,7 @@ export interface PostService {
     reason: string,
     details?: string,
   ): Promise<{ hidden: boolean; reportsCount: number }>;
-  createPost(data: CreatePostDto): Promise<void>;
+  createPost(data: CreatePostDto): Promise<CreatePostResultDto>;
   updatePost(postId: string, data: UpdatePostDto): Promise<PublicPostDto>;
   deletePost(postId: string): Promise<void>;
   setModerationStatus(
