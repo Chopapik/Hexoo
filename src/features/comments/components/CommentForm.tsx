@@ -6,6 +6,8 @@ import useCommentForm from "../hooks/useCommentForm";
 import useAddComment from "../hooks/useAddComment";
 import { parseCommentErrorMessages } from "../utils/commentErrorMap";
 import { SendIcon } from "@/features/posts/icons/SendIcon";
+import { PaperclipIcon } from "@/features/posts/icons/PaperclipIcon";
+import RemoveImageButton from "@/features/shared/components/ui/RemoveImageButton";
 
 interface CommentFormProps {
   postId: string;
@@ -20,9 +22,16 @@ export const CommentForm = ({ postId }: CommentFormProps) => {
     errors,
     handleServerErrors,
     isSubmitting,
+    fileInputRef,
+    imagePreview,
+    removeImage,
+    handleFileChange,
+    checkFormat,
+    triggerPicker,
   } = useCommentForm(postId);
 
-  const validationErrorRaw = errors.text?.message || errors.root?.message || "";
+  const validationErrorRaw =
+    errors.text?.message || errors.imageFile?.message || errors.root?.message || "";
   const parsedError = parseCommentErrorMessages(validationErrorRaw);
   const displayError = parsedError?.text;
 
@@ -34,7 +43,8 @@ export const CommentForm = ({ postId }: CommentFormProps) => {
   );
 
   const onSubmit = (data: AddCommentDto) => {
-    addComment({ ...data, postId });
+    const formatted = checkFormat({ ...data, postId });
+    addComment(formatted);
   };
 
   const isLoading = isPending || isSubmitting;
@@ -42,6 +52,7 @@ export const CommentForm = ({ postId }: CommentFormProps) => {
   const currentLength = textValue.length;
   const isOverLimit = currentLength > COMMENT_MAX_CHARS;
   const hasContentError = parsedError?.field === "content";
+  const hasImageError = parsedError?.field === "imageFile";
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -52,6 +63,24 @@ export const CommentForm = ({ postId }: CommentFormProps) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+      {imagePreview && (
+        <div className="relative w-fit group animate-in fade-in zoom-in-95 duration-200">
+          <img
+            src={imagePreview}
+            alt="Podgląd zdjęcia komentarza"
+            width={200}
+            height={200}
+            className="rounded-xl border border-primary-neutral-stroke-default object-cover max-h-48 w-auto"
+          />
+          <RemoveImageButton
+            onClick={removeImage}
+            variant="dark"
+            position="top-right"
+            showOnHover={true}
+          />
+        </div>
+      )}
+
       <div className="relative w-full group">
         <textarea
           {...register("text")}
@@ -73,6 +102,25 @@ export const CommentForm = ({ postId }: CommentFormProps) => {
         </div>
       </div>
       <div className="flex items-center justify-between w-full">
+        <div className="flex items-center">
+          <input
+            type="file"
+            ref={fileInputRef}
+            accept="image/png, image/jpeg, image/webp"
+            onChange={handleFileChange}
+            className="hidden"
+          />
+
+          <Button
+            onClick={triggerPicker}
+            icon={<PaperclipIcon className="w-5 h-5" />}
+            variant="transparent"
+            size="icon"
+            className="text-text-neutral hover:text-white"
+            type="button"
+          />
+        </div>
+
         <span className="text-red-500 text-sm font-medium">{displayError}</span>
         <Button
           type="submit"
@@ -80,7 +128,7 @@ export const CommentForm = ({ postId }: CommentFormProps) => {
           icon={<SendIcon className="w-5 h-5" />}
           variant="default"
           size="icon"
-          disabled={isOverLimit || hasContentError}
+          disabled={isOverLimit || hasContentError || hasImageError}
         />
       </div>
     </form>

@@ -11,8 +11,21 @@ export const POST = withErrorHandling(
   async (req: NextRequest, context: { params: Promise<{ id: string }> }) => {
     const { id } = await context.params;
     const session = await getUserFromSession();
-    const body = await req.json();
+    const contentType = req.headers.get("content-type") || "";
 
+    if (contentType.includes("multipart/form-data")) {
+      const form = await req.formData();
+      const text = String(form.get("text") || "");
+      const imageFile = form.get("imageFile");
+      const result = await addComment(session, {
+        text,
+        imageFile: imageFile instanceof File ? imageFile : undefined,
+        postId: id,
+      });
+      return handleSuccess(result, 201);
+    }
+
+    const body = await req.json();
     const result = await addComment(session, { ...body, postId: id });
 
     return handleSuccess(result, 201);

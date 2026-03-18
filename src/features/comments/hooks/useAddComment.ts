@@ -12,14 +12,22 @@ export default function useAddComment(
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: async (data: AddCommentDto) => {
-      return await fetchClient.post(`/posts/${data.postId}/comments`, data);
+    mutationFn: async (data: AddCommentDto | FormData) => {
+      const postId =
+        data instanceof FormData
+          ? String(data.get("postId") || "")
+          : String(data.postId || "");
+      return await fetchClient.post(`/posts/${postId}/comments`, data);
     },
     onSuccess: (_, variables) => {
+      const postId =
+        variables instanceof FormData
+          ? String(variables.get("postId") || "")
+          : String(variables.postId || "");
       toast.success("Komentarz dodany!");
 
       queryClient.invalidateQueries({
-        queryKey: ["comments", variables.postId],
+        queryKey: ["comments", postId],
       });
       queryClient.invalidateQueries({ queryKey: ["posts"] });
 

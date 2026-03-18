@@ -2,6 +2,7 @@ import { createAppError } from "@/lib/AppError";
 import { formatZodErrorFlat } from "@/lib/zod";
 import { performModeration } from "@/features/moderation/utils/assessSafety";
 import { getUsersByIds } from "@/features/users/api/services";
+import { uploadImage, hasFile } from "@/features/images/api/image.service";
 import type { SessionData } from "@/features/me/me.type";
 import type { LikeRepository } from "@/features/likes/api/repositories";
 import type { CommentRepository } from "../repositories/comment.repository.interface";
@@ -53,9 +54,27 @@ export class CommentService implements ICommentService {
       });
     }
 
-    const { text, postId } = parsed.data;
+    const { text, postId, imageFile } = parsed.data;
+    const { isPending, isNSFW } = await performModeration(
+      user.uid,
+      text,
+      imageFile,
+    );
 
-    const { isPending, isNSFW } = await performModeration(user.uid, text);
+    let imageData: Pick<CreateCommentPayload, "imageUrl" | "imageMeta"> = {};
+    if (hasFile(imageFile) && imageFile instanceof File) {
+      const upload = await uploadImage(imageFile, user.uid, "comments");
+      imageData = {
+        imageUrl: upload.publicUrl,
+        imageMeta: {
+          storagePath: upload.storagePath,
+          downloadToken: upload.downloadToken,
+          publicUrl: upload.publicUrl,
+          contentType: upload.contentType,
+          sizeBytes: upload.sizeBytes,
+        },
+      };
+    }
 
     const now = new Date();
     const payload: CreateCommentPayload = {
@@ -68,6 +87,7 @@ export class CommentService implements ICommentService {
       updatedAt: now,
       isPending,
       isNSFW,
+      ...imageData,
     };
 
     await this.repository.createComment(postId, payload);
