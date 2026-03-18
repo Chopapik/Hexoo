@@ -5,6 +5,7 @@ import { PostContentService } from "./post.content.service";
 import { PostService } from "./post.service";
 import type {
   CreatePostDto,
+  CreatePostResultDto,
   UpdatePostDto,
   PublicPostDto,
 } from "../../types/post.dto";
@@ -28,7 +29,7 @@ export const getPostService = (
 export async function createPost(
   session: SessionData | null,
   data: CreatePostDto,
-): Promise<void> {
+): Promise<CreatePostResultDto> {
   const service = getPostService(session);
   return await service.createPost(data);
 }

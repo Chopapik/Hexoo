@@ -8,6 +8,7 @@ import type { LikeRepository } from "@/features/likes/api/repositories";
 import type { CommentRepository } from "../repositories/comment.repository.interface";
 import type {
   AddCommentDto,
+  AddCommentResultDto,
   PublicCommentDto,
 } from "../../types/comment.dto";
 import { AddCommentSchema } from "../../types/comment.dto";
@@ -41,7 +42,7 @@ export class CommentService implements ICommentService {
     }
   }
 
-  async addComment(data: AddCommentDto): Promise<void> {
+  async addComment(data: AddCommentDto): Promise<AddCommentResultDto> {
     const user = this.ensureUser();
     this.validateRestricted(user);
 
@@ -97,6 +98,11 @@ export class CommentService implements ICommentService {
       "COMMENT_ADDED",
       `User added a comment to post ${postId}`,
     );
+
+    return {
+      isPending,
+      isNSFW,
+    };
   }
 
   async getCommentsByPostId(postId: string): Promise<PublicCommentDto[]> {

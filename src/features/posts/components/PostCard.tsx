@@ -18,14 +18,16 @@ type PostCardProps = {
 export const PostCard = ({ post, revealNSFW }: PostCardProps) => {
   const [showPostModal, setShowPostModal] = useState(false);
 
-  const showNSFW = useAppSelector((state) => state.settings.showNSFW);
+  const showNSFWPosts = useAppSelector(
+    (state) => state.settings.showNSFWPosts,
+  );
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     dispatch(initializeSettings());
   }, [dispatch]);
 
-  const isContentVisible = !post.isNSFW || showNSFW || revealNSFW;
+  const isContentVisible = !post.isNSFW || showNSFWPosts || revealNSFW;
 
   const handleCardClick = () => {
     setShowPostModal(true);

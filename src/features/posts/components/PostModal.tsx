@@ -26,16 +26,24 @@ export const PostModal = ({
   revealNSFW,
 }: PostModalProps) => {
   const user = useAppSelector((state) => state.auth.user);
-  const showNSFW = useAppSelector((state) => state.settings.showNSFW);
+  const showNSFWPosts = useAppSelector(
+    (state) => state.settings.showNSFWPosts,
+  );
+  const showNSFWComments = useAppSelector(
+    (state) => state.settings.showNSFWComments,
+  );
 
   const { comments, isLoading } = useComments(post.id, isOpen);
+  const visibleComments = showNSFWComments
+    ? comments
+    : comments.filter((comment) => !comment.isNSFW);
 
   const [showCommentsMobile, setShowCommentsMobile] = useState(false);
 
   const isAscii = useMemo(() => isAsciiArt(post.text), [post.text]);
 
   const hasImage = !!post.imageUrl;
-  const isContentVisible = !post.isNSFW || showNSFW || revealNSFW;
+  const isContentVisible = !post.isNSFW || showNSFWPosts || revealNSFW;
 
   const textClassName = `text-text-main text-base ${
     isAscii
@@ -140,7 +148,7 @@ export const PostModal = ({
               </div>
 
               <div className="min-h-0 flex-1 overflow-y-auto p-4 scrollbar-hide">
-                <CommentList comments={comments} isLoading={isLoading} />
+                <CommentList comments={visibleComments} isLoading={isLoading} />
               </div>
 
               {user && (
@@ -165,7 +173,7 @@ export const PostModal = ({
             )}
 
             <div className="min-h-0 flex-1 overflow-y-auto p-4 scrollbar-hide">
-              <CommentList comments={comments} isLoading={isLoading} />
+              <CommentList comments={visibleComments} isLoading={isLoading} />
             </div>
 
             {user && (

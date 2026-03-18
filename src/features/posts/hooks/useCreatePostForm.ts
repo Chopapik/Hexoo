@@ -8,6 +8,7 @@ export default function useCreatePostForm() {
     setValue,
     register,
     handleSubmit,
+    reset,
     setError,
     clearErrors,
     getValues,
@@ -61,6 +62,15 @@ export default function useCreatePostForm() {
     return { text };
   };
 
+  const resetForm = () => {
+    reset({
+      text: "",
+      imageFile: undefined,
+    });
+    removeImage();
+    clearErrors();
+  };
+
   return {
     register,
     handleSubmit,
@@ -75,5 +85,6 @@ export default function useCreatePostForm() {
     watch,
     clearErrors,
     triggerPicker,
+    resetForm,
   };
 }

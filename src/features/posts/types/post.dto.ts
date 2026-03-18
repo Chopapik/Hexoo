@@ -58,6 +58,11 @@ export const ReportPostSchema = z.object({
 export type CreatePostDto = z.infer<typeof CreatePostSchema>;
 export type UpdatePostDto = z.infer<typeof UpdatePostSchema>;
 export type ReportPostDto = z.infer<typeof ReportPostSchema>;
+export type CreatePostResultDto = {
+  postId: string;
+  isPending: boolean;
+  isNSFW: boolean;
+};
 
 export type PublicPostDto = Omit<
   PostEntity,
