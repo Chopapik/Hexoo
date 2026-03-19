@@ -25,7 +25,7 @@ interface RequestConfig<TBody = unknown> {
 }
 
 async function handleResponse<T>(response: Response): Promise<T> {
-  let body: any;
+  let body: unknown;
 
   try {
     body = await response.json();

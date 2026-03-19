@@ -1,4 +1,4 @@
-import type { UpdateProfileData } from "../../me.type";
+import type { UpdateProfileData, UpdatePasswordData } from "../../me.type";
 
 export interface MeService {
   deleteAccount(): Promise<void>;
@@ -11,5 +11,5 @@ export interface MeService {
     isRestricted?: boolean;
     isBanned?: boolean;
   }>;
-  updatePassword(passwordData: any): Promise<void>;
+  updatePassword(passwordData: UpdatePasswordData): Promise<void>;
 }

@@ -11,14 +11,14 @@ import { useLoginForm } from "../hooks/useLoginForm";
 import useLogin from "../hooks/useLogin";
 import { LoginData } from "../types/auth.type";
 import { parseErrorMessages } from "../utils/loginErrorMap";
-import { AuthBlockData } from "@/features/shared/components/security/AuthBlockDisplay";
+import type { AuthBlockData } from "@/features/shared/components/security/AuthBlockDisplay";
 import { BsShieldLockFill } from "react-icons/bs";
 
 export default function LoginForm() {
   const { register, handleSubmit, errors, handleServerErrors } = useLoginForm();
   const [lockoutData, setLockoutData] = useState<AuthBlockData | null>(null);
 
-  const handleLoginError = (code: string, field?: string, data?: any) => {
+  const handleLoginError = (code: string, field?: string, data?: AuthBlockData) => {
     if (code === "SECURITY_LOCKOUT" && data) {
       setLockoutData(data);
     } else {

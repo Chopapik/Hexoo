@@ -10,8 +10,8 @@ import { useAppSelector } from "@/lib/store/hooks";
 const MODERATION_TOAST_DURATION = 7000;
 
 export default function useCreatePost(
-  successCallBack?: (data?: any) => void,
-  errorCallBack?: (error?: any) => void,
+  successCallBack?: (data?: CreatePostResponseDto) => void,
+  errorCallBack?: (error?: Error) => void,
 ) {
   const queryClient = useQueryClient();
   const showNSFWPosts = useAppSelector(

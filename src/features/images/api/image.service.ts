@@ -85,9 +85,11 @@ export const deleteImage = async (storagePath: string | null | undefined) => {
   }
 };
 
-export const hasFile = (f: any): boolean => {
+export const hasFile = (f: unknown): f is File | Blob => {
   if (!f) return false;
-  if (typeof f.size === "number") return f.size > 0;
+  if (typeof f === "object" && f !== null && "size" in f && typeof (f as { size: unknown }).size === "number") {
+    return (f as { size: number }).size > 0;
+  }
   return false;
 };
 

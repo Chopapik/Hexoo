@@ -4,7 +4,8 @@ import { uploadImage, deleteImage } from "@/features/images/api/image.service";
 import { enforceStrictModeration } from "@/features/moderation/utils/assessSafety";
 import { logActivity } from "@/features/activity/api/services";
 import { UpdateProfileData, UpdateProfileSchema } from "../../me.type";
-import type { SessionData } from "../../me.type";
+import type { SessionData, UpdatePasswordData } from "../../me.type";
+import type { UpdateUserPayload } from "@/features/users/types/user.payload";
 import type { MeService as IMeService } from "./me.service.interface";
 import type { AuthRepository } from "@/features/auth/api/repositories/authRepository.interface";
 import type { UserRepository } from "@/features/users/api/repositories/user.repository.interface";
@@ -63,7 +64,7 @@ export class MeService implements IMeService {
     const currentStoragePath = userData?.avatarMeta?.storagePath;
 
     const authUpdate: { displayName?: string; photoURL?: string } = {};
-    const dbUpdate: Record<string, unknown> = { updatedAt: new Date() };
+    const dbUpdate: UpdateUserPayload = { updatedAt: new Date() };
 
     if (name) {
       authUpdate.displayName = name;
@@ -90,7 +91,7 @@ export class MeService implements IMeService {
       await this.authRepository.updateUser(uid, authUpdate);
     }
 
-    await this.userRepository.updateUser(uid, dbUpdate as any);
+    await this.userRepository.updateUser(uid, dbUpdate);
 
     await logActivity(
       uid,
@@ -111,7 +112,7 @@ export class MeService implements IMeService {
     };
   }
 
-  async updatePassword(passwordData: any) {
+  async updatePassword(passwordData: UpdatePasswordData) {
     const decoded = this.session;
     const { UpdatePasswordSchema } = await import("../../me.type");
     const parsed = UpdatePasswordSchema.safeParse(passwordData);
@@ -132,7 +133,7 @@ export class MeService implements IMeService {
 
     await this.userRepository.updateUser(decoded.uid, {
       updatedAt: new Date(),
-    } as any);
+    });
 
     await logActivity(decoded.uid, "PASSWORD_CHANGED", "User changed password");
   }

@@ -7,7 +7,9 @@ import { supabaseClient } from "@/lib/supabaseClient";
 import useRecaptcha from "@/features/shared/hooks/useRecaptcha";
 import toast from "react-hot-toast";
 
-type ErrorCallback = (errorCode: string, field?: string, data?: any) => void;
+import type { AuthBlockData } from "@/features/shared/components/security/AuthBlockDisplay";
+
+type ErrorCallback = (errorCode: string, field?: string, data?: AuthBlockData) => void;
 
 export default function useLogin(onError: ErrorCallback) {
   const { getRecaptchaToken } = useRecaptcha();

@@ -2,8 +2,24 @@ import { supabaseAdmin } from "@/lib/supabaseServer";
 import type {
   ModerationLogRepository,
   ModerationLogPayload,
+  ModerationActionTaken,
 } from "./moderationLog.repository.interface";
 import type { ModerationResourceType } from "@/features/moderation/types/moderation.type";
+import type { ModerationStatus } from "@/features/shared/types/content.type";
+
+interface ModerationLogRow {
+  user_id: string;
+  timestamp: string | null;
+  verdict: ModerationStatus;
+  categories: string[] | null;
+  action_taken: ModerationActionTaken;
+  resource_type: string | null;
+  resource_id: string | null;
+  source: string | null;
+  actor_id: string | null;
+  reason_summary: string | null;
+  reason_details: string | null;
+}
 
 const TABLE = "moderation_logs";
 
@@ -25,7 +41,7 @@ function payloadToRow(payload: ModerationLogPayload): Record<string, unknown> {
   };
 }
 
-function rowToPayload(row: any): ModerationLogPayload {
+function rowToPayload(row: ModerationLogRow): ModerationLogPayload {
   return {
     userId: row.user_id,
     timestamp: row.timestamp ? new Date(row.timestamp) : undefined,

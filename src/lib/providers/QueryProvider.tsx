@@ -9,9 +9,9 @@ import {
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { translateApiError } from "@/i18n/errorTranslator";
+import { AppError } from "@/lib/AppError";
 
-const handleGlobalError = (error: any) => {
-  // 1. Safety check: if we're already on the error page, do nothing (avoid loops)
+const handleGlobalError = (error: Error) => {
   if (
     typeof window !== "undefined" &&
     window.location.pathname.includes("/critical-error")
@@ -19,22 +19,13 @@ const handleGlobalError = (error: any) => {
     return;
   }
 
-  // 2. Get the status code (your JSON places it at the top level)
-  const status = error?.status || 500;
+  if (!(error instanceof AppError)) return;
 
-  // 3. Handle critical errors (429 Rate Limit / 500 Server Error)
+  const status = error.status;
+
   if (status === 429) {
-    // From your JSON:
-    // error.data -> { ok: false, error: { ... } }
-    // error.data.error -> { code: "RATE_LIMIT", data: { ... } }
-    // error.data.error.data -> { ipBlocked: true, lockoutUntil: ... }  <-- this is what we need
-
     const code = error.code;
-
-    // Here we extract the useful details about the lockout
     const detailsObj = error.data || { message: "Brak szczegółów" };
-
-    // Convert the object to a string so we can pass it in the URL
     const detailsParam = encodeURIComponent(JSON.stringify(detailsObj));
     const codeParam = encodeURIComponent(code);
 
@@ -58,8 +49,8 @@ export default function QueryProvider({
         mutationCache: new MutationCache({ onError: handleGlobalError }),
         defaultOptions: {
           queries: {
-            retry: (failureCount, error: any) => {
-              if (error?.status === 429) return false;
+            retry: (failureCount, error) => {
+              if (error instanceof AppError && error.status === 429) return false;
               return failureCount < 2;
             },
             refetchOnWindowFocus: false,

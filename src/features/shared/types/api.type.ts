@@ -1,11 +1,11 @@
-export type SuccessResponse<T = any> = {
+export type SuccessResponse<T = unknown> = {
   ok: true;
   data: T;
 };
 
 export type ErrorPayload = {
   code: string;
-  data?: Record<string, any>;
+  data?: Record<string, unknown>;
 };
 
 export type ErrorResponse = {
@@ -13,4 +13,4 @@ export type ErrorResponse = {
   error: ErrorPayload;
 };
 
-export type ApiResponse<T = any> = SuccessResponse<T> | ErrorResponse;
+export type ApiResponse<T = unknown> = SuccessResponse<T> | ErrorResponse;

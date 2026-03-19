@@ -51,7 +51,9 @@ export class SupabaseImageStorageRepository implements ImageStorageRepository {
 
     if (error) {
       const statusCode =
-        (error as any).statusCode ?? (error as any).status ?? null;
+        "status" in error && typeof error.status === "number"
+          ? error.status
+          : null;
       if (statusCode === 404) {
         return;
       }
