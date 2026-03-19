@@ -5,6 +5,10 @@ import type {
 } from "../../types/button.type";
 import Image from "next/image";
 import { Loader } from "lucide-react";
+import {
+  buttonDefaultSurfaceClass,
+  buttonSecondarySurfaceClass,
+} from "./buttonSurfaceClasses";
 
 /**
  * Map Tailwind CSS classes to button sizes.
@@ -27,16 +31,14 @@ const sizeClasses: Record<ButtonSize, string> = {
  */
 const variantClasses: Record<ButtonVariant, string> = {
   // Text button with gradient fill and subtle gradient border - matching Figma design
-  default:
-    "text-white border-[0.75px] border-transparent [--btn-fill:linear-gradient(180deg,#C026D3_0%,#86198F_100%)] [background:var(--btn-fill,_linear-gradient(180deg,#C026D3_0%,#86198F_100%))_padding-box,linear-gradient(180deg,#EF72FF_3%,#61006E_100%)_border-box] shadow-md hover:brightness-90 hover:shadow-lg transition-all",
+  default: `text-white ${buttonDefaultSurfaceClass}`,
   // Note: 'glass-card' relies on an external global CSS class for its styling.
   "glass-card": "text-white glass-card",
   // Danger variant for destructive actions
   danger:
     "text-white bg-gradient-to-b from-red-600 to-red-800 shadow-md hover:brightness-90 hover:shadow-lg transition-all",
   // Secondary variant (neutral)
-  secondary:
-    "bg-white/5 border border-white/10 text-white hover:bg-white/10 shadow-sm backdrop-blur-sm",
+  secondary: `text-white ${buttonSecondarySurfaceClass}`,
   // Transparent variant with flat hover
   transparent: "bg-transparent hover:bg-white/10 transition-colors",
   // Neutral outline
