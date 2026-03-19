@@ -1,5 +1,5 @@
 import fetchClient from "@/lib/fetchClient";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { InfiniteData, useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { PublicPostResponseDto } from "../types/post.dto";
 
@@ -14,11 +14,11 @@ export function useToggleLike() {
       await queryClient.cancelQueries({ queryKey: ["posts"] });
       const previousPosts = queryClient.getQueryData(["posts"]);
 
-      queryClient.setQueryData(["posts"], (oldData: any) => {
+      queryClient.setQueryData(["posts"], (oldData: InfiniteData<PublicPostResponseDto[]> | undefined) => {
         if (!oldData) return oldData;
 
-        const newPages = oldData.pages.map((page: any) => {
-          return page.map((post: PublicPostResponseDto) => {
+        const newPages = oldData.pages.map((page) => {
+          return page.map((post) => {
             if (post.id === postId) {
               const wasLiked = post.isLikedByMe;
 

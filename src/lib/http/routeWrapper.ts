@@ -2,10 +2,12 @@ import { handleError } from "./responseHelpers";
 import { AppError } from "../AppError";
 import { NextRequest } from "next/server";
 
+type RouteContext = { params: Promise<Record<string, string>> };
+
 export function withErrorHandling(
-  handler: (req: NextRequest, context?: any) => Promise<Response | any>
+  handler: (req: NextRequest, context?: RouteContext) => Promise<Response>
 ) {
-  return async (req: NextRequest, context?: any) => {
+  return async (req: NextRequest, context?: RouteContext) => {
     try {
       return await handler(req, context);
     } catch (caught) {

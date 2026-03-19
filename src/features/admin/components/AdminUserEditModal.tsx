@@ -26,10 +26,12 @@ export default function AdminUserEditModal({
   user: PrivateUserResponseDto | null;
   onClose: () => void;
 }) {
-  const [newUserData, setNewUserData] = useState<Partial<UpdateUserRequestDto>>({
-    name: "",
-    role: undefined,
-  });
+  const [newUserData, setNewUserData] = useState<Partial<UpdateUserRequestDto>>(
+    {
+      name: "",
+      role: undefined,
+    },
+  );
 
   const [newPassword, setNewPassword] = useState<string>("");
   const { adminUpdateUserAccount, isPending: isUpdatingData } =

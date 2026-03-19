@@ -391,7 +391,11 @@ export const ERROR_CATALOG: Record<GlobalErrorCode, ErrorCatalogEntry> = {
 
 export function translateError(err: unknown, lang: Lang = "pl"): string {
   const code =
-    typeof err === "string" ? err : ((err as any)?.code ?? undefined);
+    typeof err === "string"
+      ? err
+      : err !== null && typeof err === "object" && "code" in err
+        ? (err as { code: string }).code
+        : undefined;
 
   if (!code) {
     return ERROR_CATALOG.UNKNOWN_ERROR.message[lang];

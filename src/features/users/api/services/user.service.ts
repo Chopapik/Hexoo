@@ -136,10 +136,11 @@ export class UserService implements IUserService {
 
     try {
       return await this.repository.getUsersByIds(uids);
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
       throw createAppError({
         code: "DB_ERROR",
-        message: `[userService.getUsersByIds] Error fetching users by UIDs: ${error.message}`,
+        message: `[userService.getUsersByIds] Error fetching users by UIDs: ${message}`,
       });
     }
   }

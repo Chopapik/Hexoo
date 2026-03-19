@@ -1,4 +1,4 @@
-import type { SessionData } from "../../me.type";
+import type { SessionData, UpdatePasswordData } from "../../me.type";
 import type { UpdateProfileData } from "../../me.type";
 import { MeService } from "./me.service";
 import { authRepository } from "@/features/auth/api/repositories";
@@ -21,7 +21,7 @@ export async function updateProfile(
   return await service.updateProfile(data);
 }
 
-export async function updatePassword(session: SessionData, data: any) {
+export async function updatePassword(session: SessionData, data: UpdatePasswordData) {
   const service = getMeService(session);
   return await service.updatePassword(data);
 }

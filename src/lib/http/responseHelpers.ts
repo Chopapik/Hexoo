@@ -11,7 +11,7 @@ export function handleSuccess<T>(data?: T, status = 200) {
   return sendSuccess(data, status);
 }
 
-function sendError(code: string, status = 500, data?: Record<string, any>) {
+function sendError(code: string, status = 500, data?: Record<string, unknown>) {
   const payload: ApiResponse = {
     ok: false,
     error: { code, data },
@@ -23,9 +23,9 @@ function sendError(code: string, status = 500, data?: Record<string, any>) {
 export function handleError<T>(
   code: string,
   message: string,
-  data?: Record<string, any>,
+  data?: Record<string, unknown>,
   status = 500,
-  details?: Record<string, any>
+  details?: unknown
 ) {
   //to do, logging success
   console.warn(`message: ${message} details: ${details}`); //in future replaced by logging system

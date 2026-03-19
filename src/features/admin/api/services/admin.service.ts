@@ -6,6 +6,8 @@ import { logActivity } from "@/features/activity/api/services";
 import type { SessionData } from "@/features/me/me.type";
 import type { AdminUserCreate } from "@/features/admin/types/admin.type";
 import type { AdminService as IAdminService } from "./admin.service.interface";
+import type { UpdateUserPayload } from "@/features/users/types/user.payload";
+import { UserRole } from "@/features/users/types/user.type";
 
 export class AdminService implements IAdminService {
   constructor(private readonly session: SessionData | null) {}
@@ -75,7 +77,7 @@ export class AdminService implements IAdminService {
       role: data.role ?? "user",
     });
 
-    await userRepository.updateUser(uid, {} as any);
+    await userRepository.updateUser(uid, {});
 
     await logActivity(uid, "USER_CREATED", "Account created by admin");
     await logActivity(
@@ -123,17 +125,17 @@ export class AdminService implements IAdminService {
       });
     }
 
-    const updatePayload: Record<string, any> = {};
+    const updatePayload: UpdateUserPayload = {};
 
     if (data.name?.trim()) updatePayload.name = data.name.trim();
-    if (data.role?.trim()) updatePayload.role = data.role.trim();
+    if (data.role?.trim()) updatePayload.role = data.role.trim() as UserRole;
     if (data.email?.trim()) {
       updatePayload.email = data.email.trim();
     }
 
     await userRepository.updateUser(uid, updatePayload);
 
-    const authUpdate: Record<string, any> = {};
+    const authUpdate: Record<string, unknown> = {};
     if (updatePayload.name) authUpdate.displayName = updatePayload.name;
     if (updatePayload.email) authUpdate.email = updatePayload.email;
 

@@ -49,15 +49,15 @@ type AppErrorArgs = {
   code?: ErrorCode;
   message?: string;
   status?: number;
-  details?: any;
-  data?: Record<string, any>;
+  details?: unknown;
+  data?: Record<string, unknown>;
 };
 
 export class AppError extends Error {
   public code: ErrorCode;
   public status: number;
-  public details?: any;
-  public data?: Record<string, any>;
+  public details?: unknown;
+  public data?: Record<string, unknown>;
 
   constructor(opts?: AppErrorArgs) {
     super(opts?.message ?? opts?.code ?? "INTERNAL_ERROR");

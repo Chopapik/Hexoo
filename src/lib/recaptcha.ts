@@ -1,4 +1,4 @@
-import { createAppError } from "./AppError";
+import { AppError, createAppError } from "./AppError";
 
 const RECAPTCHA_VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify";
 const SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY;
@@ -38,11 +38,9 @@ export async function verifyRecaptchaToken(token: string) {
     }
 
     return true; // It is a human
-  } catch (error: any) {
-    // If this is our ApiError, pass it through
-    if (error?.code) throw error;
+  } catch (error: unknown) {
+    if (error instanceof AppError) throw error;
 
-    // Other network errors
     throw createAppError({
       code: "EXTERNAL_SERVICE",
       message: "Błąd łączenia z usługą reCAPTCHA",
