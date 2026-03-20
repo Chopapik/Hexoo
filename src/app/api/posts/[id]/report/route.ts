@@ -14,6 +14,6 @@ export const POST = withErrorHandling(
 
     const result = await reportPost(session, id, reason, details);
 
-    return handleSuccess(result);
+    return handleSuccess(result, 201);
   },
 );

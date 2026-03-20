@@ -21,9 +21,7 @@ export const PUT = withErrorHandling(async (req: NextRequest) => {
 
   await verifyRecaptchaToken(recaptchaToken);
 
-  const result = await updatePassword(session, newPasswordData);
+  await updatePassword(session, newPasswordData);
 
-  const response = handleSuccess();
-
-  return response;
+  return handleSuccess(undefined, 204);
 });

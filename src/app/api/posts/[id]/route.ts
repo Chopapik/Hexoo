@@ -35,12 +35,12 @@ export const PUT = withErrorHandling(
         device,
         imageFile,
       } as UpdatePostRequestDto);
-      return handleSuccess(result, 201);
+      return handleSuccess(result);
     }
 
     const body = await req.json();
     const result = await updatePost(session, id, body);
-    return handleSuccess(result, 201);
+    return handleSuccess(result);
   },
 );
 
@@ -49,6 +49,6 @@ export const DELETE = withErrorHandling(
     const { id } = await context.params;
     const session = await getUserFromSession();
     await deletePost(session, id);
-    return handleSuccess();
+    return handleSuccess(undefined, 204);
   },
 );

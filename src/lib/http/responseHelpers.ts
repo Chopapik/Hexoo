@@ -2,7 +2,9 @@ import { NextResponse } from "next/server";
 import { ApiResponse } from "@/features/shared/types/api.type";
 
 function sendSuccess<T>(data: T, status = 200) {
-  //to do, logging success
+  if (status === 204) {
+    return new NextResponse(null, { status: 204 });
+  }
   const payload: ApiResponse<T> = { ok: true, data };
   return NextResponse.json(payload, { status });
 }
@@ -25,7 +27,7 @@ export function handleError<T>(
   message: string,
   data?: Record<string, unknown>,
   status = 500,
-  details?: unknown
+  details?: unknown,
 ) {
   //to do, logging success
   console.warn(`message: ${message} details: ${details}`); //in future replaced by logging system
