@@ -8,14 +8,9 @@ import type {
 } from "./user.repository.interface";
 import type { UserEntity } from "../../types/user.entity";
 import type { UserRow } from "../../types/user.row";
+import { parseDate } from "@/features/shared/utils/dateUtils";
 
 const TABLE = "users";
-
-function parseDate(s: string | null | undefined): Date | undefined {
-  if (!s) return undefined;
-  const d = new Date(s);
-  return isNaN(d.getTime()) ? undefined : d;
-}
 
 function rowToEntity(row: UserRow): UserEntity {
   return {

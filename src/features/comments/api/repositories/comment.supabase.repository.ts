@@ -3,15 +3,10 @@ import type { CommentRepository } from "./comment.repository.interface";
 import type { CreateCommentPayload } from "../../types/comment.payload";
 import type { CommentEntity } from "../../types/comment.entity";
 import type { CommentRow } from "../../types/comment.row";
+import { parseDate } from "@/features/shared/utils/dateUtils";
 
 const COMMENTS_TABLE = "comments";
 const POSTS_TABLE = "posts";
-
-function parseDate(s: string | null | undefined): Date | undefined {
-  if (!s) return undefined;
-  const d = new Date(s);
-  return isNaN(d.getTime()) ? undefined : d;
-}
 
 function rowToEntity(row: CommentRow): CommentEntity {
   return {

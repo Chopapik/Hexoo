@@ -6,6 +6,7 @@ import type {
 } from "./moderationLog.repository.interface";
 import type { ModerationResourceType } from "@/features/moderation/types/moderation.type";
 import type { ModerationStatus } from "@/features/shared/types/content.type";
+import { parseDate } from "@/features/shared/utils/dateUtils";
 
 interface ModerationLogRow {
   user_id: string;
@@ -44,7 +45,7 @@ function payloadToRow(payload: ModerationLogPayload): Record<string, unknown> {
 function rowToPayload(row: ModerationLogRow): ModerationLogPayload {
   return {
     userId: row.user_id,
-    timestamp: row.timestamp ? new Date(row.timestamp) : undefined,
+    timestamp: parseDate(row.timestamp),
     verdict: row.verdict,
     categories: row.categories ?? [],
     actionTaken: row.action_taken,

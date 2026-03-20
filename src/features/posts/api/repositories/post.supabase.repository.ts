@@ -9,16 +9,11 @@ import type {
 } from "../../types/post.payload";
 import type { PostEntity } from "../../types/post.entity";
 import type { PostRow } from "../../types/post.row";
+import { parseDate } from "@/features/shared/utils/dateUtils";
 
 const POST_REPORTS_TABLE = "post_reports";
 
 const TABLE = "posts";
-
-function parseDate(s: string | null | undefined): Date | undefined {
-  if (!s) return undefined;
-  const d = new Date(s);
-  return isNaN(d.getTime()) ? undefined : d;
-}
 
 function rowToEntity(row: PostRow): PostEntity {
   return {
