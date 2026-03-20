@@ -7,6 +7,7 @@ import {
   getRefreshCookie,
 } from "@/lib/session";
 import { isUsernameTaken } from "../utils/checkUsernameUnique";
+import { isUsernameBlocked } from "../../constants/blockedUsernames";
 import type { ActivityType } from "@/features/activity/api/services";
 import type { AuthRepository } from "../repositories/authRepository.interface";
 import type { UserRepository } from "@/features/users/api/repositories/user.repository.interface";
@@ -146,6 +147,24 @@ export class AuthService implements IAuthService {
 
     const { uid, email } = decodedToken;
 
+    if (isUsernameBlocked(name)) {
+      try {
+        await this.authRepository.deleteUser(uid);
+      } catch (cleanupErr) {
+        throw createAppError({
+          code: "INTERNAL_ERROR",
+          message: "Failed to cleanup user from Auth after blocked username attempt",
+          details: cleanupErr,
+        });
+      }
+
+      throw createAppError({
+        code: "CONFLICT",
+        message: `[authService.registerUser] Username '${name}' is not available.`,
+        details: { field: "name" },
+      });
+    }
+
     if (await isUsernameTaken(name)) {
       try {
         await this.authRepository.deleteUser(uid);
@@ -256,6 +275,13 @@ export class AuthService implements IAuthService {
         code: "VALIDATION_ERROR",
         message: "[auth.checkUsernameAvailability] Username cannot be empty.",
       });
+    }
+
+    if (isUsernameBlocked(normalized)) {
+      return {
+        available: false,
+        username: normalized,
+      };
     }
 
     const taken = await isUsernameTaken(normalized);

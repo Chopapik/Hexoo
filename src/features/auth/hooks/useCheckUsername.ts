@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import fetchClient from "@/lib/fetchClient";
 import { ApiError } from "@/lib/AppError";
+import { isUsernameBlocked } from "../constants/blockedUsernames";
 
-// Prosty hook do debounce
 function useDebounce<T>(value: T, delay: number): T {
   const [debouncedValue, setDebouncedValue] = useState<T>(value);
 
@@ -24,10 +24,9 @@ export function useCheckUsername(username: string) {
   const [isAvailable, setIsAvailable] = useState<boolean | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const debouncedUsername = useDebounce(username, 500); // 0.5 sekundy debounce
+  const debouncedUsername = useDebounce(username, 500); 
 
   useEffect(() => {
-    // Resetuj stan gdy username się zmienia
     if (!debouncedUsername) {
       setIsAvailable(null);
       setError(null);
@@ -35,7 +34,6 @@ export function useCheckUsername(username: string) {
       return;
     }
 
-    // Sprawdź minimalną długość (zgodnie z walidacją)
     if (debouncedUsername.trim().length < 3) {
       setIsAvailable(null);
       setError(null);
@@ -43,7 +41,13 @@ export function useCheckUsername(username: string) {
       return;
     }
 
-    // Sprawdź dostępność username
+    if (isUsernameBlocked(debouncedUsername)) {
+      setIsAvailable(false);
+      setError("CONFLICT");
+      setIsChecking(false);
+      return;
+    }
+
     const checkUsername = async () => {
       setIsChecking(true);
       setError(null);
