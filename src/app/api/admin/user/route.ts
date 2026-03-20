@@ -8,5 +8,5 @@ export const POST = withErrorHandling(async (req: NextRequest) => {
   const session = await getUserFromSession();
   const body = await req.json();
   const result = await adminCreateUserAccount(session, body);
-  return handleSuccess(result);
+  return handleSuccess(result, 201);
 });

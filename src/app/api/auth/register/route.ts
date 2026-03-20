@@ -18,5 +18,5 @@ export const POST = withErrorHandling(async (req) => {
   await verifyRecaptchaToken(recaptchaToken);
 
   const resp = await registerUser({ idToken, refreshToken, name, email });
-  return handleSuccess(resp);
+  return handleSuccess(resp, 201);
 });
