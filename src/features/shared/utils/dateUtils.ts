@@ -5,33 +5,22 @@ import "dayjs/locale/pl";
 dayjs.extend(relativeTime);
 dayjs.locale("pl");
 
-type DateInput =
-  | Date
-  | string
-  | number
-  | { _seconds: number }
-  | { toDate(): Date };
-
-export function parseDate(dateInput: Date | null | undefined): Date | null {
-  if (!dateInput) return null;
-
-  if (dateInput instanceof Date) return dateInput;
-  if (typeof dateInput === "object" && "_seconds" in dateInput) {
-    return new Date(dateInput._seconds * 1000);
-  }
-  if (typeof dateInput === "object" && "toDate" in dateInput) {
-    return dateInput.toDate();
-  }
-  return new Date(dateInput);
+export function parseDate(
+  input: string | Date | null | undefined,
+): Date | undefined {
+  if (!input) return undefined;
+  if (input instanceof Date) return input;
+  const d = new Date(input);
+  return isNaN(d.getTime()) ? undefined : d;
 }
 
-export function formatDate(date: DateInput | null | undefined, format = "DD.MM.YYYY HH:mm") {
+export function formatDate(date: string | Date | null | undefined, format = "DD.MM.YYYY HH:mm") {
   const d = parseDate(date);
   if (!d) return "—";
   return dayjs(d).format(format);
 }
 
-export function formatSmartDate(date: DateInput | null | undefined) {
+export function formatSmartDate(date: string | Date | null | undefined) {
   const d = parseDate(date);
   if (!d) return "";
 
