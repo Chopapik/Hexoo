@@ -1,22 +1,14 @@
 import { BsShieldLockFill } from "react-icons/bs";
+import { formatLockoutTime } from "@/features/shared/utils/dateUtils";
 
 export type AuthBlockData = {
   ipBlocked: boolean;
   maxAnonymousAttempts: number;
-  lockoutUntil: {
-    _seconds: number;
-    _nanoseconds: number;
-  };
+  lockoutUntil: string | Date | number;
 };
 
 export default function AuthBlockDisplay({ data }: { data: AuthBlockData }) {
-  const lockoutTimestamp = data.lockoutUntil._seconds * 1000;
-
-  const unlockTime = new Date(lockoutTimestamp).toLocaleTimeString("pl-PL", {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  });
+  const unlockTime = formatLockoutTime(data.lockoutUntil);
 
   return (
     <div className="w-full flex-1 max-w-md p-10 glass-card rounded-2xl flex h-fit flex-col items-center">

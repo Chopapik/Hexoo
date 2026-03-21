@@ -12,6 +12,7 @@ import useLogin from "../hooks/useLogin";
 import { LoginData } from "../types/auth.type";
 import { parseErrorMessages } from "../utils/loginErrorMap";
 import type { AuthBlockData } from "@/features/shared/components/security/AuthBlockDisplay";
+import { formatLockoutTime } from "@/features/shared/utils/dateUtils";
 import { BsShieldLockFill } from "react-icons/bs";
 
 export default function LoginForm() {
@@ -34,12 +35,7 @@ export default function LoginForm() {
 
   const getUnlockTime = () => {
     if (!lockoutData) return "";
-    const lockoutTimestamp = lockoutData.lockoutUntil._seconds * 1000;
-    return new Date(lockoutTimestamp).toLocaleTimeString("pl-PL", {
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-    });
+    return formatLockoutTime(lockoutData.lockoutUntil);
   };
 
   return (

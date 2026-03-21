@@ -615,10 +615,7 @@ export default function UiDemoPage() {
                 data={{
                   ipBlocked: true,
                   maxAnonymousAttempts: 5,
-                  lockoutUntil: {
-                    _seconds: Math.floor(Date.now() / 1000) + 1800,
-                    _nanoseconds: 0,
-                  },
+                  lockoutUntil: Date.now() + 1800 * 1000,
                 }}
               />
               <ThrottleBlockDisplay

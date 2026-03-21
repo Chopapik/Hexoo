@@ -3,13 +3,8 @@
 import React from "react";
 import type { PublicCommentResponseDto } from "../types/comment.dto";
 import { Avatar } from "@/features/posts/components/Avatar";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-import "dayjs/locale/pl";
+import { formatSmartDate } from "@/features/shared/utils/dateUtils";
 import Link from "next/link";
-
-dayjs.extend(relativeTime);
-dayjs.locale("pl");
 
 interface CommentItemProps {
   comment: PublicCommentResponseDto;
@@ -44,9 +39,7 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
             {comment.userName}
           </Link>
           <span className="text-text-neutral text-xs font-Albert_Sans">
-            {Math.abs(dayjs().diff(comment.createdAt, "hour")) > 24
-              ? dayjs(comment.createdAt).format("D MMMM YYYY")
-              : dayjs(comment.createdAt).fromNow()}
+            {formatSmartDate(comment.createdAt)}
           </span>
         </div>
 
