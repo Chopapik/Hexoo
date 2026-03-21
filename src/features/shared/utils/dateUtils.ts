@@ -29,3 +29,13 @@ export function formatSmartDate(date: string | Date | null | undefined) {
   }
   return dayjs(d).fromNow();
 }
+
+export function formatLockoutTime(date: string | Date | number): string {
+  const d = typeof date === "number" ? new Date(date) : parseDate(date);
+  if (!d) return "—";
+  return d.toLocaleTimeString("pl-PL", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+}
