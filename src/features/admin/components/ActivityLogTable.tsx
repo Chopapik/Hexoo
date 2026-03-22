@@ -1,5 +1,6 @@
 "use client";
 
+import React, { useEffect, useRef } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import fetchClient from "@/lib/fetchClient";
 import Button from "@/features/shared/components/ui/Button";
@@ -19,7 +20,7 @@ type GetActivityLogsResponse = {
   logs: ActivityLog[];
 };
 
-const PAGE_SIZE = 50;
+const PAGE_SIZE = 20;
 
 export default function ActivityLogTable() {
   const {
@@ -52,14 +53,33 @@ export default function ActivityLogTable() {
     initialPageParam: undefined,
     getNextPageParam: (lastPage) => {
       if (!lastPage || lastPage.length === 0) return undefined;
-      const last = lastPage[lastPage.length - 1];
-      return last.createdAt;
+      return lastPage[lastPage.length - 1].id;
     },
     staleTime: 1000 * 60 * 5,
     retry: 1,
   });
 
   const logs = data?.pages.flat() ?? [];
+  const scrollRootRef = useRef<HTMLDivElement>(null);
+  const observerTarget = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const root = scrollRootRef.current;
+    const target = observerTarget.current;
+    if (!root || !target) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      { root, threshold: 1.0 },
+    );
+
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage, data?.pages.length]);
 
   return (
     <div className="w-full p-6 glass-card rounded-2xl border border-primary-neutral-stroke-default max-w-[1300px]">
@@ -92,13 +112,14 @@ export default function ActivityLogTable() {
       ) : (
         <>
           <div className="mb-3 text-sm text-text-neutral flex gap-1">
-            Razem:
-            <span className="font-medium text-text-main">
-              {logs.length}
-            </span>
+            Załadowano:
+            <span className="font-medium text-text-main">{logs.length}</span>
           </div>
 
-          <div className="overflow-x-auto rounded-md max-h-[600px] border border-primary-neutral-stroke-default/60">
+          <div
+            ref={scrollRootRef}
+            className="overflow-x-auto overflow-y-auto rounded-md max-h-[600px] border border-primary-neutral-stroke-default/60"
+          >
             <table className="min-w-full bg-transparent text-sm">
               <thead className="bg-primary-neutral-background-default/60 sticky top-0 z-10">
                 <tr className="text-left text-xs text-text-neutral uppercase tracking-wide">
@@ -160,7 +181,7 @@ export default function ActivityLogTable() {
                 ) : (
                   <tr>
                     <td
-                      colSpan={4}
+                      colSpan={6}
                       className="px-3 py-6 text-center text-text-neutral"
                     >
                       Brak zarejestrowanych zdarzeń
@@ -169,16 +190,22 @@ export default function ActivityLogTable() {
                 )}
               </tbody>
             </table>
+
+            {logs.length > 0 && (
+              <div
+                ref={observerTarget}
+                className="h-4 w-full flex justify-center py-4 shrink-0"
+              >
+                {isFetchingNextPage && (
+                  <div className="w-6 h-6 border-2 border-fuchsia-500 border-t-transparent rounded-full animate-spin" />
+                )}
+              </div>
+            )}
           </div>
-          {hasNextPage && (
-            <div className="flex justify-center mt-4">
-              <Button
-                onClick={() => fetchNextPage()}
-                text="Załaduj więcej"
-                size="sm"
-                isLoading={isFetchingNextPage}
-                variant="secondary"
-              />
+
+          {!hasNextPage && logs.length > 0 && (
+            <div className="text-center text-text-neutral text-sm py-6 font-Albert_Sans opacity-50">
+              To już wszystkie załadowane wpisy
             </div>
           )}
         </>

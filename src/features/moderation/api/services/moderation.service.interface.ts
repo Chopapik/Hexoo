@@ -5,6 +5,7 @@ export interface ModerationService {
   getModerationQueue(
     resourceType: ModerationResourceType,
     limit?: number,
+    startAfterId?: string,
   ): Promise<ModerationPostResponse[]>;
 }
 

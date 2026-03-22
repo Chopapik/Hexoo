@@ -1,6 +1,10 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import fetchClient from "@/lib/fetchClient";
 import toast from "react-hot-toast";
 import type { ModerationPostResponseDto } from "@/features/posts/types/post.dto";
@@ -9,19 +13,36 @@ export function useModeratorDashboard() {
   const queryClient = useQueryClient();
 
   const {
-    data: posts,
+    data,
     isLoading,
     isError,
     refetch,
     isFetching,
-  } = useQuery({
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
     queryKey: ["moderator", "queue"],
-    queryFn: async () => {
+    queryFn: async ({ pageParam }) => {
+      const params = new URLSearchParams({
+        limit: "20",
+      });
+
+      if (pageParam) {
+        params.append("startAfter", pageParam as string);
+      }
+
       const res = await fetchClient.get<{ posts: ModerationPostResponseDto[] }>(
-        "/moderator/queue",
+        `/moderator/queue?${params.toString()}`,
       );
       return res.posts;
     },
+    initialPageParam: undefined,
+    getNextPageParam: (lastPage) => {
+      if (!lastPage || lastPage.length === 0) return undefined;
+      return lastPage[lastPage.length - 1].id;
+    },
+    staleTime: 1000 * 60 * 1,
   });
 
   const actionMutation = useMutation({
@@ -49,11 +70,14 @@ export function useModeratorDashboard() {
   });
 
   return {
-    posts,
+    data,
     isLoading,
     isError,
     refetch,
     isFetching,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
     performAction: actionMutation.mutate,
     isActionPending: actionMutation.isPending,
   };

@@ -1,10 +1,10 @@
 import type { ModerationPostResponseDto as ModerationPostResponse } from "@/features/posts/types/post.dto";
-import type { ModerationResourceType } from "@/features/moderation/types/moderation.type";
 import type { BlockUserRequestDto as BlockUserRequest } from "@/features/users/types/user.dto";
 
 export interface ModeratorService {
   getModerationQueue(
-    resourceType: ModerationResourceType,
+    limit?: number,
+    startAfterId?: string,
   ): Promise<ModerationPostResponse[]>;
   reviewPost(
     postId: string,

@@ -33,7 +33,7 @@ export class SupabaseActivityRepository implements ActivityRepository {
 
   async getAdminActivityLogs(
     limit: number,
-    startAfter?: string,
+    startAfterId?: string,
   ): Promise<AdminActivityLog[]> {
     let query = supabaseAdmin
       .from(TABLE)
@@ -41,8 +41,21 @@ export class SupabaseActivityRepository implements ActivityRepository {
       .order("created_at", { ascending: false })
       .limit(limit);
 
-    if (startAfter) {
-      query = query.lt("created_at", startAfter);
+    if (startAfterId) {
+      const cursorRow = await supabaseAdmin
+        .from(TABLE)
+        .select("created_at, id")
+        .eq("id", startAfterId)
+        .maybeSingle();
+      if (cursorRow.data) {
+        const { created_at, id } = cursorRow.data as {
+          created_at: string;
+          id: string;
+        };
+        query = query.or(
+          `created_at.lt.${created_at},and(created_at.eq.${created_at},id.lt.${id})`,
+        );
+      }
     }
 
     const { data: logData, error: logError } = await query;

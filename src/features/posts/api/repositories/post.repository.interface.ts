@@ -24,5 +24,8 @@ export interface PostRepository {
     reportDetails: ReportDetails,
   ): Promise<{ hidden: boolean; reportsCount: number }>;
 
-  getPostsPendingModeration(limit: number): Promise<PostEntity[]>;
+  getPostsPendingModeration(
+    limit: number,
+    startAfterId?: string,
+  ): Promise<PostEntity[]>;
 }

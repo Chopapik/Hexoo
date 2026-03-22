@@ -17,9 +17,13 @@ export const getModeratorService = (
   );
 };
 
-export async function getModerationQueue(session: SessionData | null) {
+export async function getModerationQueue(
+  session: SessionData | null,
+  limit?: number,
+  startAfterId?: string,
+) {
   const service = getModeratorService(session);
-  return await service.getModerationQueue();
+  return await service.getModerationQueue(limit, startAfterId);
 }
 
 export async function reviewPost(
