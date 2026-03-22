@@ -142,17 +142,26 @@ export class ModeratorService implements IModeratorService {
     }
   }
 
-  async getModerationQueue(): Promise<ModerationPostResponse[]> {
+  async getModerationQueue(
+    limit: number = 20,
+    startAfterId?: string,
+  ): Promise<ModerationPostResponse[]> {
     const session = this.ensureModeratorOrAdmin();
 
-    await logActivity(
-      session.uid,
-      "MODERATOR_VIEWED_QUEUE",
-      "Viewed moderation queue",
-    );
+    if (!startAfterId) {
+      await logActivity(
+        session.uid,
+        "MODERATOR_VIEWED_QUEUE",
+        "Viewed moderation queue",
+      );
+    }
 
     // For now we only support posts in the moderation queue.
-    return this.moderationService.getModerationQueue("post", 50);
+    return this.moderationService.getModerationQueue(
+      "post",
+      limit,
+      startAfterId,
+    );
   }
 
   async blockUser(data: BlockUserRequest): Promise<void> {

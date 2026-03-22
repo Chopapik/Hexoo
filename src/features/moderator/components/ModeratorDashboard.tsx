@@ -1,13 +1,50 @@
 "use client";
 
+import React, { useEffect, useRef } from "react";
 import Button from "@/features/shared/components/ui/Button";
 import { useModeratorDashboard } from "../hooks/useModeratorDashboard";
 import { ModerationPostResponseDto } from "@/features/posts/types/post.dto";
 import ModerationQueueItem from "./ModerationQueueItem";
 
 export default function ModeratorDashboard() {
-  const { posts, isLoading, isError, refetch, isFetching, performAction, isActionPending } =
-    useModeratorDashboard();
+  const {
+    data,
+    isLoading,
+    isError,
+    refetch,
+    isFetching,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    performAction,
+    isActionPending,
+  } = useModeratorDashboard();
+
+  const observerTarget = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      { threshold: 1.0 },
+    );
+
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
+    }
+
+    return () => {
+      if (observerTarget.current) {
+        observer.unobserve(observerTarget.current);
+      }
+    };
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  const loadedCount =
+    data?.pages.reduce((acc, page) => acc + page.length, 0) ?? 0;
 
   return (
     <div className="w-full flex flex-col p-10 gap-10">
@@ -25,10 +62,9 @@ export default function ModeratorDashboard() {
                 Kolejka Oczekujących
               </h2>
               <div className="text-sm text-text-neutral">
-                Posty oflagowane przez AI lub zgłoszone przez użytkowników. Liczba:{" "}
-                <span className="text-fuchsia-400 font-bold">
-                  {posts?.length || 0}
-                </span>
+                Posty oflagowane przez AI lub zgłoszone przez użytkowników.
+                Załadowano:{" "}
+                <span className="text-fuchsia-400 font-bold">{loadedCount}</span>
               </div>
             </div>
 
@@ -52,7 +88,7 @@ export default function ModeratorDashboard() {
             </div>
           ) : (
             <div className="flex flex-col gap-4 mt-6">
-              {posts?.length === 0 && (
+              {data?.pages[0]?.length === 0 && (
                 <div className="text-center text-text-neutral py-20 bg-white/5 rounded-xl border border-dashed border-secondary-neutral-background-default">
                   <p className="text-sm mt-2 opacity-60">
                     Brak postów wymagających uwagi.
@@ -60,14 +96,36 @@ export default function ModeratorDashboard() {
                 </div>
               )}
 
-              {posts?.map((post: ModerationPostResponseDto) => (
-                <ModerationQueueItem
-                  key={post.id}
-                  post={post}
-                  onAction={performAction}
-                  isPending={isActionPending}
-                />
+              {data?.pages.map((group, i) => (
+                <React.Fragment key={i}>
+                  {group.map((post: ModerationPostResponseDto) => (
+                    <ModerationQueueItem
+                      key={post.id}
+                      post={post}
+                      onAction={performAction}
+                      isPending={isActionPending}
+                    />
+                  ))}
+                </React.Fragment>
               ))}
+
+              <div
+                ref={observerTarget}
+                className="h-4 w-full flex justify-center py-4"
+              >
+                {isFetchingNextPage && (
+                  <div className="w-6 h-6 border-2 border-fuchsia-500 border-t-transparent rounded-full animate-spin" />
+                )}
+              </div>
+
+              {!hasNextPage &&
+                data &&
+                data.pages.length > 0 &&
+                data.pages[0].length > 0 && (
+                  <div className="text-center text-text-neutral text-sm py-8 font-Albert_Sans opacity-50">
+                    To już wszystko na dziś
+                  </div>
+                )}
             </div>
           )}
         </div>

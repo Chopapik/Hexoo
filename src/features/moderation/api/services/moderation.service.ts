@@ -10,6 +10,7 @@ export class ModerationService implements IModerationService {
   async getModerationQueue(
     resourceType: ModerationResourceType,
     limit: number = 50,
+    startAfterId?: string,
   ): Promise<ModerationPostResponse[]> {
     // Currently only posts are supported; comments can be added later.
     if (resourceType !== "post") {
@@ -18,7 +19,10 @@ export class ModerationService implements IModerationService {
       );
     }
 
-    const posts = await postRepository.getPostsPendingModeration(limit);
+    const posts = await postRepository.getPostsPendingModeration(
+      limit,
+      startAfterId,
+    );
     if (posts.length === 0) return [];
 
     const authorIds = [...new Set(posts.map((post) => post.userId))];
