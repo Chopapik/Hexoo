@@ -1,7 +1,6 @@
 import type { SessionData } from "@/features/me/me.type";
 import { ModeratorService } from "./moderator.service";
 import { ModerationService } from "@/features/moderation/api/services/moderation.service";
-import { userRepository } from "@/features/users/api/repositories";
 import { authRepository } from "@/features/auth/api/repositories";
 import type { BlockUserRequestDto as BlockUserRequest } from "@/features/users/types/user.dto";
 
@@ -12,7 +11,6 @@ export const getModeratorService = (
   return new ModeratorService(
     session,
     moderationService,
-    userRepository,
     authRepository,
   );
 };

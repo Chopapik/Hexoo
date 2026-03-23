@@ -1,25 +1,31 @@
 import { createAppError } from "@/lib/AppError";
-import { postRepository } from "@/features/posts/api/repositories";
 import { deleteImage } from "@/features/images/api/image.service";
-import { logActivity } from "@/features/activity/api/services";
+import { supabaseAdmin } from "@/lib/supabaseServer";
 import { ModerationPostResponseDto as ModerationPostResponse } from "@/features/posts/types/post.dto";
 import { UserRole } from "@/features/users/types/user.type";
 import type { BlockUserRequestDto as BlockUserRequest } from "@/features/users/types/user.dto";
-import { ModerationStatus } from "@/features/shared/types/content.type";
-import { logModerationEvent } from "@/features/moderation/api/services/moderationLog.service";
 import type { ModerationService as IModerationService } from "@/features/moderation/api/services/moderation.service.interface";
 import type { SessionData } from "@/features/me/me.type";
 import type { ModeratorService as IModeratorService } from "./moderator.service.interface";
-import type { UserRepository } from "@/features/users/api/repositories/user.repository.interface";
 import type { AuthRepository } from "@/features/auth/api/repositories/authRepository.interface";
 
 export class ModeratorService implements IModeratorService {
   constructor(
     private readonly session: SessionData | null,
     private readonly moderationService: IModerationService,
-    private readonly userRepository: UserRepository,
     private readonly authRepository: AuthRepository | null,
   ) {}
+
+  private async runRpc(name: string, payload: Record<string, unknown>) {
+    const { error } = await supabaseAdmin.rpc(name, payload);
+    if (error) {
+      throw createAppError({
+        code: "DB_ERROR",
+        message: `[moderatorService.${name}] Transaction failed`,
+        details: error,
+      });
+    }
+  }
 
   private ensureModeratorOrAdmin(): SessionData {
     const session = this.session;
@@ -42,106 +48,6 @@ export class ModeratorService implements IModeratorService {
     return session;
   }
 
-  private async handleRejectAction(
-    postId: string,
-    post: NonNullable<Awaited<ReturnType<typeof postRepository.getPostById>>>,
-    moderatorUid: string,
-    categories: string[],
-    justification: string,
-    now: Date,
-  ) {
-    if (post?.imageMeta?.storagePath) {
-      await deleteImage(post.imageMeta.storagePath);
-    }
-    await postRepository.deletePost(postId);
-    await logModerationEvent({
-      userId: post.userId,
-      timestamp: now,
-      verdict: ModerationStatus.Rejected,
-      categories,
-      actionTaken: "CONTENT_REMOVED",
-      resourceType: "post",
-      resourceId: postId,
-      source: "moderator",
-      actorId: moderatorUid,
-      reasonSummary: "Post removed by moderator",
-      reasonDetails: justification,
-    });
-    if (post.userId) {
-      await logActivity(
-        post.userId,
-        "POST_REJECTED",
-        `Post ${postId} rejected by moderator`,
-      );
-    }
-  }
-
-  private async handleApproveAction(
-    postId: string,
-    post: NonNullable<Awaited<ReturnType<typeof postRepository.getPostById>>>,
-    moderatorUid: string,
-    categories: string[],
-    justification: string,
-    now: Date,
-  ) {
-    await postRepository.updatePost(postId, {
-      isPending: false,
-    });
-    await logModerationEvent({
-      userId: post.userId,
-      timestamp: now,
-      verdict: ModerationStatus.Approved,
-      categories,
-      actionTaken: "FLAGGED_FOR_REVIEW",
-      resourceType: "post",
-      resourceId: postId,
-      source: "moderator",
-      actorId: moderatorUid,
-      reasonSummary: "Post approved by moderator",
-      reasonDetails: justification,
-    });
-    if (post.userId) {
-      await logActivity(
-        post.userId,
-        "POST_APPROVED",
-        `Post ${postId} approved by moderator`,
-      );
-    }
-  }
-
-  private async handleQuarantineAction(
-    postId: string,
-    post: NonNullable<Awaited<ReturnType<typeof postRepository.getPostById>>>,
-    moderatorUid: string,
-    categories: string[],
-    justification: string,
-    now: Date,
-  ) {
-    await postRepository.updatePost(postId, {
-      isPending: true,
-    });
-    await logModerationEvent({
-      userId: post.userId,
-      timestamp: now,
-      verdict: ModerationStatus.Pending,
-      categories,
-      actionTaken: "FLAGGED_FOR_REVIEW",
-      resourceType: "post",
-      resourceId: postId,
-      source: "moderator",
-      actorId: moderatorUid,
-      reasonSummary: "Post moved to quarantine by moderator",
-      reasonDetails: justification,
-    });
-    if (post.userId) {
-      await logActivity(
-        post.userId,
-        "POST_QUARANTINED",
-        `Post ${postId} moved to quarantine by moderator`,
-      );
-    }
-  }
-
   async getModerationQueue(
     limit: number = 20,
     startAfterId?: string,
@@ -149,11 +55,18 @@ export class ModeratorService implements IModeratorService {
     const session = this.ensureModeratorOrAdmin();
 
     if (!startAfterId) {
-      await logActivity(
-        session.uid,
-        "MODERATOR_VIEWED_QUEUE",
-        "Viewed moderation queue",
-      );
+      const { error } = await supabaseAdmin.from("activity_logs").insert({
+        user_id: session.uid,
+        action: "MODERATOR_VIEWED_QUEUE",
+        details: "Viewed moderation queue",
+      });
+      if (error) {
+        throw createAppError({
+          code: "DB_ERROR",
+          message: "[moderatorService.getModerationQueue] Failed to log activity",
+          details: error,
+        });
+      }
     }
 
     // For now we only support posts in the moderation queue.
@@ -165,7 +78,7 @@ export class ModeratorService implements IModeratorService {
   }
 
   async blockUser(data: BlockUserRequest): Promise<void> {
-    const session = this.ensureModeratorOrAdmin();
+    this.ensureModeratorOrAdmin();
 
     if (!data.uidToBlock) {
       throw createAppError({
@@ -174,23 +87,17 @@ export class ModeratorService implements IModeratorService {
       });
     }
 
-    await this.userRepository.blockUser(data);
+    await this.runRpc("moderator_block_user_tx", {
+      p_uid_to_block: data.uidToBlock,
+      p_banned_by: data.bannedBy,
+      p_banned_reason: data.bannedReason,
+    });
+
     try {
       await this.authRepository?.updateUser(data.uidToBlock, { disabled: true });
     } catch {
       // Auth provider may not support disabled; ignore
     }
-
-    await logActivity(
-      data.uidToBlock,
-      "USER_BLOCKED",
-      `Blocked by ${data.bannedBy}. Reason: ${data.bannedReason}`,
-    );
-    await logActivity(
-      session.uid,
-      "MODERATOR_BLOCKED_USER",
-      `Blocked user ${data.uidToBlock}`,
-    );
   }
 
   async unblockUser(uid: string): Promise<void> {
@@ -203,19 +110,16 @@ export class ModeratorService implements IModeratorService {
       });
     }
 
-    await this.userRepository.unblockUser(uid);
+    await this.runRpc("moderator_unblock_user_tx", {
+      p_uid: uid,
+      p_moderator_uid: session.uid,
+    });
+
     try {
       await this.authRepository?.updateUser(uid, { disabled: false });
     } catch {
       // Auth provider may not support disabled; ignore
     }
-
-    await logActivity(uid, "USER_UNBLOCKED", "User account unblocked");
-    await logActivity(
-      session.uid,
-      "MODERATOR_UNBLOCKED_USER",
-      `Unblocked user ${uid}`,
-    );
   }
 
   async reviewPost(
@@ -234,14 +138,6 @@ export class ModeratorService implements IModeratorService {
       });
     }
 
-    const post = await postRepository.getPostById(postId);
-    if (!post) {
-      throw createAppError({
-        code: "NOT_FOUND",
-        message: "[moderatorService.reviewPost] Post not found",
-      });
-    }
-
     if (action !== "approve" && !justification?.trim()) {
       throw createAppError({
         code: "VALIDATION_ERROR",
@@ -249,56 +145,46 @@ export class ModeratorService implements IModeratorService {
       });
     }
 
-    const now = new Date();
-
-    await logActivity(
-      moderator.uid,
-      "MODERATOR_REVIEWED_POST",
-      `Reviewed post ${postId} with action ${action}`,
+    const { data: txResult, error } = await supabaseAdmin.rpc(
+      "moderator_review_post_tx",
+      {
+        p_post_id: postId,
+        p_action: action,
+        p_moderator_uid: moderator.uid,
+        p_categories: categories,
+        p_justification: justification,
+        p_ban_author: banAuthor,
+      },
     );
 
-    if (action === "reject") {
-      await this.handleRejectAction(
-        postId,
-        post,
-        moderator.uid,
-        categories,
-        justification,
-        now,
-      );
-    } else if (action === "approve") {
-      await this.handleApproveAction(
-        postId,
-        post,
-        moderator.uid,
-        categories,
-        justification,
-        now,
-      );
-    } else if (action === "quarantine") {
-      await this.handleQuarantineAction(
-        postId,
-        post,
-        moderator.uid,
-        categories,
-        justification,
-        now,
-      );
+    if (error) {
+      throw createAppError({
+        code: "DB_ERROR",
+        message: "[moderatorService.reviewPost] Transaction failed",
+        details: error,
+      });
     }
 
-    if (banAuthor && post.userId) {
+    const result = (txResult ?? {}) as {
+      deletedImagePath?: string | null;
+      authorUid?: string | null;
+    };
+
+    if (banAuthor && result.authorUid) {
       try {
-        await this.blockUser({
-          uidToBlock: post.userId,
-          bannedBy: moderator.uid,
-          bannedReason: `Decision on post ${postId}`,
+        await this.authRepository?.updateUser(result.authorUid, {
+          disabled: true,
         });
-      } catch (error) {
-        throw createAppError({
-          code: "INTERNAL_ERROR",
-          message: `[ReviewPost] Failed to block user ${post.userId} after post review`,
-          details: error,
-        });
+      } catch {
+        // Auth provider may not support disabled; ignore
+      }
+    }
+
+    if (action === "reject" && result.deletedImagePath) {
+      try {
+        await deleteImage(result.deletedImagePath);
+      } catch {
+        // DB transaction is already committed; image cleanup is best-effort.
       }
     }
   }
