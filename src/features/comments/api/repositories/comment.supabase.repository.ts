@@ -6,7 +6,6 @@ import type { CommentRow } from "../../types/comment.row";
 import { parseDate } from "@/features/shared/utils/dateUtils";
 
 const COMMENTS_TABLE = "comments";
-const POSTS_TABLE = "posts";
 
 function rowToEntity(row: CommentRow): CommentEntity {
   return {
@@ -28,60 +27,26 @@ function rowToEntity(row: CommentRow): CommentEntity {
   };
 }
 
-function createPayloadToRow(
-  postId: string,
-  data: CreateCommentPayload,
-): Record<string, unknown> {
-  const row: Record<string, unknown> = {
-    post_id: postId,
-    user_id: data.userId,
-    text: data.text ?? "",
-    likes_count: data.likesCount ?? 0,
-    comments_count: data.commentsCount ?? 0,
-    is_nsfw: data.isNSFW ?? false,
-    is_pending: data.isPending ?? false,
-  };
-  row.created_at =
-    data.createdAt instanceof Date
-      ? data.createdAt.toISOString()
-      : new Date().toISOString();
-  if (data.updatedAt != null)
-    row.updated_at =
-      data.updatedAt instanceof Date
-        ? data.updatedAt.toISOString()
-        : new Date().toISOString();
-  if (data.imageUrl !== undefined) row.image_url = data.imageUrl;
-  if (data.imageMeta !== undefined) row.image_meta = data.imageMeta;
-  if (data.device !== undefined) row.device = data.device;
-  return row;
-}
-
 export class CommentSupabaseRepository implements CommentRepository {
   async createComment(
     postId: string,
     data: CreateCommentPayload,
   ): Promise<void> {
-    const row = createPayloadToRow(postId, data);
-    const { error: insertError } = await supabaseAdmin
-      .from(COMMENTS_TABLE)
-      .insert(row);
-    if (insertError) throw new Error(insertError.message ?? "Database error");
-
-    const { data: postRow } = await supabaseAdmin
-      .from(POSTS_TABLE)
-      .select("comments_count")
-      .eq("id", postId)
-      .single();
-    const cur =
-      (postRow as { comments_count: number } | null)?.comments_count ?? 0;
-    const { error: updateError } = await supabaseAdmin
-      .from(POSTS_TABLE)
-      .update({
-        comments_count: cur + 1,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", postId);
-    if (updateError) throw new Error(updateError.message ?? "Database error");
+    const { error } = await supabaseAdmin.rpc("create_comment_tx", {
+      p_post_id: postId,
+      p_user_id: data.userId,
+      p_text: data.text ?? "",
+      p_likes_count: data.likesCount ?? 0,
+      p_comments_count: data.commentsCount ?? 0,
+      p_created_at: data.createdAt?.toISOString?.() ?? new Date().toISOString(),
+      p_updated_at: data.updatedAt?.toISOString?.() ?? null,
+      p_is_nsfw: data.isNSFW ?? false,
+      p_is_pending: data.isPending ?? false,
+      p_image_url: data.imageUrl ?? null,
+      p_image_meta: data.imageMeta ?? null,
+      p_device: data.device ?? null,
+    });
+    if (error) throw new Error(error.message ?? "Database error");
   }
 
   async getCommentsByPostId(postId: string): Promise<CommentEntity[]> {
