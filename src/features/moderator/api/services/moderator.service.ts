@@ -1,6 +1,7 @@
 import { createAppError } from "@/lib/AppError";
 import { deleteImage } from "@/features/images/api/image.service";
 import { supabaseAdmin } from "@/lib/supabaseServer";
+import { ModerationCommentResponseDto as ModerationCommentResponse } from "@/features/comments/types/comment.dto";
 import { ModerationPostResponseDto as ModerationPostResponse } from "@/features/posts/types/post.dto";
 import { UserRole } from "@/features/users/types/user.type";
 import type { BlockUserRequestDto as BlockUserRequest } from "@/features/users/types/user.dto";
@@ -48,7 +49,7 @@ export class ModeratorService implements IModeratorService {
     return session;
   }
 
-  async getModerationQueue(
+  async getModerationQueueForPosts(
     limit: number = 20,
     startAfterId?: string,
   ): Promise<ModerationPostResponse[]> {
@@ -58,20 +59,47 @@ export class ModeratorService implements IModeratorService {
       const { error } = await supabaseAdmin.from("activity_logs").insert({
         user_id: session.uid,
         action: "MODERATOR_VIEWED_QUEUE",
-        details: "Viewed moderation queue",
+        details: "Viewed moderation queue (posts)",
       });
       if (error) {
         throw createAppError({
           code: "DB_ERROR",
-          message: "[moderatorService.getModerationQueue] Failed to log activity",
+          message:
+            "[moderatorService.getModerationQueueForPosts] Failed to log activity",
           details: error,
         });
       }
     }
 
-    // For now we only support posts in the moderation queue.
-    return this.moderationService.getModerationQueue(
-      "post",
+    return this.moderationService.getModerationQueueForPosts(
+      limit,
+      startAfterId,
+    );
+  }
+
+  async getModerationQueueForComments(
+    limit: number = 20,
+    startAfterId?: string,
+  ): Promise<ModerationCommentResponse[]> {
+    const session = this.ensureModeratorOrAdmin();
+
+    if (!startAfterId) {
+      const { error } = await supabaseAdmin.from("activity_logs").insert({
+        user_id: session.uid,
+        action: "MODERATOR_VIEWED_QUEUE",
+        details: "Viewed moderation queue (comments)",
+      });
+      if (error) {
+        throw createAppError({
+          code: "DB_ERROR",
+          message:
+            "[moderatorService.getModerationQueueForComments] Failed to log activity",
+          details: error,
+        });
+      }
+    }
+
+    return this.moderationService.getModerationQueueForComments(
       limit,
       startAfterId,
     );
@@ -161,6 +189,73 @@ export class ModeratorService implements IModeratorService {
       throw createAppError({
         code: "DB_ERROR",
         message: "[moderatorService.reviewPost] Transaction failed",
+        details: error,
+      });
+    }
+
+    const result = (txResult ?? {}) as {
+      deletedImagePath?: string | null;
+      authorUid?: string | null;
+    };
+
+    if (banAuthor && result.authorUid) {
+      try {
+        await this.authRepository?.updateUser(result.authorUid, {
+          disabled: true,
+        });
+      } catch {
+        // Auth provider may not support disabled; ignore
+      }
+    }
+
+    if (action === "reject" && result.deletedImagePath) {
+      try {
+        await deleteImage(result.deletedImagePath);
+      } catch {
+        // DB transaction is already committed; image cleanup is best-effort.
+      }
+    }
+  }
+
+  async reviewComment(
+    commentId: string,
+    action: "approve" | "reject" | "quarantine",
+    banAuthor: boolean = false,
+    categories: string[],
+    justification: string,
+  ) {
+    const moderator = this.ensureModeratorOrAdmin();
+
+    if (!commentId) {
+      throw createAppError({
+        code: "INVALID_INPUT",
+        message: "[moderatorService.reviewComment] commentId was empty",
+      });
+    }
+
+    if (action !== "approve" && !justification?.trim()) {
+      throw createAppError({
+        code: "VALIDATION_ERROR",
+        message: "[moderatorService.reviewComment] justification is required",
+      });
+    }
+
+    const { data: txResult, error } = await supabaseAdmin.rpc(
+      "moderator_review_comment_tx",
+      {
+        p_comment_id: commentId,
+        p_action: action,
+        p_moderator_uid: moderator.uid,
+        p_categories: categories,
+        p_justification: justification,
+        p_ban_author: banAuthor,
+      },
+    );
+
+    if (error) {
+      throw createAppError({
+        code: "DB_ERROR",
+        message: "[moderatorService.reviewComment] Transaction failed",
         details: error,
       });
     }

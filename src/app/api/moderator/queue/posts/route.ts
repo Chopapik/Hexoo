@@ -1,4 +1,4 @@
-import { getModerationQueue } from "@/features/moderator/api/services";
+import { getModerationQueueForPosts } from "@/features/moderator/api/services";
 
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
@@ -11,6 +11,6 @@ export const GET = withErrorHandling(async (req: NextRequest) => {
   const limit = parseInt(searchParams.get("limit") || "20", 10);
   const startAfter = searchParams.get("startAfter") || undefined;
 
-  const posts = await getModerationQueue(session, limit, startAfter);
+  const posts = await getModerationQueueForPosts(session, limit, startAfter);
   return handleSuccess({ posts });
 });

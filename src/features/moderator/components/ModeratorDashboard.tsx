@@ -1,12 +1,18 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Button from "@/features/shared/components/ui/Button";
-import { useModeratorDashboard } from "../hooks/useModeratorDashboard";
+import {
+  useModeratorDashboard,
+  type ModeratorQueueTab,
+} from "../hooks/useModeratorDashboard";
 import { ModerationPostResponseDto } from "@/features/posts/types/post.dto";
+import type { ModerationCommentResponseDto } from "@/features/comments/types/comment.dto";
 import ModerationQueueItem from "./ModerationQueueItem";
+import ModerationCommentQueueItem from "./ModerationCommentQueueItem";
 
 export default function ModeratorDashboard() {
+  const [queueTab, setQueueTab] = useState<ModeratorQueueTab>("posts");
   const {
     data,
     isLoading,
@@ -16,9 +22,10 @@ export default function ModeratorDashboard() {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-    performAction,
+    performPostAction,
+    performCommentAction,
     isActionPending,
-  } = useModeratorDashboard();
+  } = useModeratorDashboard(queueTab);
 
   const observerTarget = useRef<HTMLDivElement>(null);
 
@@ -46,6 +53,16 @@ export default function ModeratorDashboard() {
   const loadedCount =
     data?.pages.reduce((acc, page) => acc + page.length, 0) ?? 0;
 
+  const queueSubtitle =
+    queueTab === "posts"
+      ? "Posty oflagowane przez AI lub zgłoszone przez użytkowników."
+      : "Komentarze oczekujące na moderację (np. flagi lub zgłoszenia).";
+
+  const emptyMessage =
+    queueTab === "posts"
+      ? "Brak postów wymagających uwagi."
+      : "Brak komentarzy wymagających uwagi.";
+
   return (
     <div className="w-full flex flex-col p-10 gap-10">
       <div className="w-full flex items-center justify-between gap-4">
@@ -56,19 +73,46 @@ export default function ModeratorDashboard() {
 
       <div className="w-full flex justify-center">
         <div className="w-full p-6 glass-card rounded-2xl border border-primary-neutral-stroke-default max-w-[1300px]">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex flex-col">
-              <h2 className="text-lg font-Albert_Sans font-semibold">
-                Kolejka Oczekujących
-              </h2>
-              <div className="text-sm text-text-neutral">
-                Posty oflagowane przez AI lub zgłoszone przez użytkowników.
-                Załadowano:{" "}
-                <span className="text-fuchsia-400 font-bold">{loadedCount}</span>
+          <div className="flex flex-col gap-4 mb-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="flex flex-col gap-3 min-w-0 flex-1">
+              <div className="inline-flex rounded-xl border border-white/10 bg-black/20 p-1 self-start">
+                <button
+                  type="button"
+                  onClick={() => setQueueTab("posts")}
+                  className={`rounded-lg px-4 py-2 text-sm font-Albert_Sans font-medium transition-colors ${
+                    queueTab === "posts"
+                      ? "bg-fuchsia-500/25 text-fuchsia-100 border border-fuchsia-500/40"
+                      : "text-text-neutral hover:text-text-main hover:bg-white/5"
+                  }`}
+                >
+                  Zgłoszone posty
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setQueueTab("comments")}
+                  className={`rounded-lg px-4 py-2 text-sm font-Albert_Sans font-medium transition-colors ${
+                    queueTab === "comments"
+                      ? "bg-fuchsia-500/25 text-fuchsia-100 border border-fuchsia-500/40"
+                      : "text-text-neutral hover:text-text-main hover:bg-white/5"
+                  }`}
+                >
+                  Zgłoszone komentarze
+                </button>
+              </div>
+              <div>
+                <h2 className="text-lg font-Albert_Sans font-semibold">
+                  Kolejka oczekujących
+                </h2>
+                <div className="text-sm text-text-neutral">
+                  {queueSubtitle} Załadowano:{" "}
+                  <span className="text-fuchsia-400 font-bold">
+                    {loadedCount}
+                  </span>
+                </div>
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 shrink-0">
               <Button
                 onClick={() => refetch()}
                 text="Odśwież"
@@ -90,22 +134,33 @@ export default function ModeratorDashboard() {
             <div className="flex flex-col gap-4 mt-6">
               {data?.pages[0]?.length === 0 && (
                 <div className="text-center text-text-neutral py-20 bg-white/5 rounded-xl border border-dashed border-secondary-neutral-background-default">
-                  <p className="text-sm mt-2 opacity-60">
-                    Brak postów wymagających uwagi.
-                  </p>
+                  <p className="text-sm mt-2 opacity-60">{emptyMessage}</p>
                 </div>
               )}
 
               {data?.pages.map((group, i) => (
                 <React.Fragment key={i}>
-                  {group.map((post: ModerationPostResponseDto) => (
-                    <ModerationQueueItem
-                      key={post.id}
-                      post={post}
-                      onAction={performAction}
-                      isPending={isActionPending}
-                    />
-                  ))}
+                  {queueTab === "posts"
+                    ? (group as ModerationPostResponseDto[]).map(
+                        (post: ModerationPostResponseDto) => (
+                          <ModerationQueueItem
+                            key={post.id}
+                            post={post}
+                            onAction={performPostAction}
+                            isPending={isActionPending}
+                          />
+                        ),
+                      )
+                    : (group as ModerationCommentResponseDto[]).map(
+                        (comment: ModerationCommentResponseDto) => (
+                          <ModerationCommentQueueItem
+                            key={comment.id}
+                            comment={comment}
+                            onAction={performCommentAction}
+                            isPending={isActionPending}
+                          />
+                        ),
+                      )}
                 </React.Fragment>
               ))}
 

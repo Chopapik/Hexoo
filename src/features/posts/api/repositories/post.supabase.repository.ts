@@ -113,6 +113,16 @@ export class PostSupabaseRepository implements PostRepository {
     return rowToEntity(data as PostRow);
   }
 
+  async getPostsByIds(postIds: string[]): Promise<PostEntity[]> {
+    if (postIds.length === 0) return [];
+    const { data, error } = await supabaseAdmin
+      .from(TABLE)
+      .select("*")
+      .in("id", postIds);
+    if (error) throw new Error(error.message ?? "Database error");
+    return (data ?? []).map((row) => rowToEntity(row as PostRow));
+  }
+
   async getPosts(limit: number, startAfterId?: string): Promise<PostEntity[]> {
     let query = supabaseAdmin
       .from(TABLE)
