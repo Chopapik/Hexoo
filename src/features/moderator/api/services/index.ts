@@ -15,13 +15,22 @@ export const getModeratorService = (
   );
 };
 
-export async function getModerationQueue(
+export async function getModerationQueueForPosts(
   session: SessionData | null,
   limit?: number,
   startAfterId?: string,
 ) {
   const service = getModeratorService(session);
-  return await service.getModerationQueue(limit, startAfterId);
+  return await service.getModerationQueueForPosts(limit, startAfterId);
+}
+
+export async function getModerationQueueForComments(
+  session: SessionData | null,
+  limit?: number,
+  startAfterId?: string,
+) {
+  const service = getModeratorService(session);
+  return await service.getModerationQueueForComments(limit, startAfterId);
 }
 
 export async function reviewPost(
@@ -34,6 +43,24 @@ export async function reviewPost(
 ) {
   const service = getModeratorService(session);
   return await service.reviewPost(postId, action, banAuthor, categories, justification);
+}
+
+export async function reviewComment(
+  session: SessionData | null,
+  commentId: string,
+  action: "approve" | "reject" | "quarantine",
+  banAuthor: boolean | undefined,
+  categories: string[],
+  justification: string,
+) {
+  const service = getModeratorService(session);
+  return await service.reviewComment(
+    commentId,
+    action,
+    banAuthor,
+    categories,
+    justification,
+  );
 }
 
 export async function blockUser(

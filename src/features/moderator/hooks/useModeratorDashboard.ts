@@ -8,8 +8,11 @@ import {
 import fetchClient from "@/lib/fetchClient";
 import toast from "react-hot-toast";
 import type { ModerationPostResponseDto } from "@/features/posts/types/post.dto";
+import type { ModerationCommentResponseDto } from "@/features/comments/types/comment.dto";
 
-export function useModeratorDashboard() {
+export type ModeratorQueueTab = "posts" | "comments";
+
+export function useModeratorDashboard(queueTab: ModeratorQueueTab) {
   const queryClient = useQueryClient();
 
   const {
@@ -22,7 +25,7 @@ export function useModeratorDashboard() {
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: ["moderator", "queue"],
+    queryKey: ["moderator", "queue", queueTab],
     queryFn: async ({ pageParam }) => {
       const params = new URLSearchParams({
         limit: "20",
@@ -32,12 +35,21 @@ export function useModeratorDashboard() {
         params.append("startAfter", pageParam as string);
       }
 
-      const res = await fetchClient.get<{ posts: ModerationPostResponseDto[] }>(
-        `/moderator/queue?${params.toString()}`,
-      );
-      return res.posts;
+      const qs = params.toString();
+
+      if (queueTab === "posts") {
+        const res = await fetchClient.get<{
+          posts: ModerationPostResponseDto[];
+        }>(`/moderator/queue/posts?${qs}`);
+        return res.posts;
+      }
+
+      const res = await fetchClient.get<{
+        comments: ModerationCommentResponseDto[];
+      }>(`/moderator/queue/comments?${qs}`);
+      return res.comments;
     },
-    initialPageParam: undefined,
+    initialPageParam: undefined as string | undefined,
     getNextPageParam: (lastPage) => {
       if (!lastPage || lastPage.length === 0) return undefined;
       return lastPage[lastPage.length - 1].id;
@@ -45,7 +57,7 @@ export function useModeratorDashboard() {
     staleTime: 1000 * 60 * 1,
   });
 
-  const actionMutation = useMutation({
+  const postMutation = useMutation({
     mutationFn: async (payload: {
       postId: string;
       action: "approve" | "reject" | "quarantine";
@@ -69,6 +81,31 @@ export function useModeratorDashboard() {
     onError: () => toast.error("Błąd podczas akcji moderatora"),
   });
 
+  const commentMutation = useMutation({
+    mutationFn: async (payload: {
+      commentId: string;
+      action: "approve" | "reject" | "quarantine";
+      banAuthor?: boolean;
+      justification?: string;
+      categories?: string[];
+    }) => {
+      return fetchClient.post("/moderator/review-comment", payload);
+    },
+    onSuccess: (_, variables) => {
+      const messages = {
+        approve: "Komentarz zatwierdzony",
+        reject: "Komentarz usunięty",
+        quarantine: "Komentarz w kwarantannie",
+      };
+      toast.success(messages[variables.action]);
+
+      queryClient.invalidateQueries({ queryKey: ["moderator", "queue"] });
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: ["comments"] });
+    },
+    onError: () => toast.error("Błąd podczas akcji moderatora"),
+  });
+
   return {
     data,
     isLoading,
@@ -78,7 +115,9 @@ export function useModeratorDashboard() {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-    performAction: actionMutation.mutate,
-    isActionPending: actionMutation.isPending,
+    performPostAction: postMutation.mutate,
+    performCommentAction: commentMutation.mutate,
+    isActionPending:
+      postMutation.isPending || commentMutation.isPending,
   };
 }

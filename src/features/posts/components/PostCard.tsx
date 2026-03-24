@@ -13,9 +13,15 @@ import { initializeSettings } from "@/features/me/store/settingsSlice";
 type PostCardProps = {
   post: PublicPostResponseDto;
   revealNSFW?: boolean;
+  /** Moderation queue: images as thumbnails with lightbox */
+  moderationThumbnailImage?: boolean;
 };
 
-export const PostCard = ({ post, revealNSFW }: PostCardProps) => {
+export const PostCard = ({
+  post,
+  revealNSFW,
+  moderationThumbnailImage = false,
+}: PostCardProps) => {
   const [showPostModal, setShowPostModal] = useState(false);
 
   const showNSFWPosts = useAppSelector(
@@ -48,7 +54,11 @@ export const PostCard = ({ post, revealNSFW }: PostCardProps) => {
         <PostMeta post={post} />
 
         {isContentVisible ? (
-          <PostBody post={post} isNSFW={post.isNSFW} />
+          <PostBody
+            post={post}
+            isNSFW={post.isNSFW}
+            moderationThumbnailImage={moderationThumbnailImage}
+          />
         ) : (
           <PostNsfwNotice className="pointer-events-none" />
         )}

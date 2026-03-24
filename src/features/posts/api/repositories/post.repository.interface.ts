@@ -11,6 +11,8 @@ export interface PostRepository {
 
   getPostById(postId: string): Promise<PostEntity | null>;
 
+  getPostsByIds(postIds: string[]): Promise<PostEntity[]>;
+
   getPosts(limit: number, startAfterId?: string): Promise<PostEntity[]>;
 
   getPostsByUserId(

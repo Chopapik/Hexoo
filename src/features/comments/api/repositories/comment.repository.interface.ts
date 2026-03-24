@@ -7,4 +7,8 @@ export interface CommentRepository {
     data: CreateCommentPayload,
   ): Promise<void>;
   getCommentsByPostId(postId: string): Promise<CommentEntity[]>;
+  getCommentsPendingModeration(
+    limit: number,
+    startAfterId?: string,
+  ): Promise<CommentEntity[]>;
 }

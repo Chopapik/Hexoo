@@ -133,7 +133,11 @@ export default function ModerationQueueItem({
           )}
         </div>
 
-        <PostCard post={post} revealNSFW={true} />
+        <PostCard
+          post={post}
+          revealNSFW={true}
+          moderationThumbnailImage
+        />
 
         <div className="bg-secondary-neutral-background-default p-3 flex flex-wrap justify-end gap-3 border-t border-white/10 shadow-[0_-5px_15px_rgba(0,0,0,0.5)]">
           <Button

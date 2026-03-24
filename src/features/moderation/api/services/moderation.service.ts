@@ -1,24 +1,17 @@
+import { commentRepository } from "@/features/comments/api/repositories";
+import type { ModerationCommentResponseDto as ModerationCommentResponse } from "@/features/comments/types/comment.dto";
 import { postRepository } from "@/features/posts/api/repositories";
-import { getUsersByIds } from "@/features/users/api/services";
 import type { ModerationPostResponseDto as ModerationPostResponse } from "@/features/posts/types/post.dto";
 import { ModerationStatus } from "@/features/shared/types/content.type";
-import type { ModerationResourceType } from "@/features/moderation/types/moderation.type";
 import { getModerationLogsForResource } from "./moderationLog.service";
 import type { ModerationService as IModerationService } from "./moderation.service.interface";
+import { getUsersByIds } from "@/features/users/api/services";
 
 export class ModerationService implements IModerationService {
-  async getModerationQueue(
-    resourceType: ModerationResourceType,
+  async getModerationQueueForPosts(
     limit: number = 50,
     startAfterId?: string,
   ): Promise<ModerationPostResponse[]> {
-    // Currently only posts are supported; comments can be added later.
-    if (resourceType !== "post") {
-      throw new Error(
-        `[ModerationService.getModerationQueue] Unsupported resourceType: ${resourceType}`,
-      );
-    }
-
     const posts = await postRepository.getPostsPendingModeration(
       limit,
       startAfterId,
@@ -58,5 +51,69 @@ export class ModerationService implements IModerationService {
       };
     });
   }
-}
 
+  async getModerationQueueForComments(
+    limit: number = 50,
+    startAfterId?: string,
+  ): Promise<ModerationCommentResponse[]> {
+    const comments = await commentRepository.getCommentsPendingModeration(
+      limit,
+      startAfterId,
+    );
+    if (comments.length === 0) return [];
+
+    const parentPostIds = [...new Set(comments.map((c) => c.postId))];
+    const parentPosts = await postRepository.getPostsByIds(parentPostIds);
+    const parentById = new Map(parentPosts.map((p) => [p.id, p]));
+
+    const commentAuthorIds = [...new Set(comments.map((c) => c.userId))];
+    const parentAuthorIds = [
+      ...new Set(parentPosts.map((p) => p.userId)),
+    ];
+    const authorIds = [...new Set([...commentAuthorIds, ...parentAuthorIds])];
+    const authors = await getUsersByIds(authorIds);
+
+    const commentIds = comments.map((c) => c.id);
+    const latestLogByCommentId = await getModerationLogsForResource(
+      "comment",
+      commentIds,
+    );
+
+    return comments.map((comment) => {
+      const author = authors[comment.userId];
+      const latestLog = latestLogByCommentId[comment.id];
+      const parentPost = parentById.get(comment.postId);
+      const parentAuthor = parentPost ? authors[parentPost.userId] : undefined;
+
+      return {
+        ...comment,
+        moderationStatus: latestLog?.verdict ?? ModerationStatus.Pending,
+        flaggedReasons: latestLog?.categories ?? [],
+        moderationInfo: latestLog
+          ? {
+              verdict: latestLog.verdict,
+              actionTaken: latestLog.actionTaken,
+              categories: latestLog.categories,
+              reasonSummary: latestLog.reasonSummary,
+              reasonDetails: latestLog.reasonDetails,
+              source: latestLog.source,
+              actorId: latestLog.actorId,
+            }
+          : undefined,
+        userName: author?.name ?? "Unknown",
+        userAvatarUrl: author?.avatarUrl ?? null,
+        parentPostPreview: parentPost
+          ? {
+              id: parentPost.id,
+              text: parentPost.text,
+              userName: parentAuthor?.name ?? "Unknown",
+              userAvatarUrl: parentAuthor?.avatarUrl ?? null,
+              hasImage: Boolean(parentPost.imageUrl),
+              imageUrl: parentPost.imageUrl ?? null,
+              isNSFW: parentPost.isNSFW,
+            }
+          : undefined,
+      };
+    });
+  }
+}

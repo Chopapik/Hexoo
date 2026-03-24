@@ -13,30 +13,59 @@ interface ModerationReasonModalProps {
   isPending: boolean;
   onClose: () => void;
   onConfirm: (justification: string) => void;
+  /** Default copy is for posts; use `"comment"` for the comment queue. */
+  resource?: "post" | "comment";
 }
 
 const ACTION_CONFIG: Record<
   ModerationAction,
-  { title: string; confirmText: string; description: string; icon: React.ReactNode; color: string }
+  {
+    title: Record<"post" | "comment", string>;
+    confirmText: Record<"post" | "comment", string>;
+    description: Record<"post" | "comment", string>;
+    icon: React.ReactNode;
+    color: string;
+  }
 > = {
   quarantine: {
-    title: "Przenieś do kwarantanny",
-    confirmText: "Kwarantanna",
-    description: "Post zostanie ukryty dla innych użytkowników do czasu ponownego przeglądu. Podaj powód tej decyzji — zostanie zapisany w bazie danych.",
+    title: {
+      post: "Przenieś do kwarantanny",
+      comment: "Przenieś komentarz do kwarantanny",
+    },
+    confirmText: { post: "Kwarantanna", comment: "Kwarantanna" },
+    description: {
+      post:
+        "Post zostanie ukryty dla innych użytkowników do czasu ponownego przeglądu. Podaj powód tej decyzji — zostanie zapisany w bazie danych.",
+      comment:
+        "Komentarz pozostanie w trybie oczekującym. Podaj powód tej decyzji — zostanie zapisany w bazie danych.",
+    },
     icon: <BsShieldExclamation className="w-5 h-5" />,
     color: "yellow",
   },
   reject: {
-    title: "Usuń post",
-    confirmText: "Usuń post",
-    description: "Post zostanie trwale usunięty. Podaj powód usunięcia — zostanie zapisany w bazie danych jako uzasadnienie dla tej decyzji.",
+    title: { post: "Usuń post", comment: "Usuń komentarz" },
+    confirmText: { post: "Usuń post", comment: "Usuń komentarz" },
+    description: {
+      post:
+        "Post zostanie trwale usunięty. Podaj powód usunięcia — zostanie zapisany w bazie danych jako uzasadnienie dla tej decyzji.",
+      comment:
+        "Komentarz zostanie trwale usunięty. Podaj powód usunięcia — zostanie zapisany w bazie danych jako uzasadnienie dla tej decyzji.",
+    },
     icon: <BsTrash className="w-5 h-5" />,
     color: "red",
   },
   "reject-ban": {
-    title: "Usuń post i zbanuj autora",
-    confirmText: "Usuń i zbanuj",
-    description: "Post zostanie trwale usunięty, a konto autora zablokowane. Podaj powód — zostanie zapisany w bazie danych.",
+    title: {
+      post: "Usuń post i zbanuj autora",
+      comment: "Usuń komentarz i zbanuj autora",
+    },
+    confirmText: { post: "Usuń i zbanuj", comment: "Usuń i zbanuj" },
+    description: {
+      post:
+        "Post zostanie trwale usunięty, a konto autora zablokowane. Podaj powód — zostanie zapisany w bazie danych.",
+      comment:
+        "Komentarz zostanie trwale usunięty, a konto autora zablokowane. Podaj powód — zostanie zapisany w bazie danych.",
+    },
     icon: <BsTrash className="w-5 h-5" />,
     color: "red",
   },
@@ -58,9 +87,13 @@ export default function ModerationReasonModal({
   isPending,
   onClose,
   onConfirm,
+  resource = "post",
 }: ModerationReasonModalProps) {
   const [justification, setJustification] = useState("");
   const config = ACTION_CONFIG[action];
+  const title = config.title[resource];
+  const confirmText = config.confirmText[resource];
+  const description = config.description[resource];
   
   const currentLength = justification.length;
   const isTooShort = justification.trim().length < 5;
@@ -96,7 +129,7 @@ export default function ModerationReasonModal({
 
   const footer = (
     <ModalFooter
-      confirmText={config.confirmText}
+      confirmText={confirmText}
       onCancel={handleClose}
       onConfirm={handleConfirm}
       isPending={isPending}
@@ -119,12 +152,12 @@ export default function ModerationReasonModal({
           className={`inline-flex items-center gap-2 self-start px-3 py-1.5 rounded-lg text-sm font-medium ${colors.badge}`}
         >
           {config.icon}
-          {config.title}
+          {title}
         </div>
 
         {/* Description */}
         <p className="text-sm text-text-neutral leading-relaxed">
-          {config.description}
+          {description}
         </p>
 
         {/* Reason textarea */}

@@ -59,4 +59,37 @@ export class CommentSupabaseRepository implements CommentRepository {
     if (error) throw new Error(error.message ?? "Database error");
     return (data ?? []).map((row) => rowToEntity(row as CommentRow));
   }
+
+  async getCommentsPendingModeration(
+    limit: number,
+    startAfterId?: string,
+  ): Promise<CommentEntity[]> {
+    let query = supabaseAdmin
+      .from(COMMENTS_TABLE)
+      .select("*")
+      .eq("is_pending", true)
+      .order("created_at", { ascending: false })
+      .limit(limit);
+
+    if (startAfterId) {
+      const cursorRow = await supabaseAdmin
+        .from(COMMENTS_TABLE)
+        .select("created_at, id")
+        .eq("id", startAfterId)
+        .maybeSingle();
+      if (cursorRow.data) {
+        const { created_at, id } = cursorRow.data as {
+          created_at: string;
+          id: string;
+        };
+        query = query.or(
+          `created_at.lt.${created_at},and(created_at.eq.${created_at},id.lt.${id})`,
+        );
+      }
+    }
+
+    const { data, error } = await query;
+    if (error) throw new Error(error.message ?? "Database error");
+    return (data ?? []).map((row) => rowToEntity(row as CommentRow));
+  }
 }

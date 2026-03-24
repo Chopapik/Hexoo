@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { CommentEntity } from "./comment.entity";
+import type { ModerationStatus } from "@/features/shared/types/content.type";
 
 export const COMMENT_MAX_CHARS = 500;
 export const COMMENT_MAX_IMAGE_FILE_SIZE_BYTES = 5 * 1024 * 1024;
@@ -51,4 +52,35 @@ export type PublicCommentResponseDto = Omit<
   userName: string;
   userAvatarUrl: string | null;
   isLikedByMe?: boolean;
+};
+
+/** Parent post snapshot for a comment in the moderation queue. */
+export type ModerationCommentParentPostPreview = {
+  id: string;
+  text: string;
+  userName: string;
+  userAvatarUrl: string | null;
+  hasImage: boolean;
+  /** Post image URL (thumbnail + lightbox in moderator UI) */
+  imageUrl?: string | null;
+  isNSFW: boolean;
+};
+
+export type ModerationCommentResponseDto = CommentEntity & {
+  moderationStatus: ModerationStatus;
+  flaggedReasons?: string[];
+  moderationInfo?: {
+    verdict: ModerationStatus;
+    actionTaken: string;
+    categories: string[];
+    reasonSummary?: string;
+    reasonDetails?: string;
+    source?: string;
+    actorId?: string;
+  };
+  userName: string;
+  userAvatarUrl: string | null;
+  isLikedByMe?: boolean;
+  /** Omitted if the parent post row is missing. */
+  parentPostPreview?: ModerationCommentParentPostPreview;
 };
