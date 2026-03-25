@@ -122,7 +122,9 @@ export class ModeratorService implements IModeratorService {
     });
 
     try {
-      await this.authRepository?.updateUser(data.uidToBlock, { disabled: true });
+      await this.authRepository?.updateUser(data.uidToBlock, {
+        disabled: true,
+      });
     } catch {
       // Auth provider may not support disabled; ignore
     }

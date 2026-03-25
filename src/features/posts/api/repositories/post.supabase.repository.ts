@@ -143,7 +143,7 @@ export class PostSupabaseRepository implements PostRepository {
           id: string;
         };
         query = query.or(
-          `created_at.lt.${created_at},and(created_at.eq.${created_at},id.lt.${id})`
+          `created_at.lt.${created_at},and(created_at.eq.${created_at},id.lt.${id})`,
         );
       }
     }
@@ -156,7 +156,7 @@ export class PostSupabaseRepository implements PostRepository {
   async getPostsByUserId(
     userId: string,
     limit: number,
-    startAfterId?: string
+    startAfterId?: string,
   ): Promise<PostEntity[]> {
     let query = supabaseAdmin
       .from(TABLE)
@@ -177,7 +177,7 @@ export class PostSupabaseRepository implements PostRepository {
           id: string;
         };
         query = query.or(
-          `created_at.lt.${created_at},and(created_at.eq.${created_at},id.lt.${id})`
+          `created_at.lt.${created_at},and(created_at.eq.${created_at},id.lt.${id})`,
         );
       }
     }
@@ -189,7 +189,7 @@ export class PostSupabaseRepository implements PostRepository {
 
   async reportPost(
     postId: string,
-    reportDetails: ReportDetails
+    reportDetails: ReportDetails,
   ): Promise<{ hidden: boolean; reportsCount: number }> {
     const post = await this.getPostById(postId);
     if (!post) return { hidden: false, reportsCount: 0 };
@@ -210,7 +210,7 @@ export class PostSupabaseRepository implements PostRepository {
         {
           onConflict: "post_id,user_id",
           ignoreDuplicates: true,
-        }
+        },
       );
 
     if (insertError) throw new Error(insertError.message ?? "Database error");
