@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import Button from "@/features/shared/components/ui/Button";
+import SelectionTabButton from "@/features/shared/components/ui/SelectionTabButton";
 import {
   useModeratorDashboard,
   type ModeratorQueueTab,
@@ -76,28 +77,18 @@ export default function ModeratorDashboard() {
           <div className="flex flex-col gap-4 mb-4 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex flex-col gap-3 min-w-0 flex-1">
               <div className="inline-flex rounded-xl border border-white/10 bg-black/20 p-1 self-start">
-                <button
-                  type="button"
+                <SelectionTabButton
+                  isSelected={queueTab === "posts"}
                   onClick={() => setQueueTab("posts")}
-                  className={`rounded-lg px-4 py-2 text-sm font-Albert_Sans font-medium transition-colors ${
-                    queueTab === "posts"
-                      ? "bg-fuchsia-500/25 text-fuchsia-100 border border-fuchsia-500/40"
-                      : "text-text-neutral hover:text-text-main hover:bg-white/5"
-                  }`}
                 >
                   Zgłoszone posty
-                </button>
-                <button
-                  type="button"
+                </SelectionTabButton>
+                <SelectionTabButton
+                  isSelected={queueTab === "comments"}
                   onClick={() => setQueueTab("comments")}
-                  className={`rounded-lg px-4 py-2 text-sm font-Albert_Sans font-medium transition-colors ${
-                    queueTab === "comments"
-                      ? "bg-fuchsia-500/25 text-fuchsia-100 border border-fuchsia-500/40"
-                      : "text-text-neutral hover:text-text-main hover:bg-white/5"
-                  }`}
                 >
                   Zgłoszone komentarze
-                </button>
+                </SelectionTabButton>
               </div>
               <div>
                 <h2 className="text-lg font-Albert_Sans font-semibold">
