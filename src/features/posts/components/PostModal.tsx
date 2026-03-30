@@ -26,9 +26,7 @@ export const PostModal = ({
   revealNSFW,
 }: PostModalProps) => {
   const user = useAppSelector((state) => state.auth.user);
-  const showNSFWPosts = useAppSelector(
-    (state) => state.settings.showNSFWPosts,
-  );
+  const showNSFWPosts = useAppSelector((state) => state.settings.showNSFWPosts);
   const showNSFWComments = useAppSelector(
     (state) => state.settings.showNSFWComments,
   );
@@ -37,6 +35,8 @@ export const PostModal = ({
   const visibleComments = showNSFWComments
     ? comments
     : comments.filter((comment) => !comment.isNSFW);
+  const hasHiddenNSFWComments =
+    !showNSFWComments && comments.some((comment) => comment.isNSFW);
 
   const [showCommentsMobile, setShowCommentsMobile] = useState(false);
 
@@ -149,6 +149,12 @@ export const PostModal = ({
 
               <div className="min-h-0 flex-1 overflow-y-auto p-4 scrollbar-hide">
                 <CommentList comments={visibleComments} isLoading={isLoading} />
+                {hasHiddenNSFWComments && (
+                  <p className="mt-3 text-center text-xs text-text-muted">
+                    Część treści dla dorosłych jest ukryta zgodnie z
+                    ustawieniami.
+                  </p>
+                )}
               </div>
 
               {user && (
@@ -172,8 +178,13 @@ export const PostModal = ({
               </div>
             )}
 
-            <div className="min-h-0 flex-1 overflow-y-auto p-4 scrollbar-hide">
+            <div className="min-h-0 flex-1 flex flex-col overflow-y-auto p-4 scrollbar-hide justify-between">
               <CommentList comments={visibleComments} isLoading={isLoading} />
+              {hasHiddenNSFWComments && (
+                <p className="mb-3 text-center text-xs text-text-muted text-text-neutral">
+                  Część treści dla dorosłych jest ukryta zgodnie z ustawieniami.
+                </p>
+              )}
             </div>
 
             {user && (
