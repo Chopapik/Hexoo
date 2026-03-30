@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import "@/styles/globals.css";
 import "@/styles/scrollbar.css";
 import "@/styles/glassmorphism.css";
-import ReduxProvider from "@/lib/providers/ReduxProvider";
 import QueryProvider from "@/lib/providers/QueryProvider";
 import RecaptchaProvider from "@/lib/providers/RecaptchaProvider";
 import ToastContainer from "@/lib/providers/ToastContainer";
@@ -26,10 +25,8 @@ export default function RootLayout({
       <body>
         <RecaptchaProvider>
           <QueryProvider>
-            <ReduxProvider>
-              {children}
-              <ToastContainer />
-            </ReduxProvider>
+            {children}
+            <ToastContainer />
           </QueryProvider>
         </RecaptchaProvider>
       </body>

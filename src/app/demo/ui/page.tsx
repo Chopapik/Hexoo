@@ -1,11 +1,8 @@
 "use client";
 
-import { useMemo, useState, type ReactNode } from "react";
-import { Provider } from "react-redux";
-import { configureStore } from "@reduxjs/toolkit";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import authReducer from "@/features/auth/store/authSlice";
-import settingsReducer from "@/features/me/store/settingsSlice";
+import { useAppStore } from "@/lib/store/store";
 import Button from "@/features/shared/components/ui/Button";
 import TextInput, {
   Message,
@@ -207,23 +204,6 @@ const demoModerationPost: ModerationPostResponseDto = {
   ],
 };
 
-const demoStore = configureStore({
-  reducer: {
-    auth: authReducer,
-    settings: settingsReducer,
-  },
-  preloadedState: {
-    auth: {
-      user: demoSessionUser,
-      ready: true,
-    },
-    settings: {
-      showNSFWPosts: true,
-      showNSFWComments: true,
-    },
-  },
-});
-
 const demoQueryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -309,6 +289,31 @@ function DemoModalShell({
   );
 }
 
+function DemoStoreBootstrap() {
+  const previousState = useRef(useAppStore.getState());
+
+  useEffect(() => {
+    useAppStore.setState((state) => ({
+      ...state,
+      auth: {
+        ...state.auth,
+        user: demoSessionUser,
+        ready: true,
+      },
+      settings: {
+        showNSFWPosts: true,
+        showNSFWComments: true,
+      },
+    }));
+
+    return () => {
+      useAppStore.setState(previousState.current);
+    };
+  }, []);
+
+  return null;
+}
+
 export default function UiDemoPage() {
   const [rightNavOpen, setRightNavOpen] = useState(false);
   const [showBackground, setShowBackground] = useState(true);
@@ -324,897 +329,890 @@ export default function UiDemoPage() {
   );
 
   return (
-    <Provider store={demoStore}>
-      <QueryClientProvider client={demoQueryClient}>
-        <div className="min-h-screen bg-page-background p-6 space-y-8">
-          {showBackground && <HexooBackground />}
+    <QueryClientProvider client={demoQueryClient}>
+      <DemoStoreBootstrap />
+      <div className="min-h-screen bg-page-background p-6 space-y-8">
+        {showBackground && <HexooBackground />}
 
-          <header className="space-y-2">
-            <h1 className="text-4xl font-bold text-text-main font-Albert_Sans">
-              UI Demo – pełny katalog komponentów (offline)
-            </h1>
-            <p className="text-text-neutral">
-              Dane pochodzą z tego pliku. Modale są renderowane inline (bez
-              createPortal).
-            </p>
-            <div className="flex items-center gap-3">
-              <Button
-                text={showBackground ? "Ukryj tło 3D" : "Pokaż tło 3D"}
-                size="sm"
-                variant="secondary"
-                onClick={() => setShowBackground((prev) => !prev)}
-              />
-            </div>
-          </header>
+        <header className="space-y-2">
+          <h1 className="text-4xl font-bold text-text-main font-Albert_Sans">
+            UI Demo – pełny katalog komponentów (offline)
+          </h1>
+          <p className="text-text-neutral">
+            Dane pochodzą z tego pliku. Modale są renderowane inline (bez
+            createPortal).
+          </p>
+          <div className="flex items-center gap-3">
+            <Button
+              text={showBackground ? "Ukryj tło 3D" : "Pokaż tło 3D"}
+              size="sm"
+              variant="secondary"
+              onClick={() => setShowBackground((prev) => !prev)}
+            />
+          </div>
+        </header>
 
-          <Section title="Logo & Avatar">
-            <div className="flex flex-wrap items-center gap-6">
-              <Logo />
-              <Avatar alt="Demo avatar" />
-              <Avatar
-                alt="Duży avatar"
-                width={64}
-                height={64}
-                className="w-16 h-16 rounded-2xl"
-              />
-            </div>
-          </Section>
+        <Section title="Logo & Avatar">
+          <div className="flex flex-wrap items-center gap-6">
+            <Logo />
+            <Avatar alt="Demo avatar" />
+            <Avatar
+              alt="Duży avatar"
+              width={64}
+              height={64}
+              className="w-16 h-16 rounded-2xl"
+            />
+          </div>
+        </Section>
 
-          <Section title="Buttons" description="Warianty, rozmiary i stany">
-            <div className="space-y-10">
-              {buttonVariants.map((variant) => (
-                <div key={variant} className="space-y-4">
-                  <h3 className="text-lg font-semibold text-text-main">
-                    {variant}
-                  </h3>
-                  <div className="flex flex-wrap gap-4">
-                    {buttonSizes.map((size) => (
-                      <Button
-                        key={`${variant}-${size}-text`}
-                        variant={variant}
-                        size={size}
-                        text={
-                          size.startsWith("icon")
-                            ? undefined
-                            : size.toUpperCase()
-                        }
-                        icon={
-                          size.startsWith("icon") ? (
-                            <Plus className="size-4" />
-                          ) : undefined
-                        }
-                      />
-                    ))}
-                  </div>
-                  <div className="flex flex-wrap gap-4">
-                    <Button
-                      variant={variant}
-                      size="md"
-                      text="Left icon"
-                      leftIcon={<Send className="size-4" />}
-                    />
-                    <Button
-                      variant={variant}
-                      size="md"
-                      text="Right icon"
-                      rightIcon={<Heart className="size-4" />}
-                    />
-                    <Button
-                      variant={variant}
-                      size="md"
-                      text="Both"
-                      leftIcon={<Search className="size-4" />}
-                      rightIcon={<Settings className="size-4" />}
-                    />
-                    <Button
-                      variant={variant}
-                      size="md"
-                      text="Loading"
-                      isLoading
-                    />
-                    <Button
-                      variant={variant}
-                      size="md"
-                      text="Disabled"
-                      disabled
-                    />
-                    <Button
-                      variant={variant}
-                      size="md"
-                      text="Icon URL"
-                      rightIconUrl={chevronRightUrl}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Section>
-
-          <Section title="TextInput">
-            <div className="grid gap-6 md:grid-cols-2">
-              {inputStatuses.map((status) => (
-                <TextInput
-                  key={status}
-                  label={`Status: ${status}`}
-                  placeholder="Wpisz tekst..."
-                  messages={inputMessages[status]}
-                />
-              ))}
-              <TextInput
-                label="Hasło (showButton: true)"
-                type="password"
-                placeholder="••••••••"
-                showButton={true}
-                messages={inputMessages.Default}
-              />
-              <TextInput
-                label="Hasło (showButton: false)"
-                type="password"
-                placeholder="••••••••"
-                showButton={false}
-                messages={inputMessages.Warning}
-              />
-              <TextInput
-                label="Email"
-                type="email"
-                placeholder="demo@hexoo.com"
-                messages={inputMessages.Success}
-              />
-            </div>
-          </Section>
-
-          <Section title="Select">
-            <div className="grid gap-6 md:grid-cols-2">
-              <Select
-                label="Domyślny"
-                options={selectOptions}
-                placeholder="Wybierz rolę"
-              />
-              <Select
-                label="Z wybraną wartością"
-                options={selectOptions}
-                value="moderator"
-              />
-              <Select
-                label="Zablokowany"
-                options={selectOptions}
-                value="user"
-                disabled
-              />
-            </div>
-          </Section>
-
-          <Section title="ValidationMessage">
-            <div className="space-y-2 max-w-md">
-              {validationSamples.map((message) => (
-                <ValidationMessage key={message.type} message={message} />
-              ))}
-            </div>
-          </Section>
-
-          <Section title="RemoveImageButton">
-            <div className="grid gap-6 md:grid-cols-2">
-              <div className="relative group rounded-xl border border-primary-neutral-stroke-default p-8 bg-black/30 h-40">
-                <span className="text-xs text-text-neutral">showOnHover</span>
-                <RemoveImageButton
-                  onClick={() => {}}
-                  variant="dark"
-                  position="top-right"
-                  showOnHover
-                />
-                <RemoveImageButton
-                  onClick={() => {}}
-                  variant="red"
-                  position="bottom-left"
-                  showOnHover
-                />
-              </div>
-              <div className="relative rounded-xl border border-primary-neutral-stroke-default p-8 bg-black/30 h-40">
-                <span className="text-xs text-text-neutral">alwaysVisible</span>
-                <RemoveImageButton
-                  onClick={() => {}}
-                  variant="dark"
-                  position="top-left"
-                  alwaysVisible
-                />
-                <RemoveImageButton
-                  onClick={() => {}}
-                  variant="red"
-                  position="bottom-right"
-                  alwaysVisible
-                  iconSize={16}
-                />
-              </div>
-            </div>
-          </Section>
-
-          <Section title="NavItem">
-            <div className="flex flex-wrap items-center gap-6">
-              <NavItem label="Aktywny" to="/demo/ui" icon={UserIcon} />
-              <NavItem
-                label="Powiadomienia"
-                to="/notifications"
-                icon={Bell}
-                hasNotification
-              />
-              <NavItem label="Wiadomości" to="/messages" icon={MessageCircle} />
-              <NavItem label="Bez ikony" to="/plain" />
-            </div>
-          </Section>
-
-          <Section title="Header & Nawigacja">
-            <div className="space-y-6">
-              <Header user={demoSessionUser} />
-              <Header user={null} />
-              <div className="flex gap-4 flex-wrap">
-                <LeftNav
-                  user={demoSessionUser}
-                  onOpenRight={() => setRightNavOpen(true)}
-                />
-                <div className="flex-1 min-w-[280px]">
-                  <RightNavSidebar />
-                </div>
-              </div>
-              <BottomNav onOpenRight={() => setRightNavOpen(true)} />
-              <RightNavOverlay
-                open={rightNavOpen}
-                onClose={() => setRightNavOpen(false)}
-              />
-            </div>
-          </Section>
-
-          <Section title="3D / Background">
-            <div className="grid gap-6 md:grid-cols-2">
-              <Hexoo3D />
-              <Hexoo3Dv2 />
-            </div>
-          </Section>
-
-          <Section title="ModalFooter">
-            <div className="space-y-4">
-              <ModalFooter
-                confirmText="Potwierdź"
-                onCancel={() => {}}
-                onConfirm={() => {}}
-              />
-              <ModalFooter
-                confirmText="Usuń"
-                confirmVariant="danger"
-                confirmSize="sm"
-                cancelSize="sm"
-                onCancel={() => {}}
-                onConfirm={() => {}}
-              />
-              <ModalFooter
-                confirmText="Zapisz"
-                confirmVariant="secondary"
-                confirmSize="lg"
-                cancelSize="lg"
-                onCancel={() => {}}
-                onConfirm={() => {}}
-                isPending
-              />
-            </div>
-          </Section>
-
-          <Section title="LegalPageWrapper">
-            <LegalPageWrapper>
-              <h2>Przykładowy nagłówek</h2>
-              <p>
-                To jest przykładowy tekst w opakowaniu LegalPageWrapper. Link na
-                dole prowadzi do strony głównej.
-              </p>
-            </LegalPageWrapper>
-          </Section>
-
-          <Section title="Auth & Security">
-            <div className="grid gap-6 lg:grid-cols-2">
-              <LoginForm />
-              <RegisterForm />
-              <AuthBlockDisplay
-                data={{
-                  ipBlocked: true,
-                  maxAnonymousAttempts: 5,
-                  lockoutUntil: Date.now() + 1800 * 1000,
-                }}
-              />
-              <ThrottleBlockDisplay
-                data={{
-                  ip: "127.0.0.1",
-                  retryAfter: Date.now() + 1000 * 60 * 60,
-                  limit: 60,
-                }}
-              />
-            </div>
-          </Section>
-
-          <Section title="Post components">
-            <div className="space-y-6">
-              <CreatePostButton onClick={() => {}} />
-              <PostMeta post={demoPost} />
-              <PostBody post={demoPost} />
-              <PostBody
-                post={{
-                  ...demoPost,
-                  id: "ascii",
-                  text: " /\\_/\\\\\n( o.o )\n > ^ <",
-                  imageUrl: null,
-                }}
-              />
-              <PostFooter post={demoPost} onCommentClick={() => {}} />
-              <PostOptions postId={demoPost.id} authorId={demoPost.userId} />
-              <PostCard post={demoPost} />
-              <PostCard post={demoPostNsfw} />
-              <PostCard post={demoPostNsfw} revealNSFW />
-              <div className="pt-4 border-t border-primary-neutral-stroke-default">
-                <h3 className="text-lg font-semibold text-text-main mb-2">
-                  PostList (offline)
+        <Section title="Buttons" description="Warianty, rozmiary i stany">
+          <div className="space-y-10">
+            {buttonVariants.map((variant) => (
+              <div key={variant} className="space-y-4">
+                <h3 className="text-lg font-semibold text-text-main">
+                  {variant}
                 </h3>
-                <PostList />
-              </div>
-            </div>
-          </Section>
-
-          <Section title="Profile & User components">
-            <div className="space-y-6">
-              <UserProfileCard
-                username="ola"
-                enableEditProfile={true}
-                initialUser={demoUserProfile}
-              />
-              <UserProfileCard
-                username="ola"
-                enableEditProfile={false}
-                initialUser={demoUserProfile}
-              />
-              <div className="pt-4 border-t border-primary-neutral-stroke-default">
-                <h3 className="text-lg font-semibold text-text-main mb-2">
-                  UserPostList (offline)
-                </h3>
-                <UserPostList userId="user-2" />
-              </div>
-            </div>
-          </Section>
-
-          <Section title="Settings components">
-            <div className="space-y-6">
-              <SettingsSection title="Sekcja ustawień (demo)">
-                <div className="text-sm text-text-neutral">
-                  Przykładowa zawartość sekcji ustawień.
+                <div className="flex flex-wrap gap-4">
+                  {buttonSizes.map((size) => (
+                    <Button
+                      key={`${variant}-${size}-text`}
+                      variant={variant}
+                      size={size}
+                      text={
+                        size.startsWith("icon") ? undefined : size.toUpperCase()
+                      }
+                      icon={
+                        size.startsWith("icon") ? (
+                          <Plus className="size-4" />
+                        ) : undefined
+                      }
+                    />
+                  ))}
                 </div>
-              </SettingsSection>
-              <AppearanceSection />
-              <ContentSection />
-              <AccountSection />
-              <DangerZoneSection />
-              <SettingsCard />
-            </div>
-          </Section>
-
-          <Section title="Admin & Moderator">
-            <div className="space-y-6">
-              <ModerationQueueItem
-                post={demoModerationPost}
-                onAction={() => {}}
-                isPending={false}
-              />
-              <ModeratorDashboard />
-              <AllUsersList />
-            </div>
-          </Section>
-
-          <Section title="Modale (inline, bez createPortal)">
-            <div className="space-y-8">
-              <DemoModalShell
-                title="Modal podstawowy"
-                footer={
-                  <ModalFooter
-                    confirmText="Potwierdź"
-                    onCancel={() => {}}
-                    onConfirm={() => {}}
+                <div className="flex flex-wrap gap-4">
+                  <Button
+                    variant={variant}
+                    size="md"
+                    text="Left icon"
+                    leftIcon={<Send className="size-4" />}
                   />
-                }
-              >
-                <div className="space-y-2">
-                  <p className="text-text-neutral text-sm">
-                    Przykładowa treść modala wraz z akcjami w stopce.
-                  </p>
-                  <div className="flex items-center gap-2 text-xs text-text-neutral">
-                    <img
-                      src={warningIconUrl}
-                      alt="warning"
-                      className="w-4 h-4"
-                    />
-                    <span>Tekst pomocniczy</span>
+                  <Button
+                    variant={variant}
+                    size="md"
+                    text="Right icon"
+                    rightIcon={<Heart className="size-4" />}
+                  />
+                  <Button
+                    variant={variant}
+                    size="md"
+                    text="Both"
+                    leftIcon={<Search className="size-4" />}
+                    rightIcon={<Settings className="size-4" />}
+                  />
+                  <Button
+                    variant={variant}
+                    size="md"
+                    text="Loading"
+                    isLoading
+                  />
+                  <Button
+                    variant={variant}
+                    size="md"
+                    text="Disabled"
+                    disabled
+                  />
+                  <Button
+                    variant={variant}
+                    size="md"
+                    text="Icon URL"
+                    rightIconUrl={chevronRightUrl}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        <Section title="TextInput">
+          <div className="grid gap-6 md:grid-cols-2">
+            {inputStatuses.map((status) => (
+              <TextInput
+                key={status}
+                label={`Status: ${status}`}
+                placeholder="Wpisz tekst..."
+                messages={inputMessages[status]}
+              />
+            ))}
+            <TextInput
+              label="Hasło (showButton: true)"
+              type="password"
+              placeholder="••••••••"
+              showButton={true}
+              messages={inputMessages.Default}
+            />
+            <TextInput
+              label="Hasło (showButton: false)"
+              type="password"
+              placeholder="••••••••"
+              showButton={false}
+              messages={inputMessages.Warning}
+            />
+            <TextInput
+              label="Email"
+              type="email"
+              placeholder="demo@hexoo.com"
+              messages={inputMessages.Success}
+            />
+          </div>
+        </Section>
+
+        <Section title="Select">
+          <div className="grid gap-6 md:grid-cols-2">
+            <Select
+              label="Domyślny"
+              options={selectOptions}
+              placeholder="Wybierz rolę"
+            />
+            <Select
+              label="Z wybraną wartością"
+              options={selectOptions}
+              value="moderator"
+            />
+            <Select
+              label="Zablokowany"
+              options={selectOptions}
+              value="user"
+              disabled
+            />
+          </div>
+        </Section>
+
+        <Section title="ValidationMessage">
+          <div className="space-y-2 max-w-md">
+            {validationSamples.map((message) => (
+              <ValidationMessage key={message.type} message={message} />
+            ))}
+          </div>
+        </Section>
+
+        <Section title="RemoveImageButton">
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="relative group rounded-xl border border-primary-neutral-stroke-default p-8 bg-black/30 h-40">
+              <span className="text-xs text-text-neutral">showOnHover</span>
+              <RemoveImageButton
+                onClick={() => {}}
+                variant="dark"
+                position="top-right"
+                showOnHover
+              />
+              <RemoveImageButton
+                onClick={() => {}}
+                variant="red"
+                position="bottom-left"
+                showOnHover
+              />
+            </div>
+            <div className="relative rounded-xl border border-primary-neutral-stroke-default p-8 bg-black/30 h-40">
+              <span className="text-xs text-text-neutral">alwaysVisible</span>
+              <RemoveImageButton
+                onClick={() => {}}
+                variant="dark"
+                position="top-left"
+                alwaysVisible
+              />
+              <RemoveImageButton
+                onClick={() => {}}
+                variant="red"
+                position="bottom-right"
+                alwaysVisible
+                iconSize={16}
+              />
+            </div>
+          </div>
+        </Section>
+
+        <Section title="NavItem">
+          <div className="flex flex-wrap items-center gap-6">
+            <NavItem label="Aktywny" to="/demo/ui" icon={UserIcon} />
+            <NavItem
+              label="Powiadomienia"
+              to="/notifications"
+              icon={Bell}
+              hasNotification
+            />
+            <NavItem label="Wiadomości" to="/messages" icon={MessageCircle} />
+            <NavItem label="Bez ikony" to="/plain" />
+          </div>
+        </Section>
+
+        <Section title="Header & Nawigacja">
+          <div className="space-y-6">
+            <Header user={demoSessionUser} />
+            <Header user={null} />
+            <div className="flex gap-4 flex-wrap">
+              <LeftNav
+                user={demoSessionUser}
+                onOpenRight={() => setRightNavOpen(true)}
+              />
+              <div className="flex-1 min-w-[280px]">
+                <RightNavSidebar />
+              </div>
+            </div>
+            <BottomNav onOpenRight={() => setRightNavOpen(true)} />
+            <RightNavOverlay
+              open={rightNavOpen}
+              onClose={() => setRightNavOpen(false)}
+            />
+          </div>
+        </Section>
+
+        <Section title="3D / Background">
+          <div className="grid gap-6 md:grid-cols-2">
+            <Hexoo3D />
+            <Hexoo3Dv2 />
+          </div>
+        </Section>
+
+        <Section title="ModalFooter">
+          <div className="space-y-4">
+            <ModalFooter
+              confirmText="Potwierdź"
+              onCancel={() => {}}
+              onConfirm={() => {}}
+            />
+            <ModalFooter
+              confirmText="Usuń"
+              confirmVariant="danger"
+              confirmSize="sm"
+              cancelSize="sm"
+              onCancel={() => {}}
+              onConfirm={() => {}}
+            />
+            <ModalFooter
+              confirmText="Zapisz"
+              confirmVariant="secondary"
+              confirmSize="lg"
+              cancelSize="lg"
+              onCancel={() => {}}
+              onConfirm={() => {}}
+              isPending
+            />
+          </div>
+        </Section>
+
+        <Section title="LegalPageWrapper">
+          <LegalPageWrapper>
+            <h2>Przykładowy nagłówek</h2>
+            <p>
+              To jest przykładowy tekst w opakowaniu LegalPageWrapper. Link na
+              dole prowadzi do strony głównej.
+            </p>
+          </LegalPageWrapper>
+        </Section>
+
+        <Section title="Auth & Security">
+          <div className="grid gap-6 lg:grid-cols-2">
+            <LoginForm />
+            <RegisterForm />
+            <AuthBlockDisplay
+              data={{
+                ipBlocked: true,
+                maxAnonymousAttempts: 5,
+                lockoutUntil: Date.now() + 1800 * 1000,
+              }}
+            />
+            <ThrottleBlockDisplay
+              data={{
+                ip: "127.0.0.1",
+                retryAfter: Date.now() + 1000 * 60 * 60,
+                limit: 60,
+              }}
+            />
+          </div>
+        </Section>
+
+        <Section title="Post components">
+          <div className="space-y-6">
+            <CreatePostButton onClick={() => {}} />
+            <PostMeta post={demoPost} />
+            <PostBody post={demoPost} />
+            <PostBody
+              post={{
+                ...demoPost,
+                id: "ascii",
+                text: " /\\_/\\\\\n( o.o )\n > ^ <",
+                imageUrl: null,
+              }}
+            />
+            <PostFooter post={demoPost} onCommentClick={() => {}} />
+            <PostOptions postId={demoPost.id} authorId={demoPost.userId} />
+            <PostCard post={demoPost} />
+            <PostCard post={demoPostNsfw} />
+            <PostCard post={demoPostNsfw} revealNSFW />
+            <div className="pt-4 border-t border-primary-neutral-stroke-default">
+              <h3 className="text-lg font-semibold text-text-main mb-2">
+                PostList (offline)
+              </h3>
+              <PostList />
+            </div>
+          </div>
+        </Section>
+
+        <Section title="Profile & User components">
+          <div className="space-y-6">
+            <UserProfileCard
+              username="ola"
+              enableEditProfile={true}
+              initialUser={demoUserProfile}
+            />
+            <UserProfileCard
+              username="ola"
+              enableEditProfile={false}
+              initialUser={demoUserProfile}
+            />
+            <div className="pt-4 border-t border-primary-neutral-stroke-default">
+              <h3 className="text-lg font-semibold text-text-main mb-2">
+                UserPostList (offline)
+              </h3>
+              <UserPostList userId="user-2" />
+            </div>
+          </div>
+        </Section>
+
+        <Section title="Settings components">
+          <div className="space-y-6">
+            <SettingsSection title="Sekcja ustawień (demo)">
+              <div className="text-sm text-text-neutral">
+                Przykładowa zawartość sekcji ustawień.
+              </div>
+            </SettingsSection>
+            <AppearanceSection />
+            <ContentSection />
+            <AccountSection />
+            <DangerZoneSection />
+            <SettingsCard />
+          </div>
+        </Section>
+
+        <Section title="Admin & Moderator">
+          <div className="space-y-6">
+            <ModerationQueueItem
+              post={demoModerationPost}
+              onAction={() => {}}
+              isPending={false}
+            />
+            <ModeratorDashboard />
+            <AllUsersList />
+          </div>
+        </Section>
+
+        <Section title="Modale (inline, bez createPortal)">
+          <div className="space-y-8">
+            <DemoModalShell
+              title="Modal podstawowy"
+              footer={
+                <ModalFooter
+                  confirmText="Potwierdź"
+                  onCancel={() => {}}
+                  onConfirm={() => {}}
+                />
+              }
+            >
+              <div className="space-y-2">
+                <p className="text-text-neutral text-sm">
+                  Przykładowa treść modala wraz z akcjami w stopce.
+                </p>
+                <div className="flex items-center gap-2 text-xs text-text-neutral">
+                  <img src={warningIconUrl} alt="warning" className="w-4 h-4" />
+                  <span>Tekst pomocniczy</span>
+                </div>
+              </div>
+            </DemoModalShell>
+
+            <DemoModalShell
+              title="Komunikat"
+              footer={
+                <div className="flex justify-end">
+                  <Button text="OK" size="sm" />
+                </div>
+              }
+            >
+              <div className="py-2 text-text-main text-base leading-relaxed">
+                To jest przykładowy alert modal.
+              </div>
+            </DemoModalShell>
+
+            <DemoModalShell
+              title="Nowy post"
+              footer={
+                <div className="flex items-center justify-between w-full">
+                  <Button
+                    icon={<PaperclipIcon className="w-5 h-5" />}
+                    variant="transparent"
+                    size="icon"
+                    className="text-text-neutral hover:text-white"
+                    type="button"
+                  />
+                  <span className="text-red-500 text-sm font-medium">
+                    Przykładowy błąd
+                  </span>
+                  <Button
+                    icon={<SendIcon className="w-5 h-5" />}
+                    variant="default"
+                    size="icon"
+                    type="button"
+                  />
+                </div>
+              }
+            >
+              <div className="flex flex-col gap-4">
+                <div className="relative w-fit group">
+                  <img
+                    src="https://placehold.co/200x200/png"
+                    alt="Preview"
+                    width={200}
+                    height={200}
+                    className="rounded-xl border border-primary-neutral-stroke-default object-cover max-h-64 w-auto"
+                  />
+                  <RemoveImageButton
+                    onClick={() => {}}
+                    variant="dark"
+                    position="top-right"
+                    showOnHover={true}
+                  />
+                </div>
+                <div className="relative w-full">
+                  <textarea
+                    placeholder="Napisz coś..."
+                    className="w-full bg-transparent text-text-main placeholder:text-text-neutral/50 text-base resize-none outline-none min-h-[100px] scrollbar-hide leading-relaxed pb-6"
+                  />
+                  <div className="absolute bottom-0 right-0 text-xs font-medium text-text-neutral/70">
+                    24 / 1000
                   </div>
                 </div>
-              </DemoModalShell>
+              </div>
+            </DemoModalShell>
 
-              <DemoModalShell
-                title="Komunikat"
-                footer={
-                  <div className="flex justify-end">
-                    <Button text="OK" size="sm" />
+            <DemoModalShell title="Post" className="max-w-5xl">
+              <div className="flex gap-4">
+                <div className="w-2/3 border-r border-primary-neutral-stroke-default/60 pr-4">
+                  <PostMeta post={demoPost} />
+                  <div className="pt-4">
+                    <PostBody post={demoPost} />
                   </div>
-                }
-              >
-                <div className="py-2 text-text-main text-base leading-relaxed">
-                  To jest przykładowy alert modal.
                 </div>
-              </DemoModalShell>
+                <div className="w-1/3" />
+              </div>
+            </DemoModalShell>
 
-              <DemoModalShell
-                title="Nowy post"
-                footer={
-                  <div className="flex items-center justify-between w-full">
-                    <Button
-                      icon={<PaperclipIcon className="w-5 h-5" />}
-                      variant="transparent"
-                      size="icon"
-                      className="text-text-neutral hover:text-white"
-                      type="button"
-                    />
-                    <span className="text-red-500 text-sm font-medium">
-                      Przykładowy błąd
-                    </span>
-                    <Button
-                      icon={<SendIcon className="w-5 h-5" />}
-                      variant="default"
-                      size="icon"
-                      type="button"
-                    />
-                  </div>
-                }
-              >
-                <div className="flex flex-col gap-4">
-                  <div className="relative w-fit group">
-                    <img
-                      src="https://placehold.co/200x200/png"
-                      alt="Preview"
-                      width={200}
-                      height={200}
-                      className="rounded-xl border border-primary-neutral-stroke-default object-cover max-h-64 w-auto"
-                    />
+            <DemoModalShell
+              title="Usunąć post?"
+              footer={
+                <ModalFooter
+                  confirmText="Tak, usuń"
+                  onCancel={() => {}}
+                  onConfirm={() => {}}
+                  confirmVariant="danger"
+                />
+              }
+            >
+              <p className="text-sm text-text-neutral leading-relaxed">
+                Czy na pewno chcesz trwale usunąć ten post? Tej operacji nie
+                będzie można cofnąć.
+              </p>
+            </DemoModalShell>
+
+            <DemoModalShell
+              title="Zgłoś naruszenie"
+              footer={
+                <ModalFooter
+                  confirmText="Zgłoś post"
+                  onCancel={() => {}}
+                  onConfirm={() => {}}
+                />
+              }
+            >
+              <div className="flex flex-col gap-4">
+                <p className="text-sm text-text-neutral">
+                  Pomóż nam zrozumieć, co jest nie tak z tym postem.
+                </p>
+                <div className="flex flex-col gap-2">
+                  {reportReasons.map((item) =>
+                    (() => {
+                      const isSelected = item.id === reportSelectedReasonId;
+                      return (
+                        <label
+                          key={item.id}
+                          className={`flex items-center gap-3 p-3 rounded-lg border transition-all ${
+                            isSelected
+                              ? "bg-fuchsia-500/10 border-fuchsia-500 text-white"
+                              : "bg-white/5 border-transparent hover:bg-white/10 text-text-neutral"
+                          }`}
+                        >
+                          <div
+                            className={`w-4 h-4 rounded-full border flex items-center justify-center ${
+                              isSelected
+                                ? "border-fuchsia-500"
+                                : "border-text-neutral"
+                            }`}
+                          >
+                            {isSelected && (
+                              <div className="w-2 h-2 bg-fuchsia-500 rounded-full" />
+                            )}
+                          </div>
+                          <span className="text-sm font-medium">
+                            {item.label}
+                          </span>
+                        </label>
+                      );
+                    })(),
+                  )}
+                </div>
+                <TextInput
+                  label="Dodatkowe informacje (opcjonalne)"
+                  placeholder="Opisz problem..."
+                  value=""
+                  onChange={() => {}}
+                />
+              </div>
+            </DemoModalShell>
+
+            <DemoModalShell title="Skomentuj post użytkownika: Ola">
+              <div className="space-y-4">
+                <div className="bg-secondary-neutral-background-default p-3 rounded-lg text-text-neutral text-sm italic border border-primary-neutral-stroke-default">
+                  Odpisujesz na: "Przykładowy post..."
+                </div>
+                <textarea
+                  placeholder="Wpisz swój komentarz..."
+                  className="w-full p-3 bg-transparent border rounded-lg text-text-main placeholder:text-text-neutral focus:outline-none resize-none h-32 transition-all border-primary-neutral-stroke-default"
+                />
+                <div className="flex justify-end">
+                  <Button text="Dodaj komentarz" size="md" />
+                </div>
+              </div>
+            </DemoModalShell>
+
+            <DemoModalShell
+              title="Edytuj profil — Ola Profile"
+              footer={
+                <div className="flex gap-3 justify-end w-full">
+                  <Button
+                    text="Anuluj"
+                    size="md"
+                    variant="secondary"
+                    type="button"
+                  />
+                  <Button
+                    text="Zapisz"
+                    size="md"
+                    variant="default"
+                    type="button"
+                  />
+                </div>
+              }
+            >
+              <div className="flex flex-col gap-6">
+                <div className="flex flex-col items-center gap-4">
+                  <div className="relative">
+                    <div className="relative group cursor-pointer">
+                      <div className="w-24 h-24 rounded-xl p-px bg-[radial-gradient(circle_at_center,#262626_0%,#171717_100%)] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)]">
+                        <Avatar
+                          src={demoUserProfile.avatarUrl || undefined}
+                          alt={demoUserProfile.name}
+                          width={96}
+                          height={96}
+                          className="w-full h-full rounded-xl border-none"
+                        />
+                      </div>
+                      <div className="absolute inset-0 bg-black/60 rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm">
+                        <div className="flex flex-col items-center gap-1">
+                          <img
+                            src={cameraIconUrl}
+                            alt="Zmień"
+                            width={24}
+                            height={24}
+                            className="opacity-90"
+                          />
+                          <span className="text-white text-xs font-medium">
+                            Zmień
+                          </span>
+                        </div>
+                      </div>
+                    </div>
                     <RemoveImageButton
                       onClick={() => {}}
                       variant="dark"
                       position="top-right"
-                      showOnHover={true}
+                      alwaysVisible={true}
                     />
                   </div>
-                  <div className="relative w-full">
-                    <textarea
-                      placeholder="Napisz coś..."
-                      className="w-full bg-transparent text-text-main placeholder:text-text-neutral/50 text-base resize-none outline-none min-h-[100px] scrollbar-hide leading-relaxed pb-6"
-                    />
-                    <div className="absolute bottom-0 right-0 text-xs font-medium text-text-neutral/70">
-                      24 / 1000
-                    </div>
+                  <div className="flex flex-col items-center gap-1">
+                    <p className="text-sm text-text-neutral font-medium">
+                      Kliknij, aby zmienić zdjęcie profilowe
+                    </p>
+                    <p className="text-xs text-text-neutral/60">
+                      PNG, JPG lub WEBP (max 5MB)
+                    </p>
                   </div>
                 </div>
-              </DemoModalShell>
-
-              <DemoModalShell title="Post" className="max-w-5xl">
-                <div className="flex gap-4">
-                  <div className="w-2/3 border-r border-primary-neutral-stroke-default/60 pr-4">
-                    <PostMeta post={demoPost} />
-                    <div className="pt-4">
-                      <PostBody post={demoPost} />
-                    </div>
-                  </div>
-                  <div className="w-1/3" />
-                </div>
-              </DemoModalShell>
-
-              <DemoModalShell
-                title="Usunąć post?"
-                footer={
-                  <ModalFooter
-                    confirmText="Tak, usuń"
-                    onCancel={() => {}}
-                    onConfirm={() => {}}
-                    confirmVariant="danger"
-                  />
-                }
-              >
-                <p className="text-sm text-text-neutral leading-relaxed">
-                  Czy na pewno chcesz trwale usunąć ten post? Tej operacji nie
-                  będzie można cofnąć.
-                </p>
-              </DemoModalShell>
-
-              <DemoModalShell
-                title="Zgłoś naruszenie"
-                footer={
-                  <ModalFooter
-                    confirmText="Zgłoś post"
-                    onCancel={() => {}}
-                    onConfirm={() => {}}
-                  />
-                }
-              >
-                <div className="flex flex-col gap-4">
-                  <p className="text-sm text-text-neutral">
-                    Pomóż nam zrozumieć, co jest nie tak z tym postem.
-                  </p>
-                  <div className="flex flex-col gap-2">
-                    {reportReasons.map((item) =>
-                      (() => {
-                        const isSelected = item.id === reportSelectedReasonId;
-                        return (
-                          <label
-                            key={item.id}
-                            className={`flex items-center gap-3 p-3 rounded-lg border transition-all ${
-                              isSelected
-                                ? "bg-fuchsia-500/10 border-fuchsia-500 text-white"
-                                : "bg-white/5 border-transparent hover:bg-white/10 text-text-neutral"
-                            }`}
-                          >
-                            <div
-                              className={`w-4 h-4 rounded-full border flex items-center justify-center ${
-                                isSelected
-                                  ? "border-fuchsia-500"
-                                  : "border-text-neutral"
-                              }`}
-                            >
-                              {isSelected && (
-                                <div className="w-2 h-2 bg-fuchsia-500 rounded-full" />
-                              )}
-                            </div>
-                            <span className="text-sm font-medium">
-                              {item.label}
-                            </span>
-                          </label>
-                        );
-                      })(),
-                    )}
-                  </div>
+                <div className="flex flex-col gap-4 p-4 rounded-xl bg-secondary-neutral-background-default/30 border border-primary-neutral-stroke-default/50">
                   <TextInput
-                    label="Dodatkowe informacje (opcjonalne)"
-                    placeholder="Opisz problem..."
-                    value=""
+                    label="Nazwa użytkownika"
+                    placeholder="Twoja publiczna nazwa"
+                    value="OlaProfile"
                     onChange={() => {}}
+                    showButton={false}
                   />
-                </div>
-              </DemoModalShell>
-
-              <DemoModalShell title="Skomentuj post użytkownika: Ola">
-                <div className="space-y-4">
-                  <div className="bg-secondary-neutral-background-default p-3 rounded-lg text-text-neutral text-sm italic border border-primary-neutral-stroke-default">
-                    Odpisujesz na: "Przykładowy post..."
-                  </div>
-                  <textarea
-                    placeholder="Wpisz swój komentarz..."
-                    className="w-full p-3 bg-transparent border rounded-lg text-text-main placeholder:text-text-neutral focus:outline-none resize-none h-32 transition-all border-primary-neutral-stroke-default"
-                  />
-                  <div className="flex justify-end">
-                    <Button text="Dodaj komentarz" size="md" />
+                  <div className="flex flex-col gap-1">
+                    <p className="text-sm text-text-neutral ml-1">
+                      Ta nazwa będzie widoczna publicznie — możesz użyć nicku
+                      lub imienia.
+                    </p>
+                    <p className="text-xs text-text-neutral/60 ml-1">
+                      9 / 30 znaków
+                    </p>
                   </div>
                 </div>
-              </DemoModalShell>
+              </div>
+            </DemoModalShell>
 
-              <DemoModalShell
-                title="Edytuj profil — Ola Profile"
-                footer={
-                  <div className="flex gap-3 justify-end w-full">
-                    <Button
-                      text="Anuluj"
-                      size="md"
-                      variant="secondary"
-                      type="button"
-                    />
-                    <Button
-                      text="Zapisz"
-                      size="md"
-                      variant="default"
-                      type="button"
-                    />
-                  </div>
-                }
-              >
-                <div className="flex flex-col gap-6">
-                  <div className="flex flex-col items-center gap-4">
-                    <div className="relative">
-                      <div className="relative group cursor-pointer">
-                        <div className="w-24 h-24 rounded-xl p-px bg-[radial-gradient(circle_at_center,#262626_0%,#171717_100%)] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)]">
-                          <Avatar
-                            src={demoUserProfile.avatarUrl || undefined}
-                            alt={demoUserProfile.name}
-                            width={96}
-                            height={96}
-                            className="w-full h-full rounded-xl border-none"
-                          />
-                        </div>
-                        <div className="absolute inset-0 bg-black/60 rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm">
-                          <div className="flex flex-col items-center gap-1">
-                            <img
-                              src={cameraIconUrl}
-                              alt="Zmień"
-                              width={24}
-                              height={24}
-                              className="opacity-90"
-                            />
-                            <span className="text-white text-xs font-medium">
-                              Zmień
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      <RemoveImageButton
-                        onClick={() => {}}
-                        variant="dark"
-                        position="top-right"
-                        alwaysVisible={true}
-                      />
-                    </div>
-                    <div className="flex flex-col items-center gap-1">
-                      <p className="text-sm text-text-neutral font-medium">
-                        Kliknij, aby zmienić zdjęcie profilowe
-                      </p>
-                      <p className="text-xs text-text-neutral/60">
-                        PNG, JPG lub WEBP (max 5MB)
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex flex-col gap-4 p-4 rounded-xl bg-secondary-neutral-background-default/30 border border-primary-neutral-stroke-default/50">
-                    <TextInput
-                      label="Nazwa użytkownika"
-                      placeholder="Twoja publiczna nazwa"
-                      value="OlaProfile"
-                      onChange={() => {}}
-                      showButton={false}
-                    />
-                    <div className="flex flex-col gap-1">
-                      <p className="text-sm text-text-neutral ml-1">
-                        Ta nazwa będzie widoczna publicznie — możesz użyć nicku
-                        lub imienia.
-                      </p>
-                      <p className="text-xs text-text-neutral/60 ml-1">
-                        9 / 30 znaków
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </DemoModalShell>
-
-              <DemoModalShell
-                title="Zmiana hasła"
-                footer={
-                  <ModalFooter
-                    confirmText="Zapisz zmiany"
-                    onCancel={() => {}}
-                    onConfirm={() => {}}
-                  />
-                }
-              >
-                <div className="flex flex-col gap-4 pt-2">
-                  <TextInput
-                    type="password"
-                    label="Aktualne hasło"
-                    placeholder="Wpisz swoje aktualne hasło"
-                    messages={inputMessages.Default}
-                  />
-                  <TextInput
-                    type="password"
-                    label="Nowe hasło"
-                    placeholder="Minimum 8 znaków"
-                    messages={inputMessages.Warning}
-                  />
-                  <TextInput
-                    type="password"
-                    label="Powtórz nowe hasło"
-                    placeholder="Potwierdź nowe hasło"
-                    messages={inputMessages.Success}
-                  />
-                  <p className="text-sm text-red-400 mt-1">
-                    Przykładowy błąd walidacji.
-                  </p>
-                </div>
-              </DemoModalShell>
-
-              <DemoModalShell
-                title="Czy na pewno chcesz usunąć konto?"
-                footer={
-                  <ModalFooter
-                    confirmText="Tak, usuń konto"
-                    onCancel={() => {}}
-                    onConfirm={() => {}}
-                    confirmVariant="danger"
-                  />
-                }
-              >
-                <p className="text-sm text-text-neutral">
-                  Ta operacja jest nieodwracalna. Wszystkie Twoje dane zostaną
-                  trwale usunięte.
+            <DemoModalShell
+              title="Zmiana hasła"
+              footer={
+                <ModalFooter
+                  confirmText="Zapisz zmiany"
+                  onCancel={() => {}}
+                  onConfirm={() => {}}
+                />
+              }
+            >
+              <div className="flex flex-col gap-4 pt-2">
+                <TextInput
+                  type="password"
+                  label="Aktualne hasło"
+                  placeholder="Wpisz swoje aktualne hasło"
+                  messages={inputMessages.Default}
+                />
+                <TextInput
+                  type="password"
+                  label="Nowe hasło"
+                  placeholder="Minimum 8 znaków"
+                  messages={inputMessages.Warning}
+                />
+                <TextInput
+                  type="password"
+                  label="Powtórz nowe hasło"
+                  placeholder="Potwierdź nowe hasło"
+                  messages={inputMessages.Success}
+                />
+                <p className="text-sm text-red-400 mt-1">
+                  Przykładowy błąd walidacji.
                 </p>
-              </DemoModalShell>
+              </div>
+            </DemoModalShell>
 
-              <DemoModalShell
-                title="Nowy użytkownik"
-                footer={
-                  <ModalFooter
-                    confirmText="Utwórz konto"
-                    onCancel={() => {}}
-                    onConfirm={() => {}}
-                    confirmSize="sm"
-                    cancelSize="sm"
-                    disabled={false}
+            <DemoModalShell
+              title="Czy na pewno chcesz usunąć konto?"
+              footer={
+                <ModalFooter
+                  confirmText="Tak, usuń konto"
+                  onCancel={() => {}}
+                  onConfirm={() => {}}
+                  confirmVariant="danger"
+                />
+              }
+            >
+              <p className="text-sm text-text-neutral">
+                Ta operacja jest nieodwracalna. Wszystkie Twoje dane zostaną
+                trwale usunięte.
+              </p>
+            </DemoModalShell>
+
+            <DemoModalShell
+              title="Nowy użytkownik"
+              footer={
+                <ModalFooter
+                  confirmText="Utwórz konto"
+                  onCancel={() => {}}
+                  onConfirm={() => {}}
+                  confirmSize="sm"
+                  cancelSize="sm"
+                  disabled={false}
+                />
+              }
+            >
+              <div className="flex flex-col gap-5 py-2">
+                <p className="text-sm text-text-neutral mb-2">
+                  Utwórz konto i skonfiguruj dostęp dla nowego użytkownika.
+                </p>
+                <div className="space-y-4">
+                  <TextInput
+                    label="Nazwa użytkownika"
+                    value="JanKowalski"
+                    onChange={() => {}}
+                    showButton={false}
+                    placeholder="np. JanKowalski"
                   />
-                }
-              >
-                <div className="flex flex-col gap-5 py-2">
-                  <p className="text-sm text-text-neutral mb-2">
-                    Utwórz konto i skonfiguruj dostęp dla nowego użytkownika.
-                  </p>
-                  <div className="space-y-4">
-                    <TextInput
-                      label="Nazwa użytkownika"
-                      value="JanKowalski"
-                      onChange={() => {}}
-                      showButton={false}
-                      placeholder="np. JanKowalski"
-                    />
-                    <TextInput
-                      label="Email"
-                      value="jan@hexoo.com"
-                      onChange={() => {}}
-                      showButton={false}
-                      placeholder="np. jan@hexoo.com"
-                    />
-                    <Select
-                      label="Rola"
-                      value="user"
-                      onChange={() => {}}
-                      options={selectOptions}
-                    />
-                    <TextInput
-                      label="Hasło"
-                      type="password"
-                      value="••••••••"
-                      onChange={() => {}}
-                      showButton={true}
-                      placeholder="Wpisz hasło..."
-                    />
-                  </div>
+                  <TextInput
+                    label="Email"
+                    value="jan@hexoo.com"
+                    onChange={() => {}}
+                    showButton={false}
+                    placeholder="np. jan@hexoo.com"
+                  />
+                  <Select
+                    label="Rola"
+                    value="user"
+                    onChange={() => {}}
+                    options={selectOptions}
+                  />
+                  <TextInput
+                    label="Hasło"
+                    type="password"
+                    value="••••••••"
+                    onChange={() => {}}
+                    showButton={true}
+                    placeholder="Wpisz hasło..."
+                  />
                 </div>
-              </DemoModalShell>
+              </div>
+            </DemoModalShell>
 
-              <DemoModalShell title="Edycja użytkownika" className="max-w-4xl">
-                <div className="flex flex-col gap-6 p-1">
-                  <div className="mb-8 p-5 rounded-xl border border-primary-neutral-stroke-default bg-[radial-gradient(ellipse_at_top_right,var(--tw-gradient-stops))] from-white/5 via-transparent to-transparent">
-                    <div className="flex flex-col sm:flex-row items-center gap-6">
-                      <div className="relative shrink-0">
-                        <Avatar
-                          src={demoAdminUser.avatarUrl || undefined}
-                          alt={demoAdminUser.name}
-                          width={80}
-                          height={80}
-                          className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl border border-white/10 shadow-lg object-cover"
-                        />
-                        <div className="absolute -bottom-2 -right-2 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider shadow-sm border border-black/20 bg-green-600 text-white">
-                          Aktywny
-                        </div>
+            <DemoModalShell title="Edycja użytkownika" className="max-w-4xl">
+              <div className="flex flex-col gap-6 p-1">
+                <div className="mb-8 p-5 rounded-xl border border-primary-neutral-stroke-default bg-[radial-gradient(ellipse_at_top_right,var(--tw-gradient-stops))] from-white/5 via-transparent to-transparent">
+                  <div className="flex flex-col sm:flex-row items-center gap-6">
+                    <div className="relative shrink-0">
+                      <Avatar
+                        src={demoAdminUser.avatarUrl || undefined}
+                        alt={demoAdminUser.name}
+                        width={80}
+                        height={80}
+                        className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl border border-white/10 shadow-lg object-cover"
+                      />
+                      <div className="absolute -bottom-2 -right-2 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider shadow-sm border border-black/20 bg-green-600 text-white">
+                        Aktywny
                       </div>
-                      <div className="flex-1 text-center sm:text-left w-full overflow-hidden">
-                        <div className="flex flex-col sm:flex-row sm:items-end gap-2 mb-1">
-                          <h3 className="text-2xl sm:text-3xl font-bold text-text-main font-Albert_Sans truncate">
-                            {demoAdminUser.name}
-                          </h3>
-                          <span className="px-2 py-1 rounded text-xs font-medium bg-primary-neutral-stroke-default text-text-neutral mb-1.5">
-                            {demoAdminUser.role}
+                    </div>
+                    <div className="flex-1 text-center sm:text-left w-full overflow-hidden">
+                      <div className="flex flex-col sm:flex-row sm:items-end gap-2 mb-1">
+                        <h3 className="text-2xl sm:text-3xl font-bold text-text-main font-Albert_Sans truncate">
+                          {demoAdminUser.name}
+                        </h3>
+                        <span className="px-2 py-1 rounded text-xs font-medium bg-primary-neutral-stroke-default text-text-neutral mb-1.5">
+                          {demoAdminUser.role}
+                        </span>
+                      </div>
+                      <p className="text-text-neutral text-sm mb-3 font-mono">
+                        {demoAdminUser.email}
+                      </p>
+                      <div className="flex flex-wrap justify-center sm:justify-start gap-4 text-xs text-text-neutral/70 border-t border-white/5 pt-3">
+                        <div className="flex flex-col">
+                          <span className="uppercase text-[10px] font-semibold tracking-wider opacity-50">
+                            ID Użytkownika
+                          </span>
+                          <span className="font-mono text-text-neutral select-all">
+                            {demoAdminUser.uid}
                           </span>
                         </div>
-                        <p className="text-text-neutral text-sm mb-3 font-mono">
-                          {demoAdminUser.email}
-                        </p>
-                        <div className="flex flex-wrap justify-center sm:justify-start gap-4 text-xs text-text-neutral/70 border-t border-white/5 pt-3">
-                          <div className="flex flex-col">
-                            <span className="uppercase text-[10px] font-semibold tracking-wider opacity-50">
-                              ID Użytkownika
-                            </span>
-                            <span className="font-mono text-text-neutral select-all">
-                              {demoAdminUser.uid}
-                            </span>
-                          </div>
-                          <div className="flex flex-col">
-                            <span className="uppercase text-[10px] font-semibold tracking-wider opacity-50">
-                              Dołączył
-                            </span>
-                            <span>15.01.2024</span>
-                          </div>
+                        <div className="flex flex-col">
+                          <span className="uppercase text-[10px] font-semibold tracking-wider opacity-50">
+                            Dołączył
+                          </span>
+                          <span>15.01.2024</span>
                         </div>
                       </div>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="flex flex-col gap-4">
-                      <div className="bg-white/5 p-5 rounded-xl border border-primary-neutral-background-default/30 h-full flex flex-col">
-                        <h3 className="text-lg font-medium mb-4 text-text-main">
-                          Dane profilowe
-                        </h3>
-                        <div className="flex flex-col gap-4 flex-1">
-                          <TextInput
-                            label="Nazwa wyświetlana"
-                            value="Admin Hexoo"
-                            placeholder={demoAdminUser.name}
-                            onChange={() => {}}
-                            showButton={false}
-                          />
-                          <Select
-                            label="Rola w systemie"
-                            value={demoAdminUser.role}
-                            onChange={() => {}}
-                            options={selectOptions}
-                            placeholder="— Wybierz rolę —"
-                          />
-                        </div>
-                        <div className="mt-6 flex justify-end">
-                          <Button
-                            text="Zapisz zmiany"
-                            size="sm"
-                            variant="default"
-                            className="w-full md:w-auto"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex flex-col gap-4">
-                      <div className="bg-white/5 p-5 rounded-xl border border-primary-neutral-background-default/30 h-full flex flex-col">
-                        <h3 className="text-lg font-medium mb-4 text-text-main">
-                          Bezpieczeństwo
-                        </h3>
-                        <div className="flex flex-col gap-4 flex-1">
-                          <TextInput
-                            label="Ustaw nowe hasło"
-                            value=""
-                            placeholder="Min. 8 znaków"
-                            onChange={() => {}}
-                            type="password"
-                            showButton={true}
-                          />
-                          <p className="text-xs text-text-neutral/60">
-                            Pozostaw puste, jeśli nie chcesz zmieniać hasła.
-                          </p>
-                        </div>
-                        <div className="mt-6 flex justify-end">
-                          <Button
-                            text="Zmień hasło"
-                            size="sm"
-                            variant="default"
-                            className="w-full md:w-auto"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex flex-col md:flex-row justify-between items-center gap-4 w-full">
-                    <Button
-                      text="Anuluj i zamknij"
-                      disabled={false}
-                      className="text-text-neutral hover:text-white order-2 md:order-1 border-transparent"
-                      variant="secondary"
-                      size="sm"
-                    />
-                    <div className="flex gap-3 w-full md:w-auto order-1 md:order-2 justify-end">
-                      <Button
-                        text="Zablokuj konto"
-                        size="sm"
-                        variant="secondary"
-                        className="text-yellow-400 border-yellow-500/30 hover:bg-yellow-500/10"
-                      />
-                      <Button
-                        text="Usuń użytkownika"
-                        size="sm"
-                        variant="danger"
-                      />
                     </div>
                   </div>
                 </div>
-              </DemoModalShell>
-            </div>
-          </Section>
-        </div>
-      </QueryClientProvider>
-    </Provider>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="flex flex-col gap-4">
+                    <div className="bg-white/5 p-5 rounded-xl border border-primary-neutral-background-default/30 h-full flex flex-col">
+                      <h3 className="text-lg font-medium mb-4 text-text-main">
+                        Dane profilowe
+                      </h3>
+                      <div className="flex flex-col gap-4 flex-1">
+                        <TextInput
+                          label="Nazwa wyświetlana"
+                          value="Admin Hexoo"
+                          placeholder={demoAdminUser.name}
+                          onChange={() => {}}
+                          showButton={false}
+                        />
+                        <Select
+                          label="Rola w systemie"
+                          value={demoAdminUser.role}
+                          onChange={() => {}}
+                          options={selectOptions}
+                          placeholder="— Wybierz rolę —"
+                        />
+                      </div>
+                      <div className="mt-6 flex justify-end">
+                        <Button
+                          text="Zapisz zmiany"
+                          size="sm"
+                          variant="default"
+                          className="w-full md:w-auto"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-4">
+                    <div className="bg-white/5 p-5 rounded-xl border border-primary-neutral-background-default/30 h-full flex flex-col">
+                      <h3 className="text-lg font-medium mb-4 text-text-main">
+                        Bezpieczeństwo
+                      </h3>
+                      <div className="flex flex-col gap-4 flex-1">
+                        <TextInput
+                          label="Ustaw nowe hasło"
+                          value=""
+                          placeholder="Min. 8 znaków"
+                          onChange={() => {}}
+                          type="password"
+                          showButton={true}
+                        />
+                        <p className="text-xs text-text-neutral/60">
+                          Pozostaw puste, jeśli nie chcesz zmieniać hasła.
+                        </p>
+                      </div>
+                      <div className="mt-6 flex justify-end">
+                        <Button
+                          text="Zmień hasło"
+                          size="sm"
+                          variant="default"
+                          className="w-full md:w-auto"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex flex-col md:flex-row justify-between items-center gap-4 w-full">
+                  <Button
+                    text="Anuluj i zamknij"
+                    disabled={false}
+                    className="text-text-neutral hover:text-white order-2 md:order-1 border-transparent"
+                    variant="secondary"
+                    size="sm"
+                  />
+                  <div className="flex gap-3 w-full md:w-auto order-1 md:order-2 justify-end">
+                    <Button
+                      text="Zablokuj konto"
+                      size="sm"
+                      variant="secondary"
+                      className="text-yellow-400 border-yellow-500/30 hover:bg-yellow-500/10"
+                    />
+                    <Button
+                      text="Usuń użytkownika"
+                      size="sm"
+                      variant="danger"
+                    />
+                  </div>
+                </div>
+              </div>
+            </DemoModalShell>
+          </div>
+        </Section>
+      </div>
+    </QueryClientProvider>
   );
 }

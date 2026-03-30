@@ -2,7 +2,14 @@ import Link from "next/link";
 import { NavItem } from "./NavItem";
 import { SessionData } from "@/features/me/me.type";
 import { UserRole } from "@/features/users/types/user.type";
-import { House, User, Settings, Plus, Shield, ClipboardList } from "lucide-react";
+import {
+  House,
+  User,
+  Settings,
+  Plus,
+  Shield,
+  ClipboardList,
+} from "lucide-react";
 import Button from "@/features/shared/components/ui/Button";
 import { useAppDispatch } from "@/lib/store/hooks";
 import { openCreatePostModal } from "@/features/posts/store/createPostModalSlice";
@@ -46,11 +53,7 @@ export function LeftNav({ onOpenRight, user }: LeftNavProps) {
                   />
                 </>
               ) : (
-                <NavItem
-                  label="Panel admina"
-                  to="/moderator"
-                  icon={Shield}
-                />
+                <NavItem label="Panel admina" to="/moderator" icon={Shield} />
               )
             ) : null}
           </div>
