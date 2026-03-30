@@ -1,28 +1,40 @@
 import { SessionData } from "@/features/me/me.type";
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-type AuthState = {
+export type AuthState = {
   user: SessionData | null;
   ready: boolean;
 };
 
-const initialState: AuthState = { user: null, ready: false };
+export const AUTH_SET_USER = "auth/setUser" as const;
+export const AUTH_CLEAR_USER = "auth/clearUser" as const;
+export const AUTH_SET_READY = "auth/setReady" as const;
 
-const authSlice = createSlice({
-  name: "auth",
-  initialState,
-  reducers: {
-    setUser(state, action: PayloadAction<SessionData | null>) {
-      state.user = action.payload;
-    },
-    clearUser(state) {
-      state.user = null;
-    },
-    setReady(state, action: PayloadAction<boolean>) {
-      state.ready = action.payload;
-    },
-  },
+export type SetUserAction = {
+  type: typeof AUTH_SET_USER;
+  payload: SessionData | null;
+};
+
+export type ClearUserAction = {
+  type: typeof AUTH_CLEAR_USER;
+};
+
+export type SetReadyAction = {
+  type: typeof AUTH_SET_READY;
+  payload: boolean;
+};
+
+export type AuthAction = SetUserAction | ClearUserAction | SetReadyAction;
+
+export const setUser = (user: SessionData | null): SetUserAction => ({
+  type: AUTH_SET_USER,
+  payload: user,
 });
 
-export const { setUser, clearUser, setReady } = authSlice.actions;
-export default authSlice.reducer;
+export const clearUser = (): ClearUserAction => ({
+  type: AUTH_CLEAR_USER,
+});
+
+export const setReady = (ready: boolean): SetReadyAction => ({
+  type: AUTH_SET_READY,
+  payload: ready,
+});

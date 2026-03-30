@@ -1,46 +1,44 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-
-interface SettingsState {
+export interface SettingsState {
   showNSFWPosts: boolean;
   showNSFWComments: boolean;
 }
 
-const initialState: SettingsState = {
-  showNSFWPosts: false,
-  showNSFWComments: false,
+export const SETTINGS_SET_NSFW_VISIBILITY = "settings/setNsfwVisibility" as const;
+export const SETTINGS_SET_COMMENTS_NSFW_VISIBILITY =
+  "settings/setCommentsNsfwVisibility" as const;
+export const SETTINGS_INITIALIZE = "settings/initializeSettings" as const;
+
+export type SetNsfwVisibilityAction = {
+  type: typeof SETTINGS_SET_NSFW_VISIBILITY;
+  payload: boolean;
 };
 
-export const settingsSlice = createSlice({
-  name: "settings",
-  initialState,
-  reducers: {
-    setNsfwVisibility: (state, action: PayloadAction<boolean>) => {
-      state.showNSFWPosts = action.payload;
-    },
-    setCommentsNsfwVisibility: (state, action: PayloadAction<boolean>) => {
-      state.showNSFWComments = action.payload;
-    },
-    initializeSettings: (state) => {
-      if (typeof window !== "undefined") {
-        const storedPosts =
-          localStorage.getItem("user_settings_nsfw_posts") ??
-          localStorage.getItem("user_settings_nsfw");
-        const storedComments = localStorage.getItem("user_settings_nsfw_comments");
+export type SetCommentsNsfwVisibilityAction = {
+  type: typeof SETTINGS_SET_COMMENTS_NSFW_VISIBILITY;
+  payload: boolean;
+};
 
-        if (storedPosts) {
-          state.showNSFWPosts = JSON.parse(storedPosts);
-        }
-        if (storedComments) {
-          state.showNSFWComments = JSON.parse(storedComments);
-        }
-      }
-    },
-  },
+export type InitializeSettingsAction = {
+  type: typeof SETTINGS_INITIALIZE;
+};
+
+export type SettingsAction =
+  | SetNsfwVisibilityAction
+  | SetCommentsNsfwVisibilityAction
+  | InitializeSettingsAction;
+
+export const setNsfwVisibility = (value: boolean): SetNsfwVisibilityAction => ({
+  type: SETTINGS_SET_NSFW_VISIBILITY,
+  payload: value,
 });
 
-export const {
-  setNsfwVisibility,
-  setCommentsNsfwVisibility,
-  initializeSettings,
-} = settingsSlice.actions;
-export default settingsSlice.reducer;
+export const setCommentsNsfwVisibility = (
+  value: boolean,
+): SetCommentsNsfwVisibilityAction => ({
+  type: SETTINGS_SET_COMMENTS_NSFW_VISIBILITY,
+  payload: value,
+});
+
+export const initializeSettings = (): InitializeSettingsAction => ({
+  type: SETTINGS_INITIALIZE,
+});
