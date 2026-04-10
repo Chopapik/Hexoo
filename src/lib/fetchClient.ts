@@ -1,6 +1,6 @@
 import { ApiError } from "./AppError";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "/api";
 const DEFAULT_TIMEOUT = 10000;
 
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
