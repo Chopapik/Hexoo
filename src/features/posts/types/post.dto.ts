@@ -73,6 +73,7 @@ export type PublicPostResponseDto = Omit<
   | "reviewedBy"
   | "reviewedAt"
 > & {
+  imageUrl?: string | null;
   userName: string;
   userAvatarUrl: string | null;
   isLikedByMe?: boolean;
@@ -88,6 +89,7 @@ export type PublicPostResponseDto = Omit<
 };
 
 export type ModerationPostResponseDto = PostEntity & {
+  imageUrl?: string | null;
   moderationStatus: ModerationStatus;
   flaggedReasons?: string[];
   moderationInfo?: {

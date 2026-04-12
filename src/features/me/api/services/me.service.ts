@@ -9,6 +9,8 @@ import type { UpdateUserPayload } from "@/features/users/types/user.payload";
 import type { MeService as IMeService } from "./me.service.interface";
 import type { AuthRepository } from "@/features/auth/api/repositories/authRepository.interface";
 import type { UserRepository } from "@/features/users/api/repositories/user.repository.interface";
+import { resolveImagePublicUrl } from "@/features/images/utils/resolveImagePublicUrl";
+import type { ImageMeta } from "@/features/images/types/image.type";
 
 export class MeService implements IMeService {
   constructor(
@@ -57,14 +59,14 @@ export class MeService implements IMeService {
       uid,
       name,
       avatarFile,
-      "meService.updateProfile", 
+      "meService.updateProfile",
     );
 
     const userData = await this.userRepository.getUserByUid(uid);
-    const currentStoragePath = userData?.avatarMeta?.storagePath;
 
-    const authUpdate: { displayName?: string; photoURL?: string } = {};
+    const authUpdate: { displayName?: string } = {};
     const dbUpdate: UpdateUserPayload = { updatedAt: new Date() };
+    let savedAvatarMeta: ImageMeta | undefined;
 
     if (name) {
       authUpdate.displayName = name;
@@ -74,17 +76,20 @@ export class MeService implements IMeService {
     if (avatarFile) {
       const uploadResult = await uploadImage(avatarFile, uid, "avatars");
 
-      if (currentStoragePath) {
-        await deleteImage(currentStoragePath);
+      if (userData?.avatarMeta) {
+        await deleteImage(userData.avatarMeta);
       }
 
-      authUpdate.photoURL = uploadResult.publicUrl;
-      dbUpdate.avatarUrl = uploadResult.publicUrl;
-      dbUpdate.avatarMeta = {
-        storagePath: uploadResult.storagePath,
+      const avatarMeta: ImageMeta = {
+        storageBucket: uploadResult.storageBucket,
+        storageLocation: uploadResult.storageLocation,
+        fileName: uploadResult.fileName,
+        downloadToken: uploadResult.downloadToken,
         contentType: uploadResult.contentType,
         sizeBytes: uploadResult.sizeBytes,
       };
+      savedAvatarMeta = avatarMeta;
+      dbUpdate.avatarMeta = avatarMeta;
     }
 
     if (Object.keys(authUpdate).length > 0) {
@@ -106,7 +111,9 @@ export class MeService implements IMeService {
       email: decoded.email,
       role: decoded.role,
       name: (dbUpdate.name as string) ?? decoded.name,
-      avatarUrl: (dbUpdate.avatarUrl as string | undefined) ?? decoded.avatarUrl,
+      avatarUrl: savedAvatarMeta
+        ? (resolveImagePublicUrl(savedAvatarMeta) ?? undefined)
+        : decoded.avatarUrl,
       isRestricted: decoded.isRestricted,
       isBanned: decoded.isBanned,
     };

@@ -10,7 +10,6 @@ export interface UserRow {
   name_lowercase: string | null;
   email: string;
   role: UserRole;
-  avatar_url: string | null;
   avatar_meta: ImageMeta | null;
   created_at: string;
   updated_at: string | null;

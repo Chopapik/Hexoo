@@ -8,8 +8,8 @@ import type {
 } from "./user.repository.interface";
 import type { UserEntity } from "../../types/user.entity";
 import type { UserRow } from "../../types/user.row";
+import type { ImageMeta } from "@/features/images/types/image.type";
 import { parseDate } from "@/features/shared/utils/dateUtils";
-
 const TABLE = "users";
 
 function rowToEntity(row: UserRow): UserEntity {
@@ -18,7 +18,6 @@ function rowToEntity(row: UserRow): UserEntity {
     name: row.name,
     email: row.email,
     role: row.role,
-    avatarUrl: row.avatar_url ?? undefined,
     avatarMeta: row.avatar_meta ?? undefined,
     createdAt: parseDate(row.created_at) ?? new Date(0),
     updatedAt: parseDate(row.updated_at),
@@ -45,7 +44,6 @@ export class UserSupabaseRepository implements UserRepository {
       name_lowercase: nameLower,
       email: data.email,
       role: data.role ?? "user",
-      avatar_url: data.avatarUrl ?? null,
       avatar_meta: data.avatarMeta ?? null,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
@@ -82,21 +80,29 @@ export class UserSupabaseRepository implements UserRepository {
   }
 
   async getUsersByIds(
-    uids: string[]
-  ): Promise<Record<string, { name: string; avatarUrl?: string | null }>> {
+    uids: string[],
+  ): Promise<Record<string, { name: string; avatarMeta?: ImageMeta | null }>> {
     if (uids.length === 0) return {};
     const unique = [...new Set(uids)];
-    const out: Record<string, { name: string; avatarUrl?: string | null }> = {};
+    const out: Record<string, { name: string; avatarMeta?: ImageMeta | null }> =
+      {};
     for (let i = 0; i < unique.length; i += 30) {
       const chunk = unique.slice(i, i + 30);
       const { data, error } = await supabaseAdmin
         .from(TABLE)
-        .select("uid, name, avatar_url")
+        .select("uid, name, avatar_meta")
         .in("uid", chunk);
       if (error) throw new Error(error.message ?? "Database error");
       for (const row of data ?? []) {
-        const r = row as { uid: string; name: string; avatar_url: string | null };
-        out[r.uid] = { name: r.name, avatarUrl: r.avatar_url ?? null };
+        const r = row as {
+          uid: string;
+          name: string;
+          avatar_meta: ImageMeta | null;
+        };
+        out[r.uid] = {
+          name: r.name,
+          avatarMeta: r.avatar_meta ?? null,
+        };
       }
     }
     return out;
@@ -151,7 +157,10 @@ export class UserSupabaseRepository implements UserRepository {
       update.restricted_by = null;
       update.restriction_reason = null;
     }
-    const { error } = await supabaseAdmin.from(TABLE).update(update).eq("uid", uid);
+    const { error } = await supabaseAdmin
+      .from(TABLE)
+      .update(update)
+      .eq("uid", uid);
     if (error) throw new Error(error.message ?? "Database error");
   }
 
@@ -176,7 +185,6 @@ export class UserSupabaseRepository implements UserRepository {
     }
     if (data.email !== undefined) row.email = data.email;
     if (data.role !== undefined) row.role = data.role;
-    if (data.avatarUrl !== undefined) row.avatar_url = data.avatarUrl;
     if (data.avatarMeta !== undefined) row.avatar_meta = data.avatarMeta;
     if (data.lastOnline !== undefined)
       row.last_online =
@@ -185,7 +193,10 @@ export class UserSupabaseRepository implements UserRepository {
           : data.lastOnline;
     if (data.isActive !== undefined) row.is_active = data.isActive;
     if (data.lastKnownIp !== undefined) row.last_known_ip = data.lastKnownIp;
-    const { error } = await supabaseAdmin.from(TABLE).update(row).eq("uid", uid);
+    const { error } = await supabaseAdmin
+      .from(TABLE)
+      .update(row)
+      .eq("uid", uid);
     if (error) throw new Error(error.message ?? "Database error");
   }
 }

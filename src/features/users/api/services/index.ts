@@ -2,6 +2,7 @@ import { UserService } from "./user.service";
 import { userRepository } from "../repositories";
 import { authRepository } from "@/features/auth/api/repositories";
 import type { UserEntity } from "../../types/user.entity";
+import type { ImageMeta } from "@/features/images/types/image.type";
 import { UserRole } from "../../types/user.type";
 import type { SessionData } from "@/features/me/me.type";
 
@@ -35,7 +36,7 @@ export async function getUserProfile(name: string) {
 
 export async function getUsersByIds(
   uids: string[],
-): Promise<Record<string, { name: string; avatarUrl?: string | null }>> {
+): Promise<Record<string, { name: string; avatarMeta?: ImageMeta | null }>> {
   const service = getUserService(null);
   return await service.getUsersByIds(uids);
 }

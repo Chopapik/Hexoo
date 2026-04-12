@@ -1,5 +1,6 @@
 import { createAppError } from "@/lib/AppError";
 import { deleteImage } from "@/features/images/api/image.service";
+import { parseImageMeta } from "@/features/images/utils/imageMeta";
 import { supabaseAdmin } from "@/lib/supabaseServer";
 import { ModerationCommentResponseDto as ModerationCommentResponse } from "@/features/comments/types/comment.dto";
 import { ModerationPostResponseDto as ModerationPostResponse } from "@/features/posts/types/post.dto";
@@ -196,7 +197,7 @@ export class ModeratorService implements IModeratorService {
     }
 
     const result = (txResult ?? {}) as {
-      deletedImagePath?: string | null;
+      deletedImageMeta?: unknown;
       authorUid?: string | null;
     };
 
@@ -210,9 +211,10 @@ export class ModeratorService implements IModeratorService {
       }
     }
 
-    if (action === "reject" && result.deletedImagePath) {
+    if (action === "reject" && result.deletedImageMeta != null) {
+      const meta = parseImageMeta(result.deletedImageMeta);
       try {
-        await deleteImage(result.deletedImagePath);
+        await deleteImage(meta);
       } catch {
         // DB transaction is already committed; image cleanup is best-effort.
       }
@@ -263,7 +265,7 @@ export class ModeratorService implements IModeratorService {
     }
 
     const result = (txResult ?? {}) as {
-      deletedImagePath?: string | null;
+      deletedImageMeta?: unknown;
       authorUid?: string | null;
     };
 
@@ -277,9 +279,10 @@ export class ModeratorService implements IModeratorService {
       }
     }
 
-    if (action === "reject" && result.deletedImagePath) {
+    if (action === "reject" && result.deletedImageMeta != null) {
+      const meta = parseImageMeta(result.deletedImageMeta);
       try {
-        await deleteImage(result.deletedImagePath);
+        await deleteImage(meta);
       } catch {
         // DB transaction is already committed; image cleanup is best-effort.
       }

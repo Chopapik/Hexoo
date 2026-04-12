@@ -24,13 +24,14 @@ import { PostContentService } from "./post.content.service";
 import { PostService as IPostService } from "./post.service.interface";
 import { CreatePostPayload } from "../../types/post.payload";
 import { logActivity } from "@/features/activity/api/services";
-
+import { ImageMeta } from "@/features/images/types/image.type";
+import { resolveImagePublicUrl } from "@/features/images/utils/resolveImagePublicUrl";
 type CreatePostInput = CreatePostRequest;
 type CreatePostResult = CreatePostResponse;
 type UpdatePostInput = UpdatePostRequest;
 type PublicPost = PublicPostResponse;
 
-type ImageDeleter = (storagePath?: string | null) => Promise<void>;
+type ImageDeleter = (meta: ImageMeta | null | undefined) => Promise<void>;
 
 export class PostService implements IPostService {
   constructor(
@@ -76,10 +77,8 @@ export class PostService implements IPostService {
       );
     }
 
-    const moderationInfoByPostId: Record<
-      string,
-      PublicPost["moderationInfo"]
-    > = {};
+    const moderationInfoByPostId: Record<string, PublicPost["moderationInfo"]> =
+      {};
 
     if (this.session) {
       // Preload latest moderation info only for posts authored by current user
@@ -108,8 +107,9 @@ export class PostService implements IPostService {
       const author = authors[post.userId];
       return {
         ...post,
+        imageUrl: resolveImagePublicUrl(post.imageMeta) ?? null,
         userName: author?.name ?? "Unknown",
-        userAvatarUrl: author?.avatarUrl ?? null,
+        userAvatarUrl: resolveImagePublicUrl(author?.avatarMeta) ?? null,
         isLikedByMe: likedPostIds.includes(post.id),
         moderationInfo:
           this.session && post.userId === this.session.uid
@@ -142,7 +142,6 @@ export class PostService implements IPostService {
       userId: user.uid,
       text: createPostData.text,
       device: "Web",
-      imageUrl: processed.imageUrl ?? null,
       imageMeta: processed.imageMeta ?? null,
       isPending: processed.isPending,
       isNSFW: processed.isNSFW,
@@ -195,8 +194,8 @@ export class PostService implements IPostService {
       });
     }
 
-    if (post.imageMeta?.storagePath) {
-      await this.imageDeleter(post.imageMeta.storagePath);
+    if (post.imageMeta) {
+      await this.imageDeleter(post.imageMeta);
     }
 
     await this.repository.deletePost(postId);
@@ -266,13 +265,12 @@ export class PostService implements IPostService {
       });
     }
 
-    if (processed.imageUrl && post.imageMeta?.storagePath) {
-      await this.imageDeleter(post.imageMeta.storagePath);
+    if (processed.imageMeta && post.imageMeta) {
+      await this.imageDeleter(post.imageMeta);
     }
 
     await this.repository.updatePost(postId, {
       text: updateData.text ?? post.text,
-      imageUrl: processed.imageUrl ?? post.imageUrl,
       imageMeta: processed.imageMeta ?? post.imageMeta,
       isPending: processed.isPending,
       isNSFW: processed.isNSFW,

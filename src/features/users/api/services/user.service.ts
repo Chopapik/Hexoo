@@ -1,4 +1,5 @@
 import type { CreateUserRequestDto as CreateUserRequest } from "../../types/user.dto";
+import { resolveImagePublicUrl } from "@/features/images/utils/resolveImagePublicUrl";
 import { createAppError } from "@/lib/AppError";
 import { logActivity } from "@/features/activity/api/services";
 import {
@@ -9,6 +10,7 @@ import type { AuthRepository } from "@/features/auth/api/repositories/authReposi
 import type { UserService as IUserService } from "./user.service.interface";
 import { SessionData } from "@/features/me/me.type";
 import { UserEntity } from "../../types/user.entity";
+import type { ImageMeta } from "@/features/images/types/image.type";
 import { UserRole } from "../../types/user.type";
 
 type CreateUserInput = CreateUserRequest;
@@ -65,7 +67,7 @@ export class UserService implements IUserService {
     const userProfile = {
       uid: userData.uid,
       name: userData.name,
-      avatarUrl: userData.avatarUrl,
+      avatarUrl: resolveImagePublicUrl(userData.avatarMeta) ?? undefined,
       lastOnline: userData.lastOnline,
       createdAt: userData.createdAt,
     };
@@ -129,7 +131,7 @@ export class UserService implements IUserService {
 
   async getUsersByIds(
     uids: string[],
-  ): Promise<Record<string, { name: string; avatarUrl?: string | null }>> {
+  ): Promise<Record<string, { name: string; avatarMeta?: ImageMeta | null }>> {
     if (!uids || uids.length === 0) {
       return {};
     }

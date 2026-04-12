@@ -145,7 +145,6 @@ export class SupabaseAuthRepository implements AuthRepository {
 
     const meta: Record<string, unknown> = {};
     if (typeof properties.displayName === "string") meta.name = properties.displayName;
-    if (typeof properties.photoURL === "string") meta.avatar_url = properties.photoURL;
     if (Object.keys(meta).length > 0) attrs.user_metadata = meta;
 
     // Supabase has no "disabled" flag; ban is enforced via our DB (is_banned). Skip no-op.

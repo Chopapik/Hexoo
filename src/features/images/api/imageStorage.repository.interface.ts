@@ -1,16 +1,17 @@
 export interface ImageStorageUploadResult {
   publicUrl: string;
-  storagePath: string;
+  objectKey: string;
   contentType: string;
   sizeBytes: number;
 }
 
 export interface ImageStorageRepository {
   uploadObject(
-    storagePath: string,
+    bucket: string,
+    objectKey: string,
     buffer: Buffer,
-    contentType: string
+    contentType: string,
   ): Promise<ImageStorageUploadResult>;
 
-  deleteObject(storagePath: string): Promise<void>;
+  deleteObject(bucket: string, objectKey: string): Promise<void>;
 }

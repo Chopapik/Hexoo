@@ -10,7 +10,6 @@ import type {
 import type { PostEntity } from "../../types/post.entity";
 import type { PostRow } from "../../types/post.row";
 import { parseDate } from "@/features/shared/utils/dateUtils";
-
 const POST_REPORTS_TABLE = "post_reports";
 
 const TABLE = "posts";
@@ -26,7 +25,6 @@ function rowToEntity(row: PostRow): PostEntity {
     updatedAt: parseDate(row.updated_at),
     isPending: row.is_pending,
     isNSFW: row.is_nsfw,
-    imageUrl: row.image_url ?? undefined,
     imageMeta: row.image_meta ?? undefined,
     device: row.device ?? undefined,
     userReports: undefined,
@@ -52,7 +50,6 @@ function createPayloadToRow(data: CreatePostPayload): Record<string, unknown> {
         : data.updatedAt;
   if (data.isNSFW != null) row.is_nsfw = data.isNSFW;
   if (data.isPending != null) row.is_pending = data.isPending;
-  if (data.imageUrl !== undefined) row.image_url = data.imageUrl;
   if (data.imageMeta !== undefined) row.image_meta = data.imageMeta;
   if (data.device !== undefined) row.device = data.device;
   return row;
@@ -70,7 +67,6 @@ function updatePayloadToRow(data: UpdatePostPayload): Record<string, unknown> {
         : data.updatedAt;
   if (data.isNSFW != null) row.is_nsfw = data.isNSFW;
   if (data.isPending != null) row.is_pending = data.isPending;
-  if (data.imageUrl !== undefined) row.image_url = data.imageUrl;
   if (data.imageMeta !== undefined) row.image_meta = data.imageMeta;
   if (data.device !== undefined) row.device = data.device;
   return row;

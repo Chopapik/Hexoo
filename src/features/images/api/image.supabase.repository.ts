@@ -4,26 +4,18 @@ import type {
   ImageStorageUploadResult,
 } from "./imageStorage.repository.interface";
 
-const getStorageClient = () => {
-  const bucketName = process.env.SUPABASE_STORAGE_BUCKET;
-  if (!bucketName) {
-    throw new Error(
-      "[ImageStorageRepository] Storage bucket is not configured"
-    );
-  }
-
-  return supabaseAdmin.storage.from(bucketName);
-};
+const storageFrom = (bucket: string) => supabaseAdmin.storage.from(bucket);
 
 export class SupabaseImageStorageRepository implements ImageStorageRepository {
   async uploadObject(
-    storagePath: string,
+    bucket: string,
+    objectKey: string,
     buffer: Buffer,
-    contentType: string
+    contentType: string,
   ): Promise<ImageStorageUploadResult> {
-    const storage = getStorageClient();
+    const storage = storageFrom(bucket);
 
-    const { error: uploadError } = await storage.upload(storagePath, buffer, {
+    const { error: uploadError } = await storage.upload(objectKey, buffer, {
       contentType,
       cacheControl: "3600",
       upsert: false,
@@ -33,21 +25,21 @@ export class SupabaseImageStorageRepository implements ImageStorageRepository {
       throw uploadError;
     }
 
-    const { data } = storage.getPublicUrl(storagePath);
+    const { data } = storage.getPublicUrl(objectKey);
     const publicUrl = data.publicUrl;
 
     return {
       publicUrl,
-      storagePath,
+      objectKey,
       contentType,
       sizeBytes: buffer.length,
     };
   }
 
-  async deleteObject(storagePath: string): Promise<void> {
-    const storage = getStorageClient();
+  async deleteObject(bucket: string, objectKey: string): Promise<void> {
+    const storage = storageFrom(bucket);
 
-    const { error } = await storage.remove([storagePath]);
+    const { error } = await storage.remove([objectKey]);
 
     if (error) {
       const statusCode =
@@ -61,4 +53,3 @@ export class SupabaseImageStorageRepository implements ImageStorageRepository {
     }
   }
 }
-

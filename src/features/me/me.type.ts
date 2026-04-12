@@ -6,6 +6,7 @@ export type SessionData = {
   email: string;
   name: string;
   role: UserRole;
+  /** Resolved at the API layer from avatarMeta; never stored in DB. */
   avatarUrl?: string;
   isRestricted?: boolean;
   isBanned?: boolean;

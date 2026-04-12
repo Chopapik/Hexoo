@@ -49,6 +49,7 @@ export type PublicCommentResponseDto = Omit<
   | "reviewedBy"
   | "reviewedAt"
 > & {
+  imageUrl?: string | null;
   userName: string;
   userAvatarUrl: string | null;
   isLikedByMe?: boolean;
@@ -67,6 +68,7 @@ export type ModerationCommentParentPostPreview = {
 };
 
 export type ModerationCommentResponseDto = CommentEntity & {
+  imageUrl?: string | null;
   moderationStatus: ModerationStatus;
   flaggedReasons?: string[];
   moderationInfo?: {

@@ -8,7 +8,6 @@ import type { ImageMeta } from "@/features/images/types/image.type";
 type PostContentProcessResult = {
   isPending: boolean;
   isNSFW: boolean;
-  imageUrl?: string | null;
   imageMeta?: ImageMeta | null;
   /** When isPending: log with resourceType "post" and resourceId after create/update. */
   moderationLogPayloadForResource?: ModerationLogPayloadForResource;
@@ -22,21 +21,19 @@ export class PostContentService {
   ): Promise<PostContentProcessResult> {
     const moderation = await performModeration(uid, text, imageFile);
 
-    let imageData: Pick<PostContentProcessResult, "imageUrl" | "imageMeta"> =
-      {};
+    let imageData: Pick<PostContentProcessResult, "imageMeta"> = {};
 
     if (hasFile(imageFile) && imageFile instanceof File) {
       const upload = await uploadImage(imageFile, uid, "posts");
-      imageData = {
-        imageUrl: upload.publicUrl,
-        imageMeta: {
-          storagePath: upload.storagePath,
-          downloadToken: upload.downloadToken,
-          publicUrl: upload.publicUrl,
-          contentType: upload.contentType,
-          sizeBytes: upload.sizeBytes,
-        },
+      const imageMeta: ImageMeta = {
+        storageBucket: upload.storageBucket,
+        storageLocation: upload.storageLocation,
+        fileName: upload.fileName,
+        downloadToken: upload.downloadToken,
+        contentType: upload.contentType,
+        sizeBytes: upload.sizeBytes,
       };
+      imageData = { imageMeta };
     }
 
     return { ...moderation, ...imageData };

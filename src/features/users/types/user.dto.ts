@@ -12,7 +12,6 @@ export const UpdateUserSchema = z.object({
   name: z.string().min(1).max(50).optional(),
   email: z.string().email().optional(),
   role: z.nativeEnum(UserRole).optional(),
-  avatarUrl: z.string().url().optional(),
   isActive: z.boolean().optional(),
 });
 
@@ -34,8 +33,10 @@ export type RestrictUserRequestDto = z.infer<typeof RestrictUserSchema>;
 
 export type PublicUserResponseDto = Pick<
   UserEntity,
-  "uid" | "name" | "avatarUrl" | "createdAt" | "lastOnline"
->;
+  "uid" | "name" | "createdAt" | "lastOnline"
+> & {
+  avatarUrl?: string | null;
+};
 
 export type PrivateUserResponseDto = PublicUserResponseDto &
   Pick<

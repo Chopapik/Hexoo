@@ -6,6 +6,7 @@ import { ModerationStatus } from "@/features/shared/types/content.type";
 import { getModerationLogsForResource } from "./moderationLog.service";
 import type { ModerationService as IModerationService } from "./moderation.service.interface";
 import { getUsersByIds } from "@/features/users/api/services";
+import { resolveImagePublicUrl } from "@/features/images/utils/resolveImagePublicUrl";
 
 export class ModerationService implements IModerationService {
   async getModerationQueueForPosts(
@@ -33,6 +34,7 @@ export class ModerationService implements IModerationService {
 
       return {
         ...post,
+        imageUrl: resolveImagePublicUrl(post.imageMeta) ?? null,
         moderationStatus: latestLog?.verdict ?? ModerationStatus.Pending,
         flaggedReasons: latestLog?.categories ?? [],
         moderationInfo: latestLog
@@ -47,7 +49,7 @@ export class ModerationService implements IModerationService {
             }
           : undefined,
         userName: author?.name ?? "Unknown",
-        userAvatarUrl: author?.avatarUrl ?? null,
+        userAvatarUrl: resolveImagePublicUrl(author?.avatarMeta) ?? null,
       };
     });
   }
@@ -87,6 +89,7 @@ export class ModerationService implements IModerationService {
 
       return {
         ...comment,
+        imageUrl: resolveImagePublicUrl(comment.imageMeta) ?? null,
         moderationStatus: latestLog?.verdict ?? ModerationStatus.Pending,
         flaggedReasons: latestLog?.categories ?? [],
         moderationInfo: latestLog
@@ -101,15 +104,16 @@ export class ModerationService implements IModerationService {
             }
           : undefined,
         userName: author?.name ?? "Unknown",
-        userAvatarUrl: author?.avatarUrl ?? null,
+        userAvatarUrl: resolveImagePublicUrl(author?.avatarMeta) ?? null,
         parentPostPreview: parentPost
           ? {
               id: parentPost.id,
               text: parentPost.text,
               userName: parentAuthor?.name ?? "Unknown",
-              userAvatarUrl: parentAuthor?.avatarUrl ?? null,
-              hasImage: Boolean(parentPost.imageUrl),
-              imageUrl: parentPost.imageUrl ?? null,
+              userAvatarUrl:
+                resolveImagePublicUrl(parentAuthor?.avatarMeta) ?? null,
+              hasImage: Boolean(parentPost.imageMeta),
+              imageUrl: resolveImagePublicUrl(parentPost.imageMeta) ?? null,
               isNSFW: parentPost.isNSFW,
             }
           : undefined,

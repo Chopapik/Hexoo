@@ -13,6 +13,7 @@ import type { AuthRepository } from "../repositories/authRepository.interface";
 import type { UserRepository } from "@/features/users/api/repositories/user.repository.interface";
 import { UserRole } from "@/features/users/types/user.type";
 import type { AuthService as IAuthService } from "./auth.service.interface";
+import { resolveImagePublicUrl } from "@/features/images/utils/resolveImagePublicUrl";
 import type { SessionData } from "@/features/me/me.type";
 
 const SESSION_EXPIRES_MS = 5 * 24 * 60 * 60 * 1000;
@@ -60,7 +61,7 @@ export class AuthService implements IAuthService {
         email: userData.email ?? "",
         name: userData.name,
         role: userData.role,
-        avatarUrl: userData.avatarUrl,
+        avatarUrl: resolveImagePublicUrl(userData.avatarMeta) ?? undefined,
         isRestricted: userData.isRestricted ?? false,
         isBanned: userData.isBanned,
       };
@@ -130,7 +131,7 @@ export class AuthService implements IAuthService {
         email: email ?? undefined,
         name: userData.name,
         role: userData.role,
-        avatarUrl: userData.avatarUrl,
+        avatarUrl: resolveImagePublicUrl(userData.avatarMeta) ?? undefined,
       },
     };
   }

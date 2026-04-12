@@ -3,6 +3,7 @@ import { formatZodErrorFlat } from "@/lib/zod";
 import { performModeration } from "@/features/moderation/utils/assessSafety";
 import { getUsersByIds } from "@/features/users/api/services";
 import { uploadImage, hasFile } from "@/features/images/api/image.service";
+import { resolveImagePublicUrl } from "@/features/images/utils/resolveImagePublicUrl";
 import type { SessionData } from "@/features/me/me.type";
 import type { LikeRepository } from "@/features/likes/api/repositories";
 import type { CommentRepository } from "../repositories/comment.repository.interface";
@@ -66,15 +67,15 @@ export class CommentService implements ICommentService {
       imageFile,
     );
 
-    let imageData: Pick<CreateCommentPayload, "imageUrl" | "imageMeta"> = {};
+    let imageData: Pick<CreateCommentPayload, "imageMeta"> = {};
     if (hasFile(imageFile) && imageFile instanceof File) {
       const upload = await uploadImage(imageFile, user.uid, "comments");
       imageData = {
-        imageUrl: upload.publicUrl,
         imageMeta: {
-          storagePath: upload.storagePath,
+          storageBucket: upload.storageBucket,
+          storageLocation: upload.storageLocation,
+          fileName: upload.fileName,
           downloadToken: upload.downloadToken,
-          publicUrl: upload.publicUrl,
           contentType: upload.contentType,
           sizeBytes: upload.sizeBytes,
         },
@@ -135,8 +136,9 @@ export class CommentService implements ICommentService {
       const author = authors[doc.userId];
       return {
         ...doc,
+        imageUrl: resolveImagePublicUrl(doc.imageMeta) ?? null,
         userName: author?.name ?? "Unknown",
-        userAvatarUrl: author?.avatarUrl ?? null,
+        userAvatarUrl: resolveImagePublicUrl(author?.avatarMeta) ?? null,
         isLikedByMe: likedCommentIds.includes(doc.id),
       } satisfies PublicComment;
     });
