@@ -19,7 +19,7 @@ export const PostMeta = ({ post }: PostMetaProps) => {
     <div className="w-full flex justify-between items-start">
       <div className="inline-flex justify-start items-center gap-2">
         <div className="size-10" onClick={handleLinkClick}>
-          <Link href={`/${post.userName}`}>
+          <Link href={`/profile/${post.userName}`}>
             <Avatar
               src={post.userAvatarUrl ?? undefined}
               alt={post.userName ?? undefined}
@@ -31,7 +31,7 @@ export const PostMeta = ({ post }: PostMetaProps) => {
             className="justify-start text-text-main text-sm font-medium font-Albert_Sans"
             onClick={handleLinkClick}
           >
-            <Link href={`/${post.userName}`} className="hover:underline">
+            <Link href={`/profile/${post.userName}`} className="hover:underline">
               {post.userName}
             </Link>
           </div>

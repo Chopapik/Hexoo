@@ -41,7 +41,7 @@ export const CommentItem = ({
       className={`flex gap-3 py-3 border-b border-primary-neutral-stroke-default/30 last:border-b-0 ${moderationProminent ? "gap-4" : ""}`}
     >
       <div className="shrink-0" onClick={handleLinkClick}>
-        <Link href={`/${comment.userName}`}>
+        <Link href={`/profile/${comment.userName}`}>
           <Avatar
             src={comment.userAvatarUrl ?? undefined}
             alt={comment.userName}
@@ -55,7 +55,7 @@ export const CommentItem = ({
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-1">
           <Link
-            href={`/${comment.userName}`}
+            href={`/profile/${comment.userName}`}
             className={nameClass}
             onClick={handleLinkClick}
           >
