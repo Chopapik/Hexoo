@@ -6,7 +6,6 @@ export interface UserEntity {
   name: string;
   email: string;
   role: UserRole;
-  avatarUrl?: string;
   avatarMeta?: ImageMeta;
 
   createdAt: Date;

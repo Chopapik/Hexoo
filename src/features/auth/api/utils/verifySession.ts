@@ -4,6 +4,7 @@ import { SessionData } from "@/features/me/me.type";
 import { logActivity } from "@/features/activity/api/services";
 import { authRepository } from "../repositories";
 import { userRepository } from "@/features/users/api/repositories";
+import { resolveImagePublicUrl } from "@/features/images/utils/resolveImagePublicUrl";
 
 export async function getUserFromSession(): Promise<SessionData | never> {
   const sessionCookie = await getSessionCookie();
@@ -44,7 +45,7 @@ export async function getUserFromSession(): Promise<SessionData | never> {
     email: userData.email ?? "",
     name: userData.name,
     role: userData.role,
-    avatarUrl: userData.avatarUrl,
+    avatarUrl: resolveImagePublicUrl(userData.avatarMeta) ?? undefined,
     isRestricted: userData.isRestricted ?? false,
     isBanned: userData.isBanned,
   };

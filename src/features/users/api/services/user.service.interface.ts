@@ -4,6 +4,7 @@ import {
   UserProfileResponseDto as UserProfileResponse,
 } from "../../types/user.dto";
 import type { UserEntity } from "../../types/user.entity";
+import type { ImageMeta } from "@/features/images/types/image.type";
 
 export interface UserService {
   createUser(uid: string, data: CreateUserRequest): Promise<void>;
@@ -11,7 +12,7 @@ export interface UserService {
   getUserProfile(name: string): Promise<{ user: UserProfileResponse } | null>;
   getUsersByIds(
     uids: string[],
-  ): Promise<Record<string, { name: string; avatarUrl?: string | null }>>;
+  ): Promise<Record<string, { name: string; avatarMeta?: ImageMeta | null }>>;
   unrestrictUser(uid: string): Promise<void>;
   restrictUser(data: RestrictUserRequest): Promise<void>;
   restrictUserBySystem(uid: string, reason: string): Promise<void>;

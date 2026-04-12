@@ -1,4 +1,5 @@
 import { UserEntity } from "../../types/user.entity";
+import type { ImageMeta } from "@/features/images/types/image.type";
 import type {
   BlockUserPayload,
   CreateUserPayload,
@@ -22,7 +23,7 @@ export interface UserRepository {
 
   getUsersByIds(
     uids: string[],
-  ): Promise<Record<string, { name: string; avatarUrl?: string | null }>>;
+  ): Promise<Record<string, { name: string; avatarMeta?: ImageMeta | null }>>;
 
   blockUser(data: BlockUserPayload): Promise<void>;
 

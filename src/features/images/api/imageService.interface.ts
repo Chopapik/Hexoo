@@ -1,10 +1,6 @@
-export interface ImageUploadResult {
-  publicUrl: string;
-  storagePath: string;
-  downloadToken: string;
-  contentType: string;
-  sizeBytes: number;
-}
+import type { ImageMeta } from "../types/image.type";
+
+export type ImageUploadResult = ImageMeta & { publicUrl: string };
 
 export interface ImageService {
   uploadImage(
@@ -12,6 +8,6 @@ export interface ImageService {
     uid: string,
     storageFolder: string,
   ): Promise<ImageUploadResult>;
-  deleteImage(storagePath: string | null | undefined): Promise<void>;
+  deleteImage(meta: ImageMeta | null | undefined): Promise<void>;
   hasFile(file: unknown): boolean;
 }

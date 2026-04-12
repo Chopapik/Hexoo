@@ -2,14 +2,28 @@ import { randomUUID } from "crypto";
 import { createAppError } from "@/lib/AppError";
 import sharp from "sharp";
 import { SupabaseImageStorageRepository } from "./image.supabase.repository";
+import { buildObjectKey } from "../utils/imageMeta";
+import type { ImageMeta } from "../types/image.type";
+import type { ImageUploadResult } from "./imageService.interface";
 
 const storageRepository = new SupabaseImageStorageRepository();
+
+function requireBucket(): string {
+  const bucket = process.env.SUPABASE_STORAGE_BUCKET;
+  if (!bucket) {
+    throw createAppError({
+      code: "EXTERNAL_SERVICE",
+      message: "[imageService] SUPABASE_STORAGE_BUCKET is not configured",
+    });
+  }
+  return bucket;
+}
 
 export const uploadImage = async (
   file: File | Blob,
   uid: string,
-  storageFolder: string
-) => {
+  storageFolder: string,
+): Promise<ImageUploadResult> => {
   if (!file) {
     throw createAppError({
       code: "INVALID_INPUT",
@@ -46,24 +60,34 @@ export const uploadImage = async (
     });
   }
 
+  const bucket = requireBucket();
   const ts = Date.now();
   const id = randomUUID();
-  const storagePath = `${storageFolder}/${uid}_${ts}_${id}.webp`;
+  const fileName = `${uid}_${ts}_${id}.webp`;
+  const storageLocation = storageFolder.replace(/^\/+/, "").replace(/\/+$/, "");
+  const objectKey = storageLocation ? `${storageLocation}/${fileName}` : fileName;
   const downloadToken = randomUUID();
 
   try {
     const result = await storageRepository.uploadObject(
-      storagePath,
+      bucket,
+      objectKey,
       processedBuffer,
-      "image/webp"
+      "image/webp",
     );
 
-    return {
-      publicUrl: result.publicUrl,
-      storagePath: result.storagePath,
+    const meta: ImageMeta = {
+      storageBucket: bucket,
+      storageLocation,
+      fileName,
       downloadToken,
       contentType: result.contentType,
       sizeBytes: result.sizeBytes,
+    };
+
+    return {
+      ...meta,
+      publicUrl: result.publicUrl,
     };
   } catch (error) {
     throw createAppError({
@@ -73,10 +97,15 @@ export const uploadImage = async (
   }
 };
 
-export const deleteImage = async (storagePath: string | null | undefined) => {
-  if (!storagePath) return;
+export const deleteImage = async (
+  meta: ImageMeta | null | undefined,
+): Promise<void> => {
+  if (!meta) return;
   try {
-    await storageRepository.deleteObject(storagePath);
+    await storageRepository.deleteObject(
+      meta.storageBucket,
+      buildObjectKey(meta),
+    );
   } catch (error) {
     throw createAppError({
       code: "EXTERNAL_SERVICE",
@@ -87,9 +116,13 @@ export const deleteImage = async (storagePath: string | null | undefined) => {
 
 export const hasFile = (f: unknown): f is File | Blob => {
   if (!f) return false;
-  if (typeof f === "object" && f !== null && "size" in f && typeof (f as { size: unknown }).size === "number") {
+  if (
+    typeof f === "object" &&
+    f !== null &&
+    "size" in f &&
+    typeof (f as { size: unknown }).size === "number"
+  ) {
     return (f as { size: number }).size > 0;
   }
   return false;
 };
-

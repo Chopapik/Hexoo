@@ -21,7 +21,6 @@ export interface ContentBase {
   isPending?: boolean;
   isNSFW: boolean;
 
-  imageUrl?: string | null;
   imageMeta?: ImageMeta | null;
 
   device?: string | null;

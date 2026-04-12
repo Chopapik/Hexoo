@@ -4,7 +4,6 @@ import type { CreateCommentPayload } from "../../types/comment.payload";
 import type { CommentEntity } from "../../types/comment.entity";
 import type { CommentRow } from "../../types/comment.row";
 import { parseDate } from "@/features/shared/utils/dateUtils";
-
 const COMMENTS_TABLE = "comments";
 
 function rowToEntity(row: CommentRow): CommentEntity {
@@ -19,7 +18,6 @@ function rowToEntity(row: CommentRow): CommentEntity {
     updatedAt: parseDate(row.updated_at),
     isNSFW: row.is_nsfw,
     isPending: row.is_pending,
-    imageUrl: row.image_url ?? undefined,
     imageMeta: row.image_meta ?? undefined,
     device: row.device ?? undefined,
     userReports: undefined,
@@ -42,7 +40,7 @@ export class CommentSupabaseRepository implements CommentRepository {
       p_updated_at: data.updatedAt?.toISOString?.() ?? null,
       p_is_nsfw: data.isNSFW ?? false,
       p_is_pending: data.isPending ?? false,
-      p_image_url: data.imageUrl ?? null,
+      p_image_url: null,
       p_image_meta: data.imageMeta ?? null,
       p_device: data.device ?? null,
     });
