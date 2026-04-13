@@ -16,7 +16,7 @@ import type { AuthService as IAuthService } from "./auth.service.interface";
 import { resolveImagePublicUrl } from "@/features/images/utils/resolveImagePublicUrl";
 import type { SessionData } from "@/features/me/me.type";
 
-const SESSION_EXPIRES_MS = 5 * 24 * 60 * 60 * 1000;
+const SESSION_EXPIRES_MS = 7 * 24 * 60 * 60 * 1000;
 
 type ActivityLogger = (
   userId: string,
@@ -45,17 +45,22 @@ export class AuthService implements IAuthService {
     return { message: "Session cleared" };
   }
 
-  /** Try to refresh session using refresh token cookie. Returns user data or null; clears cookies on failure. */
-  async tryRefreshSession(): Promise<SessionData | null> {
+  /** Restore session using refresh token cookie. Returns user data or null; clears cookies on failure. */
+  async restoreUserSession(): Promise<SessionData | null> {
     const refresh = await getRefreshCookie();
     if (!refresh.hasRefresh) return null;
     try {
       const tokens = await this.authRepository.refreshSession(refresh.value);
       await setSessionCookie(tokens.access_token);
       await setRefreshCookie(tokens.refresh_token);
-      const decoded = await this.authRepository.verifyIdToken(tokens.access_token);
+      const decoded = await this.authRepository.verifyIdToken(
+        tokens.access_token,
+      );
       const userData = await this.userRepository.getUserByUid(decoded.uid);
-      if (!userData || userData.isBanned) return null;
+      if (!userData || userData.isBanned) {
+        await clearAllAuthCookies();
+        return null;
+      }
       return {
         uid: userData.uid,
         email: userData.email ?? "",
@@ -71,7 +76,7 @@ export class AuthService implements IAuthService {
     }
   }
 
-  async createSession(idToken: string, ip: string, refreshToken?: string) {
+  async createSession(idToken: string, refreshToken?: string) {
     const decodedToken = await this.authRepository.verifyIdToken(idToken);
 
     const uid = decodedToken.uid;
@@ -109,11 +114,7 @@ export class AuthService implements IAuthService {
     );
 
     try {
-      await this.logActivity(
-        uid,
-        "LOGIN_SUCCESS",
-        "User logged in",
-      );
+      await this.logActivity(uid, "LOGIN_SUCCESS", "User logged in");
     } catch (error) {
       throw createAppError({
         code: "INTERNAL_ERROR",
@@ -154,7 +155,8 @@ export class AuthService implements IAuthService {
       } catch (cleanupErr) {
         throw createAppError({
           code: "INTERNAL_ERROR",
-          message: "Failed to cleanup user from Auth after blocked username attempt",
+          message:
+            "Failed to cleanup user from Auth after blocked username attempt",
           details: cleanupErr,
         });
       }
@@ -197,11 +199,7 @@ export class AuthService implements IAuthService {
         role: UserRole.User,
       });
 
-      await this.logActivity(
-        uid,
-        "USER_CREATED",
-        "Account created",
-      );
+      await this.logActivity(uid, "USER_CREATED", "Account created");
     } catch (error) {
       throw createAppError({
         code: "DB_ERROR",
