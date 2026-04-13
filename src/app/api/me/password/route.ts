@@ -4,7 +4,7 @@ import { handleSuccess } from "@/lib/http/responseHelpers";
 import { verifyRecaptchaToken } from "@/lib/recaptcha";
 import { createAppError } from "@/lib/AppError";
 import { NextRequest } from "next/server";
-import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
+import { getUserFromSession } from "@/features/auth/api/utils/session-user.service";
 
 export const PUT = withErrorHandling(async (req: NextRequest) => {
   const session = await getUserFromSession();

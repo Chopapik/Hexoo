@@ -1,5 +1,5 @@
 import { createAppError } from "@/lib/AppError";
-import { getSessionCookie } from "@/lib/session";
+import { getSessionCookie } from "./session.cookies";
 import { SessionData } from "@/features/me/me.type";
 import { logActivity } from "@/features/activity/api/services";
 import { authRepository } from "../repositories";
@@ -12,7 +12,7 @@ export async function getUserFromSession(): Promise<SessionData | never> {
   if (!sessionCookie.session) {
     throw createAppError({
       code: "AUTH_REQUIRED",
-      message: "[verifySession.getUserFromSession] No session cookie found.",
+      message: "[getUserFromSession] No session cookie found.",
     });
   }
 
@@ -21,7 +21,7 @@ export async function getUserFromSession(): Promise<SessionData | never> {
     .catch(() => {
       throw createAppError({
         message:
-          "[verifySession.getUserFromSession] Invalid or expired session cookie",
+          "[getUserFromSession] Invalid or expired session cookie",
         code: "INVALID_SESSION",
       });
     });
@@ -35,7 +35,7 @@ export async function getUserFromSession(): Promise<SessionData | never> {
       "Session cookie for user without profile record",
     );
     throw createAppError({
-      message: "[verifySession.getUserFromSession] User not found in database",
+      message: "[getUserFromSession] User not found in database",
       code: "USER_NOT_FOUND",
     });
   }

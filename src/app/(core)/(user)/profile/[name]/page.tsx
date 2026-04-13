@@ -1,5 +1,5 @@
 import { UserProfileCard } from "@/features/users/components/UserProfileCard";
-import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
+import { getUserFromSession } from "@/features/auth/api/utils/session-user.service";
 import { getUserProfile } from "@/features/users/api/services";
 import { ApiError } from "@/lib/AppError";
 import { notFound } from "next/navigation";

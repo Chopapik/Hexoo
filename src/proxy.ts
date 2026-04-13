@@ -1,15 +1,17 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { isUserAuthenticated } from "@/lib/session";
+import { isUserAuthenticated } from "@/features/auth/api/services/session.service";
 
 const PUBLIC_PATHS = ["/login", "/register", "/privacy", "/terms"];
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   const isApiRoute = pathname.startsWith("/api");
   const isAuthApiRoute = pathname.startsWith("/api/auth");
   const isBypassedRoute =
-    pathname.startsWith("/api/security") || pathname.startsWith("/critical-error");
+    pathname.startsWith("/api/security") ||
+    pathname.startsWith("/critical-error");
   const isDemoRoute = pathname.startsWith("/demo");
+
   const appEnv = process.env.APP_ENV;
   const isDevApp = appEnv === "development";
   const isProduction = process.env.NODE_ENV === "production";
@@ -22,21 +24,32 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const isLoggedIn = isUserAuthenticated(request);
-
   const isPublicPath =
     PUBLIC_PATHS.some(
       (path) => pathname === path || pathname.startsWith(`${path}/`),
     ) || isAuthApiRoute;
 
+  const response = NextResponse.next();
+  const isLoggedIn = await isUserAuthenticated(request, response);
+
   if (!isLoggedIn && !isPublicPath) {
     if (isApiRoute) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      const unauthorized = NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 },
+      );
+      unauthorized.cookies.delete("session");
+      unauthorized.cookies.delete("refresh");
+      return unauthorized;
     }
-    return NextResponse.redirect(new URL("/login", request.url));
+
+    const redirect = NextResponse.redirect(new URL("/login", request.url));
+    redirect.cookies.delete("session");
+    redirect.cookies.delete("refresh");
+    return redirect;
   }
 
-  return NextResponse.next();
+  return response;
 }
 
 export const config = {

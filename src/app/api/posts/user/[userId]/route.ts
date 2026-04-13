@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import { getPostsByUserId } from "@/features/posts/api/services";
-import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
+import { getUserFromSession } from "@/features/auth/api/utils/session-user.service";
 
 export const GET = withErrorHandling(
   async (

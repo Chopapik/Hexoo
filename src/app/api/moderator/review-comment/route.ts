@@ -2,7 +2,7 @@ import { reviewComment } from "@/features/moderator/api/services";
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import { NextRequest } from "next/server";
-import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
+import { getUserFromSession } from "@/features/auth/api/utils/session-user.service";
 
 export const POST = withErrorHandling(async (req: NextRequest) => {
   const session = await getUserFromSession();

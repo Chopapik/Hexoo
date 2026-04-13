@@ -5,7 +5,7 @@ import {
   getCommentsByPostId,
 } from "@/features/comments/api/services";
 import { NextRequest } from "next/server";
-import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
+import { getUserFromSession } from "@/features/auth/api/utils/session-user.service";
 
 export const POST = withErrorHandling(
   async (req: NextRequest, context: { params: Promise<{ id: string }> }) => {
