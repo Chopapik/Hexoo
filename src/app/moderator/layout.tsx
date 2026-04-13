@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
+import { getUserFromSession } from "@/features/auth/api/utils/session-user.service";
 import { ApiError } from "@/lib/AppError";
 import { notFound } from "next/navigation";
 

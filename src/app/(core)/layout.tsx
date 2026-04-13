@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { Layout } from "@/features/shared/components/layout/Layout";
-import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
-import { getSessionCookie, getRefreshCookie } from "@/lib/session";
+import { getUserFromSession } from "@/features/auth/api/utils/session-user.service";
+import {
+  getSessionCookie,
+  getRefreshCookie,
+} from "@/features/auth/api/utils/session.cookies";
 import { AppError } from "@/lib/AppError";
 import { redirect } from "next/navigation";
 

@@ -17,7 +17,7 @@ export const PostMeta = ({ post }: PostMetaProps) => {
 
   return (
     <div className="w-full flex justify-between items-start">
-      <div className="inline-flex justify-start items-center gap-2">
+      <div className="inline-flex justify-start items-center gap-2">  
         <div className="size-10" onClick={handleLinkClick}>
           <Link href={`/profile/${post.userName}`}>
             <Avatar

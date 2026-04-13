@@ -1,6 +1,6 @@
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
-import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
+import { getUserFromSession } from "@/features/auth/api/utils/session-user.service";
 import { NextRequest } from "next/server";
 import { CreatePostRequestDto } from "@/features/posts/types/post.dto";
 import { createPost, getPosts } from "@/features/posts/api/services";

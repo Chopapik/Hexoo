@@ -7,7 +7,7 @@ import {
   getPostById,
   updatePost,
 } from "@/features/posts/api/services";
-import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
+import { getUserFromSession } from "@/features/auth/api/utils/session-user.service";
 
 export const GET = withErrorHandling(
   async (req: NextRequest, context: { params: Promise<{ id: string }> }) => {

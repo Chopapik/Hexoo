@@ -2,7 +2,7 @@ import { adminUpdateUserAccount } from "@/features/admin/api/services";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { NextRequest } from "next/server";
-import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
+import { getUserFromSession } from "@/features/auth/api/utils/session-user.service";
 
 export const PUT = withErrorHandling(
   async (req: NextRequest, context: { params: Promise<{ uid: string }> }) => {

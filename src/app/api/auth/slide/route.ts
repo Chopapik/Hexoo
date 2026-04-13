@@ -3,7 +3,7 @@ import {
   REFRESH_COOKIE_NAME,
   SESSION_COOKIE_OPTS,
   REFRESH_COOKIE_OPTS,
-} from "@/lib/session";
+} from "@/features/auth/api/utils/session.cookies";
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 

@@ -1,7 +1,7 @@
 import { deleteAccount } from "@/features/me/api/services";
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
-import { getUserFromSession } from "@/features/auth/api/utils/verifySession";
+import { getUserFromSession } from "@/features/auth/api/utils/session-user.service";
 
 export const DELETE = withErrorHandling(async () => {
   const session = await getUserFromSession();

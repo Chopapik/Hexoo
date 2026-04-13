@@ -5,7 +5,7 @@ import {
   clearAllAuthCookies,
   getSessionCookie,
   getRefreshCookie,
-} from "@/lib/session";
+} from "@/features/auth/api/utils/session.cookies";
 import { isUsernameTaken } from "../utils/checkUsernameUnique";
 import { isUsernameBlocked } from "../../constants/blockedUsernames";
 import type { ActivityType } from "@/features/activity/api/services";
