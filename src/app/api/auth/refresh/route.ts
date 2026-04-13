@@ -1,4 +1,4 @@
-import { tryRefreshSession } from "@/features/auth/api/services";
+import { restoreUserSession } from "@/features/auth/api/services";
 import { NextRequest, NextResponse } from "next/server";
 
 /**
@@ -8,7 +8,7 @@ import { NextRequest, NextResponse } from "next/server";
  * Cookies can be set here (Route Handler context).
  */
 export async function GET(request: NextRequest) {
-  const user = await tryRefreshSession();
+  const user = await restoreUserSession();
   const base = new URL(request.url).origin;
   if (user) {
     return NextResponse.redirect(new URL("/", base));

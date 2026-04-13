@@ -2,11 +2,10 @@ import type { SessionData } from "@/features/me/me.type";
 
 export interface AuthService {
   logoutUser(): Promise<{ message: string }>;
-  /** Try to restore session using refresh token; returns user or null, clears cookies on failure. */
-  tryRefreshSession(): Promise<SessionData | null>;
+  /** Restore session using refresh token; returns user or null, clears cookies on failure. */
+  restoreUserSession(): Promise<SessionData | null>;
   createSession(
     idToken: string,
-    ip: string,
     refreshToken?: string,
   ): Promise<{
     user: {
