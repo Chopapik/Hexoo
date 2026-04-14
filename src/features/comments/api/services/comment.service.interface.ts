@@ -13,4 +13,9 @@ export interface CommentService {
     data: UpdateCommentRequest,
   ): Promise<PublicCommentResponse>;
   deleteComment(commentId: string): Promise<void>;
+  reportComment(
+    commentId: string,
+    reason: string,
+    details?: string,
+  ): Promise<{ hidden: boolean; reportsCount: number }>;
 }

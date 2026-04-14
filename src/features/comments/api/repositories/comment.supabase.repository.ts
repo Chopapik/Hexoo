@@ -1,4 +1,7 @@
 import { supabaseAdmin } from "@/lib/supabaseServer";
+import { ModerationStatus } from "@/features/shared/types/content.type";
+import { ReportDetails } from "@/features/shared/types/report.type";
+import { logModerationEvent } from "@/features/moderation/api/services/moderationLog.service";
 import type { CommentRepository } from "./comment.repository.interface";
 import type {
   CreateCommentPayload,
@@ -8,6 +11,7 @@ import type { CommentEntity } from "../../types/comment.entity";
 import type { CommentRow } from "../../types/comment.row";
 import { parseDate } from "@/features/shared/utils/dateUtils";
 const COMMENTS_TABLE = "comments";
+const COMMENT_REPORTS_TABLE = "comment_reports";
 
 function rowToEntity(row: CommentRow): CommentEntity {
   return {
@@ -141,5 +145,65 @@ export class CommentSupabaseRepository implements CommentRepository {
       p_post_id: postId,
     });
     if (error) throw new Error(error.message ?? "Database error");
+  }
+
+  async reportComment(
+    commentId: string,
+    reportDetails: ReportDetails,
+  ): Promise<{ hidden: boolean; reportsCount: number }> {
+    const comment = await this.getCommentById(commentId);
+    if (!comment) return { hidden: false, reportsCount: 0 };
+
+    const { error: insertError } = await supabaseAdmin
+      .from(COMMENT_REPORTS_TABLE)
+      .upsert(
+        {
+          comment_id: commentId,
+          user_id: reportDetails.uid,
+          reason: reportDetails.reason,
+          details: reportDetails.details ?? null,
+          created_at:
+            reportDetails.createdAt instanceof Date
+              ? reportDetails.createdAt.toISOString()
+              : new Date().toISOString(),
+        },
+        {
+          onConflict: "comment_id,user_id",
+          ignoreDuplicates: true,
+        },
+      );
+
+    if (insertError) throw new Error(insertError.message ?? "Database error");
+
+    const { count, error: countError } = await supabaseAdmin
+      .from(COMMENT_REPORTS_TABLE)
+      .select("*", { count: "exact", head: true })
+      .eq("comment_id", commentId);
+
+    if (countError) throw new Error(countError.message ?? "Database error");
+    const reportsCount = count ?? 0;
+    const shouldHide = reportsCount >= 3;
+
+    if (shouldHide) {
+      await this.updateComment(commentId, {
+        isPending: true,
+      });
+
+      await logModerationEvent({
+        userId: comment.userId,
+        timestamp: new Date(),
+        verdict: ModerationStatus.Pending,
+        categories: [reportDetails.reason],
+        actionTaken: "FLAGGED_FOR_REVIEW",
+        resourceType: "comment",
+        resourceId: commentId,
+        source: "user_report",
+        actorId: reportDetails.uid,
+        reasonSummary: "Comment hidden after multiple user reports",
+        reasonDetails: reportDetails.details ?? undefined,
+      });
+    }
+
+    return { hidden: shouldHide, reportsCount };
   }
 }

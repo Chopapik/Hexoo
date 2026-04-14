@@ -60,6 +60,12 @@ export type PublicCommentResponseDto = Omit<
   isLikedByMe?: boolean;
 };
 
+export interface CommentReportRequestDto {
+  commentId: string;
+  reason: string;
+  details?: string;
+}
+
 /** Parent post snapshot for a comment in the moderation queue. */
 export type ModerationCommentParentPostPreview = {
   id: string;
