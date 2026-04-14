@@ -7,7 +7,7 @@ import {
 import toast from "react-hot-toast";
 import { parseCommentErrorMessages } from "../utils/commentErrorMap";
 import { ApiError } from "@/lib/AppError";
-import { useAppSelector } from "@/lib/store/hooks";
+import { useAppStore } from "@/lib/store/store";
 
 const MODERATION_TOAST_DURATION = 7000;
 
@@ -16,9 +16,7 @@ export default function useAddComment(
   onErrorCallback?: (errorCode: string) => void,
 ) {
   const queryClient = useQueryClient();
-  const showNSFWComments = useAppSelector(
-    (state) => state.settings.showNSFWComments,
-  );
+  const showNSFWComments = useAppStore((s) => s.settings.showNSFWComments);
 
   const mutation = useMutation({
     mutationFn: async (data: AddCommentRequestDto | FormData) => {

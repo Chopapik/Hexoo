@@ -4,14 +4,14 @@ import { UpdatePasswordData } from "../me.type";
 import useRecaptcha from "@/features/shared/hooks/useRecaptcha";
 import toast from "react-hot-toast";
 import { supabaseClient } from "@/lib/supabaseClient";
-import { useAppSelector } from "@/lib/store/hooks";
+import { useAppStore } from "@/lib/store/store";
 import { ApiError } from "@/lib/AppError";
 
 type ErrorCallback = (errorCode: string, field?: string) => void;
 
 export const useUpdatePassword = (onError: ErrorCallback) => {
   const { getRecaptchaToken } = useRecaptcha();
-  const userEmail = useAppSelector((state) => state.auth.user?.email);
+  const userEmail = useAppStore((s) => s.auth.user?.email);
 
   const mutation = useMutation({
     mutationFn: async (data: UpdatePasswordData) => {

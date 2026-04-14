@@ -7,7 +7,7 @@ import { PostMeta } from "./PostMeta";
 import { CommentList } from "@/features/comments/components/CommentList";
 import { CommentForm } from "@/features/comments/components/CommentForm";
 import useComments from "@/features/comments/hooks/useComments";
-import { useAppSelector } from "@/lib/store/hooks";
+import { useAppStore } from "@/lib/store/store";
 import { isAsciiArt } from "../utils/asciiDetector";
 import { PublicPostResponseDto } from "../types/post.dto";
 import { PostNsfwNotice } from "./PostNsfwNotice";
@@ -25,11 +25,9 @@ export const PostModal = ({
   onClose,
   revealNSFW,
 }: PostModalProps) => {
-  const user = useAppSelector((state) => state.auth.user);
-  const showNSFWPosts = useAppSelector((state) => state.settings.showNSFWPosts);
-  const showNSFWComments = useAppSelector(
-    (state) => state.settings.showNSFWComments,
-  );
+  const user = useAppStore((s) => s.auth.user);
+  const showNSFWPosts = useAppStore((s) => s.settings.showNSFWPosts);
+  const showNSFWComments = useAppStore((s) => s.settings.showNSFWComments);
 
   const { comments, isLoading } = useComments(post.id, isOpen);
   const visibleComments = showNSFWComments

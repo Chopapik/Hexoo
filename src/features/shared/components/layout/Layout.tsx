@@ -6,9 +6,8 @@ import { Header } from "./Header";
 import { LeftNav } from "./LeftNav/LeftNav";
 import { BottomNav } from "./LeftNav/BottomNav";
 import { RightNavSidebar, RightNavOverlay } from "./RightNav/RightNav";
-import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
+import { useAppStore } from "@/lib/store/store";
 import CreatePostModal from "@/features/posts/components/CreatePostModal";
-import { closeCreatePostModal } from "@/features/posts/store/createPostModalSlice";
 import LogoSvg from "@/features/shared/assets/Logo.svg?url";
 
 export const Layout: React.FC<{
@@ -19,12 +18,9 @@ export const Layout: React.FC<{
   const openRight = () => setIsRightNavOpen(true);
   const closeRight = () => setIsRightNavOpen(false);
 
-  const dispatch = useAppDispatch();
-
-  const user = useAppSelector((state) => state.auth.user);
-  const isCreatePostModalOpen = useAppSelector(
-    (state) => state.createPostModal.isOpen,
-  );
+  const user = useAppStore((s) => s.auth.user);
+  const isCreatePostModalOpen = useAppStore((s) => s.createPostModal.isOpen);
+  const closeCreatePostModal = useAppStore((s) => s.closeCreatePostModal);
 
   useEffect(() => {
     setIsHydrated(true);
@@ -71,7 +67,7 @@ export const Layout: React.FC<{
         <RightNavOverlay open={isRightNavOpen} onClose={closeRight} />
         <CreatePostModal
           isOpen={isCreatePostModalOpen}
-          onClose={() => dispatch(closeCreatePostModal())}
+          onClose={closeCreatePostModal}
         />
       </div>
     </div>

@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import fetchClient from "@/lib/fetchClient";
-import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
-import { setUser } from "@/features/auth/store/authSlice";
+import { useAppStore } from "@/lib/store/store";
 import { useRouter } from "next/navigation";
 import { ApiError } from "@/lib/AppError";
 import toast from "react-hot-toast";
@@ -15,11 +14,11 @@ interface UpdateProfileParams {
 }
 
 export default function useUpdateProfile(onError?: ErrorCallback) {
-  const dispatch = useAppDispatch();
+  const setUser = useAppStore((s) => s.setUser);
   const queryClient = useQueryClient();
   const router = useRouter();
 
-  const windowUser = useAppSelector((state) => state.auth.user);
+  const windowUser = useAppStore((s) => s.auth.user);
 
   const mutation = useMutation({
     mutationFn: async (data: UpdateProfileParams) => {
@@ -42,7 +41,7 @@ export default function useUpdateProfile(onError?: ErrorCallback) {
           avatarUrl: updatedProfile.avatarUrl,
         };
 
-        dispatch(setUser(newSessionData));
+        setUser(newSessionData);
 
         const previousName = windowUser.name;
         const nameChanged = updatedProfile.name !== previousName;

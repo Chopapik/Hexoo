@@ -2,33 +2,30 @@
 
 import { useEffect } from "react";
 import SwitchButton from "@/features/shared/components/ui/SwitchButton";
-import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
-import {
-  setNsfwVisibility,
-  setCommentsNsfwVisibility,
-  initializeSettings,
-} from "@/features/me/store/settingsSlice";
+import { useAppStore } from "@/lib/store/store";
 import SettingsSection from "../SettingsSection";
 
 export default function ContentSection() {
-  const dispatch = useAppDispatch();
-  const showNSFWPosts = useAppSelector((state) => state.settings.showNSFWPosts);
-  const showNSFWComments = useAppSelector(
-    (state) => state.settings.showNSFWComments,
+  const showNSFWPosts = useAppStore((s) => s.settings.showNSFWPosts);
+  const showNSFWComments = useAppStore((s) => s.settings.showNSFWComments);
+  const initializeSettings = useAppStore((s) => s.initializeSettings);
+  const setNsfwVisibility = useAppStore((s) => s.setNsfwVisibility);
+  const setCommentsNsfwVisibility = useAppStore(
+    (s) => s.setCommentsNsfwVisibility,
   );
 
   useEffect(() => {
-    dispatch(initializeSettings());
-  }, [dispatch]);
+    initializeSettings();
+  }, [initializeSettings]);
 
   const handleNsfwPostsChange = (next: boolean) => {
-    dispatch(setNsfwVisibility(next));
+    setNsfwVisibility(next);
     localStorage.setItem("user_settings_nsfw_posts", JSON.stringify(next));
     localStorage.setItem("user_settings_nsfw", JSON.stringify(next));
   };
 
   const handleNsfwCommentsChange = (next: boolean) => {
-    dispatch(setCommentsNsfwVisibility(next));
+    setCommentsNsfwVisibility(next);
     localStorage.setItem(
       "user_settings_nsfw_comments",
       JSON.stringify(next),
