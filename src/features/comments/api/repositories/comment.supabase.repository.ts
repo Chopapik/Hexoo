@@ -1,6 +1,9 @@
 import { supabaseAdmin } from "@/lib/supabaseServer";
 import type { CommentRepository } from "./comment.repository.interface";
-import type { CreateCommentPayload } from "../../types/comment.payload";
+import type {
+  CreateCommentPayload,
+  UpdateCommentPayload,
+} from "../../types/comment.payload";
 import type { CommentEntity } from "../../types/comment.entity";
 import type { CommentRow } from "../../types/comment.row";
 import { parseDate } from "@/features/shared/utils/dateUtils";
@@ -18,12 +21,29 @@ function rowToEntity(row: CommentRow): CommentEntity {
     updatedAt: parseDate(row.updated_at),
     isNSFW: row.is_nsfw,
     isPending: row.is_pending,
-    isEdited: false,
+    isEdited: row.is_edited,
     imageMeta: row.image_meta ?? undefined,
     device: row.device ?? undefined,
     userReports: undefined,
     reportsMeta: undefined,
   };
+}
+
+function updatePayloadToRow(
+  data: UpdateCommentPayload,
+): Record<string, unknown> {
+  const row: Record<string, unknown> = {};
+  if (data.text != null) row.text = data.text;
+  if (data.isNSFW != null) row.is_nsfw = data.isNSFW;
+  if (data.isPending != null) row.is_pending = data.isPending;
+  if (data.isEdited != null) row.is_edited = data.isEdited;
+  if (data.imageMeta !== undefined) row.image_meta = data.imageMeta;
+  if (data.updatedAt != null)
+    row.updated_at =
+      data.updatedAt instanceof Date
+        ? data.updatedAt.toISOString()
+        : data.updatedAt;
+  return row;
 }
 
 export class CommentSupabaseRepository implements CommentRepository {
@@ -90,5 +110,36 @@ export class CommentSupabaseRepository implements CommentRepository {
     const { data, error } = await query;
     if (error) throw new Error(error.message ?? "Database error");
     return (data ?? []).map((row) => rowToEntity(row as CommentRow));
+  }
+
+  async getCommentById(commentId: string): Promise<CommentEntity | null> {
+    const { data, error } = await supabaseAdmin
+      .from(COMMENTS_TABLE)
+      .select("*")
+      .eq("id", commentId)
+      .maybeSingle();
+    if (error) throw new Error(error.message ?? "Database error");
+    if (!data) return null;
+    return rowToEntity(data as CommentRow);
+  }
+
+  async updateComment(
+    commentId: string,
+    data: UpdateCommentPayload,
+  ): Promise<void> {
+    const row = updatePayloadToRow(data);
+    const { error } = await supabaseAdmin
+      .from(COMMENTS_TABLE)
+      .update(row)
+      .eq("id", commentId);
+    if (error) throw new Error(error.message ?? "Database error");
+  }
+
+  async deleteComment(commentId: string, postId: string): Promise<void> {
+    const { error } = await supabaseAdmin.rpc("delete_comment_tx", {
+      p_comment_id: commentId,
+      p_post_id: postId,
+    });
+    if (error) throw new Error(error.message ?? "Database error");
   }
 }

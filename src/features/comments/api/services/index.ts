@@ -4,6 +4,8 @@ import { CommentService } from "./comment.service";
 import type {
   AddCommentRequestDto as AddCommentRequest,
   AddCommentResponseDto as AddCommentResponse,
+  UpdateCommentRequestDto as UpdateCommentRequest,
+  PublicCommentResponseDto as PublicCommentResponse,
 } from "../../types/comment.dto";
 import type { SessionData } from "@/features/me/me.type";
 
@@ -27,6 +29,23 @@ export async function getCommentsByPostId(
 ) {
   const service = getCommentService(session);
   return await service.getCommentsByPostId(postId);
+}
+
+export async function updateComment(
+  session: SessionData | null,
+  commentId: string,
+  data: UpdateCommentRequest,
+): Promise<PublicCommentResponse> {
+  const service = getCommentService(session);
+  return await service.updateComment(commentId, data);
+}
+
+export async function deleteComment(
+  session: SessionData | null,
+  commentId: string,
+): Promise<void> {
+  const service = getCommentService(session);
+  return await service.deleteComment(commentId);
 }
 
 export { CommentService };
