@@ -44,7 +44,7 @@ export const PostMeta = ({ post }: PostMetaProps) => {
       </div>
 
       <div className="pt-1" onClick={handleLinkClick}>
-        <PostOptions postId={post.id} authorId={post.userId} />
+        <PostOptions postId={post.id} authorId={post.userId} post={post} />
       </div>
     </div>
   );

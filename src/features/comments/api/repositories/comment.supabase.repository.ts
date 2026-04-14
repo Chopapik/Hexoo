@@ -18,6 +18,7 @@ function rowToEntity(row: CommentRow): CommentEntity {
     updatedAt: parseDate(row.updated_at),
     isNSFW: row.is_nsfw,
     isPending: row.is_pending,
+    isEdited: false,
     imageMeta: row.image_meta ?? undefined,
     device: row.device ?? undefined,
     userReports: undefined,

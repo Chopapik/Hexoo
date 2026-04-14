@@ -21,11 +21,18 @@ export const PostBody = ({
   return (
     <>
       <div className="self-stretch inline-flex flex-col justify-center items-center gap-4 overflow-hidden w-full">
-        {isNSFW && (
-          <span className="self-start text-[10px] font-semibold uppercase tracking-wider text-red-500 bg-red-500/10 px-2 py-1 rounded-md">
-            NSFW
-          </span>
-        )}
+        <div className="self-start flex items-center gap-2">
+          {isNSFW && (
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-red-500 bg-red-500/10 px-2 py-1 rounded-md">
+              NSFW
+            </span>
+          )}
+          {post.isEdited && (
+            <span className="text-[10px] font-medium text-text-neutral/60 italic">
+              edytowano
+            </span>
+          )}
+        </div>
         <div
           className={`self-stretch  text-text-main text-base font-normal w-full ${
             isAscii
