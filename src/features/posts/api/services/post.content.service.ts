@@ -5,11 +5,13 @@ import {
 } from "@/features/moderation/utils/assessSafety";
 import type { ImageMeta } from "@/features/images/types/image.type";
 
-type PostContentProcessResult = {
+export type ContentResource = "posts" | "comments";
+
+type ContentProcessResult = {
   isPending: boolean;
   isNSFW: boolean;
   imageMeta?: ImageMeta | null;
-  /** When isPending: log with resourceType "post" and resourceId after create/update. */
+  /** When isPending: log with resourceType and resourceId after create/update. */
   moderationLogPayloadForResource?: ModerationLogPayloadForResource;
 };
 
@@ -17,14 +19,15 @@ export class PostContentService {
   async process(
     uid: string,
     text: string,
+    resource: ContentResource,
     imageFile?: File | null,
-  ): Promise<PostContentProcessResult> {
+  ): Promise<ContentProcessResult> {
     const moderation = await performModeration(uid, text, imageFile);
 
-    let imageData: Pick<PostContentProcessResult, "imageMeta"> = {};
+    let imageData: Pick<ContentProcessResult, "imageMeta"> = {};
 
     if (hasFile(imageFile) && imageFile instanceof File) {
-      const upload = await uploadImage(imageFile, uid, "posts");
+      const upload = await uploadImage(imageFile, uid, resource);
       const imageMeta: ImageMeta = {
         storageBucket: upload.storageBucket,
         storageLocation: upload.storageLocation,

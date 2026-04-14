@@ -1,8 +1,6 @@
 import { createAppError } from "@/lib/AppError";
 import { formatZodErrorFlat } from "@/lib/zod";
-import { performModeration } from "@/features/moderation/utils/assessSafety";
 import { getUsersByIds } from "@/features/users/api/services";
-import { uploadImage, hasFile } from "@/features/images/api/image.service";
 import { resolveImagePublicUrl } from "@/features/images/utils/resolveImagePublicUrl";
 import type { SessionData } from "@/features/me/me.type";
 import type { LikeRepository } from "@/features/likes/api/repositories";
@@ -17,6 +15,7 @@ import { AddCommentSchema, UpdateCommentSchema } from "../../types/comment.dto";
 import type { CreateCommentPayload } from "../../types/comment.payload";
 import type { CommentService as ICommentService } from "./comment.service.interface";
 import { logActivity } from "@/features/activity/api/services";
+import { PostContentService } from "@/features/posts/api/services/post.content.service";
 
 type AddCommentInput = AddCommentRequest;
 type AddCommentResult = AddCommentResponse;
@@ -26,6 +25,7 @@ type PublicComment = PublicCommentResponse;
 export class CommentService implements ICommentService {
   constructor(
     private readonly repository: CommentRepository,
+    private readonly contentService: PostContentService,
     private readonly likeRepository: LikeRepository,
     private readonly session: SessionData | null = null,
   ) {}
@@ -63,26 +63,12 @@ export class CommentService implements ICommentService {
     }
 
     const { text, postId, imageFile } = parsed.data;
-    const { isPending, isNSFW } = await performModeration(
+    const processed = await this.contentService.process(
       user.uid,
       text,
+      "comments",
       imageFile,
     );
-
-    let imageData: Pick<CreateCommentPayload, "imageMeta"> = {};
-    if (hasFile(imageFile) && imageFile instanceof File) {
-      const upload = await uploadImage(imageFile, user.uid, "comments");
-      imageData = {
-        imageMeta: {
-          storageBucket: upload.storageBucket,
-          storageLocation: upload.storageLocation,
-          fileName: upload.fileName,
-          downloadToken: upload.downloadToken,
-          contentType: upload.contentType,
-          sizeBytes: upload.sizeBytes,
-        },
-      };
-    }
 
     const now = new Date();
     const payload: CreateCommentPayload = {
@@ -93,9 +79,10 @@ export class CommentService implements ICommentService {
       commentsCount: 0,
       createdAt: now,
       updatedAt: now,
-      isPending,
-      isNSFW,
-      ...imageData,
+      isPending: processed.isPending,
+      isNSFW: processed.isNSFW,
+      isEdited: false,
+      imageMeta: processed.imageMeta ?? null,
     };
 
     await this.repository.createComment(postId, payload);
@@ -107,8 +94,8 @@ export class CommentService implements ICommentService {
     );
 
     return {
-      isPending,
-      isNSFW,
+      isPending: processed.isPending,
+      isNSFW: processed.isNSFW,
     };
   }
 
@@ -139,17 +126,18 @@ export class CommentService implements ICommentService {
       });
     }
 
-    const { isPending, isNSFW } = await performModeration(
+    const processed = await this.contentService.process(
       user.uid,
       data.text,
+      "comments",
       undefined,
     );
 
     await this.repository.updateComment(commentId, {
       text: data.text,
       isEdited: true,
-      isPending,
-      isNSFW,
+      isPending: processed.isPending,
+      isNSFW: processed.isNSFW,
       updatedAt: new Date(),
     });
 
