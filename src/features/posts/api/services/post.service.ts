@@ -135,6 +135,7 @@ export class PostService implements IPostService {
     const processed = await this.contentService.process(
       user.uid,
       createPostData.text,
+      "posts",
       createPostData.imageFile,
     );
 
@@ -254,6 +255,7 @@ export class PostService implements IPostService {
     const processed = await this.contentService.process(
       user.uid,
       updateData.text ?? post.text,
+      "posts",
       updateData.imageFile,
     );
 
