@@ -10,6 +10,7 @@ create table if not exists public.posts (
   updated_at timestamptz,
   is_nsfw boolean not null default false,
   is_pending boolean not null default false,
+  is_edited boolean not null default false,
   image_url text,
   image_meta jsonb,
   device text

@@ -11,14 +11,16 @@ import type {
   AddCommentRequestDto as AddCommentRequest,
   AddCommentResponseDto as AddCommentResponse,
   PublicCommentResponseDto as PublicCommentResponse,
+  UpdateCommentRequestDto as UpdateCommentRequest,
 } from "../../types/comment.dto";
-import { AddCommentSchema } from "../../types/comment.dto";
+import { AddCommentSchema, UpdateCommentSchema } from "../../types/comment.dto";
 import type { CreateCommentPayload } from "../../types/comment.payload";
 import type { CommentService as ICommentService } from "./comment.service.interface";
 import { logActivity } from "@/features/activity/api/services";
 
 type AddCommentInput = AddCommentRequest;
 type AddCommentResult = AddCommentResponse;
+type UpdateCommentInput = UpdateCommentRequest;
 type PublicComment = PublicCommentResponse;
 
 export class CommentService implements ICommentService {
@@ -108,6 +110,85 @@ export class CommentService implements ICommentService {
       isPending,
       isNSFW,
     };
+  }
+
+  async updateComment(
+    commentId: string,
+    data: UpdateCommentInput,
+  ): Promise<PublicComment> {
+    const user = this.ensureUser();
+
+    const parsed = UpdateCommentSchema.safeParse(data);
+    if (!parsed.success) {
+      throw createAppError({
+        code: "VALIDATION_ERROR",
+        message: "[commentService.updateComment] Invalid data",
+        data: { details: formatZodErrorFlat(parsed.error) },
+      });
+    }
+
+    const comment = await this.repository.getCommentById(commentId);
+    if (!comment) {
+      throw createAppError({ code: "NOT_FOUND", message: "Comment not found" });
+    }
+
+    if (comment.userId !== user.uid) {
+      throw createAppError({
+        code: "FORBIDDEN",
+        message: "Not author of comment",
+      });
+    }
+
+    const { isPending, isNSFW } = await performModeration(
+      user.uid,
+      data.text,
+      undefined,
+    );
+
+    await this.repository.updateComment(commentId, {
+      text: data.text,
+      isEdited: true,
+      isPending,
+      isNSFW,
+      updatedAt: new Date(),
+    });
+
+    await logActivity(
+      user.uid,
+      "COMMENT_UPDATED",
+      `User updated comment ${commentId}`,
+    );
+
+    const comments = await this.getCommentsByPostId(comment.postId);
+    const updated = comments.find((c) => c.id === commentId);
+    if (!updated) {
+      throw createAppError({ code: "NOT_FOUND", message: "Comment not found after update" });
+    }
+    return updated;
+  }
+
+  async deleteComment(commentId: string): Promise<void> {
+    const user = this.ensureUser();
+
+    const comment = await this.repository.getCommentById(commentId);
+    if (!comment) {
+      throw createAppError({ code: "NOT_FOUND", message: "Comment not found" });
+    }
+
+    if (comment.userId !== user.uid) {
+      throw createAppError({
+        code: "FORBIDDEN",
+        message: "Not author of comment",
+      });
+    }
+
+    await this.repository.deleteComment(commentId, comment.postId);
+
+    await logActivity(
+      user.uid,
+      "COMMENT_DELETED",
+      `User deleted comment ${commentId}`,
+    );
   }
 
   async getCommentsByPostId(postId: string): Promise<PublicComment[]> {

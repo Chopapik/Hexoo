@@ -34,7 +34,12 @@ export const AddCommentSchema = z
     },
   );
 
+export const UpdateCommentSchema = z.object({
+  text: z.string().min(1).max(COMMENT_MAX_CHARS, { message: "comment_too_long" }),
+});
+
 export type AddCommentRequestDto = z.infer<typeof AddCommentSchema>;
+export type UpdateCommentRequestDto = z.infer<typeof UpdateCommentSchema>;
 export type AddCommentResponseDto = {
   isPending: boolean;
   isNSFW: boolean;

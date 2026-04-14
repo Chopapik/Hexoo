@@ -155,3 +155,28 @@ begin
   return v_comment_id;
 end;
 $$;
+
+create or replace function public.delete_comment_tx(
+  p_comment_id uuid,
+  p_post_id uuid
+) returns void
+language plpgsql
+as $$
+begin
+  if p_comment_id is null then
+    raise exception 'comment_id is required';
+  end if;
+
+  delete from public.comments where id = p_comment_id;
+
+  if not found then
+    raise exception 'Comment % not found', p_comment_id;
+  end if;
+
+  update public.posts
+  set
+    comments_count = greatest(comments_count - 1, 0),
+    updated_at = now()
+  where id = p_post_id;
+end;
+$$;
