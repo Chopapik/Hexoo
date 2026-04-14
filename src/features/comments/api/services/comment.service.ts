@@ -1,5 +1,7 @@
 import { createAppError } from "@/lib/AppError";
 import { formatZodErrorFlat } from "@/lib/zod";
+import { ModerationStatus } from "@/features/shared/types/content.type";
+import { logModerationEvent } from "@/features/moderation/api/services/moderationLog.service";
 import { getUsersByIds } from "@/features/users/api/services";
 import { resolveImagePublicUrl } from "@/features/images/utils/resolveImagePublicUrl";
 import type { SessionData } from "@/features/me/me.type";
@@ -177,6 +179,47 @@ export class CommentService implements ICommentService {
       "COMMENT_DELETED",
       `User deleted comment ${commentId}`,
     );
+  }
+
+  async reportComment(commentId: string, reason: string, details?: string) {
+    const user = this.ensureUser();
+
+    const comment = await this.repository.getCommentById(commentId);
+    if (!comment) {
+      throw createAppError({
+        code: "NOT_FOUND",
+        message: "[commentService.reportComment] Comment not found",
+      });
+    }
+
+    const result = await this.repository.reportComment(commentId, {
+      uid: user.uid,
+      reason,
+      details,
+      createdAt: new Date(),
+    });
+
+    await logModerationEvent({
+      userId: comment.userId,
+      timestamp: new Date(),
+      verdict: ModerationStatus.Pending,
+      categories: [reason],
+      actionTaken: "FLAGGED_FOR_REVIEW",
+      resourceType: "comment",
+      resourceId: commentId,
+      source: "user_report",
+      actorId: user.uid,
+      reasonSummary: "Comment reported by user",
+      reasonDetails: details ? `${reason}: ${details}` : reason,
+    });
+
+    await logActivity(
+      user.uid,
+      "COMMENT_REPORTED",
+      `User reported comment ${commentId} for: ${reason}`,
+    );
+
+    return result;
   }
 
   async getCommentsByPostId(postId: string): Promise<PublicComment[]> {

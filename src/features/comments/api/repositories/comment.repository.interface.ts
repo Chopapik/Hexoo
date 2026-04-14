@@ -3,6 +3,7 @@ import type {
   CreateCommentPayload,
   UpdateCommentPayload,
 } from "../../types/comment.payload";
+import type { ReportDetails } from "@/features/shared/types/report.type";
 
 export interface CommentRepository {
   createComment(
@@ -20,4 +21,8 @@ export interface CommentRepository {
     data: UpdateCommentPayload,
   ): Promise<void>;
   deleteComment(commentId: string, postId: string): Promise<void>;
+  reportComment(
+    commentId: string,
+    reportDetails: ReportDetails,
+  ): Promise<{ hidden: boolean; reportsCount: number }>;
 }

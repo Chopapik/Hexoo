@@ -56,4 +56,14 @@ export async function deleteComment(
   return await service.deleteComment(commentId);
 }
 
+export async function reportComment(
+  session: SessionData | null,
+  commentId: string,
+  reason: string,
+  details?: string,
+) {
+  const service = getCommentService(session);
+  return await service.reportComment(commentId, reason, details);
+}
+
 export { CommentService };
