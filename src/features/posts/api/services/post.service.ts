@@ -274,6 +274,7 @@ export class PostService implements IPostService {
       imageMeta: processed.imageMeta ?? post.imageMeta,
       isPending: processed.isPending,
       isNSFW: processed.isNSFW,
+      isEdited: true,
       updatedAt: new Date(),
     });
 

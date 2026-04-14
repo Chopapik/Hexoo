@@ -25,6 +25,7 @@ function rowToEntity(row: PostRow): PostEntity {
     updatedAt: parseDate(row.updated_at),
     isPending: row.is_pending,
     isNSFW: row.is_nsfw,
+    isEdited: row.is_edited,
     imageMeta: row.image_meta ?? undefined,
     device: row.device ?? undefined,
     userReports: undefined,
@@ -50,6 +51,7 @@ function createPayloadToRow(data: CreatePostPayload): Record<string, unknown> {
         : data.updatedAt;
   if (data.isNSFW != null) row.is_nsfw = data.isNSFW;
   if (data.isPending != null) row.is_pending = data.isPending;
+  if (data.isEdited != null) row.is_edited = data.isEdited;
   if (data.imageMeta !== undefined) row.image_meta = data.imageMeta;
   if (data.device !== undefined) row.device = data.device;
   return row;
@@ -67,6 +69,7 @@ function updatePayloadToRow(data: UpdatePostPayload): Record<string, unknown> {
         : data.updatedAt;
   if (data.isNSFW != null) row.is_nsfw = data.isNSFW;
   if (data.isPending != null) row.is_pending = data.isPending;
+  if (data.isEdited != null) row.is_edited = data.isEdited;
   if (data.imageMeta !== undefined) row.image_meta = data.imageMeta;
   if (data.device !== undefined) row.device = data.device;
   return row;

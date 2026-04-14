@@ -13,6 +13,7 @@ export interface PostRow {
   updated_at: string | null;
   is_nsfw: boolean;
   is_pending: boolean;
+  is_edited: boolean;
   image_meta: ImageMeta | null;
   device: string | null;
 }

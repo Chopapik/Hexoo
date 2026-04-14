@@ -20,6 +20,7 @@ export interface ContentBase {
 
   isPending?: boolean;
   isNSFW: boolean;
+  isEdited: boolean;
 
   imageMeta?: ImageMeta | null;
 
