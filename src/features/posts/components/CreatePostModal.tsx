@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { PaperclipIcon } from "../icons/PaperclipIcon";
 import { SendIcon } from "../icons/SendIcon";
-import { useAppSelector } from "@/lib/store/hooks";
+import { useAppStore } from "@/lib/store/store";
 import Modal from "@/features/shared/components/layout/Modal";
 import Button from "@/features/shared/components/ui/Button";
 import AlertModal from "@/features/shared/components/layout/AlertModal";
@@ -90,7 +90,7 @@ export default function CreatePostModal({
     }
   };
 
-  const user = useAppSelector((state) => state.auth.user);
+  const user = useAppStore((s) => s.auth.user);
 
   const displayError = clientError || rootError;
 

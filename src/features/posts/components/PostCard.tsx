@@ -7,8 +7,7 @@ import { PostFooter } from "./PostFooter";
 import { PostMeta } from "./PostMeta";
 import { PostModal } from "./PostModal";
 import { PostNsfwNotice } from "./PostNsfwNotice";
-import { useAppSelector, useAppDispatch } from "@/lib/store/hooks";
-import { initializeSettings } from "@/features/me/store/settingsSlice";
+import { useAppStore } from "@/lib/store/store";
 
 type PostCardProps = {
   post: PublicPostResponseDto;
@@ -24,14 +23,12 @@ export const PostCard = ({
 }: PostCardProps) => {
   const [showPostModal, setShowPostModal] = useState(false);
 
-  const showNSFWPosts = useAppSelector(
-    (state) => state.settings.showNSFWPosts,
-  );
-  const dispatch = useAppDispatch();
+  const showNSFWPosts = useAppStore((s) => s.settings.showNSFWPosts);
+  const initializeSettings = useAppStore((s) => s.initializeSettings);
 
   useEffect(() => {
-    dispatch(initializeSettings());
-  }, [dispatch]);
+    initializeSettings();
+  }, [initializeSettings]);
 
   const isContentVisible = !post.isNSFW || showNSFWPosts || revealNSFW;
 

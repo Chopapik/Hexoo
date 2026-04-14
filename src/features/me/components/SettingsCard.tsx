@@ -1,13 +1,13 @@
 "use client";
 
-import { useAppSelector } from "@/lib/store/hooks";
+import { useAppStore } from "@/lib/store/store";
 import AppearanceSection from "./appearance/AppearanceSection";
 import AccountSection from "./account/AccountSection";
 import DangerZoneSection from "./danger/DangerZoneSection";
 import ContentSection from "./appearance/ContentSection";
 
 export default function SettingsCard() {
-  const user = useAppSelector((state) => state.auth.user);
+  const user = useAppStore((s) => s.auth.user);
 
   if (!user) return null;
 

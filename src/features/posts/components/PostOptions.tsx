@@ -2,7 +2,7 @@
 
 import { Fragment, useState } from "react";
 import { Menu, Transition } from "@headlessui/react";
-import { useAppSelector } from "@/lib/store/hooks";
+import { useAppStore } from "@/lib/store/store";
 import {
   BsThreeDots,
   BsFlag,
@@ -26,7 +26,7 @@ export default function PostOptions({
 }) {
   const [pendingAction, setPendingAction] = useState<ModActionType>(null);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
-  const currentUser = useAppSelector((state) => state.auth.user);
+  const currentUser = useAppStore((s) => s.auth.user);
   const queryClient = useQueryClient();
 
   const isModerator = currentUser?.role === "moderator";

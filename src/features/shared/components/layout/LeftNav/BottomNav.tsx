@@ -2,15 +2,14 @@ import React from "react";
 import Button from "@/features/shared/components/ui/Button";
 import { NavItem } from "./NavItem";
 import { Plus } from "lucide-react";
-import { useAppDispatch } from "@/lib/store/hooks";
-import { openCreatePostModal } from "@/features/posts/store/createPostModalSlice";
+import { useAppStore } from "@/lib/store/store";
 
 type BottomNavProps = {
   onOpenRight?: () => void;
 };
 
 export function BottomNav({ onOpenRight }: BottomNavProps) {
-  const dispatch = useAppDispatch();
+  const openCreatePostModal = useAppStore((s) => s.openCreatePostModal);
 
   return (
     <div className="flex bg-primary-neutral-background-default border-t border-primary-neutral-stroke-default rounded-xl overflow-hidden h-11 px-1 w-full flex-row justify-between items-center gap-4">
@@ -24,7 +23,7 @@ export function BottomNav({ onOpenRight }: BottomNavProps) {
         size="icon"
         variant="secondary"
         icon={<Plus className="size-5" />}
-        onClick={() => dispatch(openCreatePostModal())}
+        onClick={openCreatePostModal}
       />
     </div>
   );

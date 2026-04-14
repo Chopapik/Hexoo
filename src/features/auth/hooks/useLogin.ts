@@ -1,7 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { useAppDispatch } from "@/lib/store/hooks";
-import { setUser } from "@/features/auth/store/authSlice";
+import { useAppStore } from "@/lib/store/store";
 import { LoginData } from "../types/auth.type";
 import fetchClient from "@/lib/fetchClient";
 import { ApiError } from "@/lib/AppError";
@@ -31,7 +30,7 @@ type LoginResponse = {
 export default function useLogin(onError: ErrorCallback) {
   const { getRecaptchaToken } = useRecaptcha();
   const router = useRouter();
-  const dispatch = useAppDispatch();
+  const setUser = useAppStore((s) => s.setUser);
 
   const sessionMutation = useMutation({
     mutationFn: async (payload: {
@@ -43,7 +42,7 @@ export default function useLogin(onError: ErrorCallback) {
       return response as LoginResponse;
     },
     onSuccess: (response) => {
-      dispatch(setUser(response.user));
+      setUser(response.user);
       router.replace("/");
       router.refresh();
     },

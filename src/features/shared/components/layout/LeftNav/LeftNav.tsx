@@ -11,8 +11,7 @@ import {
   ClipboardList,
 } from "lucide-react";
 import Button from "@/features/shared/components/ui/Button";
-import { useAppDispatch } from "@/lib/store/hooks";
-import { openCreatePostModal } from "@/features/posts/store/createPostModalSlice";
+import { useAppStore } from "@/lib/store/store";
 
 type LeftNavProps = {
   onOpenRight?: () => void;
@@ -24,7 +23,7 @@ function roleKey(role: SessionData["role"] | undefined): string {
 }
 
 export function LeftNav({ onOpenRight, user }: LeftNavProps) {
-  const dispatch = useAppDispatch();
+  const openCreatePostModal = useAppStore((s) => s.openCreatePostModal);
   const r = roleKey(user?.role);
   const isAdmin = r === UserRole.Admin;
   const isModerator = r === UserRole.Moderator;
@@ -63,7 +62,7 @@ export function LeftNav({ onOpenRight, user }: LeftNavProps) {
             size="xl"
             rightIcon={<Plus className="size-5" />}
             className="w-full justify-center font-semibold"
-            onClick={() => dispatch(openCreatePostModal())}
+            onClick={openCreatePostModal}
           />
         </div>
       ) : null}

@@ -5,7 +5,7 @@ import {
   CreatePostResponseDto,
 } from "../types/post.dto";
 import toast from "react-hot-toast";
-import { useAppSelector } from "@/lib/store/hooks";
+import { useAppStore } from "@/lib/store/store";
 
 const MODERATION_TOAST_DURATION = 7000;
 
@@ -14,9 +14,7 @@ export default function useCreatePost(
   errorCallBack?: (error?: Error) => void,
 ) {
   const queryClient = useQueryClient();
-  const showNSFWPosts = useAppSelector(
-    (state) => state.settings.showNSFWPosts,
-  );
+  const showNSFWPosts = useAppStore((s) => s.settings.showNSFWPosts);
 
   const mutation = useMutation({
     mutationFn: async (postData: CreatePostRequestDto | FormData) => {
