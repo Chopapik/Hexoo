@@ -247,6 +247,18 @@ export class PostSupabaseRepository implements PostRepository {
     return { hidden: shouldHide, reportsCount };
   }
 
+  async hasUserReportedPost(postId: string, userId: string): Promise<boolean> {
+    const { data, error } = await supabaseAdmin
+      .from(POST_REPORTS_TABLE)
+      .select("id")
+      .eq("post_id", postId)
+      .eq("user_id", userId)
+      .maybeSingle();
+
+    if (error) throw new Error(error.message ?? "Database error");
+    return !!data;
+  }
+
   async getPostsPendingModeration(
     limit: number,
     startAfterId?: string,
