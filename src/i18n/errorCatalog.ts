@@ -36,6 +36,7 @@ export type ClientValidationCode =
   | "post_id_required"
   // reports
   | "report_reason_required"
+  | "report_details_required"
   | "report_details_too_long"
   // moderation
   | "justification_too_short"
@@ -395,6 +396,14 @@ export const ERROR_CATALOG: Record<GlobalErrorCode, ErrorCatalogEntry> = {
       en: "Select a report reason",
     },
     field: "reason",
+    validationType: "Dismiss",
+  },
+  report_details_required: {
+    message: {
+      pl: "Opisz powód zgłoszenia",
+      en: "Please describe the report reason",
+    },
+    field: "details",
     validationType: "Dismiss",
   },
   report_details_too_long: {
