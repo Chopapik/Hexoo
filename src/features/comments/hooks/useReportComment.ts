@@ -3,6 +3,7 @@ import fetchClient from "@/lib/fetchClient";
 import toast from "react-hot-toast";
 import { ApiError } from "@/lib/AppError";
 import { CommentReportRequestDto } from "../types/comment.dto";
+import { translateError } from "@/i18n/errorCatalog";
 
 export default function useReportComment(onSuccessCallback?: () => void) {
   return useMutation({
@@ -21,21 +22,7 @@ export default function useReportComment(onSuccessCallback?: () => void) {
       onSuccessCallback?.();
     },
     onError: (error: ApiError) => {
-      const code = error?.code;
-
-      switch (code) {
-        case "CONFLICT":
-          toast.error("Już zgłosiłeś ten komentarz.");
-          break;
-        case "RATE_LIMIT":
-          toast.error("Zbyt wiele zgłoszeń. Zwolnij.");
-          break;
-        case "NOT_FOUND":
-          toast.error("Ten komentarz już nie istnieje.");
-          break;
-        default:
-          toast.error("Wystąpił błąd podczas wysyłania zgłoszenia.");
-      }
+      toast.error(translateError(error?.code));
     },
   });
 }

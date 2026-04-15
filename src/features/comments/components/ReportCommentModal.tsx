@@ -1,10 +1,14 @@
 "use client";
 
-import { useState } from "react";
 import Modal from "@/features/shared/components/layout/Modal";
 import ModalFooter from "@/features/shared/components/layout/ModalFooter";
-import TextInput from "@/features/shared/components/ui/TextInput";
+import useReportCommentForm from "../hooks/useReportCommentForm";
 import useReportComment from "../hooks/useReportComment";
+import {
+  REPORT_DETAILS_MAX_CHARS,
+  type ReportCommentRequestDto,
+} from "../types/comment.dto";
+import { parseReportCommentError } from "../utils/reportCommentErrorMap";
 
 const REPORT_REASONS = [
   { id: "spam", label: "To jest spam" },
@@ -12,7 +16,7 @@ const REPORT_REASONS = [
   { id: "nudity", label: "Nagość / Treści seksualne" },
   { id: "harassment", label: "Nękanie" },
   { id: "other", label: "Inny powód" },
-];
+] as const;
 
 interface ReportCommentModalProps {
   commentId: string;
@@ -23,20 +27,26 @@ export default function ReportCommentModal({
   commentId,
   onClose,
 }: ReportCommentModalProps) {
-  const [reason, setReason] = useState("spam");
-  const [details, setDetails] = useState("");
-
+  const { handleSubmit, setValue, watch, errors } = useReportCommentForm();
   const { mutate: report, isPending } = useReportComment(onClose);
 
-  const handleSubmit = () => {
-    report({ commentId, reason, details });
+  const reason = watch("reason");
+  const details = watch("details") ?? "";
+  const reasonError = parseReportCommentError(errors.reason?.message as string);
+  const detailsError = parseReportCommentError(
+    errors.details?.message as string,
+  );
+  const rootError = parseReportCommentError(errors.root?.message as string);
+
+  const onValid = (data: ReportCommentRequestDto) => {
+    report({ commentId, reason: data.reason, details: data.details });
   };
 
   const footer = (
     <ModalFooter
       confirmText="Zgłoś komentarz"
       onCancel={onClose}
-      onConfirm={handleSubmit}
+      onConfirm={handleSubmit(onValid)}
       isPending={isPending}
     />
   );
@@ -72,7 +82,9 @@ export default function ReportCommentModal({
                 name="reportReason"
                 value={item.id}
                 checked={reason === item.id}
-                onChange={(e) => setReason(e.target.value)}
+                onChange={() =>
+                  setValue("reason", item.id, { shouldValidate: true })
+                }
                 className="hidden"
               />
               <div
@@ -89,16 +101,38 @@ export default function ReportCommentModal({
               <span className="text-sm font-medium">{item.label}</span>
             </label>
           ))}
+          {errors.reason && (
+            <p className="text-xs text-red-500 mt-1">{reasonError}</p>
+          )}
         </div>
         {reason === "other" && (
-          <div className="mt-2 animate-in fade-in slide-in-from-top-2">
-            <TextInput
-              label="Dodatkowe informacje (opcjonalne)"
+          <div className="mt-2 animate-in fade-in slide-in-from-top-2 flex flex-col gap-1.5">
+            <label className="text-xs uppercase tracking-widest text-text-neutral/60 font-bold">
+              Dodatkowe informacje
+            </label>
+            <textarea
               value={details}
-              onChange={(e) => setDetails(e.target.value)}
+              onChange={(e) =>
+                setValue("details", e.target.value, { shouldValidate: true })
+              }
               placeholder="Opisz problem..."
+              rows={3}
+              className="w-full bg-black/30 rounded-lg border border-white/10 p-3 text-sm text-text-main placeholder:text-text-neutral/40 resize-none outline-none transition-all focus:ring-1 focus:ring-fuchsia-500/30 focus:border-fuchsia-500/50"
             />
+            <div className="flex items-center justify-between">
+              {errors.details && (
+                <p className="text-xs text-red-500">{detailsError}</p>
+              )}
+              <span
+                className={`text-xs ml-auto ${details.length > REPORT_DETAILS_MAX_CHARS ? "text-red-500 font-bold" : "text-white"}`}
+              >
+                {details.length} / {REPORT_DETAILS_MAX_CHARS}
+              </span>
+            </div>
           </div>
+        )}
+        {errors.root && (
+          <p className="text-xs text-red-500 mt-1">{rootError}</p>
         )}
       </div>
     </Modal>
