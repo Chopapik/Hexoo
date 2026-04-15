@@ -1,11 +1,11 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { ReportCommentSchema } from "../types/comment.dto";
+import { ReportPostSchema } from "../types/post.dto";
 
-type ReportCommentFormInput = z.input<typeof ReportCommentSchema>;
+type ReportPostFormInput = z.input<typeof ReportPostSchema>;
 
-export default function useReportCommentForm() {
+export default function useReportPostForm() {
   const {
     register,
     handleSubmit,
@@ -13,8 +13,8 @@ export default function useReportCommentForm() {
     watch,
     setError,
     formState: { errors, isSubmitting, isSubmitted },
-  } = useForm<ReportCommentFormInput>({
-    resolver: zodResolver(ReportCommentSchema),
+  } = useForm<ReportPostFormInput>({
+    resolver: zodResolver(ReportPostSchema),
     mode: "onSubmit",
     reValidateMode: "onChange",
     defaultValues: {

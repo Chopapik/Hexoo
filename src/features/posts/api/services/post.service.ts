@@ -15,6 +15,7 @@ import {
   UpdatePostRequestDto as UpdatePostRequest,
   CreatePostSchema,
   UpdatePostSchema,
+  ReportPostSchema,
   PublicPostResponseDto as PublicPostResponse,
 } from "../../types/post.dto";
 import { SessionData } from "@/features/me/me.type";
@@ -317,6 +318,15 @@ export class PostService implements IPostService {
 
   async reportPost(postId: string, reason: string, details?: string) {
     const user = this.ensureUser();
+
+    const parsed = ReportPostSchema.safeParse({ reason, details });
+    if (!parsed.success) {
+      throw createAppError({
+        code: "VALIDATION_ERROR",
+        message: "[postService.reportPost] Invalid data",
+        data: { details: formatZodErrorFlat(parsed.error) },
+      });
+    }
 
     const post = await this.repository.getPostById(postId);
     if (!post) {

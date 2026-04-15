@@ -70,14 +70,19 @@ export const REPORT_REASONS = [
 
 export const REPORT_DETAILS_MAX_CHARS = 300;
 
-export const ReportCommentSchema = z.object({
-  reason: z.enum(REPORT_REASONS, { message: "report_reason_required" }),
-  details: z
-    .string()
-    .max(REPORT_DETAILS_MAX_CHARS, { message: "report_details_too_long" })
-    .optional()
-    .default(""),
-});
+export const ReportCommentSchema = z
+  .object({
+    reason: z.enum(REPORT_REASONS, { message: "report_reason_required" }),
+    details: z
+      .string()
+      .max(REPORT_DETAILS_MAX_CHARS, { message: "report_details_too_long" })
+      .optional()
+      .default(""),
+  })
+  .refine(
+    (data) => data.reason !== "other" || (data.details ?? "").trim().length > 0,
+    { message: "report_details_required", path: ["details"] },
+  );
 
 export type ReportCommentRequestDto = z.infer<typeof ReportCommentSchema>;
 

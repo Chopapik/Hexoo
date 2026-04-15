@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import Modal from "@/features/shared/components/layout/Modal";
 import ModalFooter from "@/features/shared/components/layout/ModalFooter";
-import TextInput from "@/features/shared/components/ui/TextInput";
+import useReportPostForm from "../hooks/useReportPostForm";
 import useReportPost from "../hooks/useReportPost";
+import { REPORT_DETAILS_MAX_CHARS } from "../types/post.dto";
+import { parseReportPostError } from "../utils/reportPostErrorMap";
 
 const REPORT_REASONS = [
   { id: "spam", label: "To jest spam" },
@@ -12,7 +13,7 @@ const REPORT_REASONS = [
   { id: "nudity", label: "Nagość / Treści seksualne" },
   { id: "harassment", label: "Nękanie" },
   { id: "other", label: "Inny powód" },
-];
+] as const;
 
 interface ReportPostModalProps {
   postId: string;
@@ -23,21 +24,33 @@ export default function ReportPostModal({
   postId,
   onClose,
 }: ReportPostModalProps) {
-  const [reason, setReason] = useState("spam");
-  const [details, setDetails] = useState("");
-
+  const { handleSubmit, setValue, watch, errors, isSubmitted } =
+    useReportPostForm();
   const { mutate: report, isPending } = useReportPost(onClose);
 
-  const handleSubmit = () => {
-    report({ postId, reason, details });
+  const reason = watch("reason");
+  const details = watch("details") ?? "";
+
+  const hasTooLongError =
+    errors.details?.message === "report_details_too_long";
+  const detailsError = parseReportPostError(errors.details?.message as string);
+  const rootError = parseReportPostError(errors.root?.message as string);
+
+  const onValid = (data: Record<string, unknown>) => {
+    report({
+      postId,
+      reason: data.reason as string,
+      details: data.details as string,
+    });
   };
 
   const footer = (
     <ModalFooter
       confirmText="Zgłoś post"
       onCancel={onClose}
-      onConfirm={handleSubmit}
+      onConfirm={handleSubmit(onValid)}
       isPending={isPending}
+      confirmDisabled={isPending || hasTooLongError}
     />
   );
 
@@ -72,7 +85,9 @@ export default function ReportPostModal({
                 name="reportReason"
                 value={item.id}
                 checked={reason === item.id}
-                onChange={(e) => setReason(e.target.value)}
+                onChange={() =>
+                  setValue("reason", item.id, { shouldValidate: isSubmitted })
+                }
                 className="hidden"
               />
               <div
@@ -91,14 +106,35 @@ export default function ReportPostModal({
           ))}
         </div>
         {reason === "other" && (
-          <div className="mt-2 animate-in fade-in slide-in-from-top-2">
-            <TextInput
-              label="Dodatkowe informacje (opcjonalne)"
+          <div className="mt-2 animate-in fade-in slide-in-from-top-2 flex flex-col gap-1.5">
+            <label className="text-xs uppercase tracking-widest text-text-neutral/60 font-bold">
+              Opisz powód zgłoszenia <span className="text-red-400">*</span>
+            </label>
+            <textarea
               value={details}
-              onChange={(e) => setDetails(e.target.value)}
+              onChange={(e) =>
+                setValue("details", e.target.value, {
+                  shouldValidate: isSubmitted,
+                })
+              }
               placeholder="Opisz problem..."
+              rows={3}
+              className="w-full bg-black/30 rounded-lg border border-white/10 p-3 text-sm text-text-main placeholder:text-text-neutral/40 resize-none outline-none transition-all focus:ring-1 focus:ring-fuchsia-500/30 focus:border-fuchsia-500/50"
             />
+            <div className="flex items-center justify-between">
+              {isSubmitted && errors.details && (
+                <p className="text-xs text-red-500">{detailsError}</p>
+              )}
+              <span
+                className={`text-xs ml-auto ${hasTooLongError ? "text-red-500 font-bold" : "text-white"}`}
+              >
+                {details.length} / {REPORT_DETAILS_MAX_CHARS}
+              </span>
+            </div>
           </div>
+        )}
+        {isSubmitted && errors.root && (
+          <p className="text-xs text-red-500 mt-1">{rootError}</p>
         )}
       </div>
     </Modal>

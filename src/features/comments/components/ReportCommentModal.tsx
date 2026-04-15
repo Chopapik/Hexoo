@@ -4,10 +4,7 @@ import Modal from "@/features/shared/components/layout/Modal";
 import ModalFooter from "@/features/shared/components/layout/ModalFooter";
 import useReportCommentForm from "../hooks/useReportCommentForm";
 import useReportComment from "../hooks/useReportComment";
-import {
-  REPORT_DETAILS_MAX_CHARS,
-  type ReportCommentRequestDto,
-} from "../types/comment.dto";
+import { REPORT_DETAILS_MAX_CHARS } from "../types/comment.dto";
 import { parseReportCommentError } from "../utils/reportCommentErrorMap";
 
 const REPORT_REASONS = [
@@ -27,19 +24,26 @@ export default function ReportCommentModal({
   commentId,
   onClose,
 }: ReportCommentModalProps) {
-  const { handleSubmit, setValue, watch, errors } = useReportCommentForm();
+  const { handleSubmit, setValue, watch, errors, isSubmitted } =
+    useReportCommentForm();
   const { mutate: report, isPending } = useReportComment(onClose);
 
   const reason = watch("reason");
   const details = watch("details") ?? "";
-  const reasonError = parseReportCommentError(errors.reason?.message as string);
+
+  const hasTooLongError =
+    errors.details?.message === "report_details_too_long";
   const detailsError = parseReportCommentError(
     errors.details?.message as string,
   );
   const rootError = parseReportCommentError(errors.root?.message as string);
 
-  const onValid = (data: ReportCommentRequestDto) => {
-    report({ commentId, reason: data.reason, details: data.details });
+  const onValid = (data: Record<string, unknown>) => {
+    report({
+      commentId,
+      reason: data.reason as string,
+      details: data.details as string,
+    });
   };
 
   const footer = (
@@ -48,6 +52,7 @@ export default function ReportCommentModal({
       onCancel={onClose}
       onConfirm={handleSubmit(onValid)}
       isPending={isPending}
+      confirmDisabled={isPending || hasTooLongError}
     />
   );
 
@@ -83,7 +88,7 @@ export default function ReportCommentModal({
                 value={item.id}
                 checked={reason === item.id}
                 onChange={() =>
-                  setValue("reason", item.id, { shouldValidate: true })
+                  setValue("reason", item.id, { shouldValidate: isSubmitted })
                 }
                 className="hidden"
               />
@@ -101,37 +106,36 @@ export default function ReportCommentModal({
               <span className="text-sm font-medium">{item.label}</span>
             </label>
           ))}
-          {errors.reason && (
-            <p className="text-xs text-red-500 mt-1">{reasonError}</p>
-          )}
         </div>
         {reason === "other" && (
           <div className="mt-2 animate-in fade-in slide-in-from-top-2 flex flex-col gap-1.5">
             <label className="text-xs uppercase tracking-widest text-text-neutral/60 font-bold">
-              Dodatkowe informacje
+              Opisz powód zgłoszenia <span className="text-red-400">*</span>
             </label>
             <textarea
               value={details}
               onChange={(e) =>
-                setValue("details", e.target.value, { shouldValidate: true })
+                setValue("details", e.target.value, {
+                  shouldValidate: isSubmitted,
+                })
               }
               placeholder="Opisz problem..."
               rows={3}
               className="w-full bg-black/30 rounded-lg border border-white/10 p-3 text-sm text-text-main placeholder:text-text-neutral/40 resize-none outline-none transition-all focus:ring-1 focus:ring-fuchsia-500/30 focus:border-fuchsia-500/50"
             />
             <div className="flex items-center justify-between">
-              {errors.details && (
+              {isSubmitted && errors.details && (
                 <p className="text-xs text-red-500">{detailsError}</p>
               )}
               <span
-                className={`text-xs ml-auto ${details.length > REPORT_DETAILS_MAX_CHARS ? "text-red-500 font-bold" : "text-white"}`}
+                className={`text-xs ml-auto ${hasTooLongError ? "text-red-500 font-bold" : "text-white"}`}
               >
                 {details.length} / {REPORT_DETAILS_MAX_CHARS}
               </span>
             </div>
           </div>
         )}
-        {errors.root && (
+        {isSubmitted && errors.root && (
           <p className="text-xs text-red-500 mt-1">{rootError}</p>
         )}
       </div>

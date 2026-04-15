@@ -2,11 +2,17 @@ import { useMutation } from "@tanstack/react-query";
 import fetchClient from "@/lib/fetchClient";
 import toast from "react-hot-toast";
 import { ApiError } from "@/lib/AppError";
-import { PostReportRequestDto } from "../types/post.dto";
+import { translateError } from "@/i18n/errorCatalog";
+
+interface ReportPostPayload {
+  postId: string;
+  reason: string;
+  details?: string;
+}
 
 export default function useReportPost(onSuccessCallback?: () => void) {
   return useMutation({
-    mutationFn: async ({ postId, reason, details }: PostReportRequestDto) => {
+    mutationFn: async ({ postId, reason, details }: ReportPostPayload) => {
       await fetchClient.post(`/posts/${postId}/report`, { reason, details });
     },
     onSuccess: () => {
@@ -14,21 +20,7 @@ export default function useReportPost(onSuccessCallback?: () => void) {
       onSuccessCallback?.();
     },
     onError: (error: ApiError) => {
-      const code = error?.code;
-
-      switch (code) {
-        case "CONFLICT":
-          toast.error("Już zgłosiłeś ten post.");
-          break;
-        case "RATE_LIMIT":
-          toast.error("Zbyt wiele zgłoszeń. Zwolnij.");
-          break;
-        case "NOT_FOUND":
-          toast.error("Ten post już nie istnieje.");
-          break;
-        default:
-          toast.error("Wystąpił błąd podczas wysyłania zgłoszenia.");
-      }
+      toast.error(translateError(error?.code));
     },
   });
 }
