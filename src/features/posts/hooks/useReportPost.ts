@@ -20,6 +20,10 @@ export default function useReportPost(onSuccessCallback?: () => void) {
       onSuccessCallback?.();
     },
     onError: (error: ApiError) => {
+      if (error?.code === "CONFLICT") {
+        toast.error("Już zgłosiłeś ten post.");
+        return;
+      }
       toast.error(translateError(error?.code));
     },
   });

@@ -336,6 +336,17 @@ export class PostService implements IPostService {
       });
     }
 
+    const alreadyReported = await this.repository.hasUserReportedPost(
+      postId,
+      user.uid,
+    );
+    if (alreadyReported) {
+      throw createAppError({
+        code: "CONFLICT",
+        message: "[postService.reportPost] Post already reported by this user",
+      });
+    }
+
     const result = await this.repository.reportPost(postId, {
       uid: user.uid,
       reason,
