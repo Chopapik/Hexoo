@@ -60,6 +60,27 @@ export type PublicCommentResponseDto = Omit<
   isLikedByMe?: boolean;
 };
 
+export const REPORT_REASONS = [
+  "spam",
+  "hate",
+  "nudity",
+  "harassment",
+  "other",
+] as const;
+
+export const REPORT_DETAILS_MAX_CHARS = 300;
+
+export const ReportCommentSchema = z.object({
+  reason: z.enum(REPORT_REASONS, { message: "report_reason_required" }),
+  details: z
+    .string()
+    .max(REPORT_DETAILS_MAX_CHARS, { message: "report_details_too_long" })
+    .optional()
+    .default(""),
+});
+
+export type ReportCommentRequestDto = z.infer<typeof ReportCommentSchema>;
+
 export interface CommentReportRequestDto {
   commentId: string;
   reason: string;

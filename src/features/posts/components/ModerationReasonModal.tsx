@@ -1,9 +1,14 @@
 "use client";
 
-import { useState } from "react";
 import Modal from "@/features/shared/components/layout/Modal";
 import ModalFooter from "@/features/shared/components/layout/ModalFooter";
 import { BsShieldExclamation, BsTrash } from "react-icons/bs";
+import useModerationReasonForm from "@/features/moderator/hooks/useModerationReasonForm";
+import {
+  MODERATION_JUSTIFICATION_MAX,
+  ModerationReasonFormData,
+} from "@/features/moderator/types/moderator.dto";
+import { parseModerationReasonError } from "@/features/moderator/utils/moderationReasonErrorMap";
 
 type ModerationAction = "quarantine" | "reject" | "reject-ban";
 
@@ -89,27 +94,35 @@ export default function ModerationReasonModal({
   onConfirm,
   resource = "post",
 }: ModerationReasonModalProps) {
-  const [justification, setJustification] = useState("");
+  const {
+    handleSubmit,
+    errors,
+    isSubmitted,
+    justification,
+    selectPreset,
+    updateJustification,
+  } = useModerationReasonForm(action);
+
   const config = ACTION_CONFIG[action];
   const title = config.title[resource];
   const confirmText = config.confirmText[resource];
   const description = config.description[resource];
-  
+
   const currentLength = justification.length;
-  const isTooShort = justification.trim().length < 5;
-  const isTooLong = currentLength > 500;
-  const isReady = !isTooShort && !isTooLong;
+  const hasTooLongError =
+    errors.justification?.message === "justification_too_long";
+  const showValidationError = isSubmitted;
+  const justificationError = parseModerationReasonError(
+    errors.justification?.message as string,
+  );
 
   const handleClose = () => {
-    setJustification("");
     onClose();
   };
 
-  const handleConfirm = () => {
-    if (!isReady) return;
-    const val = justification.trim();
-    setJustification("");
-    onConfirm(val);
+  const onValid = (data: Record<string, unknown>) => {
+    const { justification } = data as ModerationReasonFormData;
+    onConfirm(justification.trim());
   };
 
   const colorMap = {
@@ -131,10 +144,10 @@ export default function ModerationReasonModal({
     <ModalFooter
       confirmText={confirmText}
       onCancel={handleClose}
-      onConfirm={handleConfirm}
+      onConfirm={handleSubmit(onValid)}
       isPending={isPending}
       confirmVariant={action === "quarantine" ? "default" : "danger"}
-      confirmDisabled={!isReady}
+      confirmDisabled={isPending || hasTooLongError}
     />
   );
 
@@ -147,7 +160,6 @@ export default function ModerationReasonModal({
       className="max-w-md"
     >
       <div className="flex flex-col gap-4 p-4">
-        {/* Action badge */}
         <div
           className={`inline-flex items-center gap-2 self-start px-3 py-1.5 rounded-lg text-sm font-medium ${colors.badge}`}
         >
@@ -155,12 +167,10 @@ export default function ModerationReasonModal({
           {title}
         </div>
 
-        {/* Description */}
         <p className="text-sm text-text-neutral leading-relaxed">
           {description}
         </p>
 
-        {/* Reason textarea */}
         <div className="flex flex-col gap-1.5">
           <label className="text-xs uppercase tracking-widest text-text-neutral/60 font-bold">
             Powód / Uzasadnienie <span className="text-red-400">*</span>
@@ -170,7 +180,7 @@ export default function ModerationReasonModal({
               <button
                 key={idx}
                 type="button"
-                onClick={() => setJustification(preset)}
+                onClick={() => selectPreset(preset)}
                 className={`text-xs px-2.5 py-1.5 rounded-md border transition-colors ${
                   justification === preset
                     ? "bg-fuchsia-500/20 border-fuchsia-500/50 text-fuchsia-100"
@@ -184,7 +194,7 @@ export default function ModerationReasonModal({
 
           <textarea
             value={justification}
-            onChange={(e) => setJustification(e.target.value)}
+            onChange={(e) => updateJustification(e.target.value)}
             placeholder="Wpisz uzasadnienie decyzji lub wybierz z listy..."
             rows={4}
             className={`
@@ -195,9 +205,14 @@ export default function ModerationReasonModal({
             `}
             autoFocus
           />
-          <div className="flex items-center justify-end">
-            <span className={`text-xs ${isTooLong ? "text-red-500 font-bold" : "text-white"}`}>
-              {currentLength} / 500
+          <div className="flex items-center justify-between">
+            {showValidationError && errors.justification && (
+              <p className="text-xs text-red-500">{justificationError}</p>
+            )}
+            <span
+              className={`text-xs ml-auto ${hasTooLongError ? "text-red-500 font-bold" : "text-white"}`}
+            >
+              {currentLength} / {MODERATION_JUSTIFICATION_MAX}
             </span>
           </div>
         </div>

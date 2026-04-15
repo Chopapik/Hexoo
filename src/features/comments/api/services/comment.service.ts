@@ -13,7 +13,7 @@ import type {
   PublicCommentResponseDto as PublicCommentResponse,
   UpdateCommentRequestDto as UpdateCommentRequest,
 } from "../../types/comment.dto";
-import { AddCommentSchema, UpdateCommentSchema } from "../../types/comment.dto";
+import { AddCommentSchema, UpdateCommentSchema, ReportCommentSchema } from "../../types/comment.dto";
 import type { CreateCommentPayload } from "../../types/comment.payload";
 import type { CommentService as ICommentService } from "./comment.service.interface";
 import { logActivity } from "@/features/activity/api/services";
@@ -183,6 +183,15 @@ export class CommentService implements ICommentService {
 
   async reportComment(commentId: string, reason: string, details?: string) {
     const user = this.ensureUser();
+
+    const parsed = ReportCommentSchema.safeParse({ reason, details });
+    if (!parsed.success) {
+      throw createAppError({
+        code: "VALIDATION_ERROR",
+        message: "[commentService.reportComment] Invalid data",
+        data: { details: formatZodErrorFlat(parsed.error) },
+      });
+    }
 
     const comment = await this.repository.getCommentById(commentId);
     if (!comment) {

@@ -33,7 +33,15 @@ export type ClientValidationCode =
   // comments
   | "comment_empty"
   | "comment_too_long"
-  | "post_id_required";
+  | "post_id_required"
+  // reports
+  | "report_reason_required"
+  | "report_details_too_long"
+  // moderation
+  | "justification_too_short"
+  | "justification_too_long"
+  | "moderation_action_invalid"
+  | "comment_id_required";
 
 // All error codes that can appear in the app
 export type GlobalErrorCode =
@@ -375,6 +383,58 @@ export const ERROR_CATALOG: Record<GlobalErrorCode, ErrorCatalogEntry> = {
     message: {
       pl: "Brak identyfikatora posta.",
       en: "Post ID is required.",
+    },
+    field: "root",
+    validationType: "Dismiss",
+  },
+
+  // reports
+  report_reason_required: {
+    message: {
+      pl: "Wybierz powód zgłoszenia",
+      en: "Select a report reason",
+    },
+    field: "reason",
+    validationType: "Dismiss",
+  },
+  report_details_too_long: {
+    message: {
+      pl: "Opis zgłoszenia jest za długi (maks. 300 znaków).",
+      en: "Report details are too long (max 300 characters).",
+    },
+    field: "details",
+    validationType: "Dismiss",
+  },
+
+  // moderation
+  justification_too_short: {
+    message: {
+      pl: "Uzasadnienie jest za krótkie (min. 5 znaków).",
+      en: "Justification is too short (min. 5 characters).",
+    },
+    field: "justification",
+    validationType: "Dismiss",
+  },
+  justification_too_long: {
+    message: {
+      pl: "Uzasadnienie jest za długie (maks. 500 znaków).",
+      en: "Justification is too long (max 500 characters).",
+    },
+    field: "justification",
+    validationType: "Dismiss",
+  },
+  moderation_action_invalid: {
+    message: {
+      pl: "Nieprawidłowa akcja moderacyjna.",
+      en: "Invalid moderation action.",
+    },
+    field: "action",
+    validationType: "Dismiss",
+  },
+  comment_id_required: {
+    message: {
+      pl: "Brak identyfikatora komentarza.",
+      en: "Comment ID is required.",
     },
     field: "root",
     validationType: "Dismiss",
