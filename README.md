@@ -96,6 +96,7 @@ OPENAI_API_KEY=
 - Never expose private secrets to the client.
 - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` is optional and exists as a compatibility alias for some deployments.
 - Route access is guarded through `src/proxy.ts`.
+- Local Supabase seeds are split into `supabase/seeds/base.sql` (neutral fixtures) and `supabase/seeds/dev_admin.sql` (development admin account).
 
 ## License
 
