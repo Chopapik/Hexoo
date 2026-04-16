@@ -192,9 +192,20 @@ begin
     v_verdict := 'APPROVED';
     v_action_taken := 'FLAGGED_FOR_REVIEW';
   else
+    if v_comment.is_pending then
+      raise exception 'Comment is already pending moderation';
+    end if;
+
     update public.comments
     set is_pending = true
     where id = p_comment_id;
+
+    update public.posts
+    set
+      comments_count = greatest(comments_count - 1, 0),
+      updated_at = now()
+    where id = v_comment.post_id;
+
     v_verdict := 'PENDING';
     v_action_taken := 'FLAGGED_FOR_REVIEW';
   end if;
