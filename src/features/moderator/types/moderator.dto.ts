@@ -16,9 +16,14 @@ const ModerationReasonBaseSchema = z.object({
 
 function withJustificationValidation<T extends z.ZodObject<any>>(schema: T) {
   return schema.superRefine((data, ctx) => {
-    if (data.action === "approve") return;
+    const typedData = data as z.infer<T> & {
+      action: (typeof MODERATION_ACTIONS)[number];
+      justification: string;
+    };
 
-    const justification = data.justification.trim();
+    if (typedData.action === "approve") return;
+
+    const justification = typedData.justification.trim();
 
     if (justification.length < MODERATION_JUSTIFICATION_MIN) {
       ctx.addIssue({
