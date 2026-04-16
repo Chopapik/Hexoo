@@ -15,14 +15,25 @@ export default function SessionWatcher() {
   const router = useRouter();
   const user = useAppStore((s) => s.auth.user);
   const clearUser = useAppStore((s) => s.clearUser);
+
   const hasHandledExpiry = useRef(false);
   const [isExpiredModalOpen, setIsExpiredModalOpen] = useState(false);
 
   const goToLogin = useCallback(() => {
     setIsExpiredModalOpen(false);
     router.replace("/login");
-    router.refresh();
   }, [router]);
+
+  const handleSessionExpired = useCallback(async () => {
+    if (hasHandledExpiry.current) return;
+    hasHandledExpiry.current = true;
+
+    clearUser();
+
+    await fetchClient.post("/auth/logout");
+
+    setIsExpiredModalOpen(true);
+  }, [clearUser]);
 
   useEffect(() => {
     if (!user) {
@@ -30,19 +41,14 @@ export default function SessionWatcher() {
       return;
     }
 
-    const handleSessionExpired = async () => {
-      if (hasHandledExpiry.current) return;
-      hasHandledExpiry.current = true;
-
-      clearUser();
-      await fetchClient.post("/auth/logout").catch(() => {});
-      setIsExpiredModalOpen(true);
-    };
+    let isActive = true;
 
     const heartbeat = async () => {
       try {
         await fetchClient.get("/auth/session");
       } catch (error) {
+        if (!isActive) return;
+
         if (
           error instanceof ApiError &&
           (error.status === 401 ||
@@ -58,38 +64,46 @@ export default function SessionWatcher() {
     const {
       data: { subscription },
     } = supabaseClient.auth.onAuthStateChange((event) => {
+      if (!isActive) return;
+
       if (event === "SIGNED_OUT") {
         void handleSessionExpired();
       }
     });
 
     void heartbeat();
+
     const intervalId = window.setInterval(() => {
       void heartbeat();
     }, SESSION_HEARTBEAT_MS);
 
     return () => {
+      isActive = false;
       subscription.unsubscribe();
       window.clearInterval(intervalId);
     };
-  }, [user, clearUser]);
+  }, [user, handleSessionExpired]);
 
   const footer = (
     <div className="flex justify-end w-full">
-      <Button onClick={goToLogin} text="Wróc do logowania" />
+      <Button onClick={goToLogin} text="Wróć do logowania" />
     </div>
   );
 
+  if (!isExpiredModalOpen) {
+    return null;
+  }
+
   return (
     <Modal
-      isOpen={isExpiredModalOpen}
+      isOpen={true}
       onClose={goToLogin}
-      title="Sesja wygasla"
+      title="Sesja wygasła"
       footer={footer}
       className="max-w-md"
     >
       <div className="py-2 text-text-main text-base leading-relaxed">
-        Twoja sesja wygasla. Zaloguj sie ponownie, aby kontynuowac.
+        Twoja sesja wygasła. Zaloguj się ponownie, aby kontynuować.
       </div>
     </Modal>
   );
