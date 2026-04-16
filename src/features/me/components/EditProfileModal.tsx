@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import TextInput from "@/features/shared/components/ui/TextInput";
 import Button from "@/features/shared/components/ui/Button";
 import Modal from "@/features/shared/components/layout/Modal";
@@ -14,6 +14,8 @@ import Image from "next/image";
 import { parseUpdateProfileErrorMessages } from "../utils/updateProfileErrorMap";
 import type { UpdateProfileData } from "../me.type";
 import ValidationMessage from "@/features/shared/components/ui/ValidationMessage";
+import AvatarEditor from "react-avatar-editor";
+import { canvasToFile } from "../utils/avatarEditor";
 
 interface EditProfileModalProps {
   user: PublicUserResponseDto | null;
@@ -37,11 +39,17 @@ export default function EditProfileModal({
     prepareFormData,
     imagePreview,
     fileInputRef,
-    handleFileChange,
     triggerPicker,
-    handleRemoveImage,
+    setCroppedAvatar,
+    validateAvatarFile,
+    clearSelectedAvatar,
     watch,
   } = useUpdateProfileForm(user);
+  const editorRef = useRef<AvatarEditor | null>(null);
+  const [isCropping, setIsCropping] = useState(false);
+  const [cropImageFile, setCropImageFile] = useState<File | null>(null);
+  const [cropImageSrc, setCropImageSrc] = useState<string | null>(null);
+  const [scale, setScale] = useState(1.2);
 
   const nameValue = watch("name") || "";
   const nameErrorCode = errors.name?.message as string | undefined;
@@ -78,6 +86,76 @@ export default function EditProfileModal({
     errors.avatarFile?.message,
   );
   const rootError = parseUpdateProfileErrorMessages(errors.root?.message);
+
+  useEffect(() => {
+    return () => {
+      if (cropImageSrc) {
+        URL.revokeObjectURL(cropImageSrc);
+      }
+    };
+  }, [cropImageSrc]);
+
+  const clearTemporaryCropState = () => {
+    if (cropImageSrc) {
+      URL.revokeObjectURL(cropImageSrc);
+    }
+    setCropImageFile(null);
+    setCropImageSrc(null);
+    setScale(1.2);
+    setIsCropping(false);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const handleAvatarInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const isValid = validateAvatarFile(file);
+    if (!isValid) {
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+      return;
+    }
+
+    if (cropImageSrc) {
+      URL.revokeObjectURL(cropImageSrc);
+    }
+
+    setCropImageFile(file);
+    setCropImageSrc(URL.createObjectURL(file));
+    setScale(1.2);
+    setIsCropping(true);
+  };
+
+  const handleApplyCrop = async () => {
+    if (!editorRef.current || !cropImageFile) return;
+
+    const canvas = editorRef.current.getImageScaledToCanvas();
+    const outputType =
+      cropImageFile.type === "image/jpeg" ||
+      cropImageFile.type === "image/png" ||
+      cropImageFile.type === "image/webp"
+        ? cropImageFile.type
+        : "image/png";
+    const extension = outputType === "image/jpeg" ? "jpg" : outputType.split("/")[1];
+
+    try {
+      const croppedFile = await canvasToFile(canvas, {
+        fileName: `avatar-cropped.${extension}`,
+        type: outputType,
+      });
+
+      const previewUrl = URL.createObjectURL(croppedFile);
+      setCroppedAvatar(croppedFile, previewUrl);
+      clearTemporaryCropState();
+    } catch {
+      // Keep existing validation rendering contract and map crop failures to root.
+      handleServerErrors("INTERNAL_ERROR");
+    }
+  };
 
   const handleSaveClick = () => {
     handleSubmit(onSubmit)();
@@ -121,42 +199,91 @@ export default function EditProfileModal({
           {/* Avatar Section */}
           <div className="flex flex-col items-center gap-3">
             <div className="relative">
-              <div
-                className="relative group cursor-pointer animate-in fade-in zoom-in-95 duration-200"
-                onClick={triggerPicker}
-              >
-                <div className="w-32 h-32 rounded-xl p-px bg-[radial-gradient(circle_at_center,#262626_0%,#171717_100%)] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] transition-transform group-hover:scale-105">
-                  <Avatar
-                    src={imagePreview || undefined}
-                    alt={user.name}
-                    width={96}
-                    height={96}
-                    className="w-full h-full rounded-xl border-none"
-                  />
-                </div>
-
-                <div className="absolute inset-0 bg-black/60 rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm">
-                  <div className="flex flex-col items-center gap-1">
-                    <Image
-                      src={cameraIcon}
-                      alt="Zmień"
-                      width={24}
-                      height={24}
-                      className="opacity-90"
+              {isCropping && cropImageSrc ? (
+                <div className="w-full max-w-sm rounded-xl border border-primary-neutral-stroke-default/50 bg-secondary-neutral-background-default/30 p-4 flex flex-col gap-4">
+                  <div className="mx-auto overflow-hidden rounded-xl">
+                    <AvatarEditor
+                      ref={editorRef}
+                      image={cropImageSrc}
+                      width={240}
+                      height={240}
+                      border={0}
+                      borderRadius={16}
+                      scale={scale}
+                      rotate={0}
                     />
-                    <span className="text-white text-xs font-medium">
-                      Zmień
-                    </span>
+                  </div>
+
+                  <div className="flex flex-col gap-2">
+                    <label className="text-xs font-semibold uppercase tracking-wider text-text-neutral/80">
+                      Powiekszenie
+                    </label>
+                    <input
+                      type="range"
+                      min={1}
+                      max={3}
+                      step={0.01}
+                      value={scale}
+                      onChange={(e) => setScale(Number(e.target.value))}
+                      className="accent-primary-fuchsia-stroke-default"
+                    />
+                  </div>
+
+                  <div className="flex gap-2 justify-end">
+                    <Button
+                      onClick={clearTemporaryCropState}
+                      text="Anuluj"
+                      size="sm"
+                      variant="secondary"
+                      type="button"
+                    />
+                    <Button
+                      onClick={handleApplyCrop}
+                      text="Zastosuj"
+                      size="sm"
+                      variant="default"
+                      type="button"
+                    />
                   </div>
                 </div>
-              </div>
+              ) : (
+                <div
+                  className="relative group cursor-pointer animate-in fade-in zoom-in-95 duration-200"
+                  onClick={triggerPicker}
+                >
+                  <div className="w-32 h-32 rounded-xl p-px bg-[radial-gradient(circle_at_center,#262626_0%,#171717_100%)] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] transition-transform group-hover:scale-105">
+                    <Avatar
+                      src={imagePreview || undefined}
+                      alt={user.name}
+                      width={96}
+                      height={96}
+                      className="w-full h-full rounded-xl border-none"
+                    />
+                  </div>
+
+                  <div className="absolute inset-0 bg-black/60 rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm">
+                    <div className="flex flex-col items-center gap-1">
+                      <Image
+                        src={cameraIcon}
+                        alt="Zmień"
+                        width={24}
+                        height={24}
+                        className="opacity-90"
+                      />
+                      <span className="text-white text-xs font-medium">
+                        Zmień
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Remove image button - only show if new image was selected */}
-              {isNewImage && (
+              {isNewImage && !isCropping && (
                 <RemoveImageButton
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleRemoveImage();
+                    clearSelectedAvatar();
                   }}
                   variant="dark"
                   position="top-right"
@@ -165,7 +292,7 @@ export default function EditProfileModal({
               )}
 
               {/* Change indicator */}
-              {isNewImage && (
+              {isNewImage && !isCropping && (
                 <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-primary-fuchsia-stroke-default text-white text-[10px] font-semibold px-2 py-0.5 rounded-full whitespace-nowrap animate-in fade-in slide-in-from-bottom-1 duration-200">
                   Zmieniono
                 </div>
@@ -174,7 +301,9 @@ export default function EditProfileModal({
 
             <div className="flex flex-col items-center ">
               <p className="text-sm text-text-neutral font-medium">
-                Kliknij, aby zmienić zdjęcie profilowe
+                {isCropping
+                  ? "Dopasuj kadr i kliknij Zastosuj"
+                  : "Kliknij, aby zmienić zdjęcie profilowe"}
               </p>
             </div>
             <div className="flex flex-col gap-1 h-6">
@@ -189,7 +318,7 @@ export default function EditProfileModal({
                 ref={fileInputRef}
                 className="hidden"
                 accept="image/png, image/jpeg, image/webp"
-                onChange={handleFileChange}
+                onChange={handleAvatarInputChange}
               />
             </div>
           </div>

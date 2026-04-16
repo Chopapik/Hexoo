@@ -24,9 +24,6 @@ export const CommentList = ({ comments, isLoading }: CommentListProps) => {
         <p className="text-text-neutral text-sm font-Albert_Sans">
           Brak komentarzy
         </p>
-        <p className="text-text-neutral/60 text-xs font-Albert_Sans mt-1">
-          Bądź pierwszy i dodaj komentarz!
-        </p>
       </div>
     );
   }
