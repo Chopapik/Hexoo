@@ -9,6 +9,7 @@ import { RightNavSidebar, RightNavOverlay } from "./RightNav/RightNav";
 import { useAppStore } from "@/lib/store/store";
 import CreatePostModal from "@/features/posts/components/CreatePostModal";
 import LogoSvg from "@/features/shared/assets/Logo.svg?url";
+import SessionWatcher from "@/features/auth/components/SessionWatcher";
 
 export const Layout: React.FC<{
   children: React.ReactNode;
@@ -42,6 +43,7 @@ export const Layout: React.FC<{
 
   return (
     <div className="flex justify-center bg-page-background w-full min-h-screen">
+      <SessionWatcher />
       <div className="flex flex-col w-full max-w-[1440px]">
         <header className="sticky top-0 z-50 bg-page-background px-2 py-2 md:px-4 md:py-4">
           <div className="mx-auto w-full">
