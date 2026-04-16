@@ -154,9 +154,7 @@ export default function PostOptions({
                     <button
                       onClick={() => setIsDeleteModalOpen(true)}
                       className={`${
-                        active
-                          ? "bg-red-500/10 text-red-400"
-                          : "text-red-500"
+                        active ? "bg-red-500/10 text-red-400" : "text-red-500"
                       } group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors`}
                     >
                       <BsTrash /> Usuń post
@@ -167,7 +165,9 @@ export default function PostOptions({
             )}
 
             {!isAuthor && (
-              <div className={`p-1 ${isAuthor ? "border-t border-white/10" : ""}`}>
+              <div
+                className={`p-1 ${isAuthor ? "border-t border-white/10" : ""}`}
+              >
                 <Menu.Item>
                   {({ active }) => (
                     <button
@@ -215,9 +215,7 @@ export default function PostOptions({
                       onClick={() => setPendingAction("reject")}
                       disabled={modAction.isPending}
                       className={`${
-                        active
-                          ? "bg-red-500/10 text-red-400"
-                          : "text-red-500"
+                        active ? "bg-red-500/10 text-red-400" : "text-red-500"
                       } group flex w-full items-center gap-3 rounded-lg px-2 py-2 text-sm transition-colors`}
                     >
                       <BsTrash /> Usuń natychmiast

@@ -1,9 +1,8 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UpdateProfileData, UpdateProfileSchema } from "../me.type";
-import { useImagePicker } from "@/features/shared/hooks/useImagePicker";
 import { PublicUserResponseDto } from "@/features/users/types/user.dto";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export function useUpdateProfileForm(user: PublicUserResponseDto | null) {
   const {
@@ -11,6 +10,7 @@ export function useUpdateProfileForm(user: PublicUserResponseDto | null) {
     handleSubmit,
     setValue,
     setError,
+    clearErrors,
     watch,
     formState: { errors, isDirty },
     reset,
@@ -26,22 +26,78 @@ export function useUpdateProfileForm(user: PublicUserResponseDto | null) {
     },
   });
 
-  const { imagePreview, fileInputRef, handleFileChange, triggerPicker, removeImage } =
-    useImagePicker({
-      initialPreview: user?.avatarUrl,
-      onImageChanged: (file) => {
-        setValue("avatarFile", file, {
-          shouldValidate: true,
-          shouldDirty: true,
-        });
-      },
-    });
+  const [imagePreview, setImagePreview] = useState<string | null>(
+    user?.avatarUrl ?? null,
+  );
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const revokeBlobPreviewIfNeeded = (preview: string | null) => {
+    if (preview && preview.startsWith("blob:")) {
+      URL.revokeObjectURL(preview);
+    }
+  };
 
   useEffect(() => {
     if (user) {
+      setImagePreview((prev) => {
+        revokeBlobPreviewIfNeeded(prev);
+        return user.avatarUrl ?? null;
+      });
       reset({ name: user.name, avatarFile: undefined });
     }
   }, [user, reset]);
+
+  useEffect(() => {
+    return () => {
+      revokeBlobPreviewIfNeeded(imagePreview);
+    };
+  }, [imagePreview]);
+
+  const triggerPicker = () => {
+    fileInputRef.current?.click();
+  };
+
+  const setCroppedAvatar = (file: File, previewUrl: string) => {
+    setImagePreview((prev) => {
+      revokeBlobPreviewIfNeeded(prev);
+      return previewUrl;
+    });
+    clearErrors("avatarFile");
+    setValue("avatarFile", file, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+  };
+
+  const validateAvatarFile = (file: File): boolean => {
+    const parsed = UpdateProfileSchema.shape.avatarFile.safeParse(file);
+    if (parsed.success) {
+      clearErrors("avatarFile");
+      return true;
+    }
+
+    const firstIssueMessage = parsed.error.issues[0]?.message ?? "wrong_file_type";
+    setError("avatarFile", {
+      type: "manual",
+      message: firstIssueMessage,
+    });
+    return false;
+  };
+
+  const clearSelectedAvatar = () => {
+    setImagePreview((prev) => {
+      revokeBlobPreviewIfNeeded(prev);
+      return null;
+    });
+    setValue("avatarFile", undefined, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+    clearErrors("avatarFile");
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
 
   const handleServerErrors = (errorCode: string, field?: string) => {
     if (field === "name") {
@@ -70,14 +126,6 @@ export function useUpdateProfileForm(user: PublicUserResponseDto | null) {
     return hasChanges ? formData : null;
   };
 
-  const handleRemoveImage = () => {
-    removeImage();
-    setValue("avatarFile", undefined, {
-      shouldValidate: true,
-      shouldDirty: true,
-    });
-  };
-
   return {
     register,
     handleSubmit,
@@ -87,9 +135,10 @@ export function useUpdateProfileForm(user: PublicUserResponseDto | null) {
     prepareFormData,
     imagePreview,
     fileInputRef,
-    handleFileChange,
     triggerPicker,
-    handleRemoveImage,
+    setCroppedAvatar,
+    validateAvatarFile,
+    clearSelectedAvatar,
     watch,
   };
 }
