@@ -1,14 +1,9 @@
--- Seed initial admin user for local development.
--- This runs automatically on `supabase db reset` / first `supabase start`
--- because [db.seed] is enabled in `supabase/config.toml`.
-
-create extension if not exists "pgcrypto";
+-- Development-only admin account.
 
 do $$
 declare
   admin_id uuid;
 begin
-  -- Only create the admin if it doesn't already exist
   if not exists (
     select 1
     from auth.users
@@ -16,7 +11,6 @@ begin
   ) then
     admin_id := gen_random_uuid();
 
-    -- Create auth user (email/password)
     insert into auth.users (
       id,
       instance_id,
@@ -43,7 +37,7 @@ begin
       crypt('admin1234', gen_salt('bf')),
       now(),
       '{"provider":"email","providers":["email"]}'::jsonb,
-      '{"name":"Admin"}'::jsonb,
+      '{"name":"Admin","role":"admin"}'::jsonb,
       now(),
       now(),
       '',
@@ -52,7 +46,6 @@ begin
       ''
     );
 
-    -- Create corresponding identity entry
     insert into auth.identities (
       id,
       user_id,
@@ -77,7 +70,6 @@ begin
       now()
     );
 
-    -- Link to your domain `public.users` table as admin
     insert into public.users (
       uid,
       name,
@@ -99,4 +91,3 @@ begin
   end if;
 end;
 $$;
-
