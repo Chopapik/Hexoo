@@ -14,7 +14,7 @@ import Image from "next/image";
 import { parseUpdateProfileErrorMessages } from "../utils/updateProfileErrorMap";
 import type { UpdateProfileData } from "../me.type";
 import ValidationMessage from "@/features/shared/components/ui/ValidationMessage";
-import AvatarEditor from "react-avatar-editor";
+import AvatarEditor, { type AvatarEditorRef } from "react-avatar-editor";
 import { canvasToFile } from "../utils/avatarEditor";
 
 interface EditProfileModalProps {
@@ -45,7 +45,7 @@ export default function EditProfileModal({
     clearSelectedAvatar,
     watch,
   } = useUpdateProfileForm(user);
-  const editorRef = useRef<AvatarEditor | null>(null);
+  const editorRef = useRef<AvatarEditorRef | null>(null);
   const [isCropping, setIsCropping] = useState(false);
   const [cropImageFile, setCropImageFile] = useState<File | null>(null);
   const [cropImageSrc, setCropImageSrc] = useState<string | null>(null);
@@ -140,7 +140,8 @@ export default function EditProfileModal({
       cropImageFile.type === "image/webp"
         ? cropImageFile.type
         : "image/png";
-    const extension = outputType === "image/jpeg" ? "jpg" : outputType.split("/")[1];
+    const extension =
+      outputType === "image/jpeg" ? "jpg" : outputType.split("/")[1];
 
     try {
       const croppedFile = await canvasToFile(canvas, {

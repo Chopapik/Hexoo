@@ -13,7 +13,11 @@ import type {
   PublicCommentResponseDto as PublicCommentResponse,
   UpdateCommentRequestDto as UpdateCommentRequest,
 } from "../../types/comment.dto";
-import { AddCommentSchema, UpdateCommentSchema, ReportCommentSchema } from "../../types/comment.dto";
+import {
+  AddCommentSchema,
+  UpdateCommentSchema,
+  ReportCommentSchema,
+} from "../../types/comment.dto";
 import type { CreateCommentPayload } from "../../types/comment.payload";
 import type { CommentService as ICommentService } from "./comment.service.interface";
 import { logActivity } from "@/features/activity/api/services";
@@ -152,7 +156,10 @@ export class CommentService implements ICommentService {
     const comments = await this.getCommentsByPostId(comment.postId);
     const updated = comments.find((c) => c.id === commentId);
     if (!updated) {
-      throw createAppError({ code: "NOT_FOUND", message: "Comment not found after update" });
+      throw createAppError({
+        code: "NOT_FOUND",
+        message: "Comment not found after update",
+      });
     }
     return updated;
   }
