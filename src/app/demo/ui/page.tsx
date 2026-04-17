@@ -169,6 +169,7 @@ const demoPost: PublicPostResponseDto = {
   commentsCount: 5,
   createdAt: new Date(),
   isNSFW: false,
+  isEdited: false,
 };
 
 const demoPostNsfw: PublicPostResponseDto = {
@@ -645,7 +646,11 @@ export default function UiDemoPage() {
               }}
             />
             <PostFooter post={demoPost} onCommentClick={() => {}} />
-            <PostOptions postId={demoPost.id} authorId={demoPost.userId} />
+            <PostOptions
+              postId={demoPost.id}
+              authorId={demoPost.userId}
+              post={demoPost}
+            />
             <PostCard post={demoPost} />
             <PostCard post={demoPostNsfw} />
             <PostCard post={demoPostNsfw} revealNSFW />

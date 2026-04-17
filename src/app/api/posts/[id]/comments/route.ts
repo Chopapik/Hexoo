@@ -1,4 +1,4 @@
-import { withErrorHandling } from "@/lib/http/routeWrapper";
+import { AnyRouteContext, withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import {
   addComment,
@@ -8,7 +8,7 @@ import { NextRequest } from "next/server";
 import { getUserFromSession } from "@/features/auth/api/utils/session-user.service";
 
 export const POST = withErrorHandling(
-  async (req: NextRequest, context: { params: Promise<{ id: string }> }) => {
+  async (req: NextRequest, context: AnyRouteContext<{ id: string }>) => {
     const { id } = await context.params;
     const session = await getUserFromSession();
     const contentType = req.headers.get("content-type") || "";
@@ -33,7 +33,7 @@ export const POST = withErrorHandling(
 );
 
 export const GET = withErrorHandling(
-  async (_req: NextRequest, context: { params: Promise<{ id: string }> }) => {
+  async (_req: NextRequest, context: AnyRouteContext<{ id: string }>) => {
     const { id } = await context.params;
     const session = await getUserFromSession().catch(() => null);
     const comments = await getCommentsByPostId(session, id);

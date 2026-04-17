@@ -28,7 +28,7 @@ export const POST = withErrorHandling(async (req: NextRequest) => {
 
   const ip = await getClientIp();
 
-  const result = await createSession(idToken, ip, refreshToken);
+  const result = await createSession(idToken, ip);
 
   return handleSuccess(result);
 });

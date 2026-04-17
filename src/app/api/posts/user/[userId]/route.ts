@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { withErrorHandling } from "@/lib/http/routeWrapper";
+import { AnyRouteContext, withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import { getPostsByUserId } from "@/features/posts/api/services";
 import { getUserFromSession } from "@/features/auth/api/utils/session-user.service";
@@ -7,7 +7,7 @@ import { getUserFromSession } from "@/features/auth/api/utils/session-user.servi
 export const GET = withErrorHandling(
   async (
     req: NextRequest,
-    { params }: { params: Promise<{ userId: string }> },
+    { params }: AnyRouteContext<{ userId: string }>,
   ) => {
     const { userId } = await params;
     const session = await getUserFromSession().catch(() => null);
