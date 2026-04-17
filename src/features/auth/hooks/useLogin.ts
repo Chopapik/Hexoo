@@ -8,6 +8,7 @@ import { supabaseClient } from "@/lib/supabaseClient";
 import useRecaptcha from "@/features/shared/hooks/useRecaptcha";
 import toast from "react-hot-toast";
 import type { AuthBlockData } from "@/features/shared/components/security/AuthBlockDisplay";
+import type { UserRole } from "@/features/users/types/user.type";
 
 type ErrorCallback = (
   errorCode: string,
@@ -20,7 +21,7 @@ type LoginResponse = {
     uid: string;
     email: string;
     name: string;
-    role: string;
+    role: UserRole;
     avatarUrl?: string;
     isRestricted?: boolean;
     isBanned?: boolean;
