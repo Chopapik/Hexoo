@@ -5,7 +5,7 @@ import { NextRequest } from "next/server";
 type RouteContext = { params: Promise<Record<string, string>> };
 
 export function withErrorHandling(
-  handler: (req: NextRequest, context?: RouteContext) => Promise<Response>
+  handler: (req: NextRequest, context?: RouteContext) => Promise<Response>,
 ) {
   return async (req: NextRequest, context?: RouteContext) => {
     try {
@@ -19,7 +19,7 @@ export function withErrorHandling(
         appError = new AppError({
           message: caught.message || "Unexpected error",
           details: {
-            message: caught.message,
+            message: caught.message,    
             stack: caught.stack ?? undefined,
           },
         });
@@ -35,7 +35,7 @@ export function withErrorHandling(
         appError.message,
         appError.data,
         appError.status,
-        appError.details
+        appError.details,
       );
     }
   };
