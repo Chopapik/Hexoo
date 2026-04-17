@@ -24,6 +24,24 @@ interface ModerationLogRow {
 
 const TABLE = "moderation_logs";
 
+function toModerationResourceType(
+  value: string | null,
+): ModerationResourceType | undefined {
+  if (value === "post" || value === "comment") {
+    return value;
+  }
+  return undefined;
+}
+
+function toModerationSource(
+  value: string | null,
+): ModerationLogPayload["source"] | undefined {
+  if (value === "ai" || value === "user_report" || value === "moderator") {
+    return value;
+  }
+  return undefined;
+}
+
 function payloadToRow(payload: ModerationLogPayload): Record<string, unknown> {
   return {
     user_id: payload.userId,
@@ -49,9 +67,9 @@ function rowToPayload(row: ModerationLogRow): ModerationLogPayload {
     verdict: row.verdict,
     categories: row.categories ?? [],
     actionTaken: row.action_taken,
-    resourceType: row.resource_type ?? undefined,
+    resourceType: toModerationResourceType(row.resource_type),
     resourceId: row.resource_id ?? undefined,
-    source: row.source ?? undefined,
+    source: toModerationSource(row.source),
     actorId: row.actor_id ?? undefined,
     reasonSummary: row.reason_summary ?? undefined,
     reasonDetails: row.reason_details ?? undefined,
