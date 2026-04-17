@@ -25,8 +25,6 @@ import Hexoo3Dv2 from "@/features/shared/components/layout/RightNav/Hexoo3Dv2";
 import HexooBackground from "@/features/shared/components/layout/HexooBackground";
 import { LegalPageWrapper } from "@/features/shared/components/layout/LegalPageWrapper";
 import { NavItem } from "@/features/shared/components/layout/LeftNav/NavItem";
-import AuthBlockDisplay from "@/features/shared/components/security/AuthBlockDisplay";
-import ThrottleBlockDisplay from "@/features/shared/components/security/ThrottleBlockDisplay";
 import { Avatar } from "@/features/posts/components/Avatar";
 import CreatePostButton from "@/features/posts/components/CreatePostButton";
 import { PostCard } from "@/features/posts/components/PostCard";
@@ -615,20 +613,6 @@ export default function UiDemoPage() {
           <div className="grid gap-6 lg:grid-cols-2">
             <LoginForm />
             <RegisterForm />
-            <AuthBlockDisplay
-              data={{
-                ipBlocked: true,
-                maxAnonymousAttempts: 5,
-                lockoutUntil: Date.now() + 1800 * 1000,
-              }}
-            />
-            <ThrottleBlockDisplay
-              data={{
-                ip: "127.0.0.1",
-                retryAfter: Date.now() + 1000 * 60 * 60,
-                limit: 60,
-              }}
-            />
           </div>
         </Section>
 

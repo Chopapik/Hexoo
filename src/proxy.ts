@@ -7,9 +7,6 @@ export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   const isApiRoute = pathname.startsWith("/api");
   const isAuthApiRoute = pathname.startsWith("/api/auth");
-  const isBypassedRoute =
-    pathname.startsWith("/api/security") ||
-    pathname.startsWith("/critical-error");
   const isDemoRoute = pathname.startsWith("/demo");
 
   const appEnv = process.env.APP_ENV;
@@ -18,10 +15,6 @@ export async function proxy(request: NextRequest) {
 
   if (isDemoRoute && isProduction && !isDevApp) {
     return NextResponse.redirect(new URL("/", request.url));
-  }
-
-  if (isBypassedRoute) {
-    return NextResponse.next();
   }
 
   const isPublicPath =

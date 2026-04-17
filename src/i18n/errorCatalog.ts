@@ -88,12 +88,6 @@ export const ERROR_CATALOG: Record<GlobalErrorCode, ErrorCatalogEntry> = {
       en: "Validation error",
     },
   },
-  RATE_LIMIT: {
-    message: {
-      pl: "Za dużo prób. Spróbuj ponownie później.",
-      en: "Too many attempts. Please try again later.",
-    },
-  },
   EXTERNAL_SERVICE: {
     message: {
       pl: "Problem z zewnętrzną usługą",
@@ -178,13 +172,6 @@ export const ERROR_CATALOG: Record<GlobalErrorCode, ErrorCatalogEntry> = {
       en: "Your account has been banned",
     },
   },
-  SECURITY_LOCKOUT: {
-    message: {
-      pl: "Konto tymczasowo zablokowane z powodów bezpieczeństwa",
-      en: "Account temporarily locked for security reasons",
-    },
-  },
-
   // ===== CLIENT / ZOD validation =====
 
   // auth / login / register

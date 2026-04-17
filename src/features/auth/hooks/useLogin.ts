@@ -7,14 +7,9 @@ import { ApiError } from "@/lib/AppError";
 import { supabaseClient } from "@/lib/supabaseClient";
 import useRecaptcha from "@/features/shared/hooks/useRecaptcha";
 import toast from "react-hot-toast";
-import type { AuthBlockData } from "@/features/shared/components/security/AuthBlockDisplay";
 import type { UserRole } from "@/features/users/types/user.type";
 
-type ErrorCallback = (
-  errorCode: string,
-  field?: string,
-  data?: AuthBlockData,
-) => void;
+type ErrorCallback = (errorCode: string, field?: string) => void;
 
 type LoginResponse = {
   user: {
@@ -66,8 +61,6 @@ export default function useLogin(onError: ErrorCallback) {
 
         if (msg.includes("invalid") || msg.includes("credentials")) {
           onError("INVALID_CREDENTIALS", "root");
-        } else if (msg.includes("too many") || msg.includes("rate")) {
-          onError("RATE_LIMIT", "root");
         } else if (msg.includes("disabled") || msg.includes("banned")) {
           onError("ACCOUNT_BANNED", "root");
         } else {

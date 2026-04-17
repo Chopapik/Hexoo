@@ -1,10 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
-import fetchClient from "@/lib/fetchClient";
-import { useCriticalError } from "@/features/shared/hooks/useCriticalError";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+import fetchClient from "@/lib/fetchClient";
 
 export const useDeleteAccount = () => {
-  const { handleCriticalError } = useCriticalError();
   const router = useRouter();
 
   const mutation = useMutation({
@@ -15,7 +14,8 @@ export const useDeleteAccount = () => {
       router.push("/login");
     },
     onError: (error) => {
-      handleCriticalError(error);
+      console.error(error);
+      toast.error("Nie udało się usunąć konta. Spróbuj ponownie.");
     },
   });
 
