@@ -12,6 +12,7 @@ import useEditPost from "../hooks/useEditPost";
 import { PublicPostResponseDto, UpdatePostRequestDto } from "../types/post.dto";
 import { parseErrorMessages } from "../utils/postErrorMap";
 import { POST_MAX_CHARS } from "../types/post.dto";
+import { ApiError } from "@/lib/AppError";
 
 interface EditPostModalProps {
   isOpen: boolean;
@@ -61,16 +62,13 @@ export default function EditPostModal({
       onClose();
     },
     (error) => {
-      const parsedError = parseErrorMessages(error);
+      const code = error instanceof ApiError ? error.code : "INTERNAL_ERROR";
+      const parsedError = parseErrorMessages(code);
 
       if (parsedError?.text) {
         setRootError(parsedError.text);
       } else {
-        const message =
-          error?.response?.data?.message ||
-          "Twój post nie mógł zostać zaktualizowany z powodów bezpieczeństwa.";
-
-        setModerationBlockReason(message);
+        setRootError("Wystąpił nieznany błąd. Spróbuj ponownie.");
       }
     },
   );
