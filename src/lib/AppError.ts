@@ -4,7 +4,6 @@ export type ErrorCode =
   | "FORBIDDEN"
   | "NOT_FOUND"
   | "VALIDATION_ERROR"
-  | "RATE_LIMIT"
   | "EXTERNAL_SERVICE"
   | "DB_ERROR"
   | "INTERNAL_ERROR"
@@ -18,8 +17,7 @@ export type ErrorCode =
   | "UNAUTHORIZED_ACTION"
   | "SERVICE_UNAVAILABLE"
   | "POLICY_VIOLATION"
-  | "ACCOUNT_BANNED"
-  | "SECURITY_LOCKOUT";
+  | "ACCOUNT_BANNED";
 
 const ErrorStatusMap: Record<ErrorCode, number> = {
   AUTH_REQUIRED: 401,
@@ -27,7 +25,6 @@ const ErrorStatusMap: Record<ErrorCode, number> = {
   FORBIDDEN: 403,
   NOT_FOUND: 404,
   VALIDATION_ERROR: 400,
-  RATE_LIMIT: 429,
   EXTERNAL_SERVICE: 502,
   DB_ERROR: 500,
   INTERNAL_ERROR: 500,
@@ -42,7 +39,6 @@ const ErrorStatusMap: Record<ErrorCode, number> = {
   SERVICE_UNAVAILABLE: 503,
   POLICY_VIOLATION: 422,
   ACCOUNT_BANNED: 403,
-  SECURITY_LOCKOUT: 423,
 };
 
 type AppErrorArgs = {
