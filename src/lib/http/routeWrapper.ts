@@ -2,12 +2,17 @@ import { handleError } from "./responseHelpers";
 import { AppError } from "../AppError";
 import { NextRequest } from "next/server";
 
-type RouteContext = { params: Promise<Record<string, string>> };
+export type RouteParamValue = string | string[] | undefined;
+export type AnyRouteParams = Record<string, RouteParamValue>;
 
-export function withErrorHandling(
-  handler: (req: NextRequest, context?: RouteContext) => Promise<Response>,
+export type AnyRouteContext<P extends AnyRouteParams = AnyRouteParams> = {
+  params: Promise<P>;
+};
+
+export function withErrorHandling<P extends AnyRouteParams>(
+  handler: (req: NextRequest, context: AnyRouteContext<P>) => Promise<Response>,
 ) {
-  return async (req: NextRequest, context?: RouteContext) => {
+  return async (req: NextRequest, context: AnyRouteContext<P>) => {
     try {
       return await handler(req, context);
     } catch (caught) {
@@ -19,7 +24,7 @@ export function withErrorHandling(
         appError = new AppError({
           message: caught.message || "Unexpected error",
           details: {
-            message: caught.message,    
+            message: caught.message,
             stack: caught.stack ?? undefined,
           },
         });

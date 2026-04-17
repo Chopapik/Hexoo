@@ -1,4 +1,4 @@
-import { withErrorHandling } from "@/lib/http/routeWrapper";
+import { AnyRouteContext, withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import { NextRequest } from "next/server";
 import {
@@ -10,7 +10,7 @@ import { getUserFromSession } from "@/features/auth/api/utils/session-user.servi
 export const PUT = withErrorHandling(
   async (
     req: NextRequest,
-    context: { params: Promise<{ commentId: string }> },
+    context: AnyRouteContext<{ commentId: string }>,
   ) => {
     const { commentId } = await context.params;
     const session = await getUserFromSession();
@@ -23,7 +23,7 @@ export const PUT = withErrorHandling(
 export const DELETE = withErrorHandling(
   async (
     _req: NextRequest,
-    context: { params: Promise<{ commentId: string }> },
+    context: AnyRouteContext<{ commentId: string }>,
   ) => {
     const { commentId } = await context.params;
     const session = await getUserFromSession();

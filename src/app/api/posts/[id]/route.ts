@@ -1,4 +1,4 @@
-import { withErrorHandling } from "@/lib/http/routeWrapper";
+import { AnyRouteContext, withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import { NextRequest } from "next/server";
 import { UpdatePostRequestDto } from "@/features/posts/types/post.dto";
@@ -10,7 +10,7 @@ import {
 import { getUserFromSession } from "@/features/auth/api/utils/session-user.service";
 
 export const GET = withErrorHandling(
-  async (req: NextRequest, context: { params: Promise<{ id: string }> }) => {
+  async (req: NextRequest, context: AnyRouteContext<{ id: string }>) => {
     const { id } = await context.params;
     const session = await getUserFromSession().catch(() => null);
     const post = await getPostById(session, id);
@@ -19,7 +19,7 @@ export const GET = withErrorHandling(
 );
 
 export const PUT = withErrorHandling(
-  async (req: NextRequest, context: { params: Promise<{ id: string }> }) => {
+  async (req: NextRequest, context: AnyRouteContext<{ id: string }>) => {
     const { id } = await context.params;
     const session = await getUserFromSession();
     const contentType = req.headers.get("content-type") || "";
@@ -45,7 +45,7 @@ export const PUT = withErrorHandling(
 );
 
 export const DELETE = withErrorHandling(
-  async (_req: NextRequest, context: { params: Promise<{ id: string }> }) => {
+  async (_req: NextRequest, context: AnyRouteContext<{ id: string }>) => {
     const { id } = await context.params;
     const session = await getUserFromSession();
     await deletePost(session, id);

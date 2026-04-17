@@ -1,11 +1,11 @@
 import { toggleLike } from "@/features/likes/api/services";
-import { withErrorHandling } from "@/lib/http/routeWrapper";
+import { AnyRouteContext, withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import { NextRequest } from "next/server";
 import { getUserFromSession } from "@/features/auth/api/utils/session-user.service";
 
 export const POST = withErrorHandling(
-  async (req: NextRequest, context: { params: Promise<{ id: string }> }) => {
+  async (req: NextRequest, context: AnyRouteContext<{ id: string }>) => {
     const { id } = await context.params;
     const session = await getUserFromSession();
     const result = await toggleLike(session, id, "posts");

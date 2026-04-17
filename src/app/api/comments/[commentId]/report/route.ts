@@ -1,4 +1,4 @@
-import { withErrorHandling } from "@/lib/http/routeWrapper";
+import { AnyRouteContext, withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import { NextRequest } from "next/server";
 import { reportComment } from "@/features/comments/api/services";
@@ -10,7 +10,7 @@ import { formatZodErrorFlat } from "@/lib/zod";
 export const POST = withErrorHandling(
   async (
     req: NextRequest,
-    context: { params: Promise<{ commentId: string }> },
+    context: AnyRouteContext<{ commentId: string }>,
   ) => {
     const { commentId } = await context.params;
     const session = await getUserFromSession();
