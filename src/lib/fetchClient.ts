@@ -5,6 +5,10 @@ const DEFAULT_TIMEOUT = 10000;
 
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
 
+type ApiErrorArgs = ConstructorParameters<typeof ApiError>[0];
+type ApiErrorCode = ApiErrorArgs["code"];
+type ApiErrorData = ApiErrorArgs["data"];
+
 /**
  * Options for convenience methods (get, post, put, etc.)
  * method and body are excluded because they're passed separately in each method
@@ -16,12 +20,54 @@ interface FetchOptions extends Omit<RequestInit, "method" | "body"> {
 /**
  * Internal request configuration used by the request function
  */
-interface RequestConfig<TBody = unknown> {
+interface RequestConfig<TBody = unknown> extends Omit<
+  RequestInit,
+  "method" | "body" | "headers" | "signal"
+> {
   method?: HttpMethod;
   body?: TBody;
-  headers?: Record<string, string>;
-  signal?: AbortSignal;
+  headers?: HeadersInit;
+  signal?: AbortSignal | null;
   timeout?: number;
+}
+
+type ApiSuccessResponse<T> = {
+  ok: true;
+  data: T;
+};
+
+type ApiErrorResponse = {
+  ok: false;
+  error: {
+    code: ApiErrorCode;
+    data?: ApiErrorData;
+  };
+};
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return !!value && typeof value === "object" && !Array.isArray(value);
+}
+
+function isApiSuccessResponse<T>(body: unknown): body is ApiSuccessResponse<T> {
+  return isRecord(body) && body.ok === true && "data" in body;
+}
+
+function isApiErrorResponse(body: unknown): body is ApiErrorResponse {
+  if (!isRecord(body) || body.ok !== false || !("error" in body)) {
+    return false;
+  }
+
+  const error = body.error;
+
+  if (!isRecord(error) || typeof error.code !== "string") {
+    return false;
+  }
+
+  if ("data" in error && error.data !== undefined && !isRecord(error.data)) {
+    return false;
+  }
+
+  return true;
 }
 
 async function handleResponse<T>(response: Response): Promise<T> {
@@ -30,27 +76,18 @@ async function handleResponse<T>(response: Response): Promise<T> {
   try {
     body = await response.json();
   } catch {
-    // Response is not JSON
     body = null;
   }
 
-  // If response is OK (2xx status)
   if (response.ok) {
-    // If the response has ok: true structure, return only the data
-    if (
-      body &&
-      typeof body === "object" &&
-      body.ok === true &&
-      "data" in body
-    ) {
-      return body.data as T;
+    if (isApiSuccessResponse<T>(body)) {
+      return body.data;
     }
+
     return body as T;
   }
 
-  // Handle API logic errors (e.g. invalid password)
-  // The backend sends structured error data
-  if (body && typeof body === "object" && body.ok === false && body.error) {
+  if (isApiErrorResponse(body)) {
     throw new ApiError({
       code: body.error.code,
       status: response.status,
@@ -58,18 +95,16 @@ async function handleResponse<T>(response: Response): Promise<T> {
     });
   }
 
-  // Handle 404 error
   if (response.status === 404) {
     throw new ApiError({
-      code: "NOT_FOUND",
+      code: "NOT_FOUND" as ApiErrorCode,
       status: 404,
     });
   }
 
-  // Handle other server errors
   throw new ApiError({
-    code: "EXTERNAL_SERVICE",
-    status: response.status ?? 502,
+    code: "EXTERNAL_SERVICE" as ApiErrorCode,
+    status: response.status || 502,
   });
 }
 
@@ -81,17 +116,15 @@ function handleNetworkError(error: unknown): never {
     throw error;
   }
 
-  // Check for abort/timeout
   if (error instanceof DOMException && error.name === "AbortError") {
     throw new ApiError({
-      code: "NETWORK_TIMEOUT",
+      code: "NETWORK_TIMEOUT" as ApiErrorCode,
       status: 0,
     });
   }
 
-  // Network error (no connection)
   throw new ApiError({
-    code: "NETWORK_ERROR",
+    code: "NETWORK_ERROR" as ApiErrorCode,
     status: 0,
   });
 }
@@ -101,7 +134,7 @@ function handleNetworkError(error: unknown): never {
  */
 function createTimeoutController(
   timeout: number,
-  externalSignal?: AbortSignal,
+  externalSignal?: AbortSignal | null,
 ): { controller: AbortController; cleanup: () => void } {
   const controller = new AbortController();
 
@@ -109,17 +142,23 @@ function createTimeoutController(
     controller.abort();
   }, timeout);
 
-  // If external signal is provided, link it
+  const abortListener = () => {
+    controller.abort();
+    clearTimeout(timeoutId);
+  };
+
   if (externalSignal) {
-    externalSignal.addEventListener("abort", () => {
-      controller.abort();
-      clearTimeout(timeoutId);
-    });
+    externalSignal.addEventListener("abort", abortListener);
   }
 
   return {
     controller,
-    cleanup: () => clearTimeout(timeoutId),
+    cleanup: () => {
+      clearTimeout(timeoutId);
+      if (externalSignal) {
+        externalSignal.removeEventListener("abort", abortListener);
+      }
+    },
   };
 }
 
@@ -133,34 +172,31 @@ async function request<T, TBody = unknown>(
   const {
     method = "GET",
     body,
-    headers = {},
+    headers,
     signal,
     timeout = DEFAULT_TIMEOUT,
+    ...rest
   } = config;
 
   const url = endpoint.startsWith("http") ? endpoint : `${BASE_URL}${endpoint}`;
 
   const { controller, cleanup } = createTimeoutController(timeout, signal);
 
-  const defaultHeaders: Record<string, string> = {};
+  const defaultHeaders = new Headers(headers);
 
-  // Auto-set Content-Type for JSON bodies (not for FormData)
-  if (body && !(body instanceof FormData)) {
-    defaultHeaders["Content-Type"] = "application/json";
+  if (body !== undefined && !(body instanceof FormData)) {
+    defaultHeaders.set("Content-Type", "application/json");
   }
 
   const fetchOptions: RequestInit = {
+    ...rest,
     method,
-    headers: {
-      ...defaultHeaders,
-      ...headers,
-    },
-    credentials: "include", // equivalent to withCredentials: true
+    headers: defaultHeaders,
+    credentials: "include",
     signal: controller.signal,
   };
 
-  // Handle body
-  if (body) {
+  if (body !== undefined) {
     if (body instanceof FormData) {
       fetchOptions.body = body;
     } else {
@@ -170,11 +206,11 @@ async function request<T, TBody = unknown>(
 
   try {
     const response = await fetch(url, fetchOptions);
-    cleanup();
     return await handleResponse<T>(response);
   } catch (error) {
-    cleanup();
     return handleNetworkError(error);
+  } finally {
+    cleanup();
   }
 }
 
