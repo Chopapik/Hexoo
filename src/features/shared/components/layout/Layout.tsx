@@ -11,6 +11,30 @@ import CreatePostModal from "@/features/posts/components/CreatePostModal";
 import LogoSvg from "@/features/shared/assets/Logo.svg?url";
 import SessionWatcher from "@/features/auth/components/SessionWatcher";
 
+const leftRailAsideClass =
+  "hidden md:block sticky top-[calc(56.6px+16px+16px)] h-[calc(100vh-56.6px-16px-16px-16px)] shrink-0";
+const rightRailAsideClass =
+  "hidden lg:block sticky top-[calc(56.6px+16px+16px)] h-[calc(100vh-56.6px-16px-16px-16px)] shrink-0";
+
+/** Ta sama szerokość co `LeftNav` / `RightNavSidebar`, żeby gość miał feed wyśrodkowany jak zalogowany. */
+function LeftRailWidthSpacer() {
+  return (
+    <div
+      className="invisible pointer-events-none md:w-20 xl:w-72 shrink-0"
+      aria-hidden
+    />
+  );
+}
+
+function RightRailWidthSpacer() {
+  return (
+    <div
+      className="invisible pointer-events-none md:w-20 lg:w-[244px] xl:w-72 shrink-0"
+      aria-hidden
+    />
+  );
+}
+
 export const Layout: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
@@ -52,23 +76,31 @@ export const Layout: React.FC<{
         </header>
         <div className="mx-auto w-full px-2 md:px-4 flex-1">
           <div className="flex gap-4 items-start">
-            <aside className="hidden md:block sticky top-[calc(56.6px+16px+16px)] h-[calc(100vh-56.6px-16px-16px-16px)]">
-              <LeftNav onOpenRight={openRight} user={user} />
+            <aside className={leftRailAsideClass}>
+              {user ? (
+                <LeftNav onOpenRight={openRight} user={user} />
+              ) : (
+                <LeftRailWidthSpacer />
+              )}
             </aside>
             <main className="flex-1 min-w-0">{children}</main>
-            <aside className="hidden lg:block sticky top-[calc(56.6px+16px+16px)] h-[calc(100vh-56.6px-16px-16px-16px)]">
-              <RightNavSidebar />
+            <aside className={rightRailAsideClass}>
+              {user ? <RightNavSidebar /> : <RightRailWidthSpacer />}
             </aside>
           </div>
         </div>
-        <div className="md:hidden sticky bottom-0 px-2 pb-2 bg-page-background">
-          <div className="mx-auto w-full pt-2">
-            <BottomNav onOpenRight={openRight} />
+        {user ? (
+          <div className="md:hidden sticky bottom-0 px-2 pb-2 bg-page-background">
+            <div className="mx-auto w-full pt-2">
+              <BottomNav onOpenRight={openRight} />
+            </div>
           </div>
-        </div>
-        <RightNavOverlay open={isRightNavOpen} onClose={closeRight} />
+        ) : null}
+        {user ? (
+          <RightNavOverlay open={isRightNavOpen} onClose={closeRight} />
+        ) : null}
         <CreatePostModal
-          isOpen={isCreatePostModalOpen}
+          isOpen={!!user && isCreatePostModalOpen}
           onClose={closeCreatePostModal}
         />
       </div>
