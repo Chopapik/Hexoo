@@ -10,6 +10,7 @@ import { useLoginForm } from "../hooks/useLoginForm";
 import useLogin from "../hooks/useLogin";
 import { LoginData } from "../types/auth.type";
 import { parseErrorMessages } from "../utils/loginErrorMap";
+import { FcGoogle } from "react-icons/fc";
 
 export default function LoginForm() {
   const { register, handleSubmit, errors, handleServerErrors } = useLoginForm();
@@ -41,6 +42,7 @@ export default function LoginForm() {
           {...register("email")}
           messages={parseErrorMessages(errors.email?.message)}
         />
+
         <TextInput
           label="Hasło"
           type="password"
@@ -48,6 +50,7 @@ export default function LoginForm() {
           {...register("password")}
           messages={parseErrorMessages(errors.password?.message)}
         />
+
         <div className="inline-flex flex-col justify-start items-start overflow-hidden h-8 min-w-1">
           {errors.root && (
             <div className="min-w-48 px-3 h-full bg-red-600 rounded-lg shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] inline-flex justify-center items-center gap-2 overflow-hidden">
@@ -78,6 +81,16 @@ export default function LoginForm() {
           <Link href="/register">Zarejestruj się</Link>
         </span>
       </div>
+
+      <Button
+        text="Zaloguj się przez Google"
+        size="xl"
+        variant="secondary"
+        leftIcon={<FcGoogle className="size-[18px] shrink-0" aria-hidden />}
+        type="button"
+        // onClick={handleGoogleLogin}
+        // isLoading={isGoogleLoading}
+      />
     </div>
   );
 }
