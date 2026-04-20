@@ -17,6 +17,12 @@ export type {
 export interface UserRepository {
   createUser(data: CreateUserPayload): Promise<void>;
 
+  /**
+   * Creates a placeholder user row for an OAuth user
+   * who has not completed username setup yet.
+   */
+  createOAuthPendingUser(data: { uid: string; email: string }): Promise<void>;
+
   getUserByUid(uid: string): Promise<UserEntity | null>;
 
   getUserByName(name: string): Promise<UserEntity | null>;

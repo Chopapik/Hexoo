@@ -42,4 +42,21 @@ export async function checkUsernameAvailability(username: string) {
   return await service.checkUsernameAvailability(username);
 }
 
+export async function oauthLogin(data: {
+  idToken: string;
+  refreshToken?: string;
+}) {
+  const service = getAuthService();
+  return await service.oauthLogin(data);
+}
+
+export async function completeOAuthProfile(data: {
+  idToken: string;
+  refreshToken?: string;
+  name: string;
+}) {
+  const service = getAuthService();
+  return await service.completeOAuthProfile(data);
+}
+
 export { AuthService };

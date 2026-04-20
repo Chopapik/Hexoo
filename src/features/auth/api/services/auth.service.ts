@@ -12,9 +12,15 @@ import type { ActivityType } from "@/features/activity/api/services";
 import type { AuthRepository } from "../repositories/authRepository.interface";
 import type { UserRepository } from "@/features/users/api/repositories/user.repository.interface";
 import { UserRole } from "@/features/users/types/user.type";
-import type { AuthService as IAuthService } from "./auth.service.interface";
+import type {
+  AuthService as IAuthService,
+  CompleteOAuthProfileResult,
+  OAuthLoginResult,
+  OAuthSessionUser,
+} from "./auth.service.interface";
 import { resolveImagePublicUrl } from "@/features/images/utils/resolveImagePublicUrl";
 import type { SessionData } from "@/features/me/me.type";
+import type { UserEntity } from "@/features/users/types/user.entity";
 
 const SESSION_EXPIRES_MS = 7 * 24 * 60 * 60 * 1000;
 
@@ -257,6 +263,217 @@ export class AuthService implements IAuthService {
       available: !user,
       email: normalized,
     };
+  }
+
+  /**
+   * Creates app session cookies for a verified user.
+   */
+  private async issueAppSession(params: {
+    userData: UserEntity;
+    idToken: string;
+    refreshToken?: string;
+    email?: string | null;
+    activityDetails: string;
+  }): Promise<OAuthSessionUser> {
+    const { userData, idToken, refreshToken, email, activityDetails } = params;
+
+    if (userData.isBanned) {
+      await this.logActivity(
+        userData.uid,
+        "LOGIN_FAILED",
+        "Login attempt on banned account",
+      );
+      throw createAppError({
+        code: "ACCOUNT_BANNED",
+        message: "[authService.issueAppSession] User is banned",
+      });
+    }
+
+    const sessionCookie = await this.authRepository.createSessionCookie(
+      idToken,
+      SESSION_EXPIRES_MS,
+    );
+
+    try {
+      await this.logActivity(userData.uid, "LOGIN_SUCCESS", activityDetails);
+    } catch (error) {
+      throw createAppError({
+        code: "INTERNAL_ERROR",
+        message: "Failed to update user stats or log activity",
+        details: error,
+      });
+    }
+
+    await setSessionCookie(sessionCookie);
+    if (refreshToken) await setRefreshCookie(refreshToken);
+
+    return {
+      uid: userData.uid,
+      email: (email ?? userData.email) || undefined,
+      name: userData.name,
+      role: userData.role,
+      avatarUrl: resolveImagePublicUrl(userData.avatarMeta) ?? undefined,
+    };
+  }
+
+  async oauthLogin(data: {
+    idToken: string;
+    refreshToken?: string;
+  }): Promise<OAuthLoginResult> {
+    const { idToken, refreshToken } = data;
+
+    const decoded = await this.authRepository.verifyIdToken(idToken);
+    const { uid, email } = decoded;
+
+    const existing = await this.userRepository.getUserByUid(uid);
+
+    if (existing && existing.hasUsername) {
+      const user = await this.issueAppSession({
+        userData: existing,
+        idToken,
+        refreshToken,
+        email,
+        activityDetails: "User logged in via OAuth",
+      });
+      return { status: "LOGGED_IN", user };
+    }
+
+    if (!existing) {
+      try {
+        await this.userRepository.createOAuthPendingUser({
+          uid,
+          email: email ?? "",
+        });
+        await this.logActivity(
+          uid,
+          "USER_CREATED",
+          "OAuth account created (pending username)",
+        );
+      } catch (error) {
+        // Another request may have created the user already.
+        // Re-read and continue if the row exists.
+        const reread = await this.userRepository.getUserByUid(uid);
+        if (!reread) {
+          throw createAppError({
+            code: "DB_ERROR",
+            message:
+              "[authService.oauthLogin] Failed to create pending OAuth user record.",
+            details: error,
+          });
+        }
+        if (reread.hasUsername) {
+          const user = await this.issueAppSession({
+            userData: reread,
+            idToken,
+            refreshToken,
+            email,
+            activityDetails: "User logged in via OAuth",
+          });
+          return { status: "LOGGED_IN", user };
+        }
+      }
+    }
+
+    return {
+      status: "NEEDS_USERNAME",
+      uid,
+      email: email ?? undefined,
+    };
+  }
+
+  async completeOAuthProfile(data: {
+    idToken: string;
+    refreshToken?: string;
+    name: string;
+  }): Promise<CompleteOAuthProfileResult> {
+    const { idToken, refreshToken, name } = data;
+
+    const decoded = await this.authRepository.verifyIdToken(idToken);
+    const { uid, email } = decoded;
+
+    const trimmed = (name ?? "").trim();
+    if (!trimmed) {
+      throw createAppError({
+        code: "VALIDATION_ERROR",
+        message: "[authService.completeOAuthProfile] Username is required.",
+        details: { field: "name" },
+      });
+    }
+
+    const existing = await this.userRepository.getUserByUid(uid);
+    if (!existing) {
+      throw createAppError({
+        code: "USER_NOT_FOUND",
+        message:
+          "[authService.completeOAuthProfile] No pending OAuth user record found. Retry OAuth login first.",
+      });
+    }
+
+    if (existing.hasUsername) {
+      const user = await this.issueAppSession({
+        userData: existing,
+        idToken,
+        refreshToken,
+        email,
+        activityDetails: "User logged in via OAuth (already onboarded)",
+      });
+      return { user };
+    }
+
+    if (isUsernameBlocked(trimmed)) {
+      throw createAppError({
+        code: "CONFLICT",
+        message: `[authService.completeOAuthProfile] Username '${trimmed}' is not available.`,
+        details: { field: "name" },
+      });
+    }
+
+    if (await isUsernameTaken(trimmed)) {
+      throw createAppError({
+        code: "CONFLICT",
+        message: `[authService.completeOAuthProfile] Username '${trimmed}' is already taken.`,
+        details: { field: "name" },
+      });
+    }
+
+    try {
+      await this.userRepository.updateUser(uid, { name: trimmed });
+    } catch (error) {
+      throw createAppError({
+        code: "DB_ERROR",
+        message:
+          "[authService.completeOAuthProfile] Failed to persist username.",
+        details: error,
+      });
+    }
+
+    try {
+      await this.authRepository.updateUser(uid, { displayName: trimmed });
+    } catch (error) {
+      console.warn(
+        "[authService.completeOAuthProfile] Failed to update Supabase auth metadata.",
+        error,
+      );
+    }
+
+    const refreshed = await this.userRepository.getUserByUid(uid);
+    if (!refreshed) {
+      throw createAppError({
+        code: "INTERNAL_ERROR",
+        message:
+          "[authService.completeOAuthProfile] User disappeared after username update.",
+      });
+    }
+
+    const user = await this.issueAppSession({
+      userData: refreshed,
+      idToken,
+      refreshToken,
+      email,
+      activityDetails: "User completed OAuth onboarding",
+    });
+
+    return { user };
   }
 
   async checkUsernameAvailability(username: string) {
