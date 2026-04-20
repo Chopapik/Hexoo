@@ -38,5 +38,17 @@ export const LoginSchema = z.object({
   password: z.string().min(1, { message: "password_required" }),
 });
 
+export const OAuthCompleteSchema = z.object({
+  name: z
+    .string()
+    .min(3, { message: "name_too_short" })
+    .max(30, { message: "name_too_long" })
+    .regex(/^[a-zA-Z0-9_]+$/, { message: "name_invalid_chars" })
+    .trim(),
+});
+
+export type OAuthCompleteFields = "name";
+
 export type RegisterData = z.infer<typeof RegisterSchema>;
 export type LoginData = z.infer<typeof LoginSchema>;
+export type OAuthCompleteData = z.infer<typeof OAuthCompleteSchema>;

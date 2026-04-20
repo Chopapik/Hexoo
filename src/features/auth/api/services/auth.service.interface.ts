@@ -1,5 +1,21 @@
 import type { SessionData } from "@/features/me/me.type";
 
+export type OAuthSessionUser = {
+  uid: string;
+  email: string | undefined;
+  name: string;
+  role: string;
+  avatarUrl?: string;
+};
+
+export type OAuthLoginResult =
+  | { status: "LOGGED_IN"; user: OAuthSessionUser }
+  | { status: "NEEDS_USERNAME"; uid: string; email: string | undefined };
+
+export type CompleteOAuthProfileResult = {
+  user: OAuthSessionUser;
+};
+
 export interface AuthService {
   logoutUser(): Promise<{ message: string }>;
   /** Restore session using refresh token; returns user or null, clears cookies on failure. */
@@ -37,4 +53,15 @@ export interface AuthService {
     available: boolean;
     username: string;
   }>;
+
+  oauthLogin(data: {
+    idToken: string;
+    refreshToken?: string;
+  }): Promise<OAuthLoginResult>;
+
+  completeOAuthProfile(data: {
+    idToken: string;
+    refreshToken?: string;
+    name: string;
+  }): Promise<CompleteOAuthProfileResult>;
 }

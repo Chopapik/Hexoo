@@ -8,6 +8,7 @@ import warningIconUrl from "@/features/shared/assets/icons/warning.svg?url";
 import Image from "next/image";
 import { useLoginForm } from "../hooks/useLoginForm";
 import useLogin from "../hooks/useLogin";
+import useGoogleLogin from "../hooks/useGoogleLogin";
 import { LoginData } from "../types/auth.type";
 import { parseErrorMessages } from "../utils/loginErrorMap";
 import { FcGoogle } from "react-icons/fc";
@@ -16,6 +17,7 @@ export default function LoginForm() {
   const { register, handleSubmit, errors, handleServerErrors } = useLoginForm();
 
   const { handleLogin, isLoading } = useLogin(handleServerErrors);
+  const { handleGoogleLogin, isLoading: isGoogleLoading } = useGoogleLogin();
 
   const onSubmit = async (data: LoginData) => {
     await handleLogin(data);
@@ -88,8 +90,8 @@ export default function LoginForm() {
         variant="secondary"
         leftIcon={<FcGoogle className="size-[18px] shrink-0" aria-hidden />}
         type="button"
-        // onClick={handleGoogleLogin}
-        // isLoading={isGoogleLoading}
+        onClick={handleGoogleLogin}
+        isLoading={isGoogleLoading}
       />
     </div>
   );

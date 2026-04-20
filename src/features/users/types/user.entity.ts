@@ -4,6 +4,11 @@ import { UserRole } from "./user.type";
 export interface UserEntity {
   uid: string;
   name: string;
+  /**
+   * Whether the user has completed username setup.
+   * Derived from `name_lowercase IS NOT NULL` and non-empty `name`.
+   */
+  hasUsername: boolean;
   email: string;
   role: UserRole;
   avatarMeta?: ImageMeta;

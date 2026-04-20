@@ -16,6 +16,11 @@ function rowToEntity(row: UserRow): UserEntity {
   return {
     uid: row.uid,
     name: row.name,
+    hasUsername:
+      typeof row.name === "string" &&
+      row.name.length > 0 &&
+      row.name_lowercase != null &&
+      row.name_lowercase.length > 0,
     email: row.email,
     role: row.role,
     avatarMeta: row.avatar_meta ?? undefined,
@@ -52,6 +57,26 @@ export class UserSupabaseRepository implements UserRepository {
     const { error } = await supabaseAdmin.from(TABLE).upsert(row, {
       onConflict: "uid",
     });
+    if (error) throw new Error(error.message ?? "Database error");
+  }
+
+  async createOAuthPendingUser(data: {
+    uid: string;
+    email: string;
+  }): Promise<void> {
+    const now = new Date().toISOString();
+    const row = {
+      uid: data.uid,
+      name: "",
+      name_lowercase: null,
+      email: data.email,
+      role: "user" as const,
+      avatar_meta: null,
+      created_at: now,
+      updated_at: now,
+      last_online: now,
+    };
+    const { error } = await supabaseAdmin.from(TABLE).insert(row);
     if (error) throw new Error(error.message ?? "Database error");
   }
 
