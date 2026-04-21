@@ -20,29 +20,29 @@ export const Header = ({ user }: { user: SessionData | null }) => {
           <Link href={`/profile/${user.name}`}>
             <div
               className="flex items-center gap-3 pl-1.5 pr-4 py-1.5 rounded-2xl 
-                         border border-transparent hover:border-white/10 
+                         border border-transparent 
                          hover:bg-white/5 transition-all duration-200 cursor-pointer group"
             >
-              {/* Avatar */}
               <div className="transform transition-transform duration-200">
                 <Avatar src={user.avatarUrl || undefined} alt={user.name} />
               </div>
 
-              {/* Tekst */}
               <div className="flex flex-col justify-center items-start">
                 <span className="text-[10px] leading-none text-text-neutral font-medium tracking-wide uppercase mb-0.5">
                   Zalogowany jako
                 </span>
-                <span className="text-sm leading-none font-bold text-text-main font-Albert_Sans group-hover:text-fuchsia-400 transition-colors">
+                <span className="text-sm leading-none font-bold text-text-main font-Albert_Sans  transition-colors">
                   {user.name}
                 </span>
               </div>
             </div>
           </Link>
         ) : (
-          <Link href="/login">
-            <Button text="Zaloguj się" rightIconUrl={chevronRightUrl} />
-          </Link>
+          <div className="mr-4">
+            <Link href="/login">
+              <Button text="Zaloguj się" rightIconUrl={chevronRightUrl} />
+            </Link>
+          </div>
         )}
       </div>
     </div>
