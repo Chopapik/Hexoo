@@ -1,12 +1,13 @@
 import React from "react";
 import Hexoo3Dv2 from "./Hexoo3Dv2";
 import Hexoo3D from "./Hexoo3D";
+import { RightNavActiveUsers } from "./RightNavActiveUsers";
 
 function RightNavContent() {
   return (
     <div className="p-3 w-full h-full flex flex-col gap-4">
+      <RightNavActiveUsers />
       <Hexoo3Dv2 />
-      <Hexoo3D />
     </div>
   );
 }
