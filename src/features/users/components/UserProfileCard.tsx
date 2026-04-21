@@ -9,8 +9,7 @@ import EditProfileModal from "../../me/components/EditProfileModal";
 import "dayjs/locale/pl";
 import { formatDate, formatSmartDate } from "@/features/shared/utils/dateUtils";
 import { UserProfileResponseDto } from "@/features/users/types/user.dto";
-
-const status = "Offline";
+import { useAppStore } from "@/lib/store/store";
 
 export const UserProfileCard = ({
   username,
@@ -26,11 +25,19 @@ export const UserProfileCard = ({
   const [showEditProfileModal, setShowEditProfileModal] =
     useState<boolean>(false);
 
+  const isOnline = useAppStore((s) =>
+    userProfileData?.uid
+      ? s.presence.onlineUids.has(userProfileData.uid)
+      : false,
+  );
+
   if (!userProfileData) {
     return null;
   }
 
   const { avatarUrl, name, createdAt, lastOnline } = userProfileData;
+  const showLastOnline = isOnline || !!lastOnline;
+  const statusLabel = isOnline ? "Online" : "Offline";
 
   return (
     <>
@@ -78,7 +85,7 @@ export const UserProfileCard = ({
                 </div>
               </div>
 
-              {lastOnline && (
+              {showLastOnline && (
                 <>
                   <span className="w-px h-5 bg-primary-neutral-stroke-default inline-block" />
                   <div className="inline-flex flex-col justify-start items-start gap-0.5">
@@ -86,7 +93,7 @@ export const UserProfileCard = ({
                       ostatnio online
                     </div>
                     <div className="self-stretch h-3.5 justify-start text-text-main text-xs font-normal font-Albert_Sans">
-                      {formatSmartDate(lastOnline)}
+                      {isOnline ? "teraz" : formatSmartDate(lastOnline)}
                     </div>
                   </div>
                 </>
@@ -94,8 +101,14 @@ export const UserProfileCard = ({
             </div>
 
             <div className="h-8 flex justify-center items-center overflow-hidden md:ml-auto">
-              <div className="justify-start text-text-neutral text-lg font-medium font-Albert_Sans italic mr-1">
-                {status}
+              <div
+                className={
+                  isOnline
+                    ? "justify-start text-lg font-Albert_Sans font-medium not-italic mr-1 text-green-500"
+                    : "justify-start text-text-neutral text-lg font-medium font-Albert_Sans italic mr-1"
+                }
+              >
+                {statusLabel}
               </div>
             </div>
           </div>

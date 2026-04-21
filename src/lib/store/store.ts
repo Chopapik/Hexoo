@@ -15,14 +15,22 @@ export interface CreatePostModalState {
   isOpen: boolean;
 }
 
+export interface PresenceStateSlice {
+  /** UIDs currently tracked on the global Realtime Presence channel. */
+  onlineUids: Set<string>;
+}
+
 interface AppState {
   auth: AuthState;
   settings: SettingsState;
   createPostModal: CreatePostModalState;
+  presence: PresenceStateSlice;
 
   setUser: (user: SessionData | null) => void;
   clearUser: () => void;
   setReady: (ready: boolean) => void;
+
+  setPresenceOnlineUids: (uids: Set<string>) => void;
 
   setNsfwVisibility: (value: boolean) => void;
   setCommentsNsfwVisibility: (value: boolean) => void;
@@ -58,10 +66,18 @@ export const useAppStore = create<AppState>((set) => ({
   createPostModal: {
     isOpen: false,
   },
+  presence: {
+    onlineUids: new Set(),
+  },
 
   setUser: (user) => set((s) => ({ auth: { ...s.auth, user } })),
   clearUser: () => set((s) => ({ auth: { ...s.auth, user: null } })),
   setReady: (ready) => set((s) => ({ auth: { ...s.auth, ready } })),
+
+  setPresenceOnlineUids: (onlineUids) =>
+    set((s) => ({
+      presence: { ...s.presence, onlineUids: new Set(onlineUids) },
+    })),
 
   setNsfwVisibility: (value) =>
     set((s) => ({ settings: { ...s.settings, showNSFWPosts: value } })),

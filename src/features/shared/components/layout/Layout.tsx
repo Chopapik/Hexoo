@@ -10,6 +10,7 @@ import { useAppStore } from "@/lib/store/store";
 import CreatePostModal from "@/features/posts/components/CreatePostModal";
 import LogoSvg from "@/features/shared/assets/Logo.svg?url";
 import SessionWatcher from "@/features/auth/components/SessionWatcher";
+import { PresenceSubscription } from "@/features/presence/components/PresenceSubscription";
 
 const leftRailAsideClass =
   "hidden md:block sticky top-[calc(56.6px+16px+16px)] h-[calc(100vh-56.6px-16px-16px-16px)] shrink-0";
@@ -71,6 +72,7 @@ export const Layout: React.FC<{
 
   return (
     <div className="flex justify-center bg-page-background w-full min-h-screen">
+      <PresenceSubscription />
       <SessionWatcher />
       <div className="flex flex-col w-full max-w-[1440px]">
         <header className="sticky top-0 z-50 bg-page-background px-2 py-2 md:px-4 md:py-4">
