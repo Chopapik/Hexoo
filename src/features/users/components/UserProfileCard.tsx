@@ -104,7 +104,7 @@ export const UserProfileCard = ({
               <div
                 className={
                   isOnline
-                    ? "justify-start text-lg font-Albert_Sans font-medium not-italic mr-1 text-green-500"
+                    ? "justify-start text-lg font-Albert_Sans font-medium not-italic mr-1 text-emerald-400 "
                     : "justify-start text-text-neutral text-lg font-medium font-Albert_Sans italic mr-1"
                 }
               >
