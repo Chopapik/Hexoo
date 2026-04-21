@@ -6,6 +6,7 @@ export type OAuthSessionUser = {
   name: string;
   role: string;
   avatarUrl?: string;
+  lastOnline?: Date | string;
 };
 
 export type OAuthLoginResult =
@@ -30,6 +31,7 @@ export interface AuthService {
       name: string;
       role: string;
       avatarUrl?: string;
+      lastOnline?: Date | string;
     };
   }>;
   registerUser(data: {
@@ -43,6 +45,7 @@ export interface AuthService {
       name: string;
       email: string | undefined;
       role: "user";
+      lastOnline?: Date | string;
     };
   }>;
   checkEmailAvailability(email: string): Promise<{

@@ -37,6 +37,22 @@ export class AuthService implements IAuthService {
     private readonly logActivity: ActivityLogger,
   ) {}
 
+  private mapUserToSessionData(
+    userData: UserEntity,
+    email?: string | null,
+  ): SessionData {
+    return {
+      uid: userData.uid,
+      email: (email ?? userData.email) || "",
+      name: userData.name,
+      role: userData.role,
+      avatarUrl: resolveImagePublicUrl(userData.avatarMeta) ?? undefined,
+      lastOnline: userData.lastOnline,
+      isRestricted: userData.isRestricted ?? false,
+      isBanned: userData.isBanned,
+    };
+  }
+
   async logoutUser() {
     try {
       const session = await getSessionCookie();
@@ -67,15 +83,7 @@ export class AuthService implements IAuthService {
         await clearAllAuthCookies();
         return null;
       }
-      return {
-        uid: userData.uid,
-        email: userData.email ?? "",
-        name: userData.name,
-        role: userData.role,
-        avatarUrl: resolveImagePublicUrl(userData.avatarMeta) ?? undefined,
-        isRestricted: userData.isRestricted ?? false,
-        isBanned: userData.isBanned,
-      };
+      return this.mapUserToSessionData(userData);
     } catch {
       await clearAllAuthCookies();
       return null;
@@ -134,11 +142,8 @@ export class AuthService implements IAuthService {
 
     return {
       user: {
-        uid: userData.uid,
-        email: email ?? undefined,
-        name: userData.name,
-        role: userData.role,
-        avatarUrl: resolveImagePublicUrl(userData.avatarMeta) ?? undefined,
+        ...this.mapUserToSessionData(userData, email),
+        email: (email ?? userData.email) || undefined,
       },
     };
   }
@@ -222,13 +227,21 @@ export class AuthService implements IAuthService {
     await setSessionCookie(sessionCookie);
     if (data.refreshToken) await setRefreshCookie(data.refreshToken);
 
+    const createdUser = await this.userRepository.getUserByUid(uid);
+
     return {
-      user: {
-        uid,
-        name,
-        email: email ?? undefined,
-        role: "user" as const,
-      },
+      user: createdUser
+        ? {
+            ...this.mapUserToSessionData(createdUser, email),
+            email: (email ?? createdUser.email) || undefined,
+            role: "user" as const,
+          }
+        : {
+            uid,
+            name,
+            email: email ?? undefined,
+            role: "user" as const,
+          },
     };
   }
 
@@ -308,11 +321,8 @@ export class AuthService implements IAuthService {
     if (refreshToken) await setRefreshCookie(refreshToken);
 
     return {
-      uid: userData.uid,
+      ...this.mapUserToSessionData(userData, email),
       email: (email ?? userData.email) || undefined,
-      name: userData.name,
-      role: userData.role,
-      avatarUrl: resolveImagePublicUrl(userData.avatarMeta) ?? undefined,
     };
   }
 

@@ -7,7 +7,7 @@ import { useState } from "react";
 import Button from "@/features/shared/components/ui/Button";
 import EditProfileModal from "../../me/components/EditProfileModal";
 import "dayjs/locale/pl";
-import { formatDate } from "@/features/shared/utils/dateUtils";
+import { formatDate, formatSmartDate } from "@/features/shared/utils/dateUtils";
 import { UserProfileResponseDto } from "@/features/users/types/user.dto";
 
 const status = "Offline";
@@ -86,7 +86,7 @@ export const UserProfileCard = ({
                       ostatnio online
                     </div>
                     <div className="self-stretch h-3.5 justify-start text-text-main text-xs font-normal font-Albert_Sans">
-                      {/* last online date here*/}
+                      {formatSmartDate(lastOnline)}
                     </div>
                   </div>
                 </>

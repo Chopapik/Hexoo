@@ -40,7 +40,10 @@ export class UserService implements IUserService {
         message: "[userService.ensureModeratorOrAdmin] No session available",
       });
     }
-    if (session.role !== UserRole.Moderator && session.role !== UserRole.Admin) {
+    if (
+      session.role !== UserRole.Moderator &&
+      session.role !== UserRole.Admin
+    ) {
       throw createAppError({
         code: "FORBIDDEN",
         message:
@@ -73,6 +76,21 @@ export class UserService implements IUserService {
     };
 
     return { user: userProfile };
+  }
+
+  async touchLastOnline(uid: string) {
+    if (!uid) return;
+
+    const minIntervalMs = 5 * 60 * 1000;
+
+    const user = await this.repository.getUserByUid(uid);
+    if (!user) return;
+
+    const now = Date.now();
+    const lastOnlineTs = user.lastOnline?.getTime?.() ?? 0;
+    if (now - lastOnlineTs < minIntervalMs) return;
+
+    await this.repository.updateUser(uid, { lastOnline: new Date(now) });
   }
 
   async unrestrictUser(uid: string) {

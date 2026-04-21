@@ -8,6 +8,8 @@ export type SessionData = {
   role: UserRole;
   /** Resolved at the API layer from avatarMeta; never stored in DB. */
   avatarUrl?: string;
+  /** Comes from users.last_online in DB. Can be ISO string after SSR serialization. */
+  lastOnline?: Date | string;
   isRestricted?: boolean;
   isBanned?: boolean;
 };
