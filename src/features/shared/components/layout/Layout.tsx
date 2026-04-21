@@ -55,6 +55,10 @@ export const Layout: React.FC<{
   useEffect(() => {
     if (!user) return;
     fetch("/api/auth/slide", { credentials: "include" }).catch(() => {});
+    fetch("/api/auth/last-online", {
+      method: "POST",
+      credentials: "include",
+    }).catch(() => {});
   }, [user]);
 
   if (!isHydrated) {

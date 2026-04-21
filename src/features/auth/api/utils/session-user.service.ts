@@ -46,6 +46,7 @@ export async function getUserFromSession(): Promise<SessionData | never> {
     name: userData.name,
     role: userData.role,
     avatarUrl: resolveImagePublicUrl(userData.avatarMeta) ?? undefined,
+    lastOnline: userData.lastOnline,
     isRestricted: userData.isRestricted ?? false,
     isBanned: userData.isBanned,
   };

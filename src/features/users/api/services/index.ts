@@ -34,6 +34,14 @@ export async function getUserProfile(name: string) {
   return await service.getUserProfile(name);
 }
 
+export async function touchLastOnline(
+  uid: string,
+  minIntervalMs?: number,
+): Promise<void> {
+  const service = getUserService(null);
+  return await service.touchLastOnline(uid, minIntervalMs);
+}
+
 export async function getUsersByIds(
   uids: string[],
 ): Promise<Record<string, { name: string; avatarMeta?: ImageMeta | null }>> {

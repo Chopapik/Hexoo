@@ -10,6 +10,7 @@ export interface UserService {
   createUser(uid: string, data: CreateUserRequest): Promise<void>;
   getUserByUid(uid: string): Promise<UserEntity | null>;
   getUserProfile(name: string): Promise<{ user: UserProfileResponse } | null>;
+  touchLastOnline(uid: string, minIntervalMs?: number): Promise<void>;
   getUsersByIds(
     uids: string[],
   ): Promise<Record<string, { name: string; avatarMeta?: ImageMeta | null }>>;
