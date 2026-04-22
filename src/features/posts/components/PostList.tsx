@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import type { PublicPostResponseDto } from "../types/post.dto";
 import { PostCard } from "./PostCard";
 import usePosts from "../hooks/usePosts";
@@ -23,6 +23,35 @@ export default function PostList({ className = "" }: PostListProps) {
   } = usePosts();
 
   const observerTarget = useRef<HTMLDivElement>(null);
+  const [imageReadyByPostId, setImageReadyByPostId] = useState<
+    Record<string, boolean>
+  >({});
+
+  const visiblePosts = useMemo(() => data?.pages.flat() ?? [], [data?.pages]);
+
+  useEffect(() => {
+    if (!visiblePosts.length) {
+      setImageReadyByPostId({});
+      return;
+    }
+
+    setImageReadyByPostId((previous) => {
+      const next: Record<string, boolean> = {};
+      for (const post of visiblePosts) {
+        next[post.id] = previous[post.id] ?? false;
+      }
+      return next;
+    });
+  }, [visiblePosts]);
+
+  const areVisiblePostsVisuallyReady = useMemo(
+    () =>
+      visiblePosts.every((post) => {
+        if (!post.imageUrl) return true;
+        return imageReadyByPostId[post.id] === true;
+      }),
+    [visiblePosts, imageReadyByPostId],
+  );
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -31,7 +60,7 @@ export default function PostList({ className = "" }: PostListProps) {
           fetchNextPage();
         }
       },
-      { threshold: 1.0 }
+      { threshold: 1.0 },
     );
 
     if (observerTarget.current) {

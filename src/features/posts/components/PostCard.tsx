@@ -14,12 +14,14 @@ type PostCardProps = {
   revealNSFW?: boolean;
   /** Moderation queue: images as thumbnails with lightbox */
   moderationThumbnailImage?: boolean;
+  onImageReadyChange?: (postId: string, isReady: boolean) => void;
 };
 
 export const PostCard = ({
   post,
   revealNSFW,
   moderationThumbnailImage = false,
+  onImageReadyChange,
 }: PostCardProps) => {
   const [showPostModal, setShowPostModal] = useState(false);
 
@@ -31,6 +33,13 @@ export const PostCard = ({
   }, [initializeSettings]);
 
   const isContentVisible = !post.isNSFW || showNSFWPosts || revealNSFW;
+  const hasVisibleImage = Boolean(post.imageUrl) && isContentVisible;
+
+  useEffect(() => {
+    if (!post.imageUrl || !hasVisibleImage) {
+      onImageReadyChange?.(post.id, true);
+    }
+  }, [post.id, post.imageUrl, hasVisibleImage, onImageReadyChange]);
 
   const handleCardClick = () => {
     setShowPostModal(true);
@@ -55,6 +64,7 @@ export const PostCard = ({
             post={post}
             isNSFW={post.isNSFW}
             moderationThumbnailImage={moderationThumbnailImage}
+            onImageReadyChange={(isReady) => onImageReadyChange?.(post.id, isReady)}
           />
         ) : (
           <PostNsfwNotice className="pointer-events-none" />

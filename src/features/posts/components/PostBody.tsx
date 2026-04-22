@@ -1,20 +1,22 @@
 import type { PublicPostResponseDto } from "../types/post.dto";
 import { isAsciiArt } from "../utils/asciiDetector";
 import { useMemo } from "react";
-import Image from "next/image";
 import { ExpandableImageThumbnail } from "@/features/shared/components/media/ExpandableImageThumbnail";
+import { DitheredImage } from "@/features/shared/components/media/DitheredImage";
 
 type PostBodyProps = {
   post: PublicPostResponseDto;
   isNSFW?: boolean;
   /** Moderation queue: image as thumbnail opening to fullscreen */
   moderationThumbnailImage?: boolean;
+  onImageReadyChange?: (isReady: boolean) => void;
 };
 
 export const PostBody = ({
   post,
   isNSFW = false,
   moderationThumbnailImage = false,
+  onImageReadyChange,
 }: PostBodyProps) => {
   const isAscii = useMemo(() => isAsciiArt(post.text), [post.text]);
 
@@ -50,13 +52,18 @@ export const PostBody = ({
               alt="Treść obrazkowa posta"
             />
           ) : (
-            <Image
+            <DitheredImage
               className="w-full max-w-[95%] relative rounded-xl object-cover h-auto"
               src={post.imageUrl}
               alt="Post content"
               width={1200}
               height={1200}
               sizes="(max-width: 768px) 95vw, (max-width: 1200px) 70vw, 800px"
+              paletteSize={16}
+              processingWidth={700}
+              ditherBaseWidth={128}
+              imageQuantization="floyd-steinberg"
+              onReadyChange={onImageReadyChange}
             />
           ))}
       </div>
