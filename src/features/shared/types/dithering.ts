@@ -46,10 +46,10 @@ export type PostDitheringSettings = {
 export const DEFAULT_POST_DITHERING_SETTINGS: PostDitheringSettings = {
   enabled: true,
   paletteSize: 16,
-  processingWidth: 700,
-  ditherBaseWidth: 128,
+  processingWidth: 446,
+  ditherBaseWidth: 816,
   colorDistanceFormula: "euclidean-bt709",
-  paletteQuantization: "wuquant",
+  paletteQuantization: "neuquant",
   imageQuantization: "floyd-steinberg",
   errorDiffusionPropagation: "gimp",
 };
