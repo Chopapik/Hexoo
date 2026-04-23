@@ -2,10 +2,8 @@
 
 import Image from "next/image";
 import { useEffect } from "react";
-import {
-  useDitheredImage,
-  type ImageQuantizationMode,
-} from "@/features/shared/hooks/useDitheredImage";
+import { useDitheredImage } from "@/features/shared/hooks/useDitheredImage";
+import type { PostDitheringSettings } from "@/features/shared/types/dithering";
 
 type DitheredImageProps = {
   src: string;
@@ -14,11 +12,9 @@ type DitheredImageProps = {
   width?: number;
   height?: number;
   sizes?: string;
-  paletteSize?: number;
-  processingWidth?: number;
-  ditherBaseWidth?: number;
-  imageQuantization?: ImageQuantizationMode;
+  dithering: PostDitheringSettings;
   onReadyChange?: (isReady: boolean) => void;
+  onErrorChange?: (hasError: boolean) => void;
 };
 
 export function DitheredImage({
@@ -28,23 +24,22 @@ export function DitheredImage({
   width = 1200,
   height = 1200,
   sizes,
-  paletteSize = 16,
-  processingWidth = 700,
-  ditherBaseWidth = 128,
-  imageQuantization = "floyd-steinberg",
+  dithering,
   onReadyChange,
+  onErrorChange,
 }: DitheredImageProps) {
   const { processedSrc, isReady, hasError } = useDitheredImage({
     src,
-    paletteSize,
-    processingWidth,
-    ditherBaseWidth,
-    imageQuantization,
+    dithering,
   });
 
   useEffect(() => {
     onReadyChange?.(isReady);
   }, [isReady, onReadyChange]);
+
+  useEffect(() => {
+    onErrorChange?.(hasError);
+  }, [hasError, onErrorChange]);
 
   if (!isReady) {
     return (

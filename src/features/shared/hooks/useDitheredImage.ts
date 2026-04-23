@@ -1,27 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { applyPaletteSync, buildPaletteSync, utils } from "image-q";
-
-export type ImageQuantizationMode =
-  | "nearest"
-  | "floyd-steinberg"
-  | "false-floyd-steinberg"
-  | "stucki"
-  | "atkinson"
-  | "jarvis"
-  | "burkes"
-  | "sierra"
-  | "two-sierra"
-  | "sierra-lite"
-  | "riemersma";
+import { distance, image, palette, utils } from "image-q";
+import type { PostDitheringSettings } from "@/features/shared/types/dithering";
 
 export type UseDitheredImageParams = {
   src: string;
-  paletteSize?: number;
-  processingWidth?: number;
-  ditherBaseWidth?: number;
-  imageQuantization?: ImageQuantizationMode;
+  dithering: PostDitheringSettings;
 };
 
 export type UseDitheredImageResult = {
@@ -35,17 +20,11 @@ const inFlightCache = new Map<string, Promise<string>>();
 
 async function renderDitheredToDataUrl({
   src,
-  paletteSize,
-  processingWidth,
-  ditherBaseWidth,
-  imageQuantization,
+  dithering,
   cacheKey,
 }: {
   src: string;
-  paletteSize: number;
-  processingWidth: number;
-  ditherBaseWidth: number;
-  imageQuantization: ImageQuantizationMode;
+  dithering: PostDitheringSettings;
   cacheKey: string;
 }) {
   const cached = resultCache.get(cacheKey);
@@ -56,32 +35,52 @@ async function renderDitheredToDataUrl({
 
   const promise = new Promise<string>((resolve, reject) => {
     const img = new window.Image();
-    img.decoding = "async";
     img.crossOrigin = "anonymous";
+    img.decoding = "async";
 
     img.onload = () => {
       try {
-        const naturalWidth = img.naturalWidth || 0;
-        const naturalHeight = img.naturalHeight || 0;
+        const naturalWidth = img.naturalWidth || img.width;
+        const naturalHeight = img.naturalHeight || img.height;
 
         if (!naturalWidth || !naturalHeight) {
-          throw new Error("Image has invalid dimensions.");
+          resolve(src);
+          return;
         }
 
         const previewWidth = Math.max(
           1,
-          Math.min(processingWidth, naturalWidth),
+          Math.min(dithering.processingWidth, naturalWidth),
         );
         const previewHeight = Math.max(
           1,
           Math.round((naturalHeight / naturalWidth) * previewWidth),
         );
 
-        const tinyWidth = Math.max(1, Math.min(ditherBaseWidth, previewWidth));
+        const tinyWidth = Math.max(
+          1,
+          Math.min(dithering.ditherBaseWidth, previewWidth),
+        );
         const tinyHeight = Math.max(
           1,
           Math.round((previewHeight / previewWidth) * tinyWidth),
         );
+
+        const workCanvas = document.createElement("canvas");
+        workCanvas.width = previewWidth;
+        workCanvas.height = previewHeight;
+
+        const workCtx = workCanvas.getContext("2d", {
+          willReadFrequently: true,
+        });
+
+        if (!workCtx) {
+          resolve(src);
+          return;
+        }
+
+        workCtx.imageSmoothingEnabled = true;
+        workCtx.drawImage(img, 0, 0, previewWidth, previewHeight);
 
         const tinyCanvas = document.createElement("canvas");
         tinyCanvas.width = tinyWidth;
@@ -90,12 +89,14 @@ async function renderDitheredToDataUrl({
         const tinyCtx = tinyCanvas.getContext("2d", {
           willReadFrequently: true,
         });
+
         if (!tinyCtx) {
-          throw new Error("2D canvas context is not available.");
+          resolve(src);
+          return;
         }
 
         tinyCtx.imageSmoothingEnabled = true;
-        tinyCtx.drawImage(img, 0, 0, tinyWidth, tinyHeight);
+        tinyCtx.drawImage(workCanvas, 0, 0, tinyWidth, tinyHeight);
 
         const tinyImageData = tinyCtx.getImageData(0, 0, tinyWidth, tinyHeight);
         const pointContainer = utils.PointContainer.fromUint8Array(
@@ -104,58 +105,60 @@ async function renderDitheredToDataUrl({
           tinyHeight,
         );
 
-        const palette = buildPaletteSync([pointContainer], {
-          colors: paletteSize,
-          paletteQuantization: "wuquant",
-          colorDistanceFormula: "euclidean-bt709",
-        });
+        const distanceCalculator = createDistanceCalculator(
+          dithering.colorDistanceFormula,
+        );
 
-        const quantizedPointContainer = applyPaletteSync(
+        const paletteQuantizer = createPaletteQuantizer(
+          dithering.paletteQuantization,
+          distanceCalculator,
+          dithering.paletteSize,
+        );
+
+        paletteQuantizer.sample(pointContainer);
+        const quantizedPalette = paletteQuantizer.quantizeSync();
+
+        const imageQuantizer = createImageQuantizer(
+          dithering.imageQuantization,
+          distanceCalculator,
+          dithering.errorDiffusionPropagation,
+        );
+
+        const quantizedPointContainer = imageQuantizer.quantizeSync(
           pointContainer,
-          palette,
-          {
-            imageQuantization,
-            colorDistanceFormula: "euclidean-bt709",
-          },
+          quantizedPalette,
         );
 
         const quantizedTinyPixels = quantizedPointContainer.toUint8Array();
-        tinyCtx.putImageData(
-          new ImageData(
-            new Uint8ClampedArray(quantizedTinyPixels),
-            tinyWidth,
-            tinyHeight,
-          ),
-          0,
-          0,
-        );
 
-        const outputCanvas = document.createElement("canvas");
-        outputCanvas.width = previewWidth;
-        outputCanvas.height = previewHeight;
-
-        const outputCtx = outputCanvas.getContext("2d");
-        if (!outputCtx) {
-          throw new Error("Output canvas context is not available.");
-        }
-
-        outputCtx.imageSmoothingEnabled = false;
-        outputCtx.clearRect(0, 0, previewWidth, previewHeight);
-        outputCtx.drawImage(
-          tinyCanvas,
-          0,
-          0,
+        const quantizedTinyImageData = new ImageData(
+          new Uint8ClampedArray(quantizedTinyPixels),
           tinyWidth,
           tinyHeight,
-          0,
-          0,
-          previewWidth,
-          previewHeight,
         );
 
-        const output = outputCanvas.toDataURL("image/png");
-        resultCache.set(cacheKey, output);
-        resolve(output);
+        tinyCtx.putImageData(quantizedTinyImageData, 0, 0);
+
+        workCtx.clearRect(0, 0, previewWidth, previewHeight);
+        workCtx.imageSmoothingEnabled = false;
+        workCtx.drawImage(tinyCanvas, 0, 0, previewWidth, previewHeight);
+
+        const outCanvas = document.createElement("canvas");
+        outCanvas.width = naturalWidth;
+        outCanvas.height = naturalHeight;
+
+        const outCtx = outCanvas.getContext("2d");
+        if (!outCtx) {
+          resolve(src);
+          return;
+        }
+
+        outCtx.imageSmoothingEnabled = false;
+        outCtx.drawImage(workCanvas, 0, 0, naturalWidth, naturalHeight);
+
+        const dataUrl = outCanvas.toDataURL("image/png");
+        resultCache.set(cacheKey, dataUrl);
+        resolve(dataUrl);
       } catch (error) {
         reject(error);
       } finally {
@@ -165,7 +168,7 @@ async function renderDitheredToDataUrl({
 
     img.onerror = () => {
       inFlightCache.delete(cacheKey);
-      reject(new Error("Failed to load image."));
+      reject(new Error(`Failed to load image for dithering: ${src}`));
     };
 
     img.src = src;
@@ -177,35 +180,57 @@ async function renderDitheredToDataUrl({
 
 export function useDitheredImage({
   src,
-  paletteSize = 16,
-  processingWidth = 700,
-  ditherBaseWidth = 128,
-  imageQuantization = "floyd-steinberg",
+  dithering,
 }: UseDitheredImageParams): UseDitheredImageResult {
+  const isEnabled = dithering.enabled;
+
   const cacheKey = useMemo(
     () =>
       [
         src,
-        `p${paletteSize}`,
-        `w${processingWidth}`,
-        `d${ditherBaseWidth}`,
-        `q${imageQuantization}`,
+        `e${String(dithering.enabled)}`,
+        `p${dithering.paletteSize}`,
+        `w${dithering.processingWidth}`,
+        `d${dithering.ditherBaseWidth}`,
+        `cdf${dithering.colorDistanceFormula}`,
+        `pq${dithering.paletteQuantization}`,
+        `iq${dithering.imageQuantization}`,
+        `edp${dithering.errorDiffusionPropagation}`,
       ].join("::"),
-    [src, paletteSize, processingWidth, ditherBaseWidth, imageQuantization],
+    [
+      src,
+      dithering.enabled,
+      dithering.paletteSize,
+      dithering.processingWidth,
+      dithering.ditherBaseWidth,
+      dithering.colorDistanceFormula,
+      dithering.paletteQuantization,
+      dithering.imageQuantization,
+      dithering.errorDiffusionPropagation,
+    ],
   );
 
   const [processedSrc, setProcessedSrc] = useState<string | null>(
-    () => resultCache.get(cacheKey) ?? null,
+    resultCache.get(cacheKey) ?? null,
+  );
+  const [isReady, setIsReady] = useState<boolean>(
+    Boolean(resultCache.get(cacheKey)),
   );
   const [hasError, setHasError] = useState(false);
-  const [isReady, setIsReady] = useState<boolean>(() =>
-    resultCache.has(cacheKey),
-  );
 
   useEffect(() => {
     let cancelled = false;
 
+    setIsReady(false);
     setHasError(false);
+
+    if (!isEnabled) {
+      setProcessedSrc(src);
+      setIsReady(true);
+      return () => {
+        cancelled = true;
+      };
+    }
 
     const cached = resultCache.get(cacheKey);
     if (cached) {
@@ -216,15 +241,9 @@ export function useDitheredImage({
       };
     }
 
-    setProcessedSrc(null);
-    setIsReady(false);
-
     renderDitheredToDataUrl({
       src,
-      paletteSize,
-      processingWidth,
-      ditherBaseWidth,
-      imageQuantization,
+      dithering,
       cacheKey,
     })
       .then((output) => {
@@ -232,24 +251,151 @@ export function useDitheredImage({
         setProcessedSrc(output);
         setIsReady(true);
       })
-      .catch(() => {
+      .catch((error) => {
+        console.error("Dither preview failed:", error);
         if (cancelled) return;
+        setProcessedSrc(src);
         setHasError(true);
-        setProcessedSrc(null);
         setIsReady(true);
       });
 
     return () => {
       cancelled = true;
     };
-  }, [
-    cacheKey,
-    src,
-    paletteSize,
-    processingWidth,
-    ditherBaseWidth,
-    imageQuantization,
-  ]);
+  }, [cacheKey, dithering, isEnabled, src]);
 
   return { processedSrc, isReady, hasError };
+}
+
+function createDistanceCalculator(
+  formula: PostDitheringSettings["colorDistanceFormula"],
+) {
+  switch (formula) {
+    case "cie94-textiles":
+      return new distance.CIE94Textiles();
+    case "cie94-graphic-arts":
+      return new distance.CIE94GraphicArts();
+    case "ciede2000":
+      return new distance.CIEDE2000();
+    case "color-metric":
+      return new distance.CMetric();
+    case "euclidean":
+      return new distance.Euclidean();
+    case "euclidean-bt709-noalpha":
+      return new distance.EuclideanBT709NoAlpha();
+    case "euclidean-bt709":
+      return new distance.EuclideanBT709();
+    case "manhattan":
+      return new distance.Manhattan();
+    case "manhattan-bt709":
+      return new distance.ManhattanBT709();
+    case "manhattan-nommyde":
+      return new distance.ManhattanNommyde();
+    case "pngquant":
+      return new distance.PNGQuant();
+  }
+}
+
+function createPaletteQuantizer(
+  quantization: PostDitheringSettings["paletteQuantization"],
+  distanceCalculator: ReturnType<typeof createDistanceCalculator>,
+  colors: number,
+) {
+  switch (quantization) {
+    case "wuquant":
+      return new palette.WuQuant(distanceCalculator, colors);
+    case "rgbquant":
+      return new palette.RGBQuant(distanceCalculator, colors);
+    case "neuquant":
+      return new palette.NeuQuant(distanceCalculator, colors);
+    case "neuquant-float":
+      return new palette.NeuQuantFloat(distanceCalculator, colors);
+  }
+}
+
+function createImageQuantizer(
+  quantization: PostDitheringSettings["imageQuantization"],
+  distanceCalculator: ReturnType<typeof createDistanceCalculator>,
+  errorDiffusionPropagation: PostDitheringSettings["errorDiffusionPropagation"],
+) {
+  const useGimpPropagation = errorDiffusionPropagation === "gimp";
+
+  switch (quantization) {
+    case "nearest":
+      return new image.NearestColor(distanceCalculator);
+    case "riemersma":
+      return new image.ErrorDiffusionRiemersma(distanceCalculator);
+    case "floyd-steinberg":
+      return new image.ErrorDiffusionArray(
+        distanceCalculator,
+        image.ErrorDiffusionArrayKernel.FloydSteinberg,
+        true,
+        0,
+        useGimpPropagation,
+      );
+    case "false-floyd-steinberg":
+      return new image.ErrorDiffusionArray(
+        distanceCalculator,
+        image.ErrorDiffusionArrayKernel.FalseFloydSteinberg,
+        true,
+        0,
+        useGimpPropagation,
+      );
+    case "stucki":
+      return new image.ErrorDiffusionArray(
+        distanceCalculator,
+        image.ErrorDiffusionArrayKernel.Stucki,
+        true,
+        0,
+        useGimpPropagation,
+      );
+    case "atkinson":
+      return new image.ErrorDiffusionArray(
+        distanceCalculator,
+        image.ErrorDiffusionArrayKernel.Atkinson,
+        true,
+        0,
+        useGimpPropagation,
+      );
+    case "jarvis":
+      return new image.ErrorDiffusionArray(
+        distanceCalculator,
+        image.ErrorDiffusionArrayKernel.Jarvis,
+        true,
+        0,
+        useGimpPropagation,
+      );
+    case "burkes":
+      return new image.ErrorDiffusionArray(
+        distanceCalculator,
+        image.ErrorDiffusionArrayKernel.Burkes,
+        true,
+        0,
+        useGimpPropagation,
+      );
+    case "sierra":
+      return new image.ErrorDiffusionArray(
+        distanceCalculator,
+        image.ErrorDiffusionArrayKernel.Sierra,
+        true,
+        0,
+        useGimpPropagation,
+      );
+    case "two-sierra":
+      return new image.ErrorDiffusionArray(
+        distanceCalculator,
+        image.ErrorDiffusionArrayKernel.TwoSierra,
+        true,
+        0,
+        useGimpPropagation,
+      );
+    case "sierra-lite":
+      return new image.ErrorDiffusionArray(
+        distanceCalculator,
+        image.ErrorDiffusionArrayKernel.SierraLite,
+        true,
+        0,
+        useGimpPropagation,
+      );
+  }
 }

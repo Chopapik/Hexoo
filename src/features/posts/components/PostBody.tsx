@@ -3,6 +3,7 @@ import { isAsciiArt } from "../utils/asciiDetector";
 import { useMemo } from "react";
 import { ExpandableImageThumbnail } from "@/features/shared/components/media/ExpandableImageThumbnail";
 import { DitheredImage } from "@/features/shared/components/media/DitheredImage";
+import { useAppStore } from "@/lib/store/store";
 
 type PostBodyProps = {
   post: PublicPostResponseDto;
@@ -19,6 +20,7 @@ export const PostBody = ({
   onImageReadyChange,
 }: PostBodyProps) => {
   const isAscii = useMemo(() => isAsciiArt(post.text), [post.text]);
+  const postDitheringSettings = useAppStore((s) => s.settings.postDithering);
 
   return (
     <>
@@ -59,10 +61,7 @@ export const PostBody = ({
               width={1200}
               height={1200}
               sizes="(max-width: 768px) 95vw, (max-width: 1200px) 70vw, 800px"
-              paletteSize={16}
-              processingWidth={700}
-              ditherBaseWidth={128}
-              imageQuantization="floyd-steinberg"
+              dithering={postDitheringSettings}
               onReadyChange={onImageReadyChange}
             />
           ))}
