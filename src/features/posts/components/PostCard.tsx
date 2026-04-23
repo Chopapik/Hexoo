@@ -27,10 +27,14 @@ export const PostCard = ({
 
   const showNSFWPosts = useAppStore((s) => s.settings.showNSFWPosts);
   const initializeSettings = useAppStore((s) => s.initializeSettings);
+  const initializeDitheringSettings = useAppStore(
+    (s) => s.initializeDitheringSettings,
+  );
 
   useEffect(() => {
     initializeSettings();
-  }, [initializeSettings]);
+    initializeDitheringSettings();
+  }, [initializeDitheringSettings, initializeSettings]);
 
   const isContentVisible = !post.isNSFW || showNSFWPosts || revealNSFW;
   const hasVisibleImage = Boolean(post.imageUrl) && isContentVisible;

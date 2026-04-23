@@ -302,6 +302,7 @@ function DemoStoreBootstrap() {
       settings: {
         showNSFWPosts: true,
         showNSFWComments: true,
+        postDithering: state.settings.postDithering,
       },
     }));
 

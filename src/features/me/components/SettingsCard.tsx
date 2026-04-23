@@ -5,6 +5,7 @@ import AppearanceSection from "./appearance/AppearanceSection";
 import AccountSection from "./account/AccountSection";
 import DangerZoneSection from "./danger/DangerZoneSection";
 import ContentSection from "./appearance/ContentSection";
+import DitheringSection from "./appearance/DitheringSection";
 
 export default function SettingsCard() {
   const user = useAppStore((s) => s.auth.user);
@@ -18,6 +19,7 @@ export default function SettingsCard() {
       </h2>
       <AppearanceSection />
       <ContentSection />
+      <DitheringSection />
       <AccountSection />
       <DangerZoneSection />
     </div>
