@@ -1,17 +1,17 @@
 import HexooBackground from "@/features/shared/components/layout/HexooBackground";
 
 export const metadata = {
-  title: "xs App",
-  description: "Empty layout example",
+  title: "Hexoo — Rejestracja",
+  description: "OAuth flow",
 };
 
-export default function AuthLayout({
+export default function OAuthLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <div className="w-full min-h-screen bg-page-background flex flex-col">
+    <div className="relative w-full min-h-screen flex flex-col">
       <HexooBackground />
       {children}
     </div>

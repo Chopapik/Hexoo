@@ -1,11 +1,11 @@
 import HexooBackground from "@/features/shared/components/layout/HexooBackground";
 
 export const metadata = {
-  title: "Hexoo — Logowanie",
-  description: "Empty layout example",
+  title: "Hexoo — Google",
+  description: "OAuth flow",
 };
 
-export default function AuthLayout({
+export default function OAuthLayout({
   children,
 }: {
   children: React.ReactNode;
