@@ -8,10 +8,17 @@ import toast from "react-hot-toast";
 
 import { supabaseClient } from "@/lib/supabaseClient";
 import fetchClient from "@/lib/fetchClient";
+import { useAppStore } from "@/lib/store/store";
+import type { SessionData } from "@/features/me/me.type";
+
+type RegisterResponse = {
+  user: SessionData;
+};
 
 export default function AuthConfirmPage() {
   const router = useRouter();
   const { executeRecaptcha } = useGoogleReCaptcha();
+  const setUser = useAppStore((s) => s.setUser);
   const [message, setMessage] = useState("Potwierdzamy Twój email...");
 
   useEffect(() => {
@@ -63,14 +70,18 @@ export default function AuthConfirmPage() {
 
         const recaptchaToken = await executeRecaptcha("register_confirm");
 
-        await fetchClient.post("/auth/register", {
-          idToken: data.session.access_token,
-          refreshToken: data.session.refresh_token,
-          name,
-          email,
-          recaptchaToken,
-        });
+        const response = await fetchClient.post<RegisterResponse>(
+          "/auth/register",
+          {
+            idToken: data.session.access_token,
+            refreshToken: data.session.refresh_token,
+            name,
+            email,
+            recaptchaToken,
+          },
+        );
 
+        setUser(response.user);
         toast.success("Konto aktywowane.");
         router.replace("/");
       } catch (error) {
@@ -80,7 +91,7 @@ export default function AuthConfirmPage() {
     };
 
     void confirmEmail();
-  }, [executeRecaptcha, router]);
+  }, [executeRecaptcha, router, setUser]);
 
   return (
     <div className="flex-1 flex items-center justify-center">

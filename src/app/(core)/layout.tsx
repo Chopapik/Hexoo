@@ -56,7 +56,7 @@ export default async function RootLayout({
           __html: `window.__HEXOO_BOOTSTRAP__ = ${serializedSession};`,
         }}
       />
-      <Layout>{children}</Layout>
+      <Layout initialUser={sessionUserData}>{children}</Layout>
     </>
   );
 }
