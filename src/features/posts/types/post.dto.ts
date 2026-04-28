@@ -3,7 +3,7 @@ import { PostEntity } from "./post.entity";
 import { ModerationStatus } from "@/features/shared/types/content.type";
 
 export const MAX_IMAGE_FILE_SIZE_BYTES = 5 * 1024 * 1024;
-export const POST_MAX_CHARS = 1000;
+export const POST_MAX_CHARS = 2048;
 
 export const CreatePostSchema = z
   .object({
