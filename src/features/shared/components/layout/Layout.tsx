@@ -11,13 +11,13 @@ import CreatePostModal from "@/features/posts/components/CreatePostModal";
 import LogoSvg from "@/features/shared/assets/Logo.svg?url";
 import SessionWatcher from "@/features/auth/components/SessionWatcher";
 import { PresenceSubscription } from "@/features/presence/components/PresenceSubscription";
+import type { SessionData } from "@/features/me/me.type";
 
 const leftRailAsideClass =
   "hidden md:block sticky top-[calc(56.6px+16px+16px)] h-[calc(100vh-56.6px-16px-16px-16px)] shrink-0";
 const rightRailAsideClass =
   "hidden lg:block sticky top-[calc(56.6px+16px+16px)] h-[calc(100vh-56.6px-16px-16px-16px)] shrink-0";
 
-/** Ta sama szerokość co `LeftNav` / `RightNavSidebar`, żeby gość miał feed wyśrodkowany jak zalogowany. */
 function LeftRailWidthSpacer() {
   return (
     <div
@@ -38,15 +38,21 @@ function RightRailWidthSpacer() {
 
 export const Layout: React.FC<{
   children: React.ReactNode;
-}> = ({ children }) => {
+  initialUser: SessionData | null;
+}> = ({ children, initialUser }) => {
   const [isHydrated, setIsHydrated] = useState(false);
   const [isRightNavOpen, setIsRightNavOpen] = useState(false);
   const openRight = () => setIsRightNavOpen(true);
   const closeRight = () => setIsRightNavOpen(false);
 
   const user = useAppStore((s) => s.auth.user);
+  const setUser = useAppStore((s) => s.setUser);
   const isCreatePostModalOpen = useAppStore((s) => s.createPostModal.isOpen);
   const closeCreatePostModal = useAppStore((s) => s.closeCreatePostModal);
+
+  useEffect(() => {
+    setUser(initialUser);
+  }, [initialUser, setUser]);
 
   useEffect(() => {
     setIsHydrated(true);
