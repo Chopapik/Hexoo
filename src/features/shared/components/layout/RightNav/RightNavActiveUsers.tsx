@@ -54,8 +54,29 @@ export function RightNavActiveUsers() {
     [users, selfUid],
   );
 
+  // Zmieniony stan dla braku użytkowników
   if (others.length === 0) {
-    return null;
+    return (
+      <section
+        className="w-full rounded-xl px-2 py-3 bg-[radial-gradient(ellipse_113.20%_442.25%_at_26.12%_10.28%,var(--text-main,rgba(255,255,255,0.04))_0%,var(--text-neutral,rgba(115,115,115,0.04))_100%)] flex flex-col justify-center items-center min-h-[90px]"
+        aria-label="Brak aktywnych użytkowników"
+      >
+        <div className="mb-2 px-0.5 flex items-center gap-1.5">
+          <h3 className="text-[10px] font-bold tracking-wider text-text-neutral font-Albert_Sans">
+            /aktywni/
+          </h3>
+        </div>
+
+        <div className="flex flex-col items-center justify-center text-text-neutral/50 transition-opacity">
+          <span className="text-xl font-mono whitespace-pre select-none tracking-tighter">
+            {` (∪｡∪)｡｡｡zzZ `}
+          </span>
+          <span className="text-[10px] mt-1.5 font-Albert_Sans tracking-widest uppercase opacity-80">
+            pusto tutaj
+          </span>
+        </div>
+      </section>
+    );
   }
 
   return (
