@@ -6,7 +6,7 @@ import type {
   PublicCommentResponseDto,
 } from "@/features/comments/types/comment.dto";
 import ModerationReasonModal from "@/features/posts/components/ModerationReasonModal";
-import { Avatar } from "@/features/posts/components/Avatar";
+import { Avatar } from "@/features/shared/components/ui/Avatar";
 import Button from "@/features/shared/components/ui/Button";
 import { ExpandableImageThumbnail } from "@/features/shared/components/media/ExpandableImageThumbnail";
 import { ReportDetails } from "@/features/shared/types/report.type";

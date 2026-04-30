@@ -169,7 +169,7 @@ export default function ModeratorDashboard() {
                 data.pages.length > 0 &&
                 data.pages[0].length > 0 && (
                   <div className="text-center text-text-neutral text-sm py-8 font-Albert_Sans opacity-50">
-                    To już wszystko na dziś
+                    konec
                   </div>
                 )}
             </div>

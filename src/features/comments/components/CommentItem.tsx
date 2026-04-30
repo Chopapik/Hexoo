@@ -10,7 +10,7 @@ import {
   BsShieldExclamation,
 } from "react-icons/bs";
 import type { PublicCommentResponseDto } from "../types/comment.dto";
-import { Avatar } from "@/features/posts/components/Avatar";
+import { Avatar } from "@/features/shared/components/ui/Avatar";
 import { formatSmartDate } from "@/features/shared/utils/dateUtils";
 import Link from "next/link";
 import { ExpandableImageThumbnail } from "@/features/shared/components/media/ExpandableImageThumbnail";

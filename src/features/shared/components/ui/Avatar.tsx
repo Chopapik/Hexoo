@@ -2,8 +2,7 @@ import Image from "next/image";
 import defaultAvatarUrl from "@/features/shared/assets/defaultAvatar.svg?url";
 import { cn } from "@/features/shared/utils/utils";
 
-const defaultClass =
-  "w-10 h-10 rounded-xl border border-neutral-800 object-cover";
+const defaultClass = "w-10 h-10 rounded-md object-cover";
 
 type AvatarProps = {
   src?: string;

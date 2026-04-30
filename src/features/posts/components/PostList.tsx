@@ -129,13 +129,7 @@ export default function PostList({ className = "" }: PostListProps) {
 
         {!hasNextPage && data && data.pages.length > 0 && (
           <div className="text-center text-text-neutral text-sm py-8 font-Albert_Sans opacity-50">
-            To już wszystko na dziś
-          </div>
-        )}
-
-        {!hasNextPage && data?.pages[0]?.length === 0 && (
-          <div className="text-center text-text-neutral text-lg py-12 font-Albert_Sans">
-            Brak postów. Bądź pierwszy i napisz coś!
+            konec
           </div>
         )}
       </div>
