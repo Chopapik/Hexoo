@@ -2,7 +2,7 @@ import Link from "next/link";
 import Button from "../ui/Button";
 import { Logo } from "../ui/Logo";
 import chevronRightUrl from "@/features/shared/assets/icons/chevronRight.svg?url";
-import { Avatar } from "@/features/posts/components/Avatar";
+import { Avatar } from "@/features/shared/components/ui/Avatar";
 import { SessionData } from "@/features/me/me.type";
 
 export const Header = ({ user }: { user: SessionData | null }) => {

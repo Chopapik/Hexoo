@@ -25,7 +25,7 @@ import Hexoo3Dv2 from "@/features/shared/components/layout/RightNav/Hexoo3Dv2";
 import HexooBackground from "@/features/shared/components/layout/HexooBackground";
 import { LegalPageWrapper } from "@/features/shared/components/layout/LegalPageWrapper";
 import { NavItem } from "@/features/shared/components/layout/LeftNav/NavItem";
-import { Avatar } from "@/features/posts/components/Avatar";
+import { Avatar } from "@/features/shared/components/ui/Avatar";
 import CreatePostButton from "@/features/posts/components/CreatePostButton";
 import { PostCard } from "@/features/posts/components/PostCard";
 import { PostMeta } from "@/features/posts/components/PostMeta";

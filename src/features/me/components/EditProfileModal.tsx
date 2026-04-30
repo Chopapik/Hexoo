@@ -8,7 +8,7 @@ import RemoveImageButton from "@/features/shared/components/ui/RemoveImageButton
 import type { PublicUserResponseDto } from "@/features/users/types/user.dto";
 import useUpdateProfile from "../hooks/useUpdateProfile";
 import { useUpdateProfileForm } from "../hooks/useUpdateProfileForm";
-import { Avatar } from "@/features/posts/components/Avatar";
+import { Avatar } from "@/features/shared/components/ui/Avatar";
 import cameraIcon from "@/features/shared/assets/icons/camera.svg?url";
 import Image from "next/image";
 import { parseUpdateProfileErrorMessages } from "../utils/updateProfileErrorMap";

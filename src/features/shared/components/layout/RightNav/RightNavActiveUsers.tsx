@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { Avatar } from "@/features/posts/components/Avatar";
 import fetchClient from "@/lib/fetchClient";
 import { useAppStore } from "@/lib/store/store";
+import { Avatar } from "@/features/shared/components/ui/Avatar";
 
 type PreviewUser = {
   uid: string;

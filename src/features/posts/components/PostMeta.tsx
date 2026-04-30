@@ -1,6 +1,6 @@
 import React from "react";
 import type { PublicPostResponseDto } from "../types/post.dto";
-import { Avatar } from "./Avatar";
+import { Avatar } from "@/features/shared/components/ui/Avatar";
 import "dayjs/locale/pl";
 import PostOptions from "./PostOptions";
 import Link from "next/link";
@@ -17,7 +17,7 @@ export const PostMeta = ({ post }: PostMetaProps) => {
 
   return (
     <div className="w-full flex justify-between items-start">
-      <div className="inline-flex justify-start items-center gap-2">  
+      <div className="inline-flex justify-start items-center gap-2">
         <div className="size-10" onClick={handleLinkClick}>
           <Link href={`/profile/${post.userName}`}>
             <Avatar
@@ -31,7 +31,10 @@ export const PostMeta = ({ post }: PostMetaProps) => {
             className="justify-start text-text-main text-sm font-medium font-Albert_Sans"
             onClick={handleLinkClick}
           >
-            <Link href={`/profile/${post.userName}`} className="hover:underline">
+            <Link
+              href={`/profile/${post.userName}`}
+              className="hover:underline"
+            >
               {post.userName}
             </Link>
           </div>
