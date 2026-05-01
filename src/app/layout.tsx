@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 
+import { rubik, newsreader, robotoMono } from "@/styles/fonts";
+
 import "@/styles/globals.css";
 import "@/styles/scrollbar.css";
 import "@/styles/glassmorphism.css";
@@ -18,11 +20,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pl" suppressHydrationWarning>
+    <html
+      lang="pl"
+      suppressHydrationWarning
+      className={`${rubik.variable} ${newsreader.variable} ${robotoMono.variable}`}
+    >
       <head>
         <ThemeScript />
       </head>
-      <body>
+      <body className="antialiased">
         <RecaptchaProvider>
           <QueryProvider>
             {children}
