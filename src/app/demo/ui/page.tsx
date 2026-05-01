@@ -22,7 +22,7 @@ import {
 } from "@/features/shared/components/layout/RightNav/RightNav";
 import Hexoo3D from "@/features/shared/components/layout/RightNav/Hexoo3D";
 import Hexoo3Dv2 from "@/features/shared/components/layout/RightNav/Hexoo3Dv2";
-import HexooBackground from "@/features/shared/components/layout/HexooBackground";
+import BackgroundAnimation from "@/features/shared/components/BackgroundAnimation";
 import { LegalPageWrapper } from "@/features/shared/components/layout/LegalPageWrapper";
 import { NavItem } from "@/features/shared/components/layout/LeftNav/NavItem";
 import { Avatar } from "@/features/shared/components/ui/Avatar";
@@ -332,7 +332,7 @@ export default function UiDemoPage() {
     <QueryClientProvider client={demoQueryClient}>
       <DemoStoreBootstrap />
       <div className="min-h-screen bg-page-background p-6 space-y-8">
-        {showBackground && <HexooBackground />}
+        {showBackground && <BackgroundAnimation />}
 
         <header className="space-y-2">
           <h1 className="text-4xl font-bold text-text-main font-sans">
