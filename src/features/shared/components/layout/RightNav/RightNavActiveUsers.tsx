@@ -62,7 +62,7 @@ export function RightNavActiveUsers() {
         aria-label="Brak aktywnych użytkowników"
       >
         <div className="mb-2 px-0.5 flex items-center gap-1.5">
-          <h3 className="text-[10px] font-bold tracking-wider text-text-neutral font-sans">
+          <h3 className="text-sm tracking-wider text-text-neutral font-serif">
             /aktywni/
           </h3>
         </div>
