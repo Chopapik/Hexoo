@@ -35,11 +35,11 @@ export default function DitheringSection() {
             <div className="text-center md:text-left">
               <h4
                 id="posts-dithering-label"
-                className="font-semibold text-text-main"
+                className="font-semibold font-sans text-text-main"
               >
                 Włącz dithering
               </h4>
-              <p className="text-sm text-text-neutral">
+              <p className="text-sm font-sans text-text-neutral">
                 Ustawienia wpływają na wygląd obrazków w postach i w podglądzie.
               </p>
             </div>
@@ -50,10 +50,12 @@ export default function DitheringSection() {
             />
           </div>
 
-          <div className="rounded-lg border border-primary-neutral-stroke-default/70 bg-secondary-neutral-background-default/40 p-3 text-sm text-text-neutral">
-            <p className="font-medium text-text-main">Aktualna konfiguracja</p>
-            <p className="mt-1">{summary}</p>
-            <p className="mt-1">
+          <div className="rounded-lg border border-primary-neutral-stroke-default/70 bg-secondary-neutral-background-default/40 p-3 text-sm font-sans text-text-neutral">
+            <p className="font-medium font-sans text-text-main">
+              Aktualna konfiguracja
+            </p>
+            <p className="mt-1 font-sans">{summary}</p>
+            <p className="mt-1 font-sans">
               Processing: {settings.processingWidth}px, Base:{" "}
               {settings.ditherBaseWidth}px, Distance:{" "}
               {settings.colorDistanceFormula}.

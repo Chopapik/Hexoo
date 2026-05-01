@@ -69,7 +69,7 @@ export const UserProfileCard = ({
         )}
 
         <div className="flex-1 w-full inline-flex flex-col md:justify-center items-start gap-2 overflow-hidden">
-          <div className="flex flex-col md:px-1 md:flex-row md:justify-between md:items-center text-center md:text-left w-full text-text-main text-base xs:text-2xl font-bold font-Albert_Sans truncate">
+          <div className="flex flex-col md:px-1 md:flex-row md:justify-between md:items-center text-center md:text-left w-full text-text-main text-base xs:text-2xl font-bold font-sans truncate">
             <span className="ml-1">{name}</span>
           </div>
 
@@ -77,10 +77,10 @@ export const UserProfileCard = ({
           <div className="self-stretch px-5 py-3.5 bg-[radial-gradient(ellipse_113.20%_442.25%_at_26.12%_10.28%,var(--text-main,rgba(255,255,255,0.04))_0%,var(--text-neutral,rgba(115,115,115,0.04))_100%)] ] rounded-xl inline-flex flex-col md:flex-row justify-center md:justify-between items-center gap-5 md:gap-4 overflow-hidden">
             <div className="w-full md:w-auto inline-flex justify-center md:justify-start items-center gap-3 md:gap-4">
               <div className="inline-flex flex-col justify-start items-start gap-0.5">
-                <div className="self-stretch h-3.5 justify-start text-text-neutral text-xs font-bold font-Albert_Sans">
+                <div className="self-stretch h-3.5 justify-start text-text-neutral text-xs font-bold font-sans">
                   dołączył
                 </div>
-                <div className="self-stretch h-3.5 justify-start text-text-main text-xs font-normal font-Albert_Sans">
+                <div className="self-stretch h-3.5 justify-start text-text-main text-xs font-normal font-sans">
                   {formatDate(createdAt, "MMMM YYYY")}
                 </div>
               </div>
@@ -89,10 +89,10 @@ export const UserProfileCard = ({
                 <>
                   <span className="w-px h-5 bg-primary-neutral-stroke-default inline-block" />
                   <div className="inline-flex flex-col justify-start items-start gap-0.5">
-                    <div className="self-stretch h-3.5 justify-start text-text-neutral text-xs font-bold font-Albert_Sans">
+                    <div className="self-stretch h-3.5 justify-start text-text-neutral text-xs font-bold font-sans">
                       ostatnio online
                     </div>
-                    <div className="self-stretch h-3.5 justify-start text-text-main text-xs font-normal font-Albert_Sans">
+                    <div className="self-stretch h-3.5 justify-start text-text-main text-xs font-normal font-sans">
                       {isOnline ? "teraz" : formatSmartDate(lastOnline)}
                     </div>
                   </div>
@@ -104,8 +104,8 @@ export const UserProfileCard = ({
               <div
                 className={
                   isOnline
-                    ? "justify-start text-lg font-Albert_Sans font-medium not-italic mr-1 text-emerald-400 "
-                    : "justify-start text-text-neutral text-lg font-medium font-Albert_Sans italic mr-1"
+                    ? "justify-start text-lg font-sans font-medium not-italic mr-1 text-emerald-400 "
+                    : "justify-start text-text-neutral text-lg font-medium font-sans italic mr-1"
                 }
               >
                 {statusLabel}

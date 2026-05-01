@@ -37,10 +37,13 @@ export default function ContentSection() {
       <div className="flex flex-col gap-6">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="text-center md:text-left">
-            <h4 id="nsfw-posts-label" className="font-semibold text-text-main">
+            <h4
+              id="nsfw-posts-label"
+              className="font-semibold font-sans text-text-main"
+            >
               Pokaż treść NSFW w postach
             </h4>
-            <p className="text-sm text-text-neutral">
+            <p className="text-sm font-sans text-text-neutral">
               Włącz, aby automatycznie pokazywać posty oznaczone jako NSFW.
             </p>
           </div>
@@ -55,11 +58,11 @@ export default function ContentSection() {
           <div className="text-center md:text-left">
             <h4
               id="nsfw-comments-label"
-              className="font-semibold text-text-main"
+              className="font-semibold font-sans text-text-main"
             >
               Pokaż treść NSFW w komentarzach
             </h4>
-            <p className="text-sm text-text-neutral">
+            <p className="text-sm font-sans text-text-neutral">
               Włącz, aby pokazywać komentarze oznaczone jako NSFW.
             </p>
           </div>

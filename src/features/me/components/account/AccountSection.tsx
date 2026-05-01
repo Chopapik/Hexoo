@@ -13,8 +13,10 @@ export default function AccountSection() {
       <SettingsSection title="Konto">
         <div className="flex flex-col md:flex-row items-center justify-between">
           <div>
-            <h4 className="font-semibold text-text-main">Zmiana hasła</h4>
-            <p className="text-sm text-text-neutral">
+            <h4 className="font-semibold font-sans text-text-main">
+              Zmiana hasła
+            </h4>
+            <p className="text-sm font-sans text-text-neutral">
               Zaktualizuj swoje hasło, aby zwiększyć bezpieczeństwo konta.
             </p>
           </div>

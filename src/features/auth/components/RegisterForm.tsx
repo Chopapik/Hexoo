@@ -150,10 +150,10 @@ export default function RegisterForm() {
   return (
     <div className="w-2xl px-32 py-20 rounded-[20px] inline-flex flex-col justify-center items-center gap-10 overflow-hidden glass-card bg-neutral-500/5">
       <div className="py-0.5 flex flex-col justify-start items-center overflow-hidden">
-        <div className="justify-start text-text-main text-5xl font-bold font-Plus_Jakarta_Sans">
+        <div className="justify-start text-text-main text-5xl font-bold font-sans">
           Rejestracja
         </div>
-        <div className="justify-start text-text-neutral text-2xl font-bold font-Plus_Jakarta_Sans">
+        <div className="justify-start text-text-neutral text-2xl font-bold font-sans">
           Załóż konto
         </div>
       </div>
@@ -205,7 +205,7 @@ export default function RegisterForm() {
                 <polyline points="20 6 9 17 4 12"></polyline>
               </svg>
             </div>
-            <span className="inline-flex items-center gap-1 text-text-main text-sm font-medium font-Plus_Jakarta_Sans">
+            <span className="inline-flex items-center gap-1 text-text-main text-sm font-medium font-sans">
               <span>Akceptuję</span>
               <span>
                 <Link
@@ -229,7 +229,7 @@ export default function RegisterForm() {
                   />
                 </svg>
               </div>
-              <span className="text-red-500 text-xs font-normal font-Roboto">
+              <span className="text-red-500 text-xs font-normal font-sans">
                 {parseRegisterErrorMessages(errors.terms.message)[0]?.text}
               </span>
             </div>
@@ -240,7 +240,7 @@ export default function RegisterForm() {
           {errors.root && (
             <div className="min-w-48 px-4 py-2 bg-red-600 rounded-lg shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] inline-flex justify-center items-center gap-2 overflow-hidden">
               <Image src={warningIconUrl} alt="warning!" />
-              <div className="justify-start text-white text-xs font-semibold font-Plus_Jakarta_Sans">
+              <div className="justify-start text-white text-xs font-semibold font-sans">
                 {parseRegisterErrorMessages(errors.root?.message)[0]?.text}
               </div>
             </div>
@@ -259,10 +259,10 @@ export default function RegisterForm() {
       </form>
 
       <div className="self-stretch text-center justify-start mt-4">
-        <span className="text-text-main text-base font-semibold font-Plus_Jakarta_Sans">
+        <span className="text-text-main text-base font-semibold font-sans">
           Masz już konto?
         </span>
-        <span className="text-text-main text-base font-semibold font-Plus_Jakarta_Sans underline ml-1">
+        <span className="text-text-main text-base font-semibold font-sans underline ml-1">
           <Link href="/login">Zaloguj się</Link>
         </span>
       </div>

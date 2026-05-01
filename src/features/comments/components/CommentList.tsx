@@ -21,7 +21,7 @@ export const CommentList = ({ comments, isLoading }: CommentListProps) => {
   if (comments.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-8 text-center">
-        <p className="text-text-neutral text-sm font-Albert_Sans">
+        <p className="text-text-neutral text-sm font-sans">
           Brak komentarzy
         </p>
       </div>

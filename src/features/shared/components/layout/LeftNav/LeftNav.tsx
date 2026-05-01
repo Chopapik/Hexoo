@@ -33,7 +33,7 @@ export function LeftNav({ onOpenRight, user }: LeftNavProps) {
     <div className="hidden md:flex md:sticky md:top-[88px] justify-end-safe self-start bg-primary-neutral-background-default border-t-2 border-primary-neutral-stroke-default  rounded-xl overflow-hidden md:w-20 xl:w-72 px-3 py-3 lg:px-4 lg:py-4 flex-col items-center h-full">
       {user ? (
         <div className="h-full py-5 gap-16 flex flex-col w-full items-center">
-          <div className="flex flex-col md:justify-start items-start w-fit font-Plus_Jakarta_Sans">
+          <div className="flex flex-col md:justify-start items-start w-fit font-sans">
             <NavItem label={"Strona główna"} to="/" icon={House} />
             <NavItem
               label={"Twój profil"}
@@ -68,7 +68,7 @@ export function LeftNav({ onOpenRight, user }: LeftNavProps) {
       ) : null}
       <footer className="flex">
         <div className="flex flex-col items-center justify-center gap-1 text-center">
-          <div className="flex gap-4 text-xs font-medium text-text-neutral/60">
+          <div className="flex gap-4 text-xs font-sans font-medium text-text-neutral/60">
             <Link
               href="/privacy"
               className="hover:text-text-neutral transition-colors"

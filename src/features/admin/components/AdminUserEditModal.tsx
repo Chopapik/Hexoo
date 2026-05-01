@@ -145,7 +145,7 @@ export default function AdminUserEditModal({
 
             <div className="flex-1 text-center sm:text-left w-full overflow-hidden">
               <div className="flex flex-col sm:flex-row sm:items-end gap-2 mb-1">
-                <h3 className="text-2xl sm:text-3xl font-bold text-text-main font-Albert_Sans truncate">
+                <h3 className="text-2xl sm:text-3xl font-bold text-text-main font-sans truncate">
                   {displayName}
                 </h3>
                 <span className="px-2 py-1 rounded text-xs font-medium bg-primary-neutral-stroke-default text-text-neutral mb-1.5">

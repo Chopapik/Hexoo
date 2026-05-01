@@ -14,7 +14,7 @@ export default function ValidationMessage({
 }: ValidationMessageProps) {
   let colorClass = "";
   const sizeClass =
-    "text-sm font-normal font-Roboto transition-colors duration-300 ease-in-out";
+    "text-sm font-normal font-sans transition-colors duration-300 ease-in-out";
   let icon = <></>;
 
   switch (message.type) {

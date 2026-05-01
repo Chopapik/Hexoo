@@ -51,11 +51,11 @@ export default function VerifyEmailPage() {
   return (
     <div className="flex-1 flex items-center justify-center">
       <div className="px-10 py-8 rounded-[20px] glass-card bg-neutral-500/5 flex flex-col items-center gap-4 text-center w-full max-w-md">
-        <div className="text-text-main text-2xl font-bold font-Plus_Jakarta_Sans">
+        <div className="text-text-main text-2xl font-bold font-sans">
           Sprawdź swoją skrzynkę
         </div>
 
-        <div className="text-text-neutral text-base font-semibold font-Plus_Jakarta_Sans">
+        <div className="text-text-neutral text-base font-semibold font-sans">
           Wysłaliśmy link aktywacyjny na Twój adres email. Kliknij go, żeby
           potwierdzić konto i dokończyć rejestrację.
         </div>

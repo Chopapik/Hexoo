@@ -38,7 +38,7 @@ export default function Select({
   return (
     <div className="w-full min-w-64 inline-flex flex-col justify-start items-start gap-1.5">
       {label && (
-        <div className="text-text-neutral text-sm font-semibold font-Plus_Jakarta_Sans ml-1">
+        <div className="text-text-neutral text-sm font-semibold font-sans ml-1">
           {label}
         </div>
       )}
@@ -48,7 +48,7 @@ export default function Select({
       >
         <select
           name={name}
-          className="flex-1 h-full w-full border-none outline-none text-text-main placeholder:text-text-neutral/50 text-base font-medium font-Plus_Jakarta_Sans bg-transparent appearance-none cursor-pointer"
+          className="flex-1 h-full w-full border-none outline-none text-text-main placeholder:text-text-neutral/50 text-base font-medium font-sans bg-transparent appearance-none cursor-pointer"
           value={value}
           onChange={onChange}
           onBlur={onBlur}

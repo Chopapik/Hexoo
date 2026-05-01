@@ -66,7 +66,7 @@ export default function Modal({
           >
             {title && (
               <div className="flex items-center justify-between px-4 py-3 border-b border-primary-neutral-stroke-default bg-secondary-neutral-background-default/60  ">
-                <span className="text-sm font-semibold text-text-main font-Albert_Sans">
+                <span className="text-sm font-semibold text-text-main font-sans">
                   {title}
                 </span>
                 <button

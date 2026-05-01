@@ -85,7 +85,7 @@ export default function AllUsersList() {
       <div className="w-full p-6 glass-card rounded-2xl border border-primary-neutral-stroke-default max-w-[1300px]">
         <div className="flex items-center justify-between mb-4">
           <div className="flex flex-col">
-            <h2 className="text-lg font-Albert_Sans font-semibold">
+            <h2 className="text-lg font-sans font-semibold">
               Wszyscy użytkownicy
             </h2>
             <div className="text-sm text-text-neutral">

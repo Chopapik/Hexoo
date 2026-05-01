@@ -91,7 +91,7 @@ export default function ModeratorDashboard() {
                 </SelectionTabButton>
               </div>
               <div>
-                <h2 className="text-lg font-Albert_Sans font-semibold">
+                <h2 className="text-lg font-sans font-semibold">
                   Kolejka oczekujących
                 </h2>
                 <div className="text-sm text-text-neutral">
@@ -168,7 +168,7 @@ export default function ModeratorDashboard() {
                 data &&
                 data.pages.length > 0 &&
                 data.pages[0].length > 0 && (
-                  <div className="text-center text-text-neutral text-sm py-8 font-Albert_Sans opacity-50">
+                  <div className="text-center text-text-neutral text-sm py-8 font-sans opacity-50">
                     konec
                   </div>
                 )}

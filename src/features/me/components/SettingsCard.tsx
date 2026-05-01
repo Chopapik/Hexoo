@@ -14,7 +14,7 @@ export default function SettingsCard() {
 
   return (
     <div className="w-full text-text-main flex flex-col gap-6 mt-4">
-      <h2 className="text-3xl font-bold font-Albert_Sans text-text-main mb-2">
+      <h2 className="text-3xl font-bold font-sans text-text-main mb-2">
         Ustawienia
       </h2>
       <AppearanceSection />
