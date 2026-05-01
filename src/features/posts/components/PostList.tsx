@@ -101,7 +101,7 @@ export default function PostList({ className = "" }: PostListProps) {
 
   if (isError) {
     return (
-      <div className="w-full text-center py-10 text-red-500 font-Albert_Sans">
+      <div className="w-full text-center py-10 text-red-500 font-sans">
         Nie udało się załadować postów.
       </div>
     );
@@ -128,7 +128,7 @@ export default function PostList({ className = "" }: PostListProps) {
         </div>
 
         {!hasNextPage && data && data.pages.length > 0 && (
-          <div className="text-center text-text-neutral text-sm py-8 font-Albert_Sans opacity-50">
+          <div className="text-center text-text-neutral text-sm py-8 font-sans opacity-50">
             konec
           </div>
         )}

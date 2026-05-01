@@ -91,9 +91,9 @@ export function NavItem({
         <div className="flex justify-start items-start overflow-hidden">
           <div
             className={
-              "hidden xl:block text-lg font-semibold font-Albert_Sans transition-colors duration-200 " +
+              "hidden xl:block text-lg font-semibold font-sans transition-colors duration-200 " +
               (isActive
-                ? "text-white drop-shadow-sm" // Tekst też lekko podbijamy
+                ? "text-white drop-shadow-sm"
                 : "text-text-neutral group-hover/item:text-text-main")
             }
           >

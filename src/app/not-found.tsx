@@ -22,15 +22,15 @@ export default function NotFound() {
           </svg>
         </div>
 
-        <h1 className="text-4xl font-Albert_Sans font-bold text-text-main text-center mb-4">
+        <h1 className="text-4xl font-sans font-bold text-text-main text-center mb-4">
           Błąd 404
         </h1>
 
-        <h2 className="text-xl font-Albert_Sans font-medium text-fuchsia-400 text-center mb-6">
+        <h2 className="text-xl font-sans font-medium text-fuchsia-400 text-center mb-6">
           Zasób nie został znaleziony.
         </h2>
 
-        <p className="text-sm text-text-neutral text-center mb-8 font-Albert_Sans leading-relaxed">
+        <p className="text-sm text-text-neutral text-center mb-8 font-sans leading-relaxed">
           Strona, której szukasz, nie istnieje lub została usunięta.
           <br />
           Sprawdź poprawność adresu URL.

@@ -28,10 +28,10 @@ export const Header = ({ user }: { user: SessionData | null }) => {
               </div>
 
               <div className="flex flex-col justify-center items-start">
-                <span className="text-[10px] leading-none text-text-neutral font-medium tracking-wide uppercase mb-0.5">
+                <span className="text-[10px] leading-none text-text-neutral font-sans font-medium tracking-wide uppercase mb-0.5">
                   Zalogowany jako
                 </span>
-                <span className="text-sm leading-none font-bold text-text-main font-Albert_Sans  transition-colors">
+                <span className="text-sm leading-none font-bold text-text-main font-sans  transition-colors">
                   {user.name}
                 </span>
               </div>

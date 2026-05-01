@@ -41,7 +41,7 @@ export const PostBody = ({
           className={`self-stretch  text-text-main text-base font-normal w-full ${
             isAscii
               ? "ascii-art"
-              : "font-Albert_Sans whitespace-pre-wrap wrap-break-word"
+              : "font-sans whitespace-pre-wrap wrap-break-word"
           }`}
         >
           {post.text}

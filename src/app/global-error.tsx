@@ -33,7 +33,7 @@ export default function GlobalError({
               </svg>
             </div>
 
-            <h2 className="text-3xl font-bold font-Albert_Sans text-red-500 mb-2">
+            <h2 className="text-3xl font-bold font-sans text-red-500 mb-2">
               Krytyczny Błąd
             </h2>
             <p className="text-text-neutral">

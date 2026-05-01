@@ -63,10 +63,10 @@ export default function OAuthCompleteProfileForm() {
   return (
     <div className="w-2xl px-32 py-20 rounded-[20px] inline-flex flex-col justify-center items-center gap-10 overflow-hidden glass-card bg-neutral-500/5">
       <div className="py-0.5 flex flex-col justify-start items-center overflow-hidden">
-        <div className="justify-start text-text-main text-5xl font-bold font-Plus_Jakarta_Sans">
+        <div className="justify-start text-text-main text-5xl font-bold font-sans">
           Ustaw nazwę
         </div>
-        <div className="justify-start text-text-neutral text-2xl font-bold font-Plus_Jakarta_Sans text-center">
+        <div className="justify-start text-text-neutral text-2xl font-bold font-sans text-center">
           Dokończ rejestrację, aby korzystać z Hexoo.
         </div>
       </div>
@@ -86,7 +86,7 @@ export default function OAuthCompleteProfileForm() {
           {errors.root && (
             <div className="min-w-48 px-3 h-full bg-red-600 rounded-lg shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] inline-flex justify-center items-center gap-2 overflow-hidden">
               <Image src={warningIconUrl} alt="warning!" />
-              <div className="justify-start text-white text-xs font-semibold font-Plus_Jakarta_Sans">
+              <div className="justify-start text-white text-xs font-semibold font-sans">
                 {parseRegisterErrorMessages(errors.root?.message)[0]?.text}
               </div>
             </div>

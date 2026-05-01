@@ -26,10 +26,10 @@ export default function LoginForm() {
   return (
     <div className="w-2xl px-32 py-20 rounded-[20px] inline-flex flex-col justify-center items-center gap-10 overflow-hidden glass-card bg-neutral-500/5">
       <div className="py-0.5 flex flex-col justify-start items-center overflow-hidden">
-        <div className="justify-start text-text-main text-5xl font-bold font-Plus_Jakarta_Sans">
+        <div className="justify-start text-text-main text-5xl font-bold font-sans">
           Logowanie
         </div>
-        <div className="justify-start text-text-neutral text-2xl font-bold font-Plus_Jakarta_Sans">
+        <div className="justify-start text-text-neutral text-2xl font-bold font-sans">
           Zaloguj się na swoje konto
         </div>
       </div>
@@ -57,7 +57,7 @@ export default function LoginForm() {
           {errors.root && (
             <div className="min-w-48 px-3 h-full bg-red-600 rounded-lg shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] inline-flex justify-center items-center gap-2 overflow-hidden">
               <Image src={warningIconUrl} alt="warning!" />
-              <div className="justify-start text-white text-xs font-semibold font-Plus_Jakarta_Sans">
+              <div className="justify-start text-white text-xs font-semibold font-sans">
                 {parseErrorMessages(errors.root?.message)[0]?.text}
               </div>
             </div>
@@ -76,10 +76,10 @@ export default function LoginForm() {
       </form>
 
       <div className="self-stretch text-center justify-start mt-4">
-        <span className="text-text-main text-base font-semibold font-Plus_Jakarta_Sans">
+        <span className="text-text-main text-base font-semibold font-sans">
           Nie masz konta?
         </span>
-        <span className="text-text-main text-base font-semibold font-Plus_Jakarta_Sans underline ml-1">
+        <span className="text-text-main text-base font-semibold font-sans underline ml-1">
           <Link href="/register">Zarejestruj się</Link>
         </span>
       </div>

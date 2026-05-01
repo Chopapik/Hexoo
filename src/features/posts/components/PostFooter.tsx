@@ -29,7 +29,7 @@ export const PostFooter = ({ post, onCommentClick }: PostFooterProps) => {
           <LikeIcon isLikedByMe={post.isLikedByMe} />
         </div>
         <div
-          className={`justify-start text-sm font-semibold font-Albert_Sans ${
+          className={`justify-start text-sm font-semibold font-sans ${
             post.isLikedByMe ? activeTextColor : inactiveTextColor
           }`}
         >
@@ -50,7 +50,7 @@ export const PostFooter = ({ post, onCommentClick }: PostFooterProps) => {
         >
           <CommentIcon />
         </div>
-        <div className="justify-start text-text-neutral text-sm font-semibold font-Albert_Sans group-hover:text-text-main transition-colors">
+        <div className="justify-start text-text-neutral text-sm font-semibold font-sans group-hover:text-text-main transition-colors">
           {post.commentsCount}
         </div>
       </div>

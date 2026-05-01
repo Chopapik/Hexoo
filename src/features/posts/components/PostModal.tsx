@@ -46,7 +46,7 @@ export const PostModal = ({
   const textClassName = `text-text-main text-base ${
     isAscii
       ? "ascii-art"
-      : "font-Albert_Sans whitespace-pre-wrap wrap-break-word"
+      : "font-sans whitespace-pre-wrap wrap-break-word"
   }`;
 
   const sidebarClassName = hasImage

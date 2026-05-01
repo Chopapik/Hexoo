@@ -48,8 +48,10 @@ export default function AppearanceSection() {
     <SettingsSection title="Wygląd">
       <div className="flex flex-col md:flex-row items-center justify-between gap-4">
         <div>
-          <h4 className="font-semibold text-text-main">Motyw aplikacji</h4>
-          <p className="text-sm text-text-neutral">
+          <h4 className="font-semibold font-sans text-text-main">
+            Motyw aplikacji
+          </h4>
+          <p className="text-sm font-sans text-text-neutral">
             Dostosuj wygląd interfejsu do swoich preferencji (Jasny / Ciemny).
           </p>
         </div>

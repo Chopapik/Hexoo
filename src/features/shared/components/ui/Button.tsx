@@ -118,7 +118,7 @@ export default function Button({
 }: ButtonProps) {
   // Keep base layout/interaction minimal so variants can fully style background/borders.
   const baseClasses =
-    "relative inline-flex justify-center items-center gap-2 font-bold font-Plus_Jakarta_Sans leading-tight shrink-0 cursor-pointer overflow-hidden transition-all duration-300 ease-out";
+    "relative inline-flex justify-center items-center gap-2 font-bold font-sans leading-tight shrink-0 cursor-pointer overflow-hidden transition-all duration-300 ease-out";
 
   // When disabled or loading, use the per-variant blocked look.
   const visualClasses =

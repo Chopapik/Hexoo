@@ -85,7 +85,7 @@ export default function ActivityLogTable() {
     <div className="w-full p-6 glass-card rounded-2xl border border-primary-neutral-stroke-default max-w-[1300px]">
       <div className="flex items-center justify-between mb-4">
         <div className="flex flex-col">
-          <h2 className="text-lg font-Albert_Sans font-semibold">
+          <h2 className="text-lg font-sans font-semibold">
             Log aktywności
           </h2>
           <div className="text-sm text-text-neutral">
@@ -204,7 +204,7 @@ export default function ActivityLogTable() {
           </div>
 
           {!hasNextPage && logs.length > 0 && (
-            <div className="text-center text-text-neutral text-sm py-6 font-Albert_Sans opacity-50">
+            <div className="text-center text-text-neutral text-sm py-6 font-sans opacity-50">
               To już wszystkie załadowane wpisy
             </div>
           )}

@@ -12,7 +12,7 @@ export default function CreatePostButton({ onClick }: CreatePostButtonProps) {
       }}
       className="self-stretch glass-ard h-20 glass-card px-8 py-4 w-full rounded-xl inline-flex justify-between items-center overflow-hidden cursor-pointer"
     >
-      <div className="text-center justify-center text-text-main text-2xl font-semibold font-Albert_Sans">
+      <div className="text-center justify-center text-text-main text-2xl font-semibold font-sans">
         co słychać?
       </div>
       <div data-svg-wrapper>

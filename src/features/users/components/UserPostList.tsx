@@ -89,7 +89,7 @@ export function UserPostList({ userId }: { userId: string }) {
       )}
 
       {data?.pages[0]?.length === 0 && (
-        <div className="text-center py-10 text-text-neutral font-Albert_Sans">
+        <div className="text-center py-10 text-text-neutral font-sans">
           Ten użytkownik nie dodał jeszcze żadnych postów.
         </div>
       )}

@@ -241,7 +241,7 @@ function Section({
   return (
     <section className="space-y-4 rounded-2xl border border-primary-neutral-stroke-default bg-primary-neutral-background-default/40 p-6">
       <div>
-        <h2 className="text-2xl font-semibold text-text-main font-Albert_Sans">
+        <h2 className="text-2xl font-semibold text-text-main font-sans">
           {title}
         </h2>
         {description && (
@@ -270,7 +270,7 @@ function DemoModalShell({
     >
       {title && (
         <div className="flex items-center justify-between px-4 py-3 border-b border-primary-neutral-stroke-default bg-secondary-neutral-background-default/60">
-          <span className="text-sm font-semibold text-text-main font-Albert_Sans">
+          <span className="text-sm font-semibold text-text-main font-sans">
             {title}
           </span>
           <button className="text-text-neutral hover:text-text-main transition-colors p-1">
@@ -335,7 +335,7 @@ export default function UiDemoPage() {
         {showBackground && <HexooBackground />}
 
         <header className="space-y-2">
-          <h1 className="text-4xl font-bold text-text-main font-Albert_Sans">
+          <h1 className="text-4xl font-bold text-text-main font-sans">
             UI Demo – pełny katalog komponentów (offline)
           </h1>
           <p className="text-text-neutral">
@@ -1086,7 +1086,7 @@ export default function UiDemoPage() {
                     </div>
                     <div className="flex-1 text-center sm:text-left w-full overflow-hidden">
                       <div className="flex flex-col sm:flex-row sm:items-end gap-2 mb-1">
-                        <h3 className="text-2xl sm:text-3xl font-bold text-text-main font-Albert_Sans truncate">
+                        <h3 className="text-2xl sm:text-3xl font-bold text-text-main font-sans truncate">
                           {demoAdminUser.name}
                         </h3>
                         <span className="px-2 py-1 rounded text-xs font-medium bg-primary-neutral-stroke-default text-text-neutral mb-1.5">

@@ -105,14 +105,14 @@ export default function ModerationCommentQueueItem({
       )}
 
       <div className="border-2 border-primary-neutral-background-default rounded-xl overflow-hidden relative ">
-        <p className="border-b border-fuchsia-500/10 bg-fuchsia-950/20 px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-fuchsia-300/90 font-Albert_Sans">
+        <p className="border-b border-fuchsia-500/10 bg-fuchsia-950/20 px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-fuchsia-300/90 font-sans">
           Wątek zgłoszenia · post (kontekst) → komentarz (zgłoszenie)
         </p>
 
         <div className="grid grid-cols-[28px_1fr] border-b border-white/10 bg-black/15">
           <TreePostGutter />
           <div className="min-w-0 px-2 py-2 sm:px-3">
-            <p className="text-[9px] uppercase tracking-widest text-text-neutral/55 mb-1.5 font-semibold font-Albert_Sans">
+            <p className="text-[9px] uppercase tracking-widest text-text-neutral/55 mb-1.5 font-semibold font-sans">
               Post nadrzędny · kontekst
             </p>
             {parent ? (
@@ -129,7 +129,7 @@ export default function ModerationCommentQueueItem({
                   </div>
                   <div className="min-w-0 flex-1 opacity-90">
                     <div className="flex flex-wrap items-center gap-1.5 mb-0.5">
-                      <span className="text-xs font-medium font-Albert_Sans text-text-main/90">
+                      <span className="text-xs font-medium font-sans text-text-main/90">
                         {parent.userName}
                       </span>
                       {parent.isNSFW && (
@@ -141,7 +141,7 @@ export default function ModerationCommentQueueItem({
                         {parent.id.slice(0, 8)}…
                       </span>
                     </div>
-                    <p className="text-xs leading-snug text-text-neutral/75 font-Albert_Sans whitespace-pre-wrap line-clamp-2 wrap-break-word">
+                    <p className="text-xs leading-snug text-text-neutral/75 font-sans whitespace-pre-wrap line-clamp-2 wrap-break-word">
                       {parent.text?.trim()
                         ? parent.text
                         : "(post bez treści tekstowej)"}
@@ -173,7 +173,7 @@ export default function ModerationCommentQueueItem({
           <TreeCommentGutter />
           <div className="flex-1 min-w-0 flex flex-col border-l border-fuchsia-500/20 bg-black/30">
             <div className=" p-5 border-b border-white/10 ">
-              <p className="text-xs uppercase tracking-widest text-fuchsia-300/95 mb-3 font-bold font-Albert_Sans">
+              <p className="text-xs uppercase tracking-widest text-fuchsia-300/95 mb-3 font-bold font-sans">
                 Zgłoszony komentarz
               </p>
               <div className="flex flex-wrap gap-3 mb-3 font-mono text-sm">

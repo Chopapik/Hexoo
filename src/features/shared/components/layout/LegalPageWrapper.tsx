@@ -9,7 +9,7 @@ export const LegalPageWrapper = ({ children }: LegalPageWrapperProps) => {
   return (
     <div className="w-full max-w-4xl mx-auto pt-2 pb-16 px-4 flex flex-col items-center">
       <div className="glass-card w-full p-8 md:p-12 rounded-2xl border border-primary-neutral-stroke-default bg-black/20 backdrop-blur-sm">
-        <article className="prose prose-invert prose-headings:font-Albert_Sans prose-headings:text-text-main prose-p:text-text-neutral prose-li:text-text-neutral prose-a:text-fuchsia-400 hover:prose-a:text-fuchsia-300 max-w-none">
+        <article className="prose prose-invert prose-headings:font-sans prose-headings:text-text-main prose-p:text-text-neutral prose-li:text-text-neutral prose-a:text-fuchsia-400 hover:prose-a:text-fuchsia-300 max-w-none">
           {children}
         </article>
       </div>

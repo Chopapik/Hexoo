@@ -91,14 +91,14 @@ export const CommentItem = ({
   const avatarClass = moderationProminent ? "size-10" : "size-8";
   const avatarPx = moderationProminent ? 40 : 32;
   const nameClass = moderationProminent
-    ? "text-text-main text-base font-semibold font-Albert_Sans hover:underline"
-    : "text-text-main text-sm font-medium font-Albert_Sans hover:underline";
+    ? "text-text-main text-base font-semibold font-sans hover:underline"
+    : "text-text-main text-sm font-medium font-sans hover:underline";
   const bodyClass = moderationProminent
-    ? "text-text-main text-base leading-relaxed font-Albert_Sans whitespace-pre-wrap wrap-break-word"
-    : "text-text-main text-sm font-Albert_Sans whitespace-pre-wrap wrap-break-word";
+    ? "text-text-main text-base leading-relaxed font-sans whitespace-pre-wrap wrap-break-word"
+    : "text-text-main text-sm font-sans whitespace-pre-wrap wrap-break-word";
   const dateClass = moderationProminent
-    ? "text-text-neutral text-sm font-Albert_Sans"
-    : "text-text-neutral text-xs font-Albert_Sans";
+    ? "text-text-neutral text-sm font-sans"
+    : "text-text-neutral text-xs font-sans";
 
   const showMenu = !!currentUser;
 

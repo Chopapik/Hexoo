@@ -15,7 +15,7 @@ export default function SelectionTabButton({
   className = "",
 }: Props) {
   const base =
-    "rounded-lg px-4 py-2 text-sm font-Albert_Sans font-medium transition-colors";
+    "rounded-lg px-4 py-2 text-sm font-sans font-medium transition-colors";
 
   const selected =
     `text-fuchsia-100 ${fuchsiaGradientSurfaceClass} shadow-sm brightness-90 saturate-90 cursor-default`;

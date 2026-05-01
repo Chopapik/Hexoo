@@ -24,10 +24,10 @@ export default function ButtonsDemoPage() {
   return (
     <div className="min-h-screen bg-primary-neutral-background-default p-8">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-bold text-text-main font-Albert_Sans mb-2">
+        <h1 className="text-4xl font-bold text-text-main font-sans mb-2">
           Button Component Demo
         </h1>
-        <p className="text-text-neutral mb-8 font-Albert_Sans">
+        <p className="text-text-neutral mb-8 font-sans">
           Wszystkie warianty i rozmiary przycisków z Button.tsx
         </p>
 
@@ -36,7 +36,7 @@ export default function ButtonsDemoPage() {
           {variants.map((variant) => (
             <div key={variant} className="space-y-6">
               <div className="border-b border-primary-neutral-stroke-default pb-2">
-                <h2 className="text-2xl font-semibold text-text-main font-Albert_Sans capitalize">
+                <h2 className="text-2xl font-semibold text-text-main font-sans capitalize">
                   {variant.replace(/-/g, " ")}
                 </h2>
               </div>
@@ -45,7 +45,7 @@ export default function ButtonsDemoPage() {
               <div className="space-y-8">
                 {/* Text buttons with different sizes */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-medium text-text-neutral font-Albert_Sans">
+                  <h3 className="text-lg font-medium text-text-neutral font-sans">
                     Z tekstem
                   </h3>
                   <div className="flex flex-wrap items-center gap-4">
@@ -61,7 +61,7 @@ export default function ButtonsDemoPage() {
                             size={size}
                             text={`Button ${size.toUpperCase()}`}
                           />
-                          <span className="text-xs text-text-neutral font-Albert_Sans">
+                          <span className="text-xs text-text-neutral font-sans">
                             {size}
                           </span>
                         </div>
@@ -71,7 +71,7 @@ export default function ButtonsDemoPage() {
 
                 {/* Icon-only buttons */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-medium text-text-neutral font-Albert_Sans">
+                  <h3 className="text-lg font-medium text-text-neutral font-sans">
                     Tylko ikona
                   </h3>
                   <div className="flex flex-wrap items-center gap-4">
@@ -85,7 +85,7 @@ export default function ButtonsDemoPage() {
                           size={size as "icon" | "iconSm"}
                           icon={<Plus className="size-4" />}
                         />
-                        <span className="text-xs text-text-neutral font-Albert_Sans">
+                        <span className="text-xs text-text-neutral font-sans">
                           {size}
                         </span>
                       </div>
@@ -95,7 +95,7 @@ export default function ButtonsDemoPage() {
 
                 {/* Buttons with left icon */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-medium text-text-neutral font-Albert_Sans">
+                  <h3 className="text-lg font-medium text-text-neutral font-sans">
                     Z ikoną po lewej
                   </h3>
                   <div className="flex flex-wrap items-center gap-4">
@@ -112,7 +112,7 @@ export default function ButtonsDemoPage() {
                             text="Send"
                             leftIcon={<Send className="size-4" />}
                           />
-                          <span className="text-xs text-text-neutral font-Albert_Sans">
+                          <span className="text-xs text-text-neutral font-sans">
                             {size}
                           </span>
                         </div>
@@ -122,7 +122,7 @@ export default function ButtonsDemoPage() {
 
                 {/* Buttons with right icon */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-medium text-text-neutral font-Albert_Sans">
+                  <h3 className="text-lg font-medium text-text-neutral font-sans">
                     Z ikoną po prawej
                   </h3>
                   <div className="flex flex-wrap items-center gap-4">
@@ -139,7 +139,7 @@ export default function ButtonsDemoPage() {
                             text="Like"
                             rightIcon={<Heart className="size-4" />}
                           />
-                          <span className="text-xs text-text-neutral font-Albert_Sans">
+                          <span className="text-xs text-text-neutral font-sans">
                             {size}
                           </span>
                         </div>
@@ -149,7 +149,7 @@ export default function ButtonsDemoPage() {
 
                 {/* Buttons with both icons */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-medium text-text-neutral font-Albert_Sans">
+                  <h3 className="text-lg font-medium text-text-neutral font-sans">
                     Z ikonami po obu stronach
                   </h3>
                   <div className="flex flex-wrap items-center gap-4">
@@ -167,7 +167,7 @@ export default function ButtonsDemoPage() {
                             leftIcon={<Search className="size-4" />}
                             rightIcon={<Settings className="size-4" />}
                           />
-                          <span className="text-xs text-text-neutral font-Albert_Sans">
+                          <span className="text-xs text-text-neutral font-sans">
                             {size}
                           </span>
                         </div>
@@ -177,7 +177,7 @@ export default function ButtonsDemoPage() {
 
                 {/* Loading state */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-medium text-text-neutral font-Albert_Sans">
+                  <h3 className="text-lg font-medium text-text-neutral font-sans">
                     Stan ładowania
                   </h3>
                   <div className="flex flex-wrap items-center gap-4">
@@ -194,7 +194,7 @@ export default function ButtonsDemoPage() {
                             text="Loading..."
                             isLoading={true}
                           />
-                          <span className="text-xs text-text-neutral font-Albert_Sans">
+                          <span className="text-xs text-text-neutral font-sans">
                             {size}
                           </span>
                         </div>
@@ -204,7 +204,7 @@ export default function ButtonsDemoPage() {
 
                 {/* Disabled state */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-medium text-text-neutral font-Albert_Sans">
+                  <h3 className="text-lg font-medium text-text-neutral font-sans">
                     Wyłączony
                   </h3>
                   <div className="flex flex-wrap items-center gap-4">
@@ -221,7 +221,7 @@ export default function ButtonsDemoPage() {
                             text="Disabled"
                             disabled={true}
                           />
-                          <span className="text-xs text-text-neutral font-Albert_Sans">
+                          <span className="text-xs text-text-neutral font-sans">
                             {size}
                           </span>
                         </div>
@@ -235,7 +235,7 @@ export default function ButtonsDemoPage() {
 
         {/* Interactive Examples */}
         <div className="mt-16 space-y-6 border-t border-primary-neutral-stroke-default pt-8">
-          <h2 className="text-2xl font-semibold text-text-main font-Albert_Sans">
+          <h2 className="text-2xl font-semibold text-text-main font-sans">
             Przykłady interaktywne
           </h2>
           <div className="flex flex-wrap gap-4">

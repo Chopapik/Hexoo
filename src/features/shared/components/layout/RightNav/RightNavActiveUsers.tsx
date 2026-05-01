@@ -62,7 +62,7 @@ export function RightNavActiveUsers() {
         aria-label="Brak aktywnych użytkowników"
       >
         <div className="mb-2 px-0.5 flex items-center gap-1.5">
-          <h3 className="text-[10px] font-bold tracking-wider text-text-neutral font-Albert_Sans">
+          <h3 className="text-[10px] font-bold tracking-wider text-text-neutral font-sans">
             /aktywni/
           </h3>
         </div>
@@ -71,7 +71,7 @@ export function RightNavActiveUsers() {
           <span className="text-xl font-mono whitespace-pre select-none tracking-tighter">
             {` (∪｡∪)｡｡｡zzZ `}
           </span>
-          <span className="text-[10px] mt-1.5 font-Albert_Sans tracking-widest uppercase opacity-80">
+          <span className="text-[10px] mt-1.5 font-sans tracking-widest uppercase opacity-80">
             pusto tutaj
           </span>
         </div>
@@ -85,7 +85,7 @@ export function RightNavActiveUsers() {
       aria-label="Użytkownicy aktywni na stronie"
     >
       <div className="mb-2 px-0.5 flex items-center gap-1.5 bg-erd">
-        <h3 className="text-[10px] font-bold  tracking-wider text-text-neutral font-Albert_Sans">
+        <h3 className="text-[10px] font-bold  tracking-wider text-text-neutral font-sans">
           /aktywni/
         </h3>
       </div>
