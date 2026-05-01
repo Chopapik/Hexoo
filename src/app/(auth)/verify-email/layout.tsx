@@ -1,4 +1,4 @@
-import HexooBackground from "@/features/shared/components/layout/HexooBackground";
+import BackgroundAnimation from "@/features/shared/components/BackgroundAnimation";
 
 export const metadata = {
   title: "Hexoo — Weryfikacja email",
@@ -12,7 +12,7 @@ export default function OAuthLayout({
 }) {
   return (
     <div className="relative w-full min-h-screen flex flex-col">
-      <HexooBackground />
+      <BackgroundAnimation />
       {children}
     </div>
   );
