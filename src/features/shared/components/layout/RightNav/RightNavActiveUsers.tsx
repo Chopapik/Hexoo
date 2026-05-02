@@ -14,6 +14,9 @@ type PreviewUser = {
 
 const DEBOUNCE_MS = 200;
 
+const AVATAR_CLASS_NAME =
+  "w-11 h-11 lg:w-10 lg:h-10 border border-white/10 transition-colors";
+
 export function RightNavActiveUsers() {
   const onlineUids = useAppStore((s) => s.presence.onlineUids);
   const selfUid = useAppStore((s) => s.auth.user?.uid);
@@ -21,6 +24,7 @@ export function RightNavActiveUsers() {
   const uidsKey = useMemo(() => [...onlineUids].sort().join(","), [onlineUids]);
 
   const [users, setUsers] = useState<PreviewUser[]>([]);
+  const [activeUsers, setActiveUsers] = useState<PreviewUser[]>([]);
 
   useEffect(() => {
     const uids = uidsKey ? uidsKey.split(",") : [];
@@ -31,15 +35,21 @@ export function RightNavActiveUsers() {
     }
 
     let cancelled = false;
+
     const debounceId = window.setTimeout(async () => {
       try {
         const data = await fetchClient.post<{ users: PreviewUser[] }>(
           "/users/by-ids",
           { uids },
         );
-        if (!cancelled) setUsers(data.users ?? []);
+
+        if (!cancelled) {
+          setUsers(data.users ?? []);
+        }
       } catch {
-        if (!cancelled) setUsers([]);
+        if (!cancelled) {
+          setUsers([]);
+        }
       }
     }, DEBOUNCE_MS);
 
@@ -49,66 +59,54 @@ export function RightNavActiveUsers() {
     };
   }, [uidsKey]);
 
-  const others = useMemo(
-    () => (selfUid ? users.filter((u) => u.uid !== selfUid) : users),
-    [users, selfUid],
-  );
+  useEffect(() => {
+    setActiveUsers(selfUid ? users.filter((u) => u.uid !== selfUid) : users);
+  }, [users, selfUid]);
 
-  // Zmieniony stan dla braku użytkowników
-  if (others.length === 0) {
-    return (
-      <section
-        className="w-full rounded-xl px-2 py-3 bg-[radial-gradient(ellipse_113.20%_442.25%_at_26.12%_10.28%,var(--text-main,rgba(255,255,255,0.04))_0%,var(--text-neutral,rgba(115,115,115,0.04))_100%)] flex flex-col justify-center items-center min-h-[90px]"
-        aria-label="Brak aktywnych użytkowników"
-      >
-        <div className="mb-2 px-0.5 flex items-center gap-1.5">
-          <h3 className="text-sm tracking-wider text-text-neutral font-serif">
-            /aktywni/
-          </h3>
-        </div>
-
-        <div className="flex flex-col items-center justify-center text-text-neutral/50 transition-opacity">
-          <span className="text-xl font-mono whitespace-pre select-none tracking-tighter">
-            {` (∪｡∪)｡｡｡zzZ `}
-          </span>
-          <span className="text-[10px] mt-1.5 font-sans tracking-widest uppercase opacity-80">
-            pusto tutaj
-          </span>
-        </div>
-      </section>
-    );
-  }
+  const isEmpty = activeUsers.length === 0;
 
   return (
     <section
-      className="w-full rounded-xl   px-2 py-3 bg-[radial-gradient(ellipse_113.20%_442.25%_at_26.12%_10.28%,var(--text-main,rgba(255,255,255,0.04))_0%,var(--text-neutral,rgba(115,115,115,0.04))_100%)] flex flex-col justify-center items-center"
-      aria-label="Użytkownicy aktywni na stronie"
+      className={`w-full rounded-xl px-2 py-3 bg-[radial-gradient(ellipse_113.20%_442.25%_at_26.12%_10.28%,var(--text-main,rgba(255,255,255,0.04))_0%,var(--text-neutral,rgba(115,115,115,0.04))_100%)] flex flex-col justify-center items-center ${isEmpty ? "min-h-[90px]" : ""}`}
+      aria-label={
+        isEmpty
+          ? "Brak aktywnych użytkowników"
+          : "Użytkownicy aktywni na stronie"
+      }
     >
-      <div className="mb-2 px-0.5 flex items-center gap-1.5 bg-erd">
-        <h3 className="text-[10px] font-bold  tracking-wider text-text-neutral font-sans">
-          /aktywni/
+      <div className="mb-2 px-0.5 flex items-center gap-1.5">
+        <h3 className="text-[10px] font-bold tracking-wider text-text-neutral font-sans">
+          /aktywni użytkownicy/
         </h3>
       </div>
 
-      <div className="flex flex-col items-center gap-2.5 lg:flex-row lg:flex-nowrap lg:justify-start lg:overflow-x-auto lg:pb-1 lg:gap-2 [scrollbar-width:thin]">
-        {others.map((u) => (
-          <Link
-            key={u.uid}
-            href={`/profile/${encodeURIComponent(u.name)}`}
-            title={u.name}
-            className="group relative shrink-0 rounded-2xl p-0.5 outline-none transition-transform duration-200 focus-visible:scale-[1.04] focus-visible:ring-2 focus-visible:ring-primary-fuchsia-stroke-default focus-visible:ring-offset-2 focus-visible:ring-offset-primary-neutral-background-default ring-offset-2 ring-offset-primary-neutral-background-default"
-          >
-            <Avatar
-              src={u.avatarUrl}
-              alt={u.name}
-              className="w-11 h-11 lg:w-10 lg:h-10 border border-white/10 transition-colors"
-              width={52}
-              height={52}
-            />
-            <span className="sr-only">Profil: {u.name}</span>
-          </Link>
-        ))}
-      </div>
+      {isEmpty ? (
+        <div className="flex flex-col items-center justify-center text-text-neutral/50 transition-opacity">
+          <span className="text-sm font-sans text">
+            aktualnie nikt nie jest aktywny
+          </span>
+        </div>
+      ) : (
+        <div className="flex flex-col items-center gap-2.5 lg:flex-row lg:flex-nowrap lg:justify-start lg:overflow-x-auto lg:pb-1 lg:gap-2 [scrollbar-width:thin]">
+          {activeUsers.map((u) => (
+            <Link
+              key={u.uid}
+              href={`/profile/${encodeURIComponent(u.name)}`}
+              title={u.name}
+              className="group relative shrink-0 rounded-2xl p-0.5 outline-none transition-transform duration-200 focus-visible:scale-[1.04] focus-visible:ring-2 focus-visible:ring-primary-fuchsia-stroke-default focus-visible:ring-offset-2 focus-visible:ring-offset-primary-neutral-background-default ring-offset-2 ring-offset-primary-neutral-background-default"
+            >
+              <Avatar
+                src={u.avatarUrl}
+                alt={u.name}
+                className={AVATAR_CLASS_NAME}
+                width={52}
+                height={52}
+              />
+              <span className="sr-only">Profil: {u.name}</span>
+            </Link>
+          ))}
+        </div>
+      )}
     </section>
   );
 }
