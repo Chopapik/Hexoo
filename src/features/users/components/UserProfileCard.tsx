@@ -100,12 +100,10 @@ export const UserProfileCard = ({
               )}
             </div>
 
-            <div className="h-8 flex justify-center items-center overflow-hidden md:ml-auto">
+            <div className="h-8 flex justify-center items-center font-serif font-light text-2xl mr-1 overflow-hidden md:ml-auto">
               <div
                 className={
-                  isOnline
-                    ? "justify-start text-lg font-sans font-medium not-italic mr-1 text-emerald-400 "
-                    : "justify-start text-text-neutral text-lg font-medium font-sans italic mr-1"
+                  isOnline ? "  text-green-500 " : "text-text-neutral italic"
                 }
               >
                 {statusLabel}
