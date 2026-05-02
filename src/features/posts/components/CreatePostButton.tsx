@@ -2,11 +2,11 @@
 
 import React, { useEffect, useRef } from "react";
 
+const GEOMETRY_OPACITIES = [0.04, 0.09, 0.14, 0.19];
+
 type CreatePostButtonProps = {
   onClick: () => void;
 };
-
-const ASCII_CHARS = [" ", "░", "▒", "▓", "█"];
 
 export default function CreatePostButton({ onClick }: CreatePostButtonProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -19,47 +19,57 @@ export default function CreatePostButton({ onClick }: CreatePostButtonProps) {
 
     let animationFrameId: number;
     let time = 0;
+    let squareSize = 8;
+    let cols = 0;
+    let rows = 0;
 
     const resizeCanvas = () => {
       const parent = canvas.parentElement;
       if (parent) {
-        canvas.width = parent.clientWidth;
-        canvas.height = parent.clientHeight;
+        const cssWidth = parent.clientWidth;
+        const cssHeight = parent.clientHeight;
+        const dpr = window.devicePixelRatio || 1;
+
+        canvas.width = cssWidth * dpr;
+        canvas.height = cssHeight * dpr;
+        canvas.style.width = `${cssWidth}px`;
+        canvas.style.height = `${cssHeight}px`;
+
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        squareSize = 8;
+        cols = Math.ceil(cssWidth / squareSize) + 1;
+        rows = Math.ceil(cssHeight / squareSize) + 1;
       }
     };
 
     window.addEventListener("resize", resizeCanvas);
     resizeCanvas();
 
-    const fontSize = 14;
-    ctx.font = `bold ${fontSize}px monospace`;
-
     const draw = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "rgba(255, 12, 255, 0.15)";
-
-      const cols = Math.floor(canvas.width / (fontSize * 0.6));
-      const rows = Math.floor(canvas.height / fontSize) + 1;
 
       for (let y = 0; y < rows; y++) {
         for (let x = 0; x < cols; x++) {
-          const waveX = Math.sin(x * 0.04 + time * 0.03);
-          const waveY = Math.cos(y * 0.06 - time * 0.02);
-          const tanGlitch = Math.tan((x - y) * 0.02 + time * 0.01) * 0.25;
+          const waveX = Math.sin(x * 0.04 + time * 0.0285);
+          const waveY = Math.cos(y * 0.06 - time * 0.019);
+          const tanGlitch = Math.tan((x - y) * 0.02 + time * 0.0095) * 0.25;
 
           const totalWave = waveX + waveY + tanGlitch;
 
-          let charIndex = 0;
-          if (totalWave > 0.4) charIndex = 1;
-          if (totalWave > 0.8) charIndex = 2;
-          if (totalWave > 1.2) charIndex = 3;
-          if (totalWave > 1.8) charIndex = 4;
+          let opacityIndex = -1;
+          if (totalWave > 0.4) opacityIndex = 0;
+          if (totalWave > 0.8) opacityIndex = 1;
+          if (totalWave > 1.2) opacityIndex = 2;
+          if (totalWave > 1.8) opacityIndex = 3;
 
-          if (charIndex > 0) {
-            ctx.fillText(
-              ASCII_CHARS[charIndex],
-              x * (fontSize * 0.6),
-              y * fontSize + fontSize,
+          if (opacityIndex >= 0) {
+            ctx.fillStyle = `rgba(255, 12, 255, ${GEOMETRY_OPACITIES[opacityIndex]})`;
+            ctx.fillRect(
+              x * squareSize,
+              y * squareSize,
+              squareSize,
+              squareSize,
             );
           }
         }
