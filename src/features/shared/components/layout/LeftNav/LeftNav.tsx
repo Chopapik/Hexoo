@@ -68,7 +68,7 @@ export function LeftNav({ onOpenRight, user }: LeftNavProps) {
       ) : null}
       <footer className="flex">
         <div className="flex flex-col items-center justify-center gap-1 text-center">
-          <div className="flex gap-4 text-xs font-sans font-medium text-text-neutral/60">
+          <div className="flex gap-4 text-sm font-serif font-medium text-text-neutral/70">
             <Link
               href="/privacy"
               className="hover:text-text-neutral transition-colors"
@@ -83,9 +83,10 @@ export function LeftNav({ onOpenRight, user }: LeftNavProps) {
               Regulamin
             </Link>
           </div>
-          <div className="text-[10px] text-text-neutral/40 font-mono">
-            © 2025-2026 Hexoo Project. Created by CHOPAPIK. Protected by
-            reCAPTCHA.
+          <div className="text-xs text-text-neutral/70 font-sand">
+            © 2025-2026 Hexoo Project. <br />
+            Created by CHOPAPIK. <br />
+            Protected by reCAPTCHA.
           </div>
         </div>
       </footer>
