@@ -10,9 +10,10 @@ export const Header = ({ user }: { user: SessionData | null }) => {
     <div className="h-14 w-full bg-primary-neutral-background-default rounded-xl border-t-2 border-primary-neutral-stroke-default inline-flex justify-between items-center shadow-lg">
       <Link
         href="/"
-        className="block h-fit w-fit transition-transform duration-200"
+        className="h-full flex items-center transition-transform duration-200 pl-4"
+        style={{ paddingTop: 0, paddingBottom: 0 }}
       >
-        <Logo />
+        <Logo className="h-full w-auto flex items-center p-3 " />
       </Link>
 
       <div>
