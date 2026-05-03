@@ -1,112 +1,66 @@
 "use client";
 
+import { Loader2 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
-import fetchClient from "@/lib/fetchClient";
-import { useAppStore } from "@/lib/store/store";
 import { Avatar } from "@/features/shared/components/ui/Avatar";
-
-type PreviewUser = {
-  uid: string;
-  name: string;
-  avatarUrl?: string;
-};
-
-const DEBOUNCE_MS = 200;
-
-const AVATAR_CLASS_NAME =
-  "w-11 h-11 lg:w-10 lg:h-10 border border-white/10 transition-colors";
+import { useActiveUsers } from "@/features/users/hooks/useActiveUsers";
+import { useAppStore } from "@/lib/store/store";
 
 export function RightNavActiveUsers() {
   const onlineUids = useAppStore((s) => s.presence.onlineUids);
   const selfUid = useAppStore((s) => s.auth.user?.uid);
 
-  const uidsKey = useMemo(() => [...onlineUids].sort().join(","), [onlineUids]);
+  const { data: users = [], isLoading } = useActiveUsers(
+    Array.from(onlineUids),
+  );
 
-  const [users, setUsers] = useState<PreviewUser[]>([]);
-  const [activeUsers, setActiveUsers] = useState<PreviewUser[]>([]);
-
-  useEffect(() => {
-    const uids = uidsKey ? uidsKey.split(",") : [];
-
-    if (uids.length === 0) {
-      setUsers([]);
-      return;
-    }
-
-    let cancelled = false;
-
-    const debounceId = window.setTimeout(async () => {
-      try {
-        const data = await fetchClient.post<{ users: PreviewUser[] }>(
-          "/users/by-ids",
-          { uids },
-        );
-
-        if (!cancelled) {
-          setUsers(data.users ?? []);
-        }
-      } catch {
-        if (!cancelled) {
-          setUsers([]);
-        }
-      }
-    }, DEBOUNCE_MS);
-
-    return () => {
-      cancelled = true;
-      window.clearTimeout(debounceId);
-    };
-  }, [uidsKey]);
-
-  useEffect(() => {
-    setActiveUsers(selfUid ? users.filter((u) => u.uid !== selfUid) : users);
-  }, [users, selfUid]);
-
+  const activeUsers = users.filter((u) => u.uid !== selfUid);
   const isEmpty = activeUsers.length === 0;
 
   return (
-    <section
-      className={`w-full rounded-xl px-2 py-3 bg-[radial-gradient(ellipse_113.20%_442.25%_at_26.12%_10.28%,var(--text-main,rgba(255,255,255,0.04))_0%,var(--text-neutral,rgba(115,115,115,0.04))_100%)] flex flex-col justify-center items-center ${isEmpty ? "min-h-[90px]" : ""}`}
-      aria-label={
-        isEmpty
-          ? "Brak aktywnych użytkowników"
-          : "Użytkownicy aktywni na stronie"
-      }
-    >
-      <div className="mb-2 px-0.5 flex items-center gap-1.5">
-        <h3 className="text-[10px] font-bold tracking-wider text-text-neutral font-sans">
+    <section className="flex min-h-[200px] w-full flex-col items-center justify-start rounded-xl bg-[radial-gradient(ellipse_113.20%_442.25%_at_26.12%_10.28%,var(--text-main,rgba(255,255,255,0.04))_0%,var(--text-neutral,rgba(115,115,115,0.04))_100%)] px-2 py-3">
+      <div className="mb-2 flex items-center gap-1.5 px-0.5">
+        <h3 className="text-text-neutral text-[10px] font-bold tracking-wider">
           /aktywni użytkownicy/
         </h3>
       </div>
 
-      {isEmpty ? (
-        <div className="flex flex-col items-center justify-center text-text-neutral/50 transition-opacity">
-          <span className="text-sm font-sans text">
-            aktualnie nikt nie jest aktywny
-          </span>
-        </div>
-      ) : (
-        <div className="flex flex-col items-center gap-2.5 lg:flex-row lg:flex-nowrap lg:justify-start lg:overflow-x-auto lg:pb-1 lg:gap-2 [scrollbar-width:thin]">
-          {activeUsers.map((u) => (
+      <div
+        className={`flex h-full w-full text-text-neutral/50 ${
+          isEmpty
+            ? "flex-col items-center justify-center gap-1.5"
+            : "flex-row flex-wrap content-center items-center justify-center gap-2.5 overflow-y-auto pb-1 [scrollbar-width:thin]"
+        }`}
+      >
+        {isEmpty ? (
+          <>
+            <Image
+              src="/images/face01.png"
+              alt=""
+              width={180}
+              height={320}
+              className="h-auto w-[75px]"
+              sizes="75px"
+            />
+            <span className="font-serif text-center text-sm">
+              aktualnie nikt poza tobą nie jest aktywny
+            </span>
+          </>
+        ) : (
+          activeUsers.map((u) => (
             <Link
               key={u.uid}
               href={`/profile/${encodeURIComponent(u.name)}`}
               title={u.name}
-              className="group relative shrink-0 rounded-2xl p-0.5 outline-none transition-transform duration-200 focus-visible:scale-[1.04] focus-visible:ring-2 focus-visible:ring-primary-fuchsia-stroke-default focus-visible:ring-offset-2 focus-visible:ring-offset-primary-neutral-background-default ring-offset-2 ring-offset-primary-neutral-background-default"
             >
-              <Avatar
-                src={u.avatarUrl}
-                alt={u.name}
-                className={AVATAR_CLASS_NAME}
-                width={52}
-                height={52}
-              />
+              <Avatar src={u.avatarUrl} alt={u.name} width={52} height={52} />
               <span className="sr-only">Profil: {u.name}</span>
             </Link>
-          ))}
-        </div>
-      )}
+          ))
+        )}
+      </div>
     </section>
   );
+
 }
