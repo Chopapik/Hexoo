@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import Button from "@/features/shared/components/ui/Button";
+import { AppLoader } from "@/features/shared/components/ui/AppLoader";
 import SelectionTabButton from "@/features/shared/components/ui/SelectionTabButton";
 import {
   useModeratorDashboard,
@@ -160,7 +161,7 @@ export default function ModeratorDashboard() {
                 className="h-4 w-full flex justify-center py-4"
               >
                 {isFetchingNextPage && (
-                  <div className="w-6 h-6 border-2 border-fuchsia-500 border-t-transparent rounded-full animate-spin" />
+                  <AppLoader size="lg" className="text-fuchsia-500" />
                 )}
               </div>
 

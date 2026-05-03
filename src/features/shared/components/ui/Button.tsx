@@ -4,7 +4,7 @@ import type {
   ButtonVariant,
 } from "../../types/button.type";
 import Image from "next/image";
-import { Loader } from "lucide-react";
+import { AppLoader } from "./AppLoader";
 import {
   buttonDefaultSurfaceClass,
   buttonSecondarySurfaceClass,
@@ -142,10 +142,8 @@ export default function Button({
     >
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center">
-          <Loader
-            className={`animate-spin ${
-              size === "sm" || size === "iconSm" ? "size-3.5" : "size-5"
-            }`}
+          <AppLoader
+            size={size === "sm" || size === "iconSm" ? "sm" : "md"}
           />
         </div>
       )}

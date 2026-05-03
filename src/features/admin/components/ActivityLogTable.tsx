@@ -4,6 +4,7 @@ import React, { useEffect, useRef } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import fetchClient from "@/lib/fetchClient";
 import Button from "@/features/shared/components/ui/Button";
+import { AppLoader } from "@/features/shared/components/ui/AppLoader";
 
 type ActivityLog = {
   id: string;
@@ -197,7 +198,7 @@ export default function ActivityLogTable() {
                 className="h-4 w-full flex justify-center py-4 shrink-0"
               >
                 {isFetchingNextPage && (
-                  <div className="w-6 h-6 border-2 border-fuchsia-500 border-t-transparent rounded-full animate-spin" />
+                  <AppLoader size="lg" className="text-fuchsia-500" />
                 )}
               </div>
             )}

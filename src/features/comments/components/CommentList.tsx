@@ -2,7 +2,7 @@
 
 import type { PublicCommentResponseDto } from "../types/comment.dto";
 import { CommentItem } from "./CommentItem";
-import { Loader2 } from "lucide-react";
+import { AppLoader } from "@/features/shared/components/ui/AppLoader";
 
 interface CommentListProps {
   comments: PublicCommentResponseDto[];
@@ -13,7 +13,7 @@ export const CommentList = ({ comments, isLoading }: CommentListProps) => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-8">
-        <Loader2 className="size-6 animate-spin text-text-neutral" />
+        <AppLoader size="lg" className="text-text-neutral" />
       </div>
     );
   }

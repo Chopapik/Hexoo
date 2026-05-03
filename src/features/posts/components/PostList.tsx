@@ -4,6 +4,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import type { PublicPostResponseDto } from "../types/post.dto";
 import { PostCard } from "./PostCard";
 import usePosts from "../hooks/usePosts";
+import { AppLoader } from "@/features/shared/components/ui/AppLoader";
 
 type PostListProps = {
   className?: string;
@@ -122,9 +123,7 @@ export default function PostList({ className = "" }: PostListProps) {
           ref={observerTarget}
           className="h-4 w-full flex justify-center py-4"
         >
-          {isFetchingNextPage && (
-            <div className="w-6 h-6 border-2 border-fuchsia-500 border-t-transparent rounded-full animate-spin" />
-          )}
+          {isFetchingNextPage && <AppLoader size="lg" />}
         </div>
 
         {!hasNextPage && data && data.pages.length > 0 && (
