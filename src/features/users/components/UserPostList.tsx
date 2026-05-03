@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import { ApiError } from "@/lib/AppError";
 import useUserPosts from "../hooks/useUserPosts";
 import { PostCard } from "@/features/posts/components/PostCard";
+import { AppLoader } from "@/features/shared/components/ui/AppLoader";
 
 export function UserPostList({ userId }: { userId: string }) {
   const {
@@ -78,7 +79,7 @@ export function UserPostList({ userId }: { userId: string }) {
         className="h-10 flex justify-center items-center"
       >
         {isFetchingNextPage && (
-          <div className="w-6 h-6 border-2 border-fuchsia-500 border-t-transparent rounded-full animate-spin" />
+          <AppLoader size="lg" className="text-fuchsia-500" />
         )}
       </div>
 
