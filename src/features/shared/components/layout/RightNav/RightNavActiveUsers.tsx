@@ -1,39 +1,60 @@
 "use client";
 
-import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
 import { Avatar } from "@/features/shared/components/ui/Avatar";
 import { useActiveUsers } from "@/features/users/hooks/useActiveUsers";
 import { useAppStore } from "@/lib/store/store";
+
+const READY_MIN_MS = 600;
 
 export function RightNavActiveUsers() {
   const onlineUids = useAppStore((s) => s.presence.onlineUids);
   const selfUid = useAppStore((s) => s.auth.user?.uid);
 
-  const { data: users = [], isLoading } = useActiveUsers(
-    Array.from(onlineUids),
-  );
+  const uids = useMemo(() => Array.from(onlineUids), [onlineUids]);
+  const needsFetch = uids.length > 1;
+
+  const { data: users = [], isLoading } = useActiveUsers(uids);
+
+  const [minDelayElapsed, setMinDelayElapsed] = useState(false);
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    const id = window.setTimeout(() => setMinDelayElapsed(true), READY_MIN_MS);
+    return () => window.clearTimeout(id);
+  }, []);
+
+  useEffect(() => {
+    if (isReady) return;
+
+    if (!minDelayElapsed) return;
+
+    if (needsFetch && isLoading) return;
+
+    setIsReady(true);
+  }, [isReady, minDelayElapsed, needsFetch, isLoading]);
 
   const activeUsers = users.filter((u) => u.uid !== selfUid);
   const isEmpty = activeUsers.length === 0;
 
   return (
     <section className="flex min-h-[200px] w-full flex-col items-center justify-start rounded-xl bg-[radial-gradient(ellipse_113.20%_442.25%_at_26.12%_10.28%,var(--text-main,rgba(255,255,255,0.04))_0%,var(--text-neutral,rgba(115,115,115,0.04))_100%)] px-2 py-3">
-      <div className="mb-2 flex items-center gap-1.5 px-0.5">
-        <h3 className="text-text-neutral text-[10px] font-bold tracking-wider">
+      <div className="mb-2 flex items-center gap-1.5 px-0.5 transition-all duration-300 ease-soft">
+        <h3 className="text-text-neutral text-[10px] font-bold tracking-wider transition-all duration-300 ease-soft">
           /aktywni użytkownicy/
         </h3>
       </div>
 
       <div
         className={`flex h-full w-full text-text-neutral/50 ${
-          isEmpty
+          !isReady || isEmpty
             ? "flex-col items-center justify-center gap-1.5"
             : "flex-row flex-wrap content-center items-center justify-center gap-2.5 overflow-y-auto pb-1 [scrollbar-width:thin]"
         }`}
       >
-        {isEmpty ? (
+        {!isReady ? null : isEmpty ? (
           <>
             <Image
               src="/images/face01.png"
@@ -62,5 +83,4 @@ export function RightNavActiveUsers() {
       </div>
     </section>
   );
-
 }
