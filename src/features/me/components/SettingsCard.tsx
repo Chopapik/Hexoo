@@ -1,7 +1,7 @@
 "use client";
 
 import { useAppStore } from "@/lib/store/store";
-import AppearanceSection from "./appearance/AppearanceSection";
+// import AppearanceSection from "./appearance/AppearanceSection";
 import AccountSection from "./account/AccountSection";
 import DangerZoneSection from "./danger/DangerZoneSection";
 import ContentSection from "./appearance/ContentSection";
@@ -17,7 +17,7 @@ export default function SettingsCard() {
       <h2 className="text-4xl font-bold font-serif text-text-main ml-2">
         Ustawienia
       </h2>
-      <AppearanceSection />
+      {/* <AppearanceSection /> */}
       <ContentSection />
       <DitheringSection />
       <AccountSection />
