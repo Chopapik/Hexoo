@@ -17,7 +17,10 @@ export const AddCommentSchema = z
       )
       .refine(
         (file) =>
-          !file || ["image/png", "image/jpeg", "image/webp"].includes(file.type),
+          !file ||
+          ["image/png", "image/jpeg", "image/webp", "image/gif"].includes(
+            file.type,
+          ),
         "wrong_file_type",
       ),
     postId: z.string().min(1, { message: "post_id_required" }),

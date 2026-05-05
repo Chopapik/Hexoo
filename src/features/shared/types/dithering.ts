@@ -44,7 +44,7 @@ export type PostDitheringSettings = {
 };
 
 export const DEFAULT_POST_DITHERING_SETTINGS: PostDitheringSettings = {
-  enabled: true,
+  enabled: false,
   paletteSize: 16,
   processingWidth: 446,
   ditherBaseWidth: 816,

@@ -43,8 +43,15 @@ export const uploadImage = async (
   }
 
   let processedBuffer: Buffer;
+  let isAnimated = false; 
+
   try {
-    processedBuffer = await sharp(inputBuffer)
+    const processor = sharp(inputBuffer, { animated: true });
+    const metadata = await processor.metadata();
+
+    isAnimated = !!(metadata.pages && metadata.pages > 1);
+
+    processedBuffer = await processor
       .resize(1920, 1920, {
         fit: "inside",
         withoutEnlargement: true,
@@ -65,7 +72,9 @@ export const uploadImage = async (
   const id = randomUUID();
   const fileName = `${uid}_${ts}_${id}.webp`;
   const storageLocation = storageFolder.replace(/^\/+/, "").replace(/\/+$/, "");
-  const objectKey = storageLocation ? `${storageLocation}/${fileName}` : fileName;
+  const objectKey = storageLocation
+    ? `${storageLocation}/${fileName}`
+    : fileName;
   const downloadToken = randomUUID();
 
   try {
@@ -83,6 +92,7 @@ export const uploadImage = async (
       downloadToken,
       contentType: result.contentType,
       sizeBytes: result.sizeBytes,
+      isAnimated, 
     };
 
     return {
