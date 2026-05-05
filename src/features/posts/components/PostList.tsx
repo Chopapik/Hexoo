@@ -123,7 +123,9 @@ export default function PostList({ className = "" }: PostListProps) {
           ref={observerTarget}
           className="h-4 w-full flex justify-center py-4"
         >
-          {isFetchingNextPage && <AppLoader size="lg" />}
+          {isFetchingNextPage && (
+            <AppLoader size="lg" className="text-text-neutral" />
+          )}
         </div>
 
         {!hasNextPage && data && data.pages.length > 0 && (
