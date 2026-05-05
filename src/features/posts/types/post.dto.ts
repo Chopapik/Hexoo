@@ -18,7 +18,9 @@ export const CreatePostSchema = z
       .refine(
         (file) =>
           !file ||
-          ["image/png", "image/jpeg", "image/webp"].includes(file.type),
+          ["image/png", "image/jpeg", "image/webp", "image/gif"].includes(
+            file.type,
+          ),
         "wrong_file_type",
       ),
   })

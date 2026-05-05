@@ -106,7 +106,7 @@ export const CommentForm = ({ postId }: CommentFormProps) => {
           <input
             type="file"
             ref={fileInputRef}
-            accept="image/png, image/jpeg, image/webp"
+            accept="image/png, image/jpeg, image/webp, image/gif"
             onChange={handleFileChange}
             className="hidden"
           />
