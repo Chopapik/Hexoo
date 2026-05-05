@@ -50,7 +50,7 @@ export default function VerifyEmailPage() {
 
   return (
     <div className="flex-1 flex items-center justify-center">
-      <div className="px-10 py-8 rounded-[20px] glass-card bg-neutral-500/5 flex flex-col items-center gap-4 text-center w-full max-w-md">
+      <div className="p-10 rounded-[20px] glass-card bg-neutral-500/5 flex flex-col items-center gap-4 text-center w-full max-w-md">
         <div className="text-text-main text-2xl font-bold font-sans">
           Sprawdź swoją skrzynkę
         </div>
@@ -60,7 +60,7 @@ export default function VerifyEmailPage() {
           potwierdzić konto i dokończyć rejestrację.
         </div>
 
-        <span className="mt-4 w-full px-4 py-3 text-2xl outline-none break-all text-text-main font-bold">
+        <span className="mt-4 w-full px-4 py-3 text-xl outline-none break-all text-text-main font-bold">
           {email}
         </span>
 
