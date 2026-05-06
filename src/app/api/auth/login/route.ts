@@ -3,11 +3,12 @@ import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import { createAppError } from "@/lib/AppError";
 import { verifyRecaptchaToken } from "@/lib/recaptcha";
+
 import { NextRequest } from "next/server";
-import { getClientIp } from "@/lib/serverUtils";
 
 export const POST = withErrorHandling(async (req: NextRequest) => {
   const body = await req.json();
+
   const { idToken, refreshToken, recaptchaToken } = body;
 
   if (!recaptchaToken) {
@@ -24,11 +25,16 @@ export const POST = withErrorHandling(async (req: NextRequest) => {
     });
   }
 
+  if (!refreshToken) {
+    throw createAppError({
+      code: "INVALID_INPUT",
+      message: "[auth/login/route.POST] No refreshToken provided.",
+    });
+  }
+
   await verifyRecaptchaToken(recaptchaToken);
 
-  const ip = await getClientIp();
-
-  const result = await createSession(idToken, ip);
+  const result = await createSession(idToken, refreshToken);
 
   return handleSuccess(result);
 });
