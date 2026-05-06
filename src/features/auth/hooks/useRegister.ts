@@ -50,8 +50,6 @@ export default function useRegister(onError: ErrorCallback) {
 
         return;
       }
-
-      toast.success("Konto utworzone. Sprawdź email i aktywuj konto.");
       router.push(`/verify-email?email=${encodeURIComponent(data.email)}`);
     } catch (error: unknown) {
       if (error instanceof ApiError && error.code === "CONFLICT") {

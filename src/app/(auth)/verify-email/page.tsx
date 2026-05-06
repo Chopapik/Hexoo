@@ -43,6 +43,7 @@ export default function VerifyEmailPage() {
       toast.error("Nie udało się wysłać maila ponownie.");
     } finally {
       setIsResending(false);
+      toast.success("Link aktywacyjny został wysłany ponownie.");
     }
   };
 
