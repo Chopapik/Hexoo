@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import { ApiError } from "@/lib/AppError";
 import fetchClient from "@/lib/fetchClient";
@@ -10,7 +10,6 @@ import Modal from "@/features/shared/components/layout/Modal";
 import Button from "@/features/shared/components/ui/Button";
 
 const SESSION_HEARTBEAT_MS = 60_000;
-const SESSION_EXPIRED_MODAL_DELAY_MS = 2_000;
 
 function isSessionExpiredError(error: unknown) {
   return (
@@ -28,45 +27,28 @@ function isAuthPage(pathname: string) {
 
 export default function SessionWatcher() {
   const pathname = usePathname();
+  const router = useRouter();
 
   const user = useAppStore((s) => s.auth.user);
   const clearUser = useAppStore((s) => s.clearUser);
 
   const hasHandledExpiry = useRef(false);
-  const modalTimeoutRef = useRef<number | null>(null);
-  const pathnameRef = useRef(pathname);
 
   const [isExpiredModalOpen, setIsExpiredModalOpen] = useState(false);
 
-  useEffect(() => {
-    pathnameRef.current = pathname;
-  }, [pathname]);
-
-  const clearModalTimeout = useCallback(() => {
-    if (modalTimeoutRef.current === null) return;
-
-    window.clearTimeout(modalTimeoutRef.current);
-    modalTimeoutRef.current = null;
+  const closeModal = useCallback(() => {
+    setIsExpiredModalOpen(false);
   }, []);
 
-  const closeModal = useCallback(() => {
-    clearModalTimeout();
-    setIsExpiredModalOpen(false);
-  }, [clearModalTimeout]);
+  const goToLogin = useCallback(() => {
+    router.replace("/login");
+  }, [router]);
 
-  const scheduleExpiredModal = useCallback(() => {
-    clearModalTimeout();
-
-    modalTimeoutRef.current = window.setTimeout(() => {
-      modalTimeoutRef.current = null;
-
-      if (isAuthPage(pathnameRef.current)) {
-        return;
-      }
-
+  const openExpiredModal = useCallback(() => {
+    if (!isAuthPage(pathname)) {
       setIsExpiredModalOpen(true);
-    }, SESSION_EXPIRED_MODAL_DELAY_MS);
-  }, [clearModalTimeout]);
+    }
+  }, [pathname]);
 
   const handleSessionExpired = useCallback(async () => {
     if (hasHandledExpiry.current) return;
@@ -81,8 +63,8 @@ export default function SessionWatcher() {
       console.warn("Failed to clear session after expiry", error);
     }
 
-    scheduleExpiredModal();
-  }, [clearUser, scheduleExpiredModal]);
+    openExpiredModal();
+  }, [clearUser, openExpiredModal]);
 
   useEffect(() => {
     if (!user) {
@@ -118,20 +100,18 @@ export default function SessionWatcher() {
 
   useEffect(() => {
     if (isAuthPage(pathname)) {
-      clearModalTimeout();
       setIsExpiredModalOpen(false);
     }
-  }, [pathname, clearModalTimeout]);
-
-  useEffect(() => {
-    return () => {
-      clearModalTimeout();
-    };
-  }, [clearModalTimeout]);
+  }, [pathname]);
 
   const footer = (
-    <div className="flex justify-end w-full">
-      <Button onClick={closeModal} text="Wróć do logowania" />
+    <div className="flex justify-end w-full gap-2">
+      <Button
+        onClick={goToLogin}
+        text="Wróć do logowania"
+        variant="secondary"
+      />
+      <Button onClick={closeModal} text="OK" />
     </div>
   );
 
