@@ -38,8 +38,6 @@ export default function VerifyEmailPage() {
         toast.error(error.message);
         return;
       }
-
-      toast.success("Wysłaliśmy link aktywacyjny ponownie.");
     } catch (error) {
       console.error("Resend confirmation error:", error);
       toast.error("Nie udało się wysłać maila ponownie.");
