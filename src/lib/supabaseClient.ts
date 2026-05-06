@@ -7,9 +7,13 @@ const anonKey =
 
 if (!supabaseUrl || !anonKey) {
   throw new Error(
-    "Missing Supabase env: NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY / NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY"
+    "Missing Supabase env: NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY / NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
   );
 }
 
 /** Browser Supabase client (anon key). Use for auth: signIn, signUp, session.access_token. */
-export const supabaseClient = createClient(supabaseUrl, anonKey);
+export const supabaseClient = createClient(supabaseUrl, anonKey, {
+  auth: {
+    persistSession: false,
+  },
+});

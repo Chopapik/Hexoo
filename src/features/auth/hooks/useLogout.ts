@@ -1,23 +1,30 @@
 import { useMutation } from "@tanstack/react-query";
-import fetchClient from "@/lib/fetchClient";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { supabaseClient } from "@/lib/supabaseClient";
+
+import fetchClient from "@/lib/fetchClient";
+import { useAppStore } from "@/lib/store/store";
 
 export function useLogout() {
   const router = useRouter();
+  const clearUser = useAppStore((s) => s.clearUser);
 
   const mutation = useMutation({
     mutationFn: async () => {
-      await supabaseClient.auth.signOut();
-      return await fetchClient.post("/auth/logout");
+      await fetchClient.post("/auth/logout");
     },
-    onSuccess: () => {
-      router.push("/login");
+
+    onMutate: () => {
+      clearUser();
+      router.replace("/login");
     },
+
     onError: (error) => {
-      console.error("Logout failed", error);
-      toast.error("Wystąpił nieznany bład");
+      console.error("Logout cleanup failed", error);
+
+      toast.error(
+        "Wylogowano lokalnie, ale nie udało się potwierdzić wylogowania na serwerze. Odśwież stronę, jeśli problem wróci.",
+      );
     },
   });
 
