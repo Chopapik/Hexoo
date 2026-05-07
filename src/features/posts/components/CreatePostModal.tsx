@@ -49,6 +49,7 @@ export default function CreatePostModal({
   const clientError = parseErrorMessages(validationErrorRaw)?.text;
 
   const textValue = watch("text") || "";
+  const hasText = textValue.trim().length > 0;
   const currentLength = textValue.length;
   const isOverLimit = currentLength > POST_MAX_CHARS;
 
@@ -134,17 +135,23 @@ export default function CreatePostModal({
         title="Nowy post"
         onClose={onClose}
         footer={footerContent}
-        className="w-full h-full lg:h-fit lg:w-full lg:max-w-3xl "
+        className="w-full h-[calc(100dvh-2rem)] lg:h-auto lg:max-h-[calc(100dvh-2rem)] lg:w-full lg:max-w-3xl"
       >
-        <div className="flex flex-col gap-4 p-4 w-full">
+        <div className="flex h-full w-full flex-col gap-4 overflow-y-auto p-4">
           {imagePreview && (
-            <div className="relative w-fit group animate-in fade-in zoom-in-95 duration-200">
+            <div
+              className={`relative w-fit group animate-in fade-in zoom-in-95 duration-200 transition-all ${
+                hasText ? "max-w-[120px]" : "max-w-[220px]"
+              }`}
+            >
               <img
                 src={imagePreview}
                 alt="Preview"
                 width={200}
                 height={200}
-                className="rounded-xl border border-primary-neutral-stroke-default object-cover max-h-64 w-auto"
+                className={`rounded-xl border border-primary-neutral-stroke-default object-cover w-auto transition-all duration-300 ${
+                  hasText ? "max-h-24" : "max-h-[min(32dvh,16rem)]"
+                }`}
               />
               <RemoveImageButton
                 onClick={removeImage}
@@ -163,9 +170,9 @@ export default function CreatePostModal({
                 user ? `Co u Ciebie słychać, ${user.name}?` : "Napisz coś..."
               }
               className={`w-full bg-transparent text-text-main placeholder:text-text-neutral/50 text-base resize-none outline-none leading-relaxed pb-6 transition-all duration-300 ${
-                imagePreview && !textValue.trim()
-                  ? "min-h-[150px]"
-                  : "min-h-[425px]"
+                imagePreview
+                  ? "min-h-[140px]"
+                  : "min-h-[min(425px,55dvh)]"
               }`}
               autoFocus
             />
