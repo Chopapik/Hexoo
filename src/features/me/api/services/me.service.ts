@@ -11,6 +11,7 @@ import type { AuthRepository } from "@/features/auth/api/repositories/authReposi
 import type { UserRepository } from "@/features/users/api/repositories/user.repository.interface";
 import { resolveImagePublicUrl } from "@/features/images/utils/resolveImagePublicUrl";
 import type { ImageMeta } from "@/features/images/types/image.type";
+import { isUsernameBlocked } from "@/features/auth/constants/blockedUsernames";
 
 export class MeService implements IMeService {
   constructor(
@@ -55,14 +56,33 @@ export class MeService implements IMeService {
       });
     }
 
+    const userData = await this.userRepository.getUserByUid(uid);
+
+    if (name) {
+      if (isUsernameBlocked(name)) {
+        throw createAppError({
+          code: "CONFLICT",
+          message: `[meService.updateProfile] Username '${name}' is not available.`,
+          data: { field: "name" },
+        });
+      }
+
+      const existingUser = await this.userRepository.getUserByName(name);
+      if (existingUser && existingUser.uid !== uid) {
+        throw createAppError({
+          code: "CONFLICT",
+          message: `[meService.updateProfile] Username '${name}' is already taken.`,
+          data: { field: "name" },
+        });
+      }
+    }
+
     await enforceStrictModeration(
       uid,
       name,
       avatarFile,
       "meService.updateProfile",
     );
-
-    const userData = await this.userRepository.getUserByUid(uid);
 
     const authUpdate: { displayName?: string } = {};
     const dbUpdate: UpdateUserPayload = { updatedAt: new Date() };

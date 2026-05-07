@@ -67,13 +67,31 @@ export default function useUpdateProfile(onError?: ErrorCallback) {
     onError: (error: unknown) => {
       if (error instanceof ApiError) {
         const errorCode = error.code;
+        const errorData = error.data as Record<string, unknown> | undefined;
 
         if (errorCode === "CONFLICT") {
           onError?.(errorCode, "name");
         } else if (errorCode === "POLICY_VIOLATION") {
-          onError?.(errorCode, "root");
+          const sources = Array.isArray(errorData?.source)
+            ? errorData.source.filter(
+                (source): source is "text" | "image" =>
+                  source === "text" || source === "image",
+              )
+            : [];
+          const hasTextViolation = sources.includes("text");
+          const hasImageViolation = sources.includes("image");
+
+          if (hasTextViolation && hasImageViolation) {
+            onError?.("policy_violation_profile", "root");
+          } else if (hasImageViolation) {
+            onError?.("policy_violation_avatar", "avatarFile");
+          } else if (hasTextViolation) {
+            onError?.("policy_violation_name", "name");
+          } else {
+            onError?.(errorCode, "root");
+          }
         } else if (errorCode === "VALIDATION_ERROR") {
-          const details = error.details as Record<string, string[]> | undefined;
+          const details = errorData?.details as Record<string, string[]> | undefined;
           if (details) {
             Object.keys(details).forEach((field) => {
               const messages = details[field];

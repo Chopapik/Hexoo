@@ -19,6 +19,9 @@ export type ClientValidationCode =
   | "name_too_short"
   | "name_too_long"
   | "name_invalid_chars"
+  | "policy_violation_name"
+  | "policy_violation_avatar"
+  | "policy_violation_profile"
   | "file_too_big"
   | "wrong_file_type"
   // change password
@@ -313,6 +316,30 @@ export const ERROR_CATALOG: Record<GlobalErrorCode, ErrorCatalogEntry> = {
       en: "Invalid characters in name",
     },
     field: "name",
+    validationType: "Dismiss",
+  },
+  policy_violation_name: {
+    message: {
+      pl: "Nazwa użytkownika narusza zasady serwisu. Zmień nick i spróbuj ponownie.",
+      en: "Username violates the service policy. Please choose a different name.",
+    },
+    field: "name",
+    validationType: "Dismiss",
+  },
+  policy_violation_avatar: {
+    message: {
+      pl: "Zdjęcie profilowe narusza zasady serwisu. Wybierz inne zdjęcie.",
+      en: "Profile image violates the service policy. Please choose a different image.",
+    },
+    field: "avatarFile",
+    validationType: "Dismiss",
+  },
+  policy_violation_profile: {
+    message: {
+      pl: "Nazwa użytkownika lub zdjęcie profilowe narusza zasady serwisu. Popraw dane i spróbuj ponownie.",
+      en: "Username or profile image violates the service policy. Please update your profile data and try again.",
+    },
+    field: "root",
     validationType: "Dismiss",
   },
   file_too_big: {
