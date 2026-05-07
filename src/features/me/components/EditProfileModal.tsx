@@ -1,7 +1,9 @@
 "use client";
 
 import { ChangeEvent, useEffect, useRef, useState } from "react";
-import TextInput from "@/features/shared/components/ui/TextInput";
+import TextInput, {
+  type Message,
+} from "@/features/shared/components/ui/TextInput";
 import Button from "@/features/shared/components/ui/Button";
 import Modal from "@/features/shared/components/layout/Modal";
 import RemoveImageButton from "@/features/shared/components/ui/RemoveImageButton";
@@ -16,6 +18,7 @@ import type { UpdateProfileData } from "../me.type";
 import ValidationMessage from "@/features/shared/components/ui/ValidationMessage";
 import AvatarEditor, { type AvatarEditorRef } from "react-avatar-editor";
 import { canvasToFile } from "../utils/avatarEditor";
+import { useCheckUsername } from "@/features/auth/hooks/useCheckUsername";
 
 interface EditProfileModalProps {
   user: PublicUserResponseDto | null;
@@ -54,14 +57,28 @@ export default function EditProfileModal({
   const nameValue = watch("name") || "";
   const nameErrorCode = errors.name?.message as string | undefined;
   const nameLength = nameValue.trim().length;
-  const avatarFileValue = watch("avatarFile");
+  const normalizedNameValue = nameValue.trim().toLowerCase().replace(/\s+/g, "");
+  const normalizedCurrentName = user.name
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, "");
+  const hasNameChanged = normalizedNameValue !== normalizedCurrentName;
+  const {
+    isChecking: isCheckingUsername,
+    isAvailable: isUsernameAvailable,
+    error: usernameError,
+  } = useCheckUsername(nameValue, { currentUsername: user.name });
 
   const { updateProfile, isPending } = useUpdateProfile(handleServerErrors);
 
   const isNewImage = imagePreview && imagePreview.startsWith("blob:");
   const hasChanges = isDirty;
   const hasNameValue = nameValue.trim().length > 0;
-  const canSubmit = hasChanges && hasNameValue;
+  const canSubmit =
+    hasChanges &&
+    hasNameValue &&
+    !isCheckingUsername &&
+    usernameError !== "CONFLICT";
 
   const onSubmit = async (data: UpdateProfileData) => {
     const formData = prepareFormData(data);
@@ -81,7 +98,32 @@ export default function EditProfileModal({
     onClose();
   };
 
-  const nameError = parseUpdateProfileErrorMessages(errors.name?.message);
+  const validationNameError = parseUpdateProfileErrorMessages(
+    errors.name?.message,
+  );
+  let nameError: Message[] = validationNameError;
+
+  if (errors.name?.message === "CONFLICT" || usernameError === "CONFLICT") {
+    nameError = [
+      {
+        type: "Dismiss",
+        text: "Ta nazwa użytkownika jest już zajęta",
+      },
+    ];
+  } else if (
+    validationNameError.length === 0 &&
+    hasNameChanged &&
+    isUsernameAvailable === true &&
+    nameValue.trim().length >= 3 &&
+    !isCheckingUsername
+  ) {
+    nameError = [
+      {
+        type: "Success",
+        text: "Nazwa użytkownika jest dostępna",
+      },
+    ];
+  }
   const avatarFileError = parseUpdateProfileErrorMessages(
     errors.avatarFile?.message,
   );

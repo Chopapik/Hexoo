@@ -3,6 +3,10 @@ import fetchClient from "@/lib/fetchClient";
 import { ApiError } from "@/lib/AppError";
 import { isUsernameBlocked } from "../constants/blockedUsernames";
 
+type UseCheckUsernameOptions = {
+  currentUsername?: string;
+};
+
 function useDebounce<T>(value: T, delay: number): T {
   const [debouncedValue, setDebouncedValue] = useState<T>(value);
 
@@ -19,16 +23,38 @@ function useDebounce<T>(value: T, delay: number): T {
   return debouncedValue;
 }
 
-export function useCheckUsername(username: string) {
+function normalizeUsername(username: string) {
+  return username.trim().toLowerCase().replace(/\s+/g, "");
+}
+
+export function useCheckUsername(
+  username: string,
+  options: UseCheckUsernameOptions = {},
+) {
   const [isChecking, setIsChecking] = useState(false);
   const [isAvailable, setIsAvailable] = useState<boolean | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const debouncedUsername = useDebounce(username, 500); 
+  const debouncedUsername = useDebounce(username, 500);
 
   useEffect(() => {
+    const normalizedUsername = normalizeUsername(debouncedUsername);
+    const normalizedCurrentUsername = options.currentUsername
+      ? normalizeUsername(options.currentUsername)
+      : "";
+
     if (!debouncedUsername) {
       setIsAvailable(null);
+      setError(null);
+      setIsChecking(false);
+      return;
+    }
+
+    if (
+      normalizedCurrentUsername &&
+      normalizedCurrentUsername === normalizedUsername
+    ) {
+      setIsAvailable(true);
       setError(null);
       setIsChecking(false);
       return;
@@ -63,14 +89,12 @@ export function useCheckUsername(username: string) {
         } else {
           setError(null);
         }
-      } catch (err) {
-        if (err instanceof ApiError && err.code === "CONFLICT") {
+      } catch (error) {
+        if (error instanceof ApiError && error.code === "CONFLICT") {
           setIsAvailable(false);
           setError("CONFLICT");
         } else {
-          // W przypadku innych błędów, nie blokuj użytkownika
-          // Backend też sprawdzi przy rejestracji
-          console.error("Failed to check username:", err);
+          console.error("Failed to check username:", error);
           setIsAvailable(null);
           setError(null);
         }
@@ -80,7 +104,7 @@ export function useCheckUsername(username: string) {
     };
 
     checkUsername();
-  }, [debouncedUsername]);
+  }, [debouncedUsername, options.currentUsername]);
 
   return {
     isChecking,
