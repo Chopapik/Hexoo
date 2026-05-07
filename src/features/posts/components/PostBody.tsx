@@ -54,16 +54,18 @@ export const PostBody = ({
               alt="Treść obrazkowa posta"
             />
           ) : (
-            <DitheredImage
-              className="w-full max-w-[95%] relative rounded-xl object-cover h-auto"
-              src={post.imageUrl}
-              alt="Post content"
-              width={1200}
-              height={1200}
-              sizes="(max-width: 768px) 95vw, (max-width: 1200px) 70vw, 800px"
-              dithering={postDitheringSettings}
-              onReadyChange={onImageReadyChange}
-            />
+            <div className="flex w-full justify-center overflow-hidden rounded-xl">
+              <DitheredImage
+                className="relative mx-auto block max-h-[72dvh] w-auto max-w-[95%] rounded-xl object-contain"
+                src={post.imageUrl}
+                alt="Post content"
+                width={1200}
+                height={1200}
+                sizes="(max-width: 768px) 95vw, (max-width: 1200px) 70vw, 800px"
+                dithering={postDitheringSettings}
+                onReadyChange={onImageReadyChange}
+              />
+            </div>
           ))}
       </div>
     </>
