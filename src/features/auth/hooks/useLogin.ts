@@ -1,5 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useAppStore } from "@/lib/store/store";
 import { LoginData } from "../types/auth.type";
 import fetchClient from "@/lib/fetchClient";
@@ -28,6 +29,9 @@ export default function useLogin(onError: ErrorCallback) {
   const router = useRouter();
   const setUser = useAppStore((s) => s.setUser);
 
+  const [isSigningIn, setIsSigningIn] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
+
   const sessionMutation = useMutation({
     mutationFn: async (payload: {
       idToken: string;
@@ -39,6 +43,8 @@ export default function useLogin(onError: ErrorCallback) {
     },
     onSuccess: (response) => {
       setUser(response.user);
+      setIsRedirecting(true);
+
       router.replace("/");
       router.refresh();
     },
@@ -49,6 +55,8 @@ export default function useLogin(onError: ErrorCallback) {
   });
 
   const handleLogin = async (data: LoginData) => {
+    setIsSigningIn(true);
+
     try {
       const { data: sessionData, error: signInError } =
         await supabaseClient.auth.signInWithPassword({
@@ -66,10 +74,12 @@ export default function useLogin(onError: ErrorCallback) {
         } else {
           toast.error(signInError.message ?? "Błąd logowania.");
         }
+
         return;
       }
 
       const accessToken = sessionData.session?.access_token;
+
       if (!accessToken) {
         toast.error("Brak tokena sesji.");
         return;
@@ -78,7 +88,7 @@ export default function useLogin(onError: ErrorCallback) {
       const recaptchaToken = await getRecaptchaToken("login");
       if (!recaptchaToken) return;
 
-      sessionMutation.mutate({
+      await sessionMutation.mutateAsync({
         idToken: accessToken,
         refreshToken: sessionData.session?.refresh_token,
         recaptchaToken,
@@ -86,11 +96,13 @@ export default function useLogin(onError: ErrorCallback) {
     } catch (error) {
       console.error(error);
       toast.error("Wystąpił nieznany błąd.");
+    } finally {
+      setIsSigningIn(false);
     }
   };
 
   return {
     handleLogin,
-    isLoading: sessionMutation.isPending,
+    isLoading: isSigningIn || sessionMutation.isPending || isRedirecting,
   };
 }

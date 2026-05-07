@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-
 import { RegisterData, registerFields } from "../types/auth.type";
 import fetchClient from "@/lib/fetchClient";
 import { ApiError } from "@/lib/AppError";
@@ -15,6 +14,7 @@ export default function useRegister(onError: ErrorCallback) {
 
   const handleRegister = async (data: RegisterData) => {
     setIsLoading(true);
+    let shouldKeepLoading = false;
 
     try {
       const checkResponse = (await fetchClient.post("/auth/check-username", {
@@ -50,6 +50,8 @@ export default function useRegister(onError: ErrorCallback) {
 
         return;
       }
+
+      shouldKeepLoading = true;
       router.push(`/verify-email?email=${encodeURIComponent(data.email)}`);
     } catch (error: unknown) {
       if (error instanceof ApiError && error.code === "CONFLICT") {
@@ -60,7 +62,9 @@ export default function useRegister(onError: ErrorCallback) {
       console.error("Register error:", error);
       toast.error("Wystąpił nieznany błąd podczas rejestracji.");
     } finally {
-      setIsLoading(false);
+      if (!shouldKeepLoading) {
+        setIsLoading(false);
+      }
     }
   };
 
