@@ -1,19 +1,15 @@
 "use client";
 
 import React, { useState } from "react";
-import { PaperclipIcon } from "../icons/PaperclipIcon";
-import { SendIcon } from "../icons/SendIcon";
 import { useAppStore } from "@/lib/store/store";
-import Modal from "@/features/shared/components/layout/Modal";
-import Button from "@/features/shared/components/ui/Button";
 import AlertModal from "@/features/shared/components/layout/AlertModal";
-import RemoveImageButton from "@/features/shared/components/ui/RemoveImageButton";
 import useCreatePostForm from "../hooks/useCreatePostForm";
 import useCreatePost from "../hooks/useCreatePost";
 import { CreatePostRequestDto } from "../types/post.dto";
 import { parseErrorMessages } from "../utils/postErrorMap";
 import { POST_MAX_CHARS } from "../types/post.dto";
 import { ApiError } from "@/lib/AppError";
+import PostComposerModal from "./PostComposerModal";
 
 interface CreatePostModalProps {
   isOpen: boolean;
@@ -49,7 +45,6 @@ export default function CreatePostModal({
   const clientError = parseErrorMessages(validationErrorRaw)?.text;
 
   const textValue = watch("text") || "";
-  const hasText = textValue.trim().length > 0;
   const currentLength = textValue.length;
   const isOverLimit = currentLength > POST_MAX_CHARS;
 
@@ -93,112 +88,36 @@ export default function CreatePostModal({
 
   const displayError = clientError || rootError;
 
-  const footerContent = (
-    <div className="flex items-center justify-between w-full">
-      <div className="flex items-center">
-        <input
-          type="file"
-          ref={fileInputRef}
-          accept="image/png, image/jpeg, image/webp, image/gif"
-          onChange={handleFileChange}
-          className="hidden"
-        />
-
-        <Button
-          onClick={triggerPicker}
-          icon={<PaperclipIcon className="w-5 h-5" />}
-          variant="transparent"
-          size="icon"
-          className="text-text-neutral hover:text-white"
-          type="button"
-        />
-      </div>
-
-      <span className="text-red-500 text-sm font-medium">{displayError}</span>
-
-      <Button
-        onClick={submit}
-        disabled={isOverLimit || !!clientError}
-        isLoading={isPending}
-        icon={<SendIcon className="w-5 h-5" />}
-        variant="default"
-        size="icon"
-        type="submit"
-      />
-    </div>
-  );
-
   return (
-    <>
-      <Modal
-        isOpen={isOpen}
-        title="Nowy post"
-        onClose={onClose}
-        footer={footerContent}
-        className="w-full h-[calc(100dvh-2rem)] lg:h-auto lg:max-h-[calc(100dvh-2rem)] lg:w-full lg:max-w-3xl"
-      >
-        <div className="flex h-full w-full flex-col gap-4 overflow-y-auto p-4">
-          {imagePreview && (
-            <div
-              className={`relative w-fit group animate-in fade-in zoom-in-95 duration-200 transition-all ${
-                hasText ? "max-w-[120px]" : "max-w-[220px]"
-              }`}
-            >
-              <img
-                src={imagePreview}
-                alt="Preview"
-                width={200}
-                height={200}
-                className={`rounded-xl border border-primary-neutral-stroke-default object-cover w-auto transition-all duration-300 ${
-                  hasText ? "max-h-24" : "max-h-[min(32dvh,16rem)]"
-                }`}
-              />
-              <RemoveImageButton
-                onClick={removeImage}
-                variant="dark"
-                position="top-right"
-                showOnHover={true}
-              />
-            </div>
-          )}
-
-          <div className="relative w-full">
-            <textarea
-              {...register("text")}
-              onKeyDown={handleKeyDown}
-              placeholder={
-                user ? `Co u Ciebie słychać, ${user.name}?` : "Napisz coś..."
-              }
-              className={`w-full bg-transparent text-text-main placeholder:text-text-neutral/50 text-base resize-none outline-none leading-relaxed pb-6 transition-all duration-300 ${
-                imagePreview
-                  ? "min-h-[140px]"
-                  : "min-h-[min(425px,55dvh)]"
-              }`}
-              autoFocus
-            />
-
-            <div
-              className={`
-                absolute bottom-0 right-0 text-xs font-medium transition-colors duration-200 pointer-events-none select-none
-                ${
-                  isOverLimit
-                    ? "text-red-500"
-                    : "text-text-neutral/40 group-focus-within:text-text-neutral/70"
-                }
-              `}
-            >
-              {currentLength} / {POST_MAX_CHARS}
-            </div>
-          </div>
-        </div>
-      </Modal>
-
-      <AlertModal
-        isOpen={!!moderationBlockReason}
-        onClose={() => setModerationBlockReason(null)}
-        title="Post odrzucony"
-        message={moderationBlockReason || ""}
-      />
-    </>
+    <PostComposerModal
+      isOpen={isOpen}
+      title="Nowy post"
+      placeholder={
+        user ? `Co u Ciebie słychać, ${user.name}?` : "Napisz coś..."
+      }
+      onClose={onClose}
+      onSubmit={submit}
+      onImageSelect={triggerPicker}
+      onImageRemove={removeImage}
+      onFileChange={handleFileChange}
+      onTextKeyDown={handleKeyDown}
+      textRegistration={register("text")}
+      textValue={textValue}
+      imagePreview={imagePreview}
+      fileInputRef={fileInputRef}
+      displayError={displayError}
+      isPending={isPending}
+      isOverLimit={isOverLimit}
+      isSubmitDisabled={isOverLimit || !!clientError}
+      acceptedImageTypes="image/png, image/jpeg, image/webp, image/gif"
+      alert={
+        <AlertModal
+          isOpen={!!moderationBlockReason}
+          onClose={() => setModerationBlockReason(null)}
+          title="Post odrzucony"
+          message={moderationBlockReason || ""}
+        />
+      }
+    />
   );
 }
