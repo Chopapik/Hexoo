@@ -7,7 +7,6 @@ import {
   getRefreshCookie,
 } from "@/features/auth/api/utils/session.cookies";
 import { isUsernameTaken } from "../utils/checkUsernameUnique";
-import { isUsernameBlocked } from "../../constants/blockedUsernames";
 import type { ActivityType } from "@/features/activity/api/services";
 import type { AuthRepository } from "../repositories/authRepository.interface";
 import type { UserRepository } from "@/features/users/api/repositories/user.repository.interface";
@@ -159,45 +158,20 @@ export class AuthService implements IAuthService {
     const decodedToken = await this.authRepository.verifyIdToken(idToken);
 
     const { uid, email } = decodedToken;
+    const displayName = name.trim();
 
-    if (isUsernameBlocked(name)) {
-      try {
-        await this.authRepository.deleteUser(uid);
-      } catch (cleanupErr) {
-        throw createAppError({
-          code: "INTERNAL_ERROR",
-          message:
-            "Failed to cleanup user from Auth after blocked username attempt",
-          details: cleanupErr,
-        });
-      }
-
+    if (!displayName) {
       throw createAppError({
-        code: "CONFLICT",
-        message: `[authService.registerUser] Username '${name}' is not available.`,
+        code: "VALIDATION_ERROR",
+        message: "[authService.registerUser] Display name is required.",
         details: { field: "name" },
       });
     }
 
-    if (await isUsernameTaken(name)) {
-      try {
-        await this.authRepository.deleteUser(uid);
-        await this.logActivity(
-          uid,
-          "LOGIN_FAILED",
-          "User cleanup after username conflict",
-        );
-      } catch (cleanupErr) {
-        throw createAppError({
-          code: "INTERNAL_ERROR",
-          message: "Failed to cleanup user from Auth after username conflict",
-          details: cleanupErr,
-        });
-      }
-
+    if (await isUsernameTaken(displayName)) {
       throw createAppError({
         code: "CONFLICT",
-        message: `[authService.registerUser] Username '${name}' is already taken.`,
+        message: `[authService.registerUser] Display name '${displayName}' is already taken.`,
         details: { field: "name" },
       });
     }
@@ -205,7 +179,7 @@ export class AuthService implements IAuthService {
     try {
       await this.userRepository.createUser({
         uid,
-        name,
+        name: displayName,
         email: email ?? "",
         role: UserRole.User,
       });
@@ -238,7 +212,7 @@ export class AuthService implements IAuthService {
           }
         : {
             uid,
-            name,
+            name: displayName,
             email: email ?? undefined,
             role: "user" as const,
           },
@@ -430,18 +404,10 @@ export class AuthService implements IAuthService {
       return { user };
     }
 
-    if (isUsernameBlocked(trimmed)) {
+    if (await isUsernameTaken(trimmed, uid)) {
       throw createAppError({
         code: "CONFLICT",
-        message: `[authService.completeOAuthProfile] Username '${trimmed}' is not available.`,
-        details: { field: "name" },
-      });
-    }
-
-    if (await isUsernameTaken(trimmed)) {
-      throw createAppError({
-        code: "CONFLICT",
-        message: `[authService.completeOAuthProfile] Username '${trimmed}' is already taken.`,
+        message: `[authService.completeOAuthProfile] Display name '${trimmed}' is already taken.`,
         details: { field: "name" },
       });
     }
@@ -490,24 +456,19 @@ export class AuthService implements IAuthService {
     if (!username || typeof username !== "string") {
       throw createAppError({
         code: "VALIDATION_ERROR",
-        message: "[auth.checkUsernameAvailability] Username is required.",
+        message: "[authService.checkUsernameAvailability] Display name is required.",
+        details: { field: "name" },
       });
     }
 
-    const normalized = username.trim().toLowerCase();
+    const normalized = username.trim();
 
     if (normalized.length === 0) {
       throw createAppError({
         code: "VALIDATION_ERROR",
-        message: "[auth.checkUsernameAvailability] Username cannot be empty.",
+        message: "[authService.checkUsernameAvailability] Display name cannot be empty.",
+        details: { field: "name" },
       });
-    }
-
-    if (isUsernameBlocked(normalized)) {
-      return {
-        available: false,
-        username: normalized,
-      };
     }
 
     const taken = await isUsernameTaken(normalized);

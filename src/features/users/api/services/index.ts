@@ -29,9 +29,9 @@ export async function getUserByUid(uid: string): Promise<UserEntity | null> {
   return await service.getUserByUid(uid);
 }
 
-export async function getUserProfile(name: string) {
+export async function getUserProfile(uid: string) {
   const service = getUserService(null);
-  return await service.getUserProfile(name);
+  return await service.getUserProfile(uid);
 }
 
 export async function touchLastOnline(

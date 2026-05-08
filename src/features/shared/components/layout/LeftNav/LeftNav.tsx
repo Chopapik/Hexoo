@@ -37,7 +37,7 @@ export function LeftNav({ onOpenRight, user }: LeftNavProps) {
             <NavItem label={"Strona główna"} to="/" icon={House} />
             <NavItem
               label={"Twój profil"}
-              to={`/profile/${user.name}`}
+              to={`/profile/${user.uid}`}
               icon={User}
             />
             <NavItem label={"Ustawienia"} to="/settings" icon={Settings} />

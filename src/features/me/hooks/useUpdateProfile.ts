@@ -43,18 +43,15 @@ export default function useUpdateProfile(onError?: ErrorCallback) {
 
         setUser(newSessionData);
 
-        const previousName = windowUser.name;
-        const nameChanged = updatedProfile.name !== previousName;
+        const uid = updatedProfile.uid || windowUser.uid;
 
-        if (nameChanged) {
-          router.push(`/profile/${updatedProfile.name}`);
-        } else {
+        if (uid) {
+          router.push(`/profile/${uid}`);
           await queryClient.invalidateQueries({
-            queryKey: ["profile", updatedProfile.name],
+            queryKey: ["profile", uid],
           });
         }
 
-        const uid = updatedProfile.uid || windowUser.uid;
         if (uid) {
           await queryClient.invalidateQueries({
             queryKey: ["posts", "user", uid],

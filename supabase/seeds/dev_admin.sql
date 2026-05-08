@@ -72,8 +72,8 @@ begin
 
     insert into public.users (
       uid,
-      name,
-      name_lowercase,
+      display_name,
+      display_name_normalized,
       email,
       role,
       created_at,

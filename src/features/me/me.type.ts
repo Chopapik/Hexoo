@@ -34,10 +34,9 @@ export type UpdatePasswordData = z.infer<typeof UpdatePasswordSchema>;
 export const UpdateProfileSchema = z.object({
   name: z
     .string()
-    .min(3, { message: "name_too_short" })
-    .max(30, { message: "name_too_long" })
-    .regex(/^[a-zA-Z0-9_]+$/, { message: "name_invalid_chars" })
     .trim()
+    .min(1, { message: "name_too_short" })
+    .max(50, { message: "name_too_long" })
     .optional(),
   avatarFile: z
     .instanceof(File)
