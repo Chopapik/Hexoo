@@ -1,9 +1,8 @@
 import type { PublicPostResponseDto } from "../types/post.dto";
 import { isAsciiArt } from "../utils/asciiDetector";
 import { useMemo } from "react";
+import { PostMedia } from "./PostMedia";
 import { ExpandableImageThumbnail } from "@/features/shared/components/media/ExpandableImageThumbnail";
-import { DitheredImage } from "@/features/shared/components/media/DitheredImage";
-import { useAppStore } from "@/lib/store/store";
 
 type PostBodyProps = {
   post: PublicPostResponseDto;
@@ -20,7 +19,6 @@ export const PostBody = ({
   onImageReadyChange,
 }: PostBodyProps) => {
   const isAscii = useMemo(() => isAsciiArt(post.text), [post.text]);
-  const postDitheringSettings = useAppStore((s) => s.settings.postDithering);
 
   return (
     <>
@@ -54,18 +52,7 @@ export const PostBody = ({
               alt="Treść obrazkowa posta"
             />
           ) : (
-            <div className="flex w-full justify-center overflow-hidden rounded-xl">
-              <DitheredImage
-                className="relative mx-auto block max-h-[72dvh] w-auto max-w-[95%] rounded-xl object-contain"
-                src={post.imageUrl}
-                alt="Post content"
-                width={1200}
-                height={1200}
-                sizes="(max-width: 768px) 95vw, (max-width: 1200px) 70vw, 800px"
-                dithering={postDitheringSettings}
-                onReadyChange={onImageReadyChange}
-              />
-            </div>
+            <PostMedia src={post.imageUrl} alt="Post content" />
           ))}
       </div>
     </>
