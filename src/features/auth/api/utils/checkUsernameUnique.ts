@@ -1,39 +1,32 @@
 import { supabaseAdmin } from "@/lib/supabaseServer";
+import { normalizeDisplayName } from "@/features/users/utils/displayName";
 
 const USERS_TABLE = "users";
 
-export async function isUsernameTaken(username: string): Promise<boolean> {
-  if (!username) return true;
+// Checks display_name uniqueness until a separate handle/username field exists.
+export async function isUsernameTaken(
+  username: string,
+  exceptUid?: string,
+): Promise<boolean> {
+  const normalized = normalizeDisplayName(username);
 
-  const normalized = username.trim().toLowerCase().replace(/\s+/g, "");
-  const trimmed = username.trim();
+  if (!normalized) return false;
 
-  // Check name_lowercase (primary index for case-insensitive lookup)
-  const { data: byLower } = await supabaseAdmin
+  const { data, error } = await supabaseAdmin
     .from(USERS_TABLE)
     .select("uid")
-    .eq("name_lowercase", normalized)
-    .limit(1);
+    .eq("display_name_normalized", normalized)
+    .maybeSingle();
 
-  if (byLower && byLower.length > 0) return true;
-
-  // Check name exactly (for legacy or if name_lowercase was null)
-  const { data: byName } = await supabaseAdmin
-    .from(USERS_TABLE)
-    .select("uid")
-    .eq("name", trimmed)
-    .limit(1);
-
-  if (byName && byName.length > 0) return true;
-
-  if (normalized !== trimmed) {
-    const { data: byNameNorm } = await supabaseAdmin
-      .from(USERS_TABLE)
-      .select("uid")
-      .eq("name", normalized)
-      .limit(1);
-    if (byNameNorm && byNameNorm.length > 0) return true;
+  if (error) {
+    throw new Error(error.message ?? "Database error");
   }
 
-  return false;
+  if (!data) return false;
+
+  if (exceptUid && data.uid === exceptUid) {
+    return false;
+  }
+
+  return true;
 }

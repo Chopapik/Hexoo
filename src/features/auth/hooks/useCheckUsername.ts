@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import fetchClient from "@/lib/fetchClient";
 import { ApiError } from "@/lib/AppError";
-import { isUsernameBlocked } from "../constants/blockedUsernames";
 
 type UseCheckUsernameOptions = {
   currentUsername?: string;
@@ -23,8 +22,8 @@ function useDebounce<T>(value: T, delay: number): T {
   return debouncedValue;
 }
 
-function normalizeUsername(username: string) {
-  return username.trim().toLowerCase().replace(/\s+/g, "");
+function normalizeDisplayName(value: string): string {
+  return value.trim().toLowerCase();
 }
 
 export function useCheckUsername(
@@ -38,12 +37,9 @@ export function useCheckUsername(
   const debouncedUsername = useDebounce(username, 500);
 
   useEffect(() => {
-    const normalizedUsername = normalizeUsername(debouncedUsername);
-    const normalizedCurrentUsername = options.currentUsername
-      ? normalizeUsername(options.currentUsername)
-      : "";
+    const trimmed = debouncedUsername.trim();
 
-    if (!debouncedUsername) {
+    if (!trimmed) {
       setIsAvailable(null);
       setError(null);
       setIsChecking(false);
@@ -51,25 +47,12 @@ export function useCheckUsername(
     }
 
     if (
-      normalizedCurrentUsername &&
-      normalizedCurrentUsername === normalizedUsername
+      options.currentUsername &&
+      normalizeDisplayName(trimmed) ===
+        normalizeDisplayName(options.currentUsername)
     ) {
       setIsAvailable(true);
       setError(null);
-      setIsChecking(false);
-      return;
-    }
-
-    if (debouncedUsername.trim().length < 3) {
-      setIsAvailable(null);
-      setError(null);
-      setIsChecking(false);
-      return;
-    }
-
-    if (isUsernameBlocked(debouncedUsername)) {
-      setIsAvailable(false);
-      setError("CONFLICT");
       setIsChecking(false);
       return;
     }
@@ -80,21 +63,17 @@ export function useCheckUsername(
 
       try {
         const response = (await fetchClient.post("/auth/check-username", {
-          username: debouncedUsername,
+          username: trimmed,
         })) as { available: boolean };
 
         setIsAvailable(response.available);
-        if (!response.available) {
-          setError("CONFLICT");
-        } else {
-          setError(null);
-        }
+        setError(response.available ? null : "CONFLICT");
       } catch (error) {
         if (error instanceof ApiError && error.code === "CONFLICT") {
           setIsAvailable(false);
           setError("CONFLICT");
         } else {
-          console.error("Failed to check username:", error);
+          console.error("Failed to check display name:", error);
           setIsAvailable(null);
           setError(null);
         }

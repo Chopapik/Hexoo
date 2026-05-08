@@ -14,13 +14,8 @@ import { OAuthCompleteData } from "../types/auth.type";
 import { parseRegisterErrorMessages } from "../utils/registerErrorMap";
 
 export default function OAuthCompleteProfileForm() {
-  const {
-    register,
-    handleSubmit,
-    errors,
-    handleServerErrors,
-    watchedName,
-  } = useOAuthCompleteForm();
+  const { register, handleSubmit, errors, handleServerErrors, watchedName } =
+    useOAuthCompleteForm();
 
   const { handleComplete, isLoading } = useOAuthComplete(handleServerErrors);
 
@@ -35,7 +30,9 @@ export default function OAuthCompleteProfileForm() {
     if (validationMessages.length > 0) return validationMessages;
 
     if (usernameError === "CONFLICT") {
-      return [{ type: "Dismiss", text: "Ta nazwa użytkownika jest już zajęta" }];
+      return [
+        { type: "Dismiss", text: "Ta nazwa użytkownika jest już zajęta" },
+      ];
     }
 
     if (
@@ -63,7 +60,7 @@ export default function OAuthCompleteProfileForm() {
   return (
     <div className="w-2xl px-32 py-20 rounded-[20px] inline-flex flex-col justify-center items-center gap-10 overflow-hidden glass-card bg-neutral-500/5">
       <div className="py-0.5 flex flex-col justify-start items-center overflow-hidden">
-        <div className="justify-start text-text-main text-5xl font-bold font-sans">
+        <div className="justify-start text-text-main text-5xl font-bold font-serif">
           Ustaw nazwę
         </div>
         <div className="justify-start text-text-neutral text-2xl font-bold font-sans text-center">

@@ -6,8 +6,8 @@ import { UserRole } from "./user.type";
  */
 export interface UserRow {
   uid: string;
-  name: string;
-  name_lowercase: string | null;
+  display_name: string;
+  display_name_normalized: string;
   email: string;
   role: UserRole;
   avatar_meta: ImageMeta | null;

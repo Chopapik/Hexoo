@@ -57,13 +57,20 @@ export class UserService implements IUserService {
     return await this.repository.getUserByUid(uid);
   }
 
-  async getUserProfile(name: string) {
-    if (!name) return null;
+  async getUserProfile(uid: string) {
+    console.log("[getUserProfile] raw uid:", uid);
 
-    const cleaned = name.trim().replace(/\s+/g, "");
-    if (!cleaned) return null;
+    if (!uid) return null;
 
-    const userData = await this.repository.getUserByName(cleaned);
+    const cleanedUid = uid.trim();
+
+    console.log("[getUserProfile] cleaned uid:", cleanedUid);
+
+    if (!cleanedUid) return null;
+
+    const userData = await this.repository.getUserByUid(cleanedUid);
+
+    console.log("[getUserProfile] userData:", userData);
 
     if (!userData) return null;
 

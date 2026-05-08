@@ -18,7 +18,7 @@ export const Header = ({ user }: { user: SessionData | null }) => {
 
       <div>
         {user ? (
-          <Link href={`/profile/${user.name}`}>
+          <Link href={`/profile/${user.uid}`}>
             <div
               className="flex items-center gap-3 pl-1.5 pr-4 py-1.5 rounded-2xl 
                          border border-transparent 

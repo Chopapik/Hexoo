@@ -19,8 +19,7 @@ export const RegisterSchema = z.object({
   name: z
     .string()
     .min(3, { message: "name_too_short" })
-    .max(30, { message: "name_too_long" })
-    .regex(/^[a-zA-Z0-9_]+$/, { message: "name_invalid_chars" })
+    .max(50, { message: "name_too_long" })
     .trim(),
 
   terms: z.literal(true, {
@@ -42,8 +41,7 @@ export const OAuthCompleteSchema = z.object({
   name: z
     .string()
     .min(3, { message: "name_too_short" })
-    .max(30, { message: "name_too_long" })
-    .regex(/^[a-zA-Z0-9_]+$/, { message: "name_invalid_chars" })
+    .max(50, { message: "name_too_long" })
     .trim(),
 });
 

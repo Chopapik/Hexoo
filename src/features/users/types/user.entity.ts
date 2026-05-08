@@ -3,10 +3,14 @@ import { UserRole } from "./user.type";
 
 export interface UserEntity {
   uid: string;
+  /**
+   * Temporary app-level name field mapped from `users.display_name`.
+   * It is a display label only (not a username/handle and never an identifier).
+   */
   name: string;
   /**
-   * Whether the user has completed username setup.
-   * Derived from `name_lowercase IS NOT NULL` and non-empty `name`.
+   * Whether the user has a non-empty display name.
+   * Derived from `users.display_name`.
    */
   hasUsername: boolean;
   email: string;

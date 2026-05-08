@@ -25,8 +25,6 @@ export interface UserRepository {
 
   getUserByUid(uid: string): Promise<UserEntity | null>;
 
-  getUserByName(name: string): Promise<UserEntity | null>;
-
   getUsersByIds(
     uids: string[],
   ): Promise<Record<string, { name: string; avatarMeta?: ImageMeta | null }>>;

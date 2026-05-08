@@ -1,18 +1,18 @@
 import { UserProfileCard } from "@/features/users/components/UserProfileCard";
 import { getUserFromSession } from "@/features/auth/api/utils/session-user.service";
 import { getUserProfile } from "@/features/users/api/services";
-import { ApiError } from "@/lib/AppError";
+import { AppError } from "@/lib/AppError";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { UserPostList } from "@/features/users/components/UserPostList";
 
 type Props = {
-  params: Promise<{ name: string }>;
+  params: Promise<{ uid: string }>;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { name } = await params;
-  const profileData = await getUserProfile(name);
+  const { uid } = await params;
+  const profileData = await getUserProfile(uid);
 
   if (!profileData || !profileData.user) {
     return {
@@ -38,9 +38,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function ProfilePage({ params }: Props) {
-  const { name } = await params;
+  const { uid } = await params;
 
-  const profileData = await getUserProfile(name);
+  const profileData = await getUserProfile(uid);
 
   if (!profileData || !profileData.user) {
     notFound();
@@ -51,7 +51,7 @@ export default async function ProfilePage({ params }: Props) {
     user = await getUserFromSession();
   } catch (error: unknown) {
     if (
-      error instanceof ApiError &&
+      error instanceof AppError &&
       (error.code === "AUTH_REQUIRED" || error.code === "INVALID_SESSION")
     ) {
       user = null;
@@ -61,12 +61,12 @@ export default async function ProfilePage({ params }: Props) {
   }
 
   let enableSettings = false;
-  if (user && user.name === name) enableSettings = true;
+  if (user && user.uid === uid) enableSettings = true;
 
   return (
     <div className="flex flex-col gap-4">
       <UserProfileCard
-        username={name}
+        username={uid}
         enableEditProfile={enableSettings}
         initialUser={profileData.user}
       />

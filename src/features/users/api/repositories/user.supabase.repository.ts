@@ -10,17 +10,14 @@ import type { UserEntity } from "../../types/user.entity";
 import type { UserRow } from "../../types/user.row";
 import type { ImageMeta } from "@/features/images/types/image.type";
 import { parseDate } from "@/features/shared/utils/dateUtils";
+import { normalizeDisplayName } from "@/features/users/utils/displayName";
 const TABLE = "users";
 
 function rowToEntity(row: UserRow): UserEntity {
   return {
     uid: row.uid,
-    name: row.name,
-    hasUsername:
-      typeof row.name === "string" &&
-      row.name.length > 0 &&
-      row.name_lowercase != null &&
-      row.name_lowercase.length > 0,
+    name: row.display_name,
+    hasUsername: row.display_name.trim().length > 0,
     email: row.email,
     role: row.role,
     avatarMeta: row.avatar_meta ?? undefined,
@@ -42,11 +39,11 @@ function rowToEntity(row: UserRow): UserEntity {
 
 export class UserSupabaseRepository implements UserRepository {
   async createUser(data: CreateUserPayload): Promise<void> {
-    const nameLower = data.name.trim().toLowerCase().replace(/\s+/g, "");
+    const displayName = data.name.trim();
     const row = {
       uid: data.uid,
-      name: data.name,
-      name_lowercase: nameLower,
+      display_name: displayName,
+      display_name_normalized: normalizeDisplayName(displayName),
       email: data.email,
       role: data.role ?? "user",
       avatar_meta: data.avatarMeta ?? null,
@@ -67,8 +64,8 @@ export class UserSupabaseRepository implements UserRepository {
     const now = new Date().toISOString();
     const row = {
       uid: data.uid,
-      name: "",
-      name_lowercase: null,
+      display_name: "",
+      display_name_normalized: "",
       email: data.email,
       role: "user" as const,
       avatar_meta: null,
@@ -86,22 +83,16 @@ export class UserSupabaseRepository implements UserRepository {
       .select("*")
       .eq("uid", uid)
       .maybeSingle();
+
+    console.log("[getUserByUid]", {
+      uid,
+      data,
+      error,
+    });
+
     if (error) throw new Error(error.message ?? "Database error");
     if (!data) return null;
     return rowToEntity(data as UserRow);
-  }
-
-  async getUserByName(name: string): Promise<UserEntity | null> {
-    const nameLower = name.trim().toLowerCase().replace(/\s+/g, "");
-    const { data, error } = await supabaseAdmin
-      .from(TABLE)
-      .select("*")
-      .eq("name_lowercase", nameLower)
-      .limit(1);
-    if (error) throw new Error(error.message ?? "Database error");
-    const row = Array.isArray(data) ? data[0] : data;
-    if (!row) return null;
-    return rowToEntity(row as UserRow);
   }
 
   async getUsersByIds(
@@ -115,17 +106,17 @@ export class UserSupabaseRepository implements UserRepository {
       const chunk = unique.slice(i, i + 30);
       const { data, error } = await supabaseAdmin
         .from(TABLE)
-        .select("uid, name, avatar_meta")
+        .select("uid, display_name, avatar_meta")
         .in("uid", chunk);
       if (error) throw new Error(error.message ?? "Database error");
       for (const row of data ?? []) {
         const r = row as {
           uid: string;
-          name: string;
+          display_name: string;
           avatar_meta: ImageMeta | null;
         };
         out[r.uid] = {
-          name: r.name,
+          name: r.display_name,
           avatarMeta: r.avatar_meta ?? null,
         };
       }
@@ -205,8 +196,9 @@ export class UserSupabaseRepository implements UserRepository {
       updated_at: new Date().toISOString(),
     };
     if (data.name !== undefined) {
-      row.name = data.name;
-      row.name_lowercase = data.name.trim().toLowerCase().replace(/\s+/g, "");
+      const displayName = data.name.trim();
+      row.display_name = displayName;
+      row.display_name_normalized = normalizeDisplayName(displayName);
     }
     if (data.email !== undefined) row.email = data.email;
     if (data.role !== undefined) row.role = data.role;

@@ -11,7 +11,7 @@ import type { AuthRepository } from "@/features/auth/api/repositories/authReposi
 import type { UserRepository } from "@/features/users/api/repositories/user.repository.interface";
 import { resolveImagePublicUrl } from "@/features/images/utils/resolveImagePublicUrl";
 import type { ImageMeta } from "@/features/images/types/image.type";
-import { isUsernameBlocked } from "@/features/auth/constants/blockedUsernames";
+import { isUsernameTaken } from "@/features/auth/api/utils/checkUsernameUnique";
 
 export class MeService implements IMeService {
   constructor(
@@ -58,20 +58,21 @@ export class MeService implements IMeService {
 
     const userData = await this.userRepository.getUserByUid(uid);
 
-    if (name) {
-      if (isUsernameBlocked(name)) {
+    if (name !== undefined) {
+      const displayName = name.trim();
+
+      if (!displayName) {
         throw createAppError({
-          code: "CONFLICT",
-          message: `[meService.updateProfile] Username '${name}' is not available.`,
+          code: "VALIDATION_ERROR",
+          message: "[meService.updateProfile] Display name is required.",
           data: { field: "name" },
         });
       }
 
-      const existingUser = await this.userRepository.getUserByName(name);
-      if (existingUser && existingUser.uid !== uid) {
+      if (await isUsernameTaken(displayName, uid)) {
         throw createAppError({
           code: "CONFLICT",
-          message: `[meService.updateProfile] Username '${name}' is already taken.`,
+          message: `[meService.updateProfile] Display name '${displayName}' is already taken.`,
           data: { field: "name" },
         });
       }
@@ -89,8 +90,9 @@ export class MeService implements IMeService {
     let savedAvatarMeta: ImageMeta | undefined;
 
     if (name) {
-      authUpdate.displayName = name;
-      dbUpdate.name = name;
+      const displayName = name.trim();
+      authUpdate.displayName = displayName;
+      dbUpdate.name = displayName;
     }
 
     if (avatarFile) {

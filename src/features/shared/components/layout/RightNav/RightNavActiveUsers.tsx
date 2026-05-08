@@ -72,7 +72,7 @@ export function RightNavActiveUsers() {
           activeUsers.map((u) => (
             <Link
               key={u.uid}
-              href={`/profile/${encodeURIComponent(u.name)}`}
+              href={`/profile/${encodeURIComponent(u.uid)}`}
               title={u.name}
             >
               <Avatar src={u.avatarUrl} alt={u.name} width={52} height={52} />

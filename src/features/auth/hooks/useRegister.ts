@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { RegisterData, registerFields } from "../types/auth.type";
-import fetchClient from "@/lib/fetchClient";
 import { ApiError } from "@/lib/AppError";
 import { supabaseClient } from "@/lib/supabaseClient";
 
@@ -17,15 +16,6 @@ export default function useRegister(onError: ErrorCallback) {
     let shouldKeepLoading = false;
 
     try {
-      const checkResponse = (await fetchClient.post("/auth/check-username", {
-        username: data.name,
-      })) as { available: boolean };
-
-      if (!checkResponse.available) {
-        onError("CONFLICT", "name");
-        return;
-      }
-
       const { error: signUpError } = await supabaseClient.auth.signUp({
         email: data.email,
         password: data.password,
