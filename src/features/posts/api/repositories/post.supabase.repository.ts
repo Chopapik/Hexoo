@@ -161,6 +161,7 @@ export class PostSupabaseRepository implements PostRepository {
       .from(TABLE)
       .select("*")
       .eq("user_id", userId)
+      .eq("is_pending", false)
       .order("created_at", { ascending: false })
       .limit(limit);
 
