@@ -109,7 +109,7 @@ export class PostService implements IPostService {
       return {
         ...post,
         imageUrl: resolveImagePublicUrl(post.imageMeta) ?? null,
-        userName: author?.name ?? "Unknown",
+        userName: author?.name ?? "Deleted user",
         userAvatarUrl: resolveImagePublicUrl(author?.avatarMeta) ?? null,
         isLikedByMe: likedPostIds.includes(post.id),
         moderationInfo:
