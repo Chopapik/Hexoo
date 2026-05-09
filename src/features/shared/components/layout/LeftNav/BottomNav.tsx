@@ -1,4 +1,3 @@
-import React from "react";
 import Button from "@/features/shared/components/ui/Button";
 import { NavItem } from "./NavItem";
 import { Plus } from "lucide-react";
