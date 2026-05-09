@@ -70,6 +70,13 @@ export function LeftNav({ onOpenRight, user }: LeftNavProps) {
         <div className="flex flex-col items-center justify-center gap-1 text-center">
           <div className="flex gap-4 text-sm font-serif font-medium text-text-neutral/70">
             <Link
+              href="mailto:contact@hexoo.eu"
+              className="hover:text-text-neutral transition-colors"
+            >
+              Kontakt
+            </Link>
+            <span>•</span>
+            <Link
               href="/privacy"
               className="hover:text-text-neutral transition-colors"
             >
