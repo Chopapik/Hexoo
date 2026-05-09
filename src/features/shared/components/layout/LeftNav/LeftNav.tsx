@@ -33,7 +33,7 @@ export function LeftNav({ onOpenRight, user }: LeftNavProps) {
     <div className="hidden md:flex md:sticky md:top-[88px] justify-end-safe self-start bg-primary-neutral-background-default border-t-2 border-primary-neutral-stroke-default  rounded-xl overflow-hidden md:w-20 xl:w-72 px-3 py-3 lg:px-4 lg:py-4 flex-col items-center h-full">
       {user ? (
         <div className="h-full py-5 gap-16 flex flex-col w-full items-center">
-          <div className="flex flex-col md:justify-start items-start w-fit font-sans">
+          <div className="flex flex-col md:justify-start items-center xl:items-start w-full xl:w-fit font-sans">
             <NavItem label={"Strona główna"} to="/" icon={House} />
             <NavItem
               label={"Twój profil"}
@@ -57,13 +57,25 @@ export function LeftNav({ onOpenRight, user }: LeftNavProps) {
             ) : null}
           </div>
 
-          <Button
-            text="Dodaj post"
-            size="xl"
-            rightIcon={<Plus className="size-5" />}
-            className="w-full justify-center font-semibold"
-            onClick={openCreatePostModal}
-          />
+          <div className="flex w-full justify-center">
+            <div className="xl:hidden">
+              <Button
+                size="icon"
+                icon={<Plus className="size-5" />}
+                onClick={openCreatePostModal}
+              />
+            </div>
+
+            <div className="hidden xl:block w-full">
+              <Button
+                text="Dodaj post"
+                size="xl"
+                rightIcon={<Plus className="size-5" />}
+                className="w-full justify-center font-semibold"
+                onClick={openCreatePostModal}
+              />
+            </div>
+          </div>
         </div>
       ) : null}
       <footer className="flex">
