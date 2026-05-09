@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Header } from "./Header";
 import { LeftNav } from "./LeftNav/LeftNav";
@@ -42,6 +42,8 @@ export const Layout: React.FC<{
 }> = ({ children, initialUser }) => {
   const [isHydrated, setIsHydrated] = useState(false);
   const [isRightNavOpen, setIsRightNavOpen] = useState(false);
+  const [isHeaderVisible, setIsHeaderVisible] = useState(true);
+  const lastScrollY = useRef(0);
   const openRight = () => setIsRightNavOpen(true);
   const closeRight = () => setIsRightNavOpen(false);
 
@@ -56,6 +58,29 @@ export const Layout: React.FC<{
 
   useEffect(() => {
     setIsHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(() => {
+        const currentY = window.scrollY;
+        const delta = currentY - lastScrollY.current;
+        if (currentY < 10) {
+          setIsHeaderVisible(true);
+        } else if (delta > 4) {
+          setIsHeaderVisible(false);
+        } else if (delta < -4) {
+          setIsHeaderVisible(true);
+        }
+        lastScrollY.current = currentY;
+        ticking = false;
+      });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   // Sliding session: re-set cookies in Route Handler so expiry extends 1 year from this visit
@@ -81,7 +106,12 @@ export const Layout: React.FC<{
       <PresenceSubscription />
       <SessionWatcher />
       <div className="flex flex-col w-full max-w-[1440px]">
-        <header className="sticky top-0 z-50 bg-page-background px-2 py-2 md:px-4 md:py-4">
+        <header
+          className={
+            "sticky top-0 z-50 bg-page-background px-2 py-2 md:px-4 md:py-4 transition-transform duration-300 ease-out will-change-transform " +
+            (isHeaderVisible ? "" : "max-md:-translate-y-full")
+          }
+        >
           <div className="mx-auto w-full">
             <Header user={user} />
           </div>
@@ -104,7 +134,7 @@ export const Layout: React.FC<{
         {user ? (
           <div className="md:hidden sticky bottom-0 px-2 pb-2 bg-page-background">
             <div className="mx-auto w-full pt-2">
-              <BottomNav onOpenRight={openRight} />
+              <BottomNav onOpenRight={openRight} user={user} />
             </div>
           </div>
         ) : null}
