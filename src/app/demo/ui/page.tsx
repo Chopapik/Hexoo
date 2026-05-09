@@ -558,7 +558,10 @@ export default function UiDemoPage() {
                 <RightNavSidebar />
               </div>
             </div>
-            <BottomNav onOpenRight={() => setRightNavOpen(true)} />
+            <BottomNav
+              onOpenRight={() => setRightNavOpen(true)}
+              user={demoSessionUser}
+            />
             <RightNavOverlay
               open={rightNavOpen}
               onClose={() => setRightNavOpen(false)}

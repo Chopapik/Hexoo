@@ -32,12 +32,7 @@ export function BottomNav({ user }: BottomNavProps) {
   return (
     <div className="flex bg-primary-neutral-background-default border-t border-primary-neutral-stroke-default rounded-xl overflow-hidden h-11 px-1 w-full flex-row justify-between items-center gap-2">
       <div className="flex flex-row items-center min-w-0 px-2">
-        <NavItem
-          label="Strona główna"
-          to="/"
-          icon={House}
-          variant="bottom"
-        />
+        <NavItem label="Strona główna" to="/" icon={House} variant="bottom" />
 
         <NavItem
           label="Twój profil"
