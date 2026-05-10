@@ -5,7 +5,11 @@ import Image from "next/image";
 import { Header } from "./Header";
 import { LeftNav } from "./LeftNav/LeftNav";
 import { BottomNav } from "./LeftNav/BottomNav";
-import { RightNavSidebar, RightNavOverlay } from "./RightNav/RightNav";
+import {
+  RightNavOverlay,
+  RightNavSidebar,
+} from "./RightNav/RightNav";
+import { RightNavGuestDisclaimer } from "./RightNav/RightNavGuestDisclaimer";
 import { useAppStore } from "@/lib/store/store";
 import CreatePostModal from "@/features/posts/components/CreatePostModal";
 import LogoSvg from "@/features/shared/assets/Logo.svg?url";
@@ -22,15 +26,6 @@ function LeftRailWidthSpacer() {
   return (
     <div
       className="invisible pointer-events-none md:w-20 xl:w-72 shrink-0"
-      aria-hidden
-    />
-  );
-}
-
-function RightRailWidthSpacer() {
-  return (
-    <div
-      className="invisible pointer-events-none md:w-20 lg:w-[244px] xl:w-72 shrink-0"
       aria-hidden
     />
   );
@@ -127,7 +122,7 @@ export const Layout: React.FC<{
             </aside>
             <main className="flex-1 min-w-0">{children}</main>
             <aside className={rightRailAsideClass}>
-              {user ? <RightNavSidebar /> : <RightRailWidthSpacer />}
+              {user ? <RightNavSidebar /> : <RightNavGuestDisclaimer />}
             </aside>
           </div>
         </div>

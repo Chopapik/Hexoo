@@ -1,9 +1,4 @@
-import React from "react";
-import Hexoo3Dv2 from "./Hexoo3Dv2";
-import Hexoo3D from "./Hexoo3D";
 import { RightNavActiveUsers } from "./RightNavActiveUsers";
-import Image from "next/image";
-import NavImage from "@/features/shared/assets/nav_image.png";
 
 function RightNavContent() {
   return (
