@@ -78,36 +78,34 @@ export function LeftNav({ onOpenRight, user }: LeftNavProps) {
           </div>
         </div>
       ) : null}
-      <footer className="flex">
-        <div className="flex flex-col items-center justify-center gap-1 text-center">
-          <div className="flex gap-4 text-sm font-serif font-medium text-text-neutral/70">
+      <footer className="flex flex-col w-full">
+        <div className="border-t border-primary-neutral-stroke-default w-full mb-3" />
+        <ul className="flex flex-col items-start justify-start gap-0.5 text-left w-full font-sans">
+          <li>
             <Link
               href="mailto:contact@hexoo.eu"
-              className="hover:text-text-neutral transition-colors"
+              className="hover:text-text-neutral transition-colors text-xs font-medium text-text-neutral/45"
             >
               Kontakt
             </Link>
-            <span>•</span>
+          </li>
+          <li>
             <Link
               href="/privacy"
-              className="hover:text-text-neutral transition-colors"
+              className="hover:text-text-neutral transition-colors text-xs font-medium text-text-neutral/45"
             >
               Prywatność i Cookies
             </Link>
-            <span>•</span>
+          </li>
+          <li>
             <Link
               href="/terms"
-              className="hover:text-text-neutral transition-colors"
+              className="hover:text-text-neutral transition-colors text-xs font-medium text-text-neutral/45"
             >
               Regulamin
             </Link>
-          </div>
-          <div className="text-xs text-text-neutral/70 font-sand">
-            © 2025-2026 Hexoo Project. <br />
-            Created by CHOPAPIK. <br />
-            Protected by reCAPTCHA.
-          </div>
-        </div>
+          </li>
+        </ul>
       </footer>
     </div>
   );

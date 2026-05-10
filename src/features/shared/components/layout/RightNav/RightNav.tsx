@@ -2,8 +2,15 @@ import { RightNavActiveUsers } from "./RightNavActiveUsers";
 
 function RightNavContent() {
   return (
-    <div className="p-3 w-full h-full flex flex-col gap-4">
-      <RightNavActiveUsers />
+    <div className="flex flex-col h-full justify-between">
+      {" "}
+      <div className="p-3 w-full h-full flex flex-col gap-4">
+        <RightNavActiveUsers />
+      </div>
+      <div className="text-xs text-text-neutral/35 font-sans w-full text-center p-6">
+        <p>© 2025-2026 Hexoo Project.</p>
+        <p>Created by CHOPAPIK.</p>
+      </div>
     </div>
   );
 }
