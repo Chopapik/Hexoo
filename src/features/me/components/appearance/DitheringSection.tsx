@@ -31,8 +31,8 @@ export default function DitheringSection() {
     <>
       <SettingsSection title="Dithering postów">
         <div className="flex flex-col gap-5">
-          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-            <div className="text-center md:text-left">
+          <div className="flex flex-row items-center justify-between gap-3">
+            <div className="min-w-0 flex-1 text-left">
               <h4
                 id="posts-dithering-label"
                 className="font-semibold font-sans text-text-main"
@@ -43,11 +43,13 @@ export default function DitheringSection() {
                 Ustawienia wpływają na wygląd obrazków w postach i w podglądzie.
               </p>
             </div>
-            <SwitchButton
-              checked={settings.enabled}
-              onChange={setDitheringEnabled}
-              labelledBy="posts-dithering-label"
-            />
+            <div className="shrink-0">
+              <SwitchButton
+                checked={settings.enabled}
+                onChange={setDitheringEnabled}
+                labelledBy="posts-dithering-label"
+              />
+            </div>
           </div>
 
           <div className="rounded-lg border border-primary-neutral-stroke-default/70 bg-secondary-neutral-background-default/40 p-3 text-sm font-sans text-text-neutral">
@@ -62,12 +64,15 @@ export default function DitheringSection() {
             </p>
           </div>
 
-          <div className="flex justify-end">
-            <Button
-              text="Skonfiguruj"
-              size="md"
-              onClick={() => setIsModalOpen(true)}
-            />
+          <div className="flex w-full flex-row items-center gap-3">
+            <div className="min-w-0 flex-1" />
+            <div className="shrink-0">
+              <Button
+                text="Skonfiguruj"
+                size="md"
+                onClick={() => setIsModalOpen(true)}
+              />
+            </div>
           </div>
         </div>
       </SettingsSection>

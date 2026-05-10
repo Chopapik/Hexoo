@@ -237,7 +237,7 @@ export default function EditProfileModal({
         <form
           id="edit-profile-form"
           onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col gap-6 p-12"
+          className="flex flex-col gap-6 p-4 sm:p-8 md:p-12"
         >
           {/* Avatar Section */}
           <div className="flex flex-col items-center gap-3">

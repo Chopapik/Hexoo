@@ -35,8 +35,8 @@ export default function ContentSection() {
   return (
     <SettingsSection title="Treści">
       <div className="flex flex-col gap-6">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="text-center md:text-left">
+        <div className="flex flex-row items-center justify-between gap-3">
+          <div className="min-w-0 flex-1 text-left">
             <h4
               id="nsfw-posts-label"
               className="font-semibold font-sans text-text-main"
@@ -47,15 +47,17 @@ export default function ContentSection() {
               Włącz, aby automatycznie pokazywać posty oznaczone jako NSFW.
             </p>
           </div>
-          <SwitchButton
-            checked={showNSFWPosts}
-            onChange={handleNsfwPostsChange}
-            labelledBy="nsfw-posts-label"
-          />
+          <div className="shrink-0">
+            <SwitchButton
+              checked={showNSFWPosts}
+              onChange={handleNsfwPostsChange}
+              labelledBy="nsfw-posts-label"
+            />
+          </div>
         </div>
 
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="text-center md:text-left">
+        <div className="flex flex-row items-center justify-between gap-3">
+          <div className="min-w-0 flex-1 text-left">
             <h4
               id="nsfw-comments-label"
               className="font-semibold font-sans text-text-main"
@@ -66,11 +68,13 @@ export default function ContentSection() {
               Włącz, aby pokazywać komentarze oznaczone jako NSFW.
             </p>
           </div>
-          <SwitchButton
-            checked={showNSFWComments}
-            onChange={handleNsfwCommentsChange}
-            labelledBy="nsfw-comments-label"
-          />
+          <div className="shrink-0">
+            <SwitchButton
+              checked={showNSFWComments}
+              onChange={handleNsfwCommentsChange}
+              labelledBy="nsfw-comments-label"
+            />
+          </div>
         </div>
       </div>
     </SettingsSection>

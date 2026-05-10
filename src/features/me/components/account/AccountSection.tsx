@@ -11,8 +11,8 @@ export default function AccountSection() {
   return (
     <>
       <SettingsSection title="Konto">
-        <div className="flex flex-col md:flex-row items-center justify-between">
-          <div>
+        <div className="flex flex-row items-center justify-between gap-3">
+          <div className="min-w-0 flex-1 text-left">
             <h4 className="font-semibold font-sans text-text-main">
               Zmiana hasła
             </h4>
@@ -20,10 +20,12 @@ export default function AccountSection() {
               Zaktualizuj swoje hasło, aby zwiększyć bezpieczeństwo konta.
             </p>
           </div>
-          <Button
-            text="Zmień hasło"
-            onClick={() => setPasswordModalOpen(true)}
-          />
+          <div className="shrink-0">
+            <Button
+              text="Zmień hasło"
+              onClick={() => setPasswordModalOpen(true)}
+            />
+          </div>
         </div>
       </SettingsSection>
 
