@@ -1,11 +1,13 @@
 "use client";
 
-import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { DitheredImage } from "@/features/shared/components/media/DitheredImage";
+import { useAppStore } from "@/lib/store/store";
 
 type PostMediaProps = {
   src: string;
   alt: string;
+  onReadyChange?: (isReady: boolean) => void;
 };
 
 const MIN_FEED_RATIO = 4 / 5; 
@@ -17,13 +19,15 @@ const MIN_BOX_WIDTH = 320;
 const clamp = (value: number, min: number, max: number) =>
   Math.min(Math.max(value, min), max);
 
-export function PostMedia({ src, alt }: PostMediaProps) {
+export function PostMedia({ src, alt, onReadyChange }: PostMediaProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const dithering = useAppStore((s) => s.settings.postDithering);
   const [naturalRatio, setNaturalRatio] = useState(1);
   const [box, setBox] = useState({
     width: 520,
     height: 520,
   });
+  const [isAnimated, setIsAnimated] = useState(false);
 
   const recalculateBox = useCallback(() => {
     const parentWidth =
@@ -56,6 +60,30 @@ export function PostMedia({ src, alt }: PostMediaProps) {
   }, [naturalRatio]);
 
   useEffect(() => {
+    let cancelled = false;
+    const img = new window.Image();
+
+    img.onload = () => {
+      if (cancelled) return;
+      if (img.naturalWidth && img.naturalHeight) {
+        setNaturalRatio(img.naturalWidth / img.naturalHeight);
+      }
+      setIsAnimated(src.toLowerCase().includes(".gif"));
+    };
+
+    img.onerror = () => {
+      if (cancelled) return;
+      setIsAnimated(src.toLowerCase().includes(".gif"));
+    };
+
+    img.src = src;
+
+    return () => {
+      cancelled = true;
+    };
+  }, [src]);
+
+  useEffect(() => {
     recalculateBox();
 
     const parent = containerRef.current?.parentElement;
@@ -85,19 +113,16 @@ export function PostMedia({ src, alt }: PostMediaProps) {
         maxWidth: "95%",
       }}
     >
-      <Image
+      <DitheredImage
         src={src}
         alt={alt}
-        fill
+        width={box.width}
+        height={box.height}
         sizes="(max-width: 768px) 95vw, (max-width: 1200px) 70vw, 760px"
-        className="object-cover object-center"
-        onLoad={(event) => {
-          const img = event.currentTarget;
-
-          if (img.naturalWidth && img.naturalHeight) {
-            setNaturalRatio(img.naturalWidth / img.naturalHeight);
-          }
-        }}
+        className="h-full w-full object-cover object-center"
+        dithering={dithering}
+        isAnimated={isAnimated}
+        onReadyChange={onReadyChange}
       />
     </div>
   );

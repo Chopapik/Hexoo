@@ -52,7 +52,11 @@ export const PostBody = ({
               alt="Treść obrazkowa posta"
             />
           ) : (
-            <PostMedia src={post.imageUrl} alt="Post content" />
+            <PostMedia
+              src={post.imageUrl}
+              alt="Post content"
+              onReadyChange={onImageReadyChange}
+            />
           ))}
       </div>
     </>
