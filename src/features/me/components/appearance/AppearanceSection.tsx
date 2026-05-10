@@ -46,8 +46,8 @@ export default function AppearanceSection() {
 
   return (
     <SettingsSection title="Wygląd">
-      <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-        <div>
+      <div className="flex flex-row items-center justify-between gap-3">
+        <div className="min-w-0 flex-1 text-left">
           <h4 className="font-semibold font-sans text-text-main">
             Motyw aplikacji
           </h4>
@@ -55,17 +55,19 @@ export default function AppearanceSection() {
             Dostosuj wygląd interfejsu do swoich preferencji (Jasny / Ciemny).
           </p>
         </div>
-        <Button
-          leftIcon={
-            isMounted ? (
-              <ThemeToggleIcon isDark={isDark} />
-            ) : (
-              <div className="w-5 h-5" />
-            )
-          }
-          onClick={handleThemeToggle}
-          className="w-fit"
-        />
+        <div className="shrink-0">
+          <Button
+            leftIcon={
+              isMounted ? (
+                <ThemeToggleIcon isDark={isDark} />
+              ) : (
+                <div className="w-5 h-5" />
+              )
+            }
+            onClick={handleThemeToggle}
+            className="w-fit"
+          />
+        </div>
       </div>
     </SettingsSection>
   );

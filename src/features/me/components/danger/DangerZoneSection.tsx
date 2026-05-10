@@ -16,8 +16,8 @@ export default function DangerZoneSection() {
   return (
     <>
       <SettingsSection title="Strefa niebezpieczna">
-        <div className="flex flex-col md:flex-row items-center justify-between">
-          <div>
+        <div className="flex flex-row items-center justify-between gap-3">
+          <div className="min-w-0 flex-1 text-left">
             <h4 className="font-semibold font-sans text-text-main">
               Wyloguj się
             </h4>
@@ -25,28 +25,32 @@ export default function DangerZoneSection() {
               Zakończ obecną sesję na tym urządzeniu.
             </p>
           </div>
-          <Button
-            variant="default"
-            text="Wyloguj się"
-            rightIcon={<LogOut className="size-4" />}
-            onClick={() => logout()}
-          />
+          <div className="shrink-0">
+            <Button
+              variant="default"
+              text="Wyloguj się"
+              rightIcon={<LogOut className="size-4" />}
+              onClick={() => logout()}
+            />
+          </div>
         </div>
         <div className="w-full h-px bg-primary-neutral-stroke-default my-2" />
-        <div className="flex flex-col md:flex-row items-center justify-between">
-          <div>
+        <div className="flex flex-row items-center justify-between gap-3">
+          <div className="min-w-0 flex-1 text-left">
             <h4 className="font-semibold font-sans text-red-500">Usuń konto</h4>
             <p className="text-sm font-sans text-text-neutral">
               Trwałe usunięcie konta i wszystkich powiązanych z nim danych. Tej
               akcji nie można cofnąć.
             </p>
           </div>
-          <Button
-            variant="danger"
-            text="Usuń konto"
-            rightIcon={<Trash2 className="size-4" />}
-            onClick={() => setDeleteModalOpen(true)}
-          />
+          <div className="shrink-0">
+            <Button
+              variant="danger"
+              text="Usuń konto"
+              rightIcon={<Trash2 className="size-4" />}
+              onClick={() => setDeleteModalOpen(true)}
+            />
+          </div>
         </div>
       </SettingsSection>
 
