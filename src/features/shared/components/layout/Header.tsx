@@ -36,7 +36,7 @@ export const Header = ({ user }: { user: SessionData | null }) => {
           </Link>
         ) : (
           <div className="mr-4">
-            <Link href="/login">
+            <Link href="/login" prefetch={false}>
               <Button text="Zaloguj się" rightIconUrl={chevronRightUrl} />
             </Link>
           </div>
