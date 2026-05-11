@@ -16,7 +16,11 @@ export function useLogout() {
 
     onMutate: () => {
       clearUser();
+    },
+
+    onSuccess: () => {
       router.replace("/login");
+      router.refresh();
     },
 
     onError: (error) => {
