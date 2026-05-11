@@ -1,16 +1,15 @@
 import Button from "@/features/shared/components/ui/Button";
 import { NavItem } from "./NavItem";
-import {
-  House,
-  User,
-  Settings,
-  Plus,
-  Shield,
-  ClipboardList,
-} from "lucide-react";
 import { useAppStore } from "@/lib/store/store";
 import type { SessionData } from "@/features/me/me.type";
 import { UserRole } from "@/features/users/types/user.type";
+import {
+  HexActivityIcon,
+  HexCreateIcon,
+  HexHomeIcon,
+  HexProfileIcon,
+  HexSettingsIcon,
+} from "@/features/shared/components/icons/HexNavIcons";
 
 type BottomNavProps = {
   onOpenRight?: () => void;
@@ -32,19 +31,24 @@ export function BottomNav({ user }: BottomNavProps) {
   return (
     <div className="flex bg-primary-neutral-background-default border-t border-primary-neutral-stroke-default rounded-xl overflow-hidden h-11 px-1 w-full flex-row justify-between items-center gap-1.5">
       <div className="flex flex-row items-center min-w-0 px-1">
-        <NavItem label="Strona główna" to="/" icon={House} variant="bottom" />
+        <NavItem
+          label="Strona główna"
+          to="/"
+          icon={HexHomeIcon}
+          variant="bottom"
+        />
 
         <NavItem
           label="Twój profil"
           to={`/profile/${user.uid}`}
-          icon={User}
+          icon={HexProfileIcon}
           variant="bottom"
         />
 
         <NavItem
           label="Ustawienia"
           to="/settings"
-          icon={Settings}
+          icon={HexSettingsIcon}
           variant="bottom"
         />
 
@@ -54,14 +58,14 @@ export function BottomNav({ user }: BottomNavProps) {
               <NavItem
                 label="Panel admina"
                 to="/admin"
-                icon={Shield}
+                icon={HexActivityIcon}
                 variant="bottom"
               />
 
               <NavItem
                 label="Moderacja"
                 to="/moderator"
-                icon={ClipboardList}
+                icon={HexActivityIcon}
                 variant="bottom"
               />
             </>
@@ -69,7 +73,7 @@ export function BottomNav({ user }: BottomNavProps) {
             <NavItem
               label="Panel admina"
               to="/moderator"
-              icon={Shield}
+              icon={HexActivityIcon}
               variant="bottom"
             />
           )
@@ -78,7 +82,7 @@ export function BottomNav({ user }: BottomNavProps) {
 
       <Button
         size="icon"
-        icon={<Plus className="size-5" />}
+        icon={<HexCreateIcon className="size-10" />}
         className="shrink-0"
         onClick={openCreatePostModal}
       />

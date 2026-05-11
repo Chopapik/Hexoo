@@ -31,7 +31,7 @@ export function NavItem({
       : pathname === to || pathname?.startsWith(`${to}/`);
 
   const iconClasses =
-    "size-5 left-[2px] top-[2px] absolute transition-colors duration-200 " +
+    "size-10 left-0 top-0 absolute transition-colors duration-200 " +
     (isActive
       ? "text-text-main"
       : "text-text-neutral group-hover/item:text-text-main");
@@ -64,14 +64,14 @@ export function NavItem({
 
       <div className="flex justify-start items-center gap-1 overflow-hidden">
         <div className="relative inline-flex flex-col justify-start items-start overflow-hidden">
-          <div className="size-6 relative overflow-hidden flex items-center justify-center">
+          <div className="size-10 relative overflow-hidden flex items-center justify-center">
             {Icon ? (
               (() => {
                 const I = Icon as LucideIcon;
                 return (
                   <I
                     className={iconClasses}
-                    strokeWidth={isActive ? 2.5 : 2}
+                    strokeWidth={isActive ? 0.9 : 0.75}
                     fill={isActive ? "currentColor" : "none"}
                   />
                 );

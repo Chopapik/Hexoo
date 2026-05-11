@@ -2,16 +2,15 @@ import Link from "next/link";
 import { NavItem } from "./NavItem";
 import { SessionData } from "@/features/me/me.type";
 import { UserRole } from "@/features/users/types/user.type";
-import {
-  House,
-  User,
-  Settings,
-  Plus,
-  Shield,
-  ClipboardList,
-} from "lucide-react";
 import Button from "@/features/shared/components/ui/Button";
 import { useAppStore } from "@/lib/store/store";
+import {
+  HexActivityIcon,
+  HexHomeIcon,
+  HexProfileIcon,
+  HexSettingsIcon,
+} from "@/features/shared/components/icons/HexNavIcons";
+import { Plus } from "lucide-react";
 
 type LeftNavProps = {
   onOpenRight?: () => void;
@@ -34,25 +33,37 @@ export function LeftNav({ onOpenRight, user }: LeftNavProps) {
       {user ? (
         <div className="h-full py-5 gap-16 flex flex-col w-full items-center">
           <div className="flex flex-col md:justify-start items-center xl:items-start w-full xl:w-fit font-sans">
-            <NavItem label={"Strona główna"} to="/" icon={House} />
+            <NavItem label={"Strona główna"} to="/" icon={HexHomeIcon} />
             <NavItem
               label={"Twój profil"}
               to={`/profile/${user.uid}`}
-              icon={User}
+              icon={HexProfileIcon}
             />
-            <NavItem label={"Ustawienia"} to="/settings" icon={Settings} />
+            <NavItem
+              label={"Ustawienia"}
+              to="/settings"
+              icon={HexSettingsIcon}
+            />
             {isStaff ? (
               isAdmin ? (
                 <>
-                  <NavItem label="Panel admina" to="/admin" icon={Shield} />
+                  <NavItem
+                    label="Panel admina"
+                    to="/admin"
+                    icon={HexActivityIcon}
+                  />
                   <NavItem
                     label="Moderacja"
                     to="/moderator"
-                    icon={ClipboardList}
+                    icon={HexActivityIcon}
                   />
                 </>
               ) : (
-                <NavItem label="Panel admina" to="/moderator" icon={Shield} />
+                <NavItem
+                  label="Panel admina"
+                  to="/moderator"
+                  icon={HexActivityIcon}
+                />
               )
             ) : null}
           </div>
