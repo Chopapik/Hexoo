@@ -95,7 +95,7 @@ export default function AuthConfirmPage() {
 
   return (
     <div className="flex-1 flex items-center justify-center">
-      <div className="px-10 py-8 rounded-[20px] glass-card bg-neutral-500/5 flex flex-col items-center gap-4 text-center max-w-md">
+      <div className="flex w-full max-w-md flex-col items-center gap-4 px-4 py-8 text-center max-sm:bg-transparent sm:gap-6 sm:rounded-[20px] sm:px-10 sm:py-8 sm:glass-card">
         <div className="text-text-main text-2xl font-bold font-sans">
           Aktywacja konta
         </div>

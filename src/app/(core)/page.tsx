@@ -11,7 +11,7 @@ export default function HomePage() {
   return (
     <div className="relative">
       {user ? (
-        <div className="w-full max-w-4xl mb-4 flex justify-end">
+        <div className="w-full max-w-4xl mb-2 sm:mb-4 flex justify-end">
           <CreatePostButton onClick={openCreatePostModal} />
         </div>
       ) : null}

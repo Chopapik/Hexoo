@@ -56,9 +56,9 @@ export default function TextInput({
     messages.length > 0 ? messages[messages.length - 1].type : "Default";
 
   return (
-    <div className="w-full min-w-64 inline-flex flex-col justify-start items-start gap-1.5 font-sans">
+    <div className="w-full min-w-0 sm:min-w-64 inline-flex flex-col justify-start items-start gap-1 sm:gap-1.5 font-sans">
       {label && (
-        <div className="text-text-neutral text-sm font-semibold font-sans ml-1">
+        <div className="text-text-neutral text-xs sm:text-sm font-semibold font-sans ml-1">
           {label}
         </div>
       )}
@@ -66,7 +66,7 @@ export default function TextInput({
       <div
         data-show-button={showButton}
         data-status={lastMessageType}
-        className={`self-stretch h-11 min-w-48 px-4 inline-flex justify-start items-center gap-2 overflow-hidden font-sans transition-all duration-200 ${baseBorderClasses} ${borderClasses[lastMessageType]}`}
+        className={`self-stretch h-10 sm:h-11 min-w-0 sm:min-w-48 px-3 sm:px-4 inline-flex justify-start items-center gap-2 overflow-hidden font-sans transition-all duration-200 ${baseBorderClasses} ${borderClasses[lastMessageType]}`}
       >
         <input
           type={type === "password" && showPassword ? "text" : type}
@@ -95,7 +95,7 @@ export default function TextInput({
         )}
       </div>
 
-      <div className="min-h-8">
+      <div className="min-h-6 sm:min-h-8">
         {messages.length > 0 &&
           messages.map((msg, index) => (
             <ValidationMessage key={index} message={msg} />

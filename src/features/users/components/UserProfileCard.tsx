@@ -48,8 +48,8 @@ export const UserProfileCard = ({
         />
       )}
 
-      <div className="self-stretch w-full p-4 md:px-6 md:py-5 bg-primary-neutral-background-default rounded-xl border-t-2 border-primary-neutral-stroke-default shadow-lg inline-flex flex-col md:flex-row justify-start items-center gap-3 relative">
-        <div className="w-16 h-16 xs:w-24 xs:h-24 rounded-xl p-px bg-[radial-gradient(circle_at_center,#262626_0%,#171717_100%)] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)]">
+      <div className="self-stretch w-full p-3 sm:p-4 md:px-6 md:py-5 bg-primary-neutral-background-default rounded-xl border-t-2 border-primary-neutral-stroke-default shadow-lg inline-flex flex-col md:flex-row justify-start items-center gap-3 relative">
+        <div className="w-14 h-14 xs:w-20 xs:h-20 md:w-24 md:h-24 rounded-xl p-px bg-[radial-gradient(circle_at_center,#262626_0%,#171717_100%)] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)]">
           <Image
             className="w-full h-full rounded-xl object-cover"
             src={avatarUrl ?? defaultAvatarUrl}
@@ -59,7 +59,7 @@ export const UserProfileCard = ({
           />
         </div>
         {enableEditProfile && (
-          <div className="absolute top-4 right-4 md:right-7">
+          <div className="absolute top-3 right-3 sm:top-4 sm:right-4 md:right-7">
             <Button
               text="edytuj profil"
               size="sm"
@@ -69,13 +69,13 @@ export const UserProfileCard = ({
         )}
 
         <div className="flex-1 w-full inline-flex flex-col md:justify-center items-start gap-2 overflow-hidden">
-          <div className="flex flex-row px-1 justify-between items-center text-left w-full text-text-main text-base xs:text-2xl font-bold font-sans truncate">
-            <span className="ml-1">{name}</span>
+          <div className="flex flex-row px-1 justify-center md:justify-between items-center text-center md:text-left w-full text-text-main text-base xs:text-xl md:text-2xl font-bold font-sans truncate">
+            <span className="md:ml-1">{name}</span>
           </div>
 
           {/* Info bar */}
-          <div className="self-stretch px-5 py-3.5 bg-[radial-gradient(ellipse_113.20%_442.25%_at_26.12%_10.28%,var(--text-main,rgba(255,255,255,0.04))_0%,var(--text-neutral,rgba(115,115,115,0.04))_100%)] ] rounded-xl inline-flex flex-row justify-between items-center gap-3 overflow-hidden">
-            <div className="w-auto inline-flex justify-start items-center gap-3 md:gap-4">
+          <div className="self-stretch px-3 py-2 sm:px-5 sm:py-3.5 bg-[radial-gradient(ellipse_113.20%_442.25%_at_26.12%_10.28%,var(--text-main,rgba(255,255,255,0.04))_0%,var(--text-neutral,rgba(115,115,115,0.04))_100%)] ] rounded-xl inline-flex flex-row justify-between items-center gap-2 sm:gap-3 overflow-hidden">
+            <div className="w-auto inline-flex justify-start items-center gap-2 sm:gap-3 md:gap-4">
               <div className="inline-flex flex-col justify-start items-start gap-0.5">
                 <div className="self-stretch h-3.5 justify-start text-text-neutral text-xs font-bold font-sans">
                   dołączył
@@ -100,7 +100,7 @@ export const UserProfileCard = ({
               )}
             </div>
 
-            <div className="h-8 flex justify-center items-center font-serif font-light text-xl mr-1 overflow-hidden md:ml-auto">
+            <div className="h-7 sm:h-8 flex justify-center items-center font-serif font-light text-lg sm:text-xl mr-1 overflow-hidden md:ml-auto">
               <div
                 className={
                   isOnline ? "  text-green-500 " : "text-text-neutral italic"

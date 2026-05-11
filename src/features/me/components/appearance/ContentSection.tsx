@@ -34,8 +34,8 @@ export default function ContentSection() {
 
   return (
     <SettingsSection title="Treści">
-      <div className="flex flex-col gap-6">
-        <div className="flex flex-row items-center justify-between gap-3">
+      <div className="flex flex-col gap-4 sm:gap-6">
+        <div className="flex flex-row items-center justify-between gap-2 sm:gap-3">
           <div className="min-w-0 flex-1 text-left">
             <h4
               id="nsfw-posts-label"
@@ -43,7 +43,7 @@ export default function ContentSection() {
             >
               Pokaż treść NSFW w postach
             </h4>
-            <p className="text-sm font-sans text-text-neutral">
+            <p className="text-xs sm:text-sm font-sans text-text-neutral">
               Włącz, aby automatycznie pokazywać posty oznaczone jako NSFW.
             </p>
           </div>
@@ -56,7 +56,7 @@ export default function ContentSection() {
           </div>
         </div>
 
-        <div className="flex flex-row items-center justify-between gap-3">
+        <div className="flex flex-row items-center justify-between gap-2 sm:gap-3">
           <div className="min-w-0 flex-1 text-left">
             <h4
               id="nsfw-comments-label"
@@ -64,7 +64,7 @@ export default function ContentSection() {
             >
               Pokaż treść NSFW w komentarzach
             </h4>
-            <p className="text-sm font-sans text-text-neutral">
+            <p className="text-xs sm:text-sm font-sans text-text-neutral">
               Włącz, aby pokazywać komentarze oznaczone jako NSFW.
             </p>
           </div>

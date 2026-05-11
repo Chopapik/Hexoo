@@ -99,13 +99,13 @@ export default function PostComposerModal({
         title={title}
         onClose={onClose}
         footer={footerContent}
-        className="w-full h-[calc(100dvh-2rem)] lg:h-auto lg:max-h-[calc(100dvh-2rem)] lg:w-full lg:max-w-3xl"
+        className="w-full h-dvh max-h-dvh lg:h-auto lg:max-h-[calc(100dvh-2rem)] lg:w-full lg:max-w-3xl"
       >
-        <div className="flex h-full w-full flex-col gap-4 overflow-y-auto p-4">
+        <div className="flex h-full w-full flex-col gap-3 sm:gap-4 overflow-y-auto p-3 sm:p-4">
           {imagePreview && (
             <div
               className={`relative w-fit group animate-in fade-in zoom-in-95 duration-200 transition-all ${
-                hasText ? "max-w-[120px]" : "max-w-[220px]"
+                hasText ? "max-w-[96px] sm:max-w-[120px]" : "max-w-[180px] sm:max-w-[220px]"
               }`}
             >
               <img
@@ -114,7 +114,7 @@ export default function PostComposerModal({
                 width={200}
                 height={200}
                 className={`rounded-xl border border-primary-neutral-stroke-default object-cover w-auto transition-all duration-300 ${
-                  hasText ? "max-h-24" : "max-h-[min(32dvh,16rem)]"
+                  hasText ? "max-h-20 sm:max-h-24" : "max-h-[min(28dvh,12rem)] sm:max-h-[min(32dvh,16rem)]"
                 }`}
               />
               {showRemoveImageButton && (
@@ -134,7 +134,7 @@ export default function PostComposerModal({
               onKeyDown={onTextKeyDown}
               placeholder={placeholder}
               className={`w-full bg-transparent text-text-main placeholder:text-text-neutral/50 text-base resize-none outline-none leading-relaxed pb-6 transition-all duration-300 ${
-                imagePreview ? "min-h-[140px]" : "min-h-[min(425px,55dvh)]"
+                imagePreview ? "min-h-[120px] sm:min-h-[140px]" : "min-h-[min(320px,48dvh)] sm:min-h-[min(425px,55dvh)]"
               }`}
               autoFocus
             />

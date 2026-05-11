@@ -59,7 +59,7 @@ export const PostCard = ({
       />
       <div
         onClick={handleCardClick}
-        className="w-full max-w-4xl p-4 bg-primary-neutral-background-default rounded-xl border-t-2 border-primary-neutral-stroke-default inline-flex flex-col justify-start items-start gap-4 cursor-pointer"
+        className="w-full max-w-4xl p-3 sm:p-4 bg-primary-neutral-background-default rounded-xl border-t-2 border-primary-neutral-stroke-default inline-flex flex-col justify-start items-start gap-3 sm:gap-4 cursor-pointer"
       >
         <PostMeta post={post} />
 
@@ -68,7 +68,9 @@ export const PostCard = ({
             post={post}
             isNSFW={post.isNSFW}
             moderationThumbnailImage={moderationThumbnailImage}
-            onImageReadyChange={(isReady) => onImageReadyChange?.(post.id, isReady)}
+            onImageReadyChange={(isReady) =>
+              onImageReadyChange?.(post.id, isReady)
+            }
           />
         ) : (
           <PostNsfwNotice className="pointer-events-none" />

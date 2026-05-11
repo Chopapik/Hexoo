@@ -18,17 +18,18 @@ export const PostMeta = ({ post }: PostMetaProps) => {
   return (
     <div className="w-full flex justify-between items-start">
       <div className="inline-flex justify-start items-center gap-2">
-        <div className="size-10" onClick={handleLinkClick}>
+        <div className="size-9 sm:size-10" onClick={handleLinkClick}>
           <Link href={`/profile/${post.userId}`}>
             <Avatar
               src={post.userAvatarUrl ?? undefined}
               alt={post.userName ?? undefined}
+              className="size-9 sm:size-10"
             />
           </Link>
         </div>
         <div className="self-stretch inline-flex flex-col justify-center items-start">
           <div
-            className="justify-start text-text-main text-sm font-medium font-sans"
+            className="justify-start text-text-main text-xs sm:text-sm font-medium font-sans"
             onClick={handleLinkClick}
           >
             <Link
@@ -39,7 +40,7 @@ export const PostMeta = ({ post }: PostMetaProps) => {
             </Link>
           </div>
           <div className="inline-flex justify-center items-center gap-1">
-            <div className="justify-start text-text-neutral text-xs font-normal font-sans">
+            <div className="justify-start text-text-neutral text-[11px] sm:text-xs font-normal font-sans">
               {formatSmartDate(post.createdAt)}
             </div>
           </div>

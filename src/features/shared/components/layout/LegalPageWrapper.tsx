@@ -8,7 +8,7 @@ interface LegalPageWrapperProps {
 export const LegalPageWrapper = ({ children }: LegalPageWrapperProps) => {
   return (
     <div className="w-full max-w-4xl mx-auto pt-2 pb-16 px-4 flex flex-col items-center">
-      <div className="glass-card w-full p-8 md:p-12 rounded-2xl border border-primary-neutral-stroke-default bg-black/20 backdrop-blur-sm">
+      <div className="rounded-2xl w-full py-2 sm:p-8 md:p-12 sm:glass-card">
         <article className="prose prose-invert prose-headings:font-serif prose-headings:text-text-main prose-p:text-text-neutral prose-li:text-text-neutral prose-a:text-fuchsia-400 hover:prose-a:text-fuchsia-300 max-w-none">
           {children}
         </article>

@@ -79,7 +79,7 @@ export function UserPostList({ userId }: { userId: string }) {
         className="h-10 flex justify-center items-center"
       >
         {isFetchingNextPage && (
-          <AppLoader size="lg" className="text-fuchsia-500" />
+          <AppLoader size="lg" className="text-text-neutral" />
         )}
       </div>
 

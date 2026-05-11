@@ -198,7 +198,7 @@ export default function ActivityLogTable() {
                 className="h-4 w-full flex justify-center py-4 shrink-0"
               >
                 {isFetchingNextPage && (
-                  <AppLoader size="lg" className="text-fuchsia-500" />
+                  <AppLoader size="lg" className="text-text-neutral" />
                 )}
               </div>
             )}

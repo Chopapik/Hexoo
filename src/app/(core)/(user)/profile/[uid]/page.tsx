@@ -64,7 +64,7 @@ export default async function ProfilePage({ params }: Props) {
   if (user && user.uid === uid) enableSettings = true;
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-2 sm:gap-4">
       <UserProfileCard
         username={uid}
         enableEditProfile={enableSettings}

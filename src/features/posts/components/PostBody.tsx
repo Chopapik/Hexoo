@@ -19,31 +19,37 @@ export const PostBody = ({
   onImageReadyChange,
 }: PostBodyProps) => {
   const isAscii = useMemo(() => isAsciiArt(post.text), [post.text]);
+  const hasBadges = isNSFW || post.isEdited;
+  const hasText = post.text.trim().length > 0;
 
   return (
     <>
-      <div className="self-stretch inline-flex flex-col justify-center items-center gap-4 overflow-hidden w-full">
-        <div className="self-start flex items-center gap-2">
-          {isNSFW && (
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-red-500 bg-red-500/10 px-2 py-1 rounded-md">
-              NSFW
-            </span>
-          )}
-          {post.isEdited && (
-            <span className="text-[10px] font-medium text-text-neutral/60 italic">
-              edytowano
-            </span>
-          )}
-        </div>
-        <div
-          className={`self-stretch  text-text-main text-base font-normal w-full ${
-            isAscii
-              ? "ascii-art"
-              : "font-sans whitespace-pre-wrap wrap-break-word"
-          }`}
-        >
-          {post.text}
-        </div>
+      <div className="self-stretch inline-flex flex-col justify-center items-center gap-3 sm:gap-4 overflow-hidden w-full">
+        {hasBadges && (
+          <div className="self-start flex items-center gap-2">
+            {isNSFW && (
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-red-500 bg-red-500/10 px-2 py-1 rounded-md">
+                NSFW
+              </span>
+            )}
+            {post.isEdited && (
+              <span className="text-[10px] font-medium text-text-neutral/60 italic">
+                edytowano
+              </span>
+            )}
+          </div>
+        )}
+        {hasText && (
+          <div
+            className={`self-stretch text-text-main text-sm sm:text-base font-normal w-full ${
+              isAscii
+                ? "ascii-art"
+                : "font-sans whitespace-pre-wrap wrap-break-word"
+            }`}
+          >
+            {post.text}
+          </div>
+        )}
 
         {post.imageUrl &&
           (moderationThumbnailImage ? (
