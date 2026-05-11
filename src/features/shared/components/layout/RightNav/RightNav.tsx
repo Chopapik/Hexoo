@@ -2,8 +2,7 @@ import { RightNavActiveUsers } from "./RightNavActiveUsers";
 
 function RightNavContent() {
   return (
-    <div className="flex flex-col h-full justify-between">
-      {" "}
+    <div className="flex flex-col h-full w-full  justify-between">
       <div className="p-3 w-full h-full flex flex-col gap-4">
         <RightNavActiveUsers />
       </div>
