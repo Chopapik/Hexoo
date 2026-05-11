@@ -103,7 +103,7 @@ export const Layout: React.FC<{
       <div className="flex flex-col w-full max-w-[1440px]">
         <header
           className={
-            "sticky top-0 z-50 bg-page-background px-2 py-2 md:px-4 md:py-4 transition-transform duration-300 ease-out will-change-transform " +
+            "sticky top-0 z-50 bg-page-background px-1.5 py-1.5 md:px-4 md:py-4 transition-transform duration-300 ease-out will-change-transform " +
             (isHeaderVisible ? "" : "max-md:-translate-y-full")
           }
         >
@@ -111,8 +111,8 @@ export const Layout: React.FC<{
             <Header user={user} />
           </div>
         </header>
-        <div className="mx-auto w-full px-2 md:px-4 flex-1">
-          <div className="flex gap-4 items-start">
+        <div className="mx-auto w-full px-1.5 md:px-4 flex-1">
+          <div className="flex gap-3 md:gap-4 items-start">
             <aside className={leftRailAsideClass}>
               {user ? (
                 <LeftNav onOpenRight={openRight} user={user} />
@@ -127,8 +127,8 @@ export const Layout: React.FC<{
           </div>
         </div>
         {user ? (
-          <div className="md:hidden sticky bottom-0 px-2 pb-2 bg-page-background">
-            <div className="mx-auto w-full pt-2">
+          <div className="md:hidden sticky bottom-0 px-1.5 pb-1.5 bg-page-background">
+            <div className="mx-auto w-full pt-1.5">
               <BottomNav onOpenRight={openRight} user={user} />
             </div>
           </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import type { PublicPostResponseDto } from "../types/post.dto";
 import { PostCard } from "./PostCard";
 import usePosts from "../hooks/usePosts";
@@ -28,31 +28,29 @@ export default function PostList({ className = "" }: PostListProps) {
     Record<string, boolean>
   >({});
 
-  const visiblePosts = useMemo(() => data?.pages.flat() ?? [], [data?.pages]);
+  const visiblePosts = data?.pages.flat() ?? [];
 
   useEffect(() => {
-    if (!visiblePosts.length) {
+    const posts = data?.pages.flat() ?? [];
+
+    if (!posts.length) {
       setImageReadyByPostId({});
       return;
     }
 
     setImageReadyByPostId((previous) => {
       const next: Record<string, boolean> = {};
-      for (const post of visiblePosts) {
+      for (const post of posts) {
         next[post.id] = previous[post.id] ?? false;
       }
       return next;
     });
-  }, [visiblePosts]);
+  }, [data?.pages]);
 
-  const areVisiblePostsVisuallyReady = useMemo(
-    () =>
-      visiblePosts.every((post) => {
-        if (!post.imageUrl) return true;
-        return imageReadyByPostId[post.id] === true;
-      }),
-    [visiblePosts, imageReadyByPostId],
-  );
+  const areVisiblePostsVisuallyReady = visiblePosts.every((post) => {
+    if (!post.imageUrl) return true;
+    return imageReadyByPostId[post.id] === true;
+  });
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -78,11 +76,11 @@ export default function PostList({ className = "" }: PostListProps) {
   if (isLoading) {
     return (
       <main className={joinClassNames(className)}>
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="w-full max-w-[920px] p-4 bg-primary-neutral-background-default rounded-xl border-t-2 border-primary-neutral-stroke-default flex flex-col gap-4 animate-pulse"
+              className="w-full max-w-[920px] p-3 sm:p-4 bg-primary-neutral-background-default rounded-xl border-t-2 border-primary-neutral-stroke-default flex flex-col gap-3 sm:gap-4 animate-pulse"
             >
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-white/10" />
@@ -110,7 +108,7 @@ export default function PostList({ className = "" }: PostListProps) {
 
   return (
     <main className={joinClassNames(className)}>
-      <div className="space-y-4">
+      <div className="space-y-3 sm:space-y-4">
         {data?.pages.map((group, i) => (
           <React.Fragment key={i}>
             {group.map((post: PublicPostResponseDto) => (

@@ -16,11 +16,11 @@ import {
  */
 const sizeClasses: Record<ButtonSize, string> = {
   sm: "h-7 min-w-7 px-3 text-xs rounded-xl",
-  md: "h-9 min-w-9 px-4 text-base rounded-3xl",
-  lg: "h-11 min-w-11 px-5 text-base rounded-xl",
-  xl: "h-13 w-full px-3 text-base rounded-xl",
+  md: "h-10 min-w-10 px-3 text-sm rounded-3xl sm:h-9 sm:min-w-9 sm:px-4 sm:text-base",
+  lg: "h-11 min-w-11 px-4 text-sm rounded-xl sm:px-5 sm:text-base",
+  xl: "h-11 w-full px-3 text-sm rounded-xl sm:h-13 sm:text-base",
   // Icon-only sizes
-  icon: "h-9 min-w-9 rounded-xl",
+  icon: "h-10 min-w-10 rounded-xl sm:h-9 sm:min-w-9",
   iconSm: "size-7 rounded-xl",
 };
 

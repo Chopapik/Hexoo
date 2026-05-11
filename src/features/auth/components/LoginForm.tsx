@@ -23,16 +23,16 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="w-2xl px-32 py-20 rounded-[20px] inline-flex flex-col justify-center items-center gap-10 overflow-hidden glass-card bg-neutral-500/5">
+    <div className="mx-auto inline-flex w-full max-w-md flex-col items-center justify-center gap-6 overflow-hidden px-4 py-8 xs:px-6 sm:max-w-2xl sm:gap-10 sm:rounded-[20px] sm:px-12 sm:py-12 sm:glass-card md:px-32 md:py-20">
       <div className="py-0.5 flex flex-col justify-start items-center overflow-hidden">
-        <div className="justify-start text-text-main text-6xl  font-serif">
+        <div className="justify-start text-text-main text-4xl sm:text-6xl font-serif">
           Logowanie
         </div>
       </div>
 
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="self-stretch flex flex-col justify-center items-center gap-2 overflow-hidden"
+        className="self-stretch flex flex-col justify-center items-center gap-1.5 sm:gap-2 overflow-hidden"
       >
         <TextInput
           label="Email"
@@ -60,7 +60,7 @@ export default function LoginForm() {
           )}
         </div>
 
-        <div className="self-stretch flex flex-col justify-center items-end gap-1 mt-4 space-y-4">
+        <div className="self-stretch flex flex-col justify-center items-end gap-1 mt-3 sm:mt-4 space-y-3 sm:space-y-4">
           <Button
             text="Zaloguj się"
             size="xl"
@@ -96,11 +96,11 @@ export default function LoginForm() {
         </div>
       </form>
 
-      <div className="self-stretch text-center justify-start mt-4">
-        <span className="text-text-main text-base font-semibold font-sans">
+      <div className="self-stretch text-center justify-start mt-2 sm:mt-4">
+        <span className="text-text-main text-sm sm:text-base font-semibold font-sans">
           Nie masz konta?
         </span>
-        <span className="text-text-main text-base font-semibold font-sans underline ml-1">
+        <span className="text-text-main text-sm sm:text-base font-semibold font-sans underline ml-1">
           <Link href="/register">Zarejestruj się</Link>
         </span>
       </div>

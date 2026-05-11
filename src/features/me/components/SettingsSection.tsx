@@ -8,11 +8,11 @@ export default function SettingsSection({
   children: ReactNode;
 }) {
   return (
-    <div className="w-full p-4 md:px-6 md:py-5 bg-primary-neutral-background-default rounded-xl border-t-2 border-primary-neutral-stroke-default shadow-lg font-sans">
-      <h3 className="text-2xl font-bold font-serif text-text-main mb-4">
+    <div className="w-full p-3 sm:p-4 md:px-6 md:py-5 bg-primary-neutral-background-default rounded-xl border-t-2 border-primary-neutral-stroke-default shadow-lg font-sans">
+      <h3 className="text-xl sm:text-2xl font-bold font-serif text-text-main mb-3 sm:mb-4">
         {title}
       </h3>
-      <div className="flex flex-col gap-4">{children}</div>
+      <div className="flex flex-col gap-3 sm:gap-4">{children}</div>
     </div>
   );
 }

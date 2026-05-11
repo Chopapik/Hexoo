@@ -237,13 +237,13 @@ export default function EditProfileModal({
         <form
           id="edit-profile-form"
           onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col gap-6 p-4 sm:p-8 md:p-12"
+          className="flex flex-col gap-4 sm:gap-6 p-3 sm:p-6 md:p-10"
         >
           {/* Avatar Section */}
-          <div className="flex flex-col items-center gap-3">
+          <div className="flex flex-col items-center gap-2 sm:gap-3">
             <div className="relative">
               {isCropping && cropImageSrc ? (
-                <div className="w-full max-w-sm rounded-xl border border-primary-neutral-stroke-default/50 bg-secondary-neutral-background-default/30 p-4 flex flex-col gap-4">
+                <div className="w-full max-w-sm rounded-xl border border-primary-neutral-stroke-default/50 bg-secondary-neutral-background-default/30 p-3 sm:p-4 flex flex-col gap-3 sm:gap-4">
                   <div className="mx-auto overflow-hidden rounded-xl">
                     <AvatarEditor
                       ref={editorRef}
@@ -294,7 +294,7 @@ export default function EditProfileModal({
                   className="relative group cursor-pointer animate-in fade-in zoom-in-95 duration-200"
                   onClick={triggerPicker}
                 >
-                  <div className="w-32 h-32 rounded-xl p-px bg-[radial-gradient(circle_at_center,#262626_0%,#171717_100%)] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] transition-transform group-hover:scale-105">
+                  <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-xl p-px bg-[radial-gradient(circle_at_center,#262626_0%,#171717_100%)] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] transition-transform group-hover:scale-105">
                     <Avatar
                       src={imagePreview || undefined}
                       alt={user.name}
@@ -343,7 +343,7 @@ export default function EditProfileModal({
             </div>
 
             <div className="flex flex-col items-center ">
-              <p className="text-sm text-text-neutral font-medium">
+              <p className="text-xs sm:text-sm text-text-neutral font-medium text-center">
                 {isCropping
                   ? "Dopasuj kadr i kliknij Zastosuj"
                   : "Kliknij, aby zmienić zdjęcie profilowe"}
@@ -367,7 +367,7 @@ export default function EditProfileModal({
           </div>
 
           {/* Name Section */}
-          <div className="flex flex-col gap-4 p-4 rounded-xl bg-secondary-neutral-background-default/30 border border-primary-neutral-stroke-default/50">
+          <div className="flex flex-col gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl bg-secondary-neutral-background-default/30 border border-primary-neutral-stroke-default/50">
             <TextInput
               label="Nazwa użytkownika"
               placeholder="Twoja publiczna nazwa"
@@ -376,7 +376,7 @@ export default function EditProfileModal({
               showButton={false}
             />
             <div className="flex flex-col gap-1">
-              <p className="text-sm text-text-neutral ml-1">
+              <p className="text-xs sm:text-sm text-text-neutral ml-1">
                 Ta nazwa będzie widoczna publicznie — możesz użyć nicku lub
                 imienia.
               </p>

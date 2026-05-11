@@ -54,10 +54,12 @@ export const PostModal = ({
     : "w-full max-w-full";
 
   const modalClassName = `
-    h-[calc(100dvh-2rem)]
-    max-h-[calc(100dvh-2rem)]
+    h-dvh
+    max-h-dvh
+    lg:h-[calc(100dvh-2rem)]
+    lg:max-h-[calc(100dvh-2rem)]
     overflow-hidden
-    ${hasImage ? "max-w-[calc(100vw-2rem)]" : ""}
+    ${hasImage ? "lg:!max-w-[calc(100vw-2rem)]" : ""}
   `;
 
   return (
@@ -74,7 +76,7 @@ export const PostModal = ({
               <img
                 src={post.imageUrl ?? ""}
                 alt="Post content"
-                className="block lg:h-full lg:max-h-full lg:w-auto lg:max-w-full lg:object-contain"
+                className="block h-full w-full object-contain object-center"
               />
             ) : (
               <div className="flex h-full w-full items-center justify-center">
@@ -87,14 +89,14 @@ export const PostModal = ({
         <div
           className={`flex h-full min-h-0 flex-col border-primary-neutral-stroke-default/60 ${sidebarClassName}`}
         >
-          <div className="shrink-0 border-b border-primary-neutral-stroke-default/60 p-4">
+          <div className="shrink-0 border-b border-primary-neutral-stroke-default/60 p-3 sm:p-4">
             <PostMeta post={post} />
           </div>
 
           {!showCommentsMobile && (
             <div className="flex min-h-0 flex-1 flex-col lg:hidden">
               {isContentVisible && post.text && (
-                <div className="shrink-0 border-b border-primary-neutral-stroke-default/60 p-4">
+                <div className="shrink-0 border-b border-primary-neutral-stroke-default/60 p-3 sm:p-4">
                   <p className={textClassName}>{post.text}</p>
                 </div>
               )}
@@ -121,7 +123,7 @@ export const PostModal = ({
                 </div>
               )}
 
-              <div className="mt-auto shrink-0 p-4">
+              <div className="mt-auto shrink-0 p-3 sm:p-4">
                 <Button
                   text="Pokaż komentarze"
                   size="xl"
@@ -135,7 +137,7 @@ export const PostModal = ({
 
           {showCommentsMobile && (
             <div className="flex min-h-0 flex-1 flex-col lg:hidden">
-              <div className="shrink-0 border-b border-primary-neutral-stroke-default/60 p-4">
+              <div className="shrink-0 border-b border-primary-neutral-stroke-default/60 p-3 sm:p-4">
                 <Button
                   text="Wróć do posta"
                   size="xl"
@@ -145,7 +147,7 @@ export const PostModal = ({
                 />
               </div>
 
-              <div className="min-h-0 flex-1 overflow-y-auto p-4 scrollbar-hide">
+              <div className="min-h-0 flex-1 overflow-y-auto p-3 sm:p-4 scrollbar-hide">
                 <CommentList comments={visibleComments} isLoading={isLoading} />
                 {hasHiddenNSFWComments && (
                   <p className="mt-3 text-center text-xs text-text-muted">
@@ -156,7 +158,7 @@ export const PostModal = ({
               </div>
 
               {user && (
-                <div className="shrink-0 border-t border-primary-neutral-stroke-default/60 bg-secondary-neutral-background-default/60 p-4">
+                <div className="shrink-0 border-t border-primary-neutral-stroke-default/60 bg-secondary-neutral-background-default/60 p-3 sm:p-4">
                   <CommentForm postId={post.id} />
                 </div>
               )}

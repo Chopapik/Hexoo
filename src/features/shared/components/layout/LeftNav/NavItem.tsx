@@ -42,7 +42,7 @@ export function NavItem({
     "rounded-xl inline-flex items-center group/item cursor-pointer transition-colors duration-200 " +
     (isSidebar
       ? "h-12 w-full justify-center xl:justify-start xl:gap-5"
-      : "h-10 w-12 justify-center");
+      : "h-10 w-10 xs:w-11 sm:w-12 justify-center");
 
   return (
     <Link

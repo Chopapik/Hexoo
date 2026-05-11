@@ -30,8 +30,8 @@ export default function DitheringSection() {
   return (
     <>
       <SettingsSection title="Dithering postów">
-        <div className="flex flex-col gap-5">
-          <div className="flex flex-row items-center justify-between gap-3">
+        <div className="flex flex-col gap-4 sm:gap-5">
+          <div className="flex flex-row items-center justify-between gap-2 sm:gap-3">
             <div className="min-w-0 flex-1 text-left">
               <h4
                 id="posts-dithering-label"
@@ -39,7 +39,7 @@ export default function DitheringSection() {
               >
                 Włącz dithering
               </h4>
-              <p className="text-sm font-sans text-text-neutral">
+              <p className="text-xs sm:text-sm font-sans text-text-neutral">
                 Ustawienia wpływają na wygląd obrazków w postach i w podglądzie.
               </p>
             </div>
@@ -52,7 +52,7 @@ export default function DitheringSection() {
             </div>
           </div>
 
-          <div className="rounded-lg border border-primary-neutral-stroke-default/70 bg-secondary-neutral-background-default/40 p-3 text-sm font-sans text-text-neutral">
+          <div className="rounded-lg border border-primary-neutral-stroke-default/70 bg-secondary-neutral-background-default/40 p-2.5 sm:p-3 text-xs sm:text-sm font-sans text-text-neutral">
             <p className="font-medium font-sans text-text-main">
               Aktualna konfiguracja
             </p>
@@ -64,7 +64,7 @@ export default function DitheringSection() {
             </p>
           </div>
 
-          <div className="flex w-full flex-row items-center gap-3">
+          <div className="flex w-full flex-row items-center gap-2 sm:gap-3">
             <div className="min-w-0 flex-1" />
             <div className="shrink-0">
               <Button

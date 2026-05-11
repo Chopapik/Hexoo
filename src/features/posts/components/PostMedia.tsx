@@ -10,8 +10,8 @@ type PostMediaProps = {
   onReadyChange?: (isReady: boolean) => void;
 };
 
-const MIN_FEED_RATIO = 4 / 5; 
-const MAX_FEED_RATIO = 16 / 9; 
+const MIN_FEED_RATIO = 4 / 5;
+const MAX_FEED_RATIO = 16 / 9;
 const MAX_BOX_WIDTH = 760;
 const MAX_BOX_HEIGHT = 640;
 const MIN_BOX_WIDTH = 320;
@@ -35,7 +35,7 @@ export function PostMedia({ src, alt, onReadyChange }: PostMediaProps) {
 
     const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
 
-    const maxWidth = Math.min(parentWidth * 0.95, MAX_BOX_WIDTH);
+    const maxWidth = Math.min(parentWidth, MAX_BOX_WIDTH);
     const maxHeight = Math.min(viewportHeight * 0.72, MAX_BOX_HEIGHT);
 
     const feedRatio = clamp(naturalRatio || 1, MIN_FEED_RATIO, MAX_FEED_RATIO);
@@ -110,7 +110,7 @@ export function PostMedia({ src, alt, onReadyChange }: PostMediaProps) {
       style={{
         width: `${box.width}px`,
         height: `${box.height}px`,
-        maxWidth: "95%",
+        maxWidth: "100%",
       }}
     >
       <DitheredImage
@@ -118,7 +118,7 @@ export function PostMedia({ src, alt, onReadyChange }: PostMediaProps) {
         alt={alt}
         width={box.width}
         height={box.height}
-        sizes="(max-width: 768px) 95vw, (max-width: 1200px) 70vw, 760px"
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 70vw, 760px"
         className="h-full w-full object-cover object-center"
         dithering={dithering}
         isAnimated={isAnimated}

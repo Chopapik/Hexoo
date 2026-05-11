@@ -6,9 +6,13 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="relative w-full min-h-screen flex flex-col">
+    <div className="relative flex min-h-dvh w-full flex-col">
       <BackgroundAnimation />
-      {children}
+      <div className="relative z-1 flex min-h-dvh flex-1 flex-col">
+        <div className="flex min-h-0 flex-1 flex-col overflow-auto px-2 pt-3 sm:flex-1 sm:items-center sm:pb-16 sm:pt-[10vh]">
+          {children}
+        </div>
+      </div>
     </div>
   );
 }

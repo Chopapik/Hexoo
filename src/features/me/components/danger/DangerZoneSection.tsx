@@ -16,12 +16,12 @@ export default function DangerZoneSection() {
   return (
     <>
       <SettingsSection title="Strefa niebezpieczna">
-        <div className="flex flex-row items-center justify-between gap-3">
+        <div className="flex flex-row items-center justify-between gap-2 sm:gap-3">
           <div className="min-w-0 flex-1 text-left">
             <h4 className="font-semibold font-sans text-text-main">
               Wyloguj się
             </h4>
-            <p className="text-sm font-sans text-text-neutral">
+            <p className="text-xs sm:text-sm font-sans text-text-neutral">
               Zakończ obecną sesję na tym urządzeniu.
             </p>
           </div>
@@ -35,10 +35,10 @@ export default function DangerZoneSection() {
           </div>
         </div>
         <div className="w-full h-px bg-primary-neutral-stroke-default my-2" />
-        <div className="flex flex-row items-center justify-between gap-3">
+        <div className="flex flex-row items-center justify-between gap-2 sm:gap-3">
           <div className="min-w-0 flex-1 text-left">
             <h4 className="font-semibold font-sans text-red-500">Usuń konto</h4>
-            <p className="text-sm font-sans text-text-neutral">
+            <p className="text-xs sm:text-sm font-sans text-text-neutral">
               Trwałe usunięcie konta i wszystkich powiązanych z nim danych. Tej
               akcji nie można cofnąć.
             </p>

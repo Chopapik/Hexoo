@@ -17,7 +17,7 @@ export const PostFooter = ({ post, onCommentClick }: PostFooterProps) => {
   const inactiveTextColor = "text-text-neutral";
 
   return (
-    <div className="w-full bg-transparent inline-flex justify-start items-start gap-4 mt-2">
+    <div className="w-full bg-transparent inline-flex justify-start items-start gap-3 sm:gap-4 mt-1 sm:mt-2">
       <div
         className="flex justify-start items-center gap-1.5 cursor-pointer group"
         onClick={(e) => {
@@ -29,7 +29,7 @@ export const PostFooter = ({ post, onCommentClick }: PostFooterProps) => {
           <LikeIcon isLikedByMe={post.isLikedByMe} />
         </div>
         <div
-          className={`justify-start text-sm font-semibold font-sans ${
+          className={`justify-start text-xs sm:text-sm font-semibold font-sans ${
             post.isLikedByMe ? activeTextColor : inactiveTextColor
           }`}
         >
@@ -50,7 +50,7 @@ export const PostFooter = ({ post, onCommentClick }: PostFooterProps) => {
         >
           <CommentIcon />
         </div>
-        <div className="justify-start text-text-neutral text-sm font-semibold font-sans group-hover:text-text-main transition-colors">
+        <div className="justify-start text-text-neutral text-xs sm:text-sm font-semibold font-sans group-hover:text-text-main transition-colors">
           {post.commentsCount}
         </div>
       </div>

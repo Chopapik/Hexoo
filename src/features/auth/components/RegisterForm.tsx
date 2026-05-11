@@ -148,19 +148,19 @@ export default function RegisterForm() {
   };
 
   return (
-    <div className="w-2xl px-32 py-20 rounded-[20px] inline-flex flex-col justify-center items-center gap-10 overflow-hidden glass-card bg-neutral-500/5">
+    <div className="mx-auto inline-flex w-full max-w-md flex-col items-center justify-center gap-6 overflow-hidden px-4 py-8 xs:px-6 sm:max-w-2xl sm:gap-10 sm:rounded-[20px] sm:px-12 sm:py-12 sm:glass-card md:px-32 md:py-20">
       <div className="py-0.5 flex flex-col justify-start items-center overflow-hidden">
-        <div className="justify-start text-text-main text-6xl  font-serif">
+        <div className="justify-start text-text-main text-4xl sm:text-6xl font-serif">
           Rejestracja
         </div>
-        <div className="justify-start text-text-neutral text-2xl font-bold font-serif">
+        <div className="justify-start text-text-neutral text-lg sm:text-2xl font-bold font-serif">
           Załóż konto
         </div>
       </div>
 
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="self-stretch flex flex-col justify-center items-center gap-3 overflow-hidden"
+        className="self-stretch flex flex-col justify-center items-center gap-2 sm:gap-3 overflow-hidden"
       >
         <TextInput
           label="Nazwa użytkownika"
@@ -205,7 +205,7 @@ export default function RegisterForm() {
                 <polyline points="20 6 9 17 4 12"></polyline>
               </svg>
             </div>
-            <span className="inline-flex items-center gap-1 text-text-main text-sm font-medium font-sans">
+            <span className="inline-flex items-center gap-1 text-text-main text-xs sm:text-sm font-medium font-sans">
               <span>Akceptuję</span>
               <span>
                 <Link
@@ -247,7 +247,7 @@ export default function RegisterForm() {
           )}
         </div>
 
-        <div className="self-stretch flex flex-col justify-center items-end gap-1 mt-4">
+        <div className="self-stretch flex flex-col justify-center items-end gap-1 mt-3 sm:mt-4">
           <Button
             text="Zarejestruj się"
             size="xl"
@@ -258,11 +258,11 @@ export default function RegisterForm() {
         </div>
       </form>
 
-      <div className="self-stretch text-center justify-start mt-4">
-        <span className="text-text-main text-base font-semibold font-sans">
+      <div className="self-stretch text-center justify-start mt-2 sm:mt-4">
+        <span className="text-text-main text-sm sm:text-base font-semibold font-sans">
           Masz już konto?
         </span>
-        <span className="text-text-main text-base font-semibold font-sans underline ml-1">
+        <span className="text-text-main text-sm sm:text-base font-semibold font-sans underline ml-1">
           <Link href="/login">Zaloguj się</Link>
         </span>
       </div>

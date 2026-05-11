@@ -97,7 +97,7 @@ export default function CreatePostButton({ onClick }: CreatePostButtonProps) {
         background:
           "linear-gradient(to bottom right, rgba(255, 12, 255, 0.07) 0%, rgba(255, 255, 255, 0.01) 100%)",
       }}
-      className="relative self-stretch h-20 glass-card px-8 py-4 w-full rounded-xl inline-flex justify-between items-center overflow-hidden cursor-pointer group hover:border-white/10 transition-all duration-300"
+      className="relative self-stretch h-14 sm:h-20 glass-card px-4 sm:px-8 py-3 sm:py-4 w-full rounded-xl inline-flex justify-between items-center overflow-hidden cursor-pointer group hover:border-white/10 transition-all duration-300"
     >
       <canvas
         ref={canvasRef}
@@ -105,7 +105,7 @@ export default function CreatePostButton({ onClick }: CreatePostButtonProps) {
       />
 
       <div className="relative z-10 w-full inline-flex justify-between items-center pointer-events-none">
-        <div className="text-center justify-center text-text-main text-2xl font-semibold font-serif">
+        <div className="text-center justify-center text-text-main text-xl sm:text-2xl font-semibold font-serif">
           co słychać?
         </div>
         <div data-svg-wrapper>
