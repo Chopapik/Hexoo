@@ -1,8 +1,10 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { isUserAuthenticated } from "@/features/auth/api/services/session.service";
 
-/** Strony i prefiksy wymagające zalogowania (reszta jest publiczna, m.in. feed i profile). */
+/** Pages and prefixes that require login (others stay public, e.g. feed and profiles). */
 const AUTH_REQUIRED_PREFIXES = ["/settings", "/admin", "/moderator"];
+/** Pages and prefixes available only for logged-out users. */
+const PUBLIC_ONLY_PREFIXES = ["/login", "/register"];
 
 function pathRequiresAuth(pathname: string): boolean {
   return AUTH_REQUIRED_PREFIXES.some(
@@ -10,7 +12,13 @@ function pathRequiresAuth(pathname: string): boolean {
   );
 }
 
-/** GET/HEAD na wybrane endpointy API — dostęp bez sesji (np. publiczny feed). */
+function pathIsPublicOnly(pathname: string): boolean {
+  return PUBLIC_ONLY_PREFIXES.some(
+    (p) => pathname === p || pathname.startsWith(`${p}/`),
+  );
+}
+
+/** GET/HEAD on selected API endpoints — allowed without a session (e.g. public feed). */
 function isPublicApiReadRequest(request: NextRequest): boolean {
   const method = request.method;
   if (method !== "GET" && method !== "HEAD") {
@@ -81,6 +89,10 @@ export async function proxy(request: NextRequest) {
     redirect.cookies.delete("session");
     redirect.cookies.delete("refresh");
     return redirect;
+  }
+
+  if (isLoggedIn && pathIsPublicOnly(pathname)) {
+    return NextResponse.redirect(new URL("/", request.url));
   }
 
   return response;
