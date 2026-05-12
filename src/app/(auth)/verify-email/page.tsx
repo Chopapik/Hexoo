@@ -50,7 +50,7 @@ export default function VerifyEmailPage() {
   return (
     <div className="flex-1 flex items-center justify-center">
       <div className="flex w-full max-w-md flex-col items-center gap-4 px-4 py-8 text-center max-sm:bg-transparent sm:gap-6 sm:rounded-[20px] sm:p-10 sm:glass-card">
-        <div className="text-text-main text-2xl font-bold font-sans">
+        <div className="text-text-main text-2xl font-bold font-serif">
           Sprawdź swoją skrzynkę
         </div>
 
@@ -58,6 +58,11 @@ export default function VerifyEmailPage() {
           Wysłaliśmy link aktywacyjny na Twój adres email. Kliknij go, żeby
           potwierdzić konto i dokończyć rejestrację.
         </div>
+
+        <p className="text-text-neutral text-sm font-normal font-sans">
+          Jeśli nie widzisz wiadomości, sprawdź folder Spam lub inne filtry
+          poczty.
+        </p>
 
         <span className="mt-4 w-full px-4 py-3 text-xl outline-none break-all text-text-main font-bold">
           {email}
