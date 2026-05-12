@@ -1,12 +1,7 @@
 import { createAppError } from "@/lib/AppError";
 import { formatZodErrorFlat } from "@/lib/zod";
-import { getUsersByIds } from "@/features/users/api/services";
 import { ModerationStatus } from "@/features/shared/types/content.type";
-import type { LikeRepository } from "@/features/likes/api/repositories";
-import {
-  getModerationLogsForResource,
-  logModerationEvent,
-} from "@/features/moderation/api/services/moderationLog.service";
+import { logModerationEvent } from "@/features/moderation/api/services/moderationLog.service";
 
 import { PostEntity } from "../../types/post.entity";
 import {
@@ -22,11 +17,11 @@ import { SessionData } from "@/features/me/me.type";
 
 import { PostRepository } from "../repositories/post.repository.interface";
 import { PostContentService } from "./post.content.service";
+import { PostEnricher } from "./post.enricher";
 import { PostService as IPostService } from "./post.service.interface";
 import { CreatePostPayload } from "../../types/post.payload";
 import { logActivity } from "@/features/activity/api/services";
 import { ImageMeta } from "@/features/images/types/image.type";
-import { resolveImagePublicUrl } from "@/features/images/utils/resolveImagePublicUrl";
 type CreatePostInput = CreatePostRequest;
 type CreatePostResult = CreatePostResponse;
 type UpdatePostInput = UpdatePostRequest;
@@ -38,7 +33,7 @@ export class PostService implements IPostService {
   constructor(
     private readonly repository: PostRepository,
     private readonly contentService: PostContentService,
-    private readonly likeRepository: LikeRepository,
+    private readonly enricher: PostEnricher,
     private readonly imageDeleter: ImageDeleter,
     private readonly session: SessionData | null = null,
   ) {}
@@ -63,63 +58,7 @@ export class PostService implements IPostService {
   }
 
   private async enrichPosts(posts: PostEntity[]): Promise<PublicPost[]> {
-    if (posts.length === 0) return [];
-
-    const authorIds = [...new Set(posts.map((post) => post.userId))];
-    const authors = await getUsersByIds(authorIds);
-
-    const visiblePostIds = posts.map((post) => post.id);
-    let likedPostIds: string[] = [];
-
-    if (this.session && visiblePostIds.length > 0) {
-      likedPostIds = await this.likeRepository.getLikesForParents(
-        this.session.uid,
-        visiblePostIds,
-      );
-    }
-
-    const likedPostIdSet = new Set(likedPostIds);
-
-    const ownPostIds =
-      this.session === null
-        ? []
-        : posts
-            .filter((post) => post.userId === this.session!.uid)
-            .map((post) => post.id);
-
-    const moderationLogsByPostId =
-      ownPostIds.length > 0
-        ? await getModerationLogsForResource("post", ownPostIds)
-        : {};
-
-    const moderationInfoByPostId: Record<string, PublicPost["moderationInfo"]> =
-      Object.fromEntries(
-        Object.entries(moderationLogsByPostId).map(([postId, log]) => [
-          postId,
-          {
-            verdict: log.verdict,
-            actionTaken: log.actionTaken,
-            categories: log.categories,
-            reasonSummary: log.reasonSummary,
-            reasonDetails: log.reasonDetails,
-          },
-        ]),
-      );
-
-    return posts.map((post) => {
-      const author = authors[post.userId];
-      return {
-        ...post,
-        imageUrl: resolveImagePublicUrl(post.imageMeta) ?? null,
-        userName: author?.name ?? "Deleted user",
-        userAvatarUrl: resolveImagePublicUrl(author?.avatarMeta) ?? null,
-        isLikedByMe: likedPostIdSet.has(post.id),
-        moderationInfo:
-          this.session && post.userId === this.session.uid
-            ? moderationInfoByPostId[post.id]
-            : undefined,
-      };
-    });
+    return this.enricher.enrich(posts, this.session);
   }
 
   async createPost(createPostData: CreatePostInput): Promise<CreatePostResult> {
