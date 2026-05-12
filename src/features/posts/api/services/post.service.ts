@@ -4,7 +4,7 @@ import { getUsersByIds } from "@/features/users/api/services";
 import { ModerationStatus } from "@/features/shared/types/content.type";
 import type { LikeRepository } from "@/features/likes/api/repositories";
 import {
-  getLatestModerationLogForResource,
+  getModerationLogsForResource,
   logModerationEvent,
 } from "@/features/moderation/api/services/moderationLog.service";
 
@@ -78,31 +78,33 @@ export class PostService implements IPostService {
       );
     }
 
-    const moderationInfoByPostId: Record<string, PublicPost["moderationInfo"]> =
-      {};
+    const likedPostIdSet = new Set(likedPostIds);
 
-    if (this.session) {
-      // Preload latest moderation info only for posts authored by current user
-      await Promise.all(
-        posts
-          .filter((post) => post.userId === this.session!.uid)
-          .map(async (post) => {
-            const log = await getLatestModerationLogForResource(
-              "post",
-              post.id,
-            );
-            if (log) {
-              moderationInfoByPostId[post.id] = {
-                verdict: log.verdict,
-                actionTaken: log.actionTaken,
-                categories: log.categories,
-                reasonSummary: log.reasonSummary,
-                reasonDetails: log.reasonDetails,
-              };
-            }
-          }),
+    const ownPostIds =
+      this.session === null
+        ? []
+        : posts
+            .filter((post) => post.userId === this.session!.uid)
+            .map((post) => post.id);
+
+    const moderationLogsByPostId =
+      ownPostIds.length > 0
+        ? await getModerationLogsForResource("post", ownPostIds)
+        : {};
+
+    const moderationInfoByPostId: Record<string, PublicPost["moderationInfo"]> =
+      Object.fromEntries(
+        Object.entries(moderationLogsByPostId).map(([postId, log]) => [
+          postId,
+          {
+            verdict: log.verdict,
+            actionTaken: log.actionTaken,
+            categories: log.categories,
+            reasonSummary: log.reasonSummary,
+            reasonDetails: log.reasonDetails,
+          },
+        ]),
       );
-    }
 
     return posts.map((post) => {
       const author = authors[post.userId];
@@ -111,7 +113,7 @@ export class PostService implements IPostService {
         imageUrl: resolveImagePublicUrl(post.imageMeta) ?? null,
         userName: author?.name ?? "Deleted user",
         userAvatarUrl: resolveImagePublicUrl(author?.avatarMeta) ?? null,
-        isLikedByMe: likedPostIds.includes(post.id),
+        isLikedByMe: likedPostIdSet.has(post.id),
         moderationInfo:
           this.session && post.userId === this.session.uid
             ? moderationInfoByPostId[post.id]
