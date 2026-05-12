@@ -1,320 +1,106 @@
 import { createAppError } from "@/lib/AppError";
-import { formatZodErrorFlat } from "@/lib/zod";
 import { ModerationStatus } from "@/features/shared/types/content.type";
-import { logModerationEvent } from "@/features/moderation/api/services/moderationLog.service";
+import type { SessionData } from "@/features/me/me.type";
 
-import { PostEntity } from "../../types/post.entity";
-import {
+import type { PostRepository } from "../repositories/post.repository.interface";
+import type { PostService as IPostService } from "./post.service.interface";
+
+import type {
   CreatePostRequestDto as CreatePostRequest,
   CreatePostResponseDto as CreatePostResponse,
   UpdatePostRequestDto as UpdatePostRequest,
-  CreatePostSchema,
-  UpdatePostSchema,
-  ReportPostSchema,
   PublicPostResponseDto as PublicPostResponse,
 } from "../../types/post.dto";
-import { SessionData } from "@/features/me/me.type";
 
-import { PostRepository } from "../repositories/post.repository.interface";
-import { PostContentService } from "./post.content.service";
-import { PostEnricher } from "./post.enricher";
-import { PostService as IPostService } from "./post.service.interface";
-import { CreatePostPayload } from "../../types/post.payload";
-import { logActivity } from "@/features/activity/api/services";
-import { ImageMeta } from "@/features/images/types/image.type";
-type CreatePostInput = CreatePostRequest;
-type CreatePostResult = CreatePostResponse;
-type UpdatePostInput = UpdatePostRequest;
-type PublicPost = PublicPostResponse;
+import type { CreatePostUseCase } from "./use-cases/create-post.use-case";
+import type { UpdatePostUseCase } from "./use-cases/update-post.use-case";
+import type { DeletePostUseCase } from "./use-cases/delete-post.use-case";
+import type { ReportPostUseCase } from "./use-cases/report-post.use-case";
 
-type ImageDeleter = (meta: ImageMeta | null | undefined) => Promise<void>;
+import type { PostEnricher } from "./post.enricher";
+import type { PostModerationWorkflow } from "./post.moderation-workflow";
 
 export class PostService implements IPostService {
   constructor(
     private readonly repository: PostRepository,
-    private readonly contentService: PostContentService,
     private readonly enricher: PostEnricher,
-    private readonly imageDeleter: ImageDeleter,
+    private readonly moderationWorkflow: PostModerationWorkflow,
+    private readonly createPostUseCase: CreatePostUseCase,
+    private readonly updatePostUseCase: UpdatePostUseCase,
+    private readonly deletePostUseCase: DeletePostUseCase,
+    private readonly reportPostUseCase: ReportPostUseCase,
     private readonly session: SessionData | null = null,
   ) {}
 
-  private ensureUser(): SessionData {
-    if (!this.session) {
-      throw createAppError({
-        code: "AUTH_REQUIRED",
-        message: "User session required",
-      });
-    }
-    return this.session;
+  async createPost(data: CreatePostRequest): Promise<CreatePostResponse> {
+    return this.createPostUseCase.execute(data);
   }
 
-  private validateRestricted(session: SessionData) {
-    if (session.isRestricted) {
-      throw createAppError({
-        code: "FORBIDDEN",
-        data: { reason: "account_restricted" },
-      });
-    }
-  }
-
-  private async enrichPosts(posts: PostEntity[]): Promise<PublicPost[]> {
-    return this.enricher.enrich(posts, this.session);
-  }
-
-  async createPost(createPostData: CreatePostInput): Promise<CreatePostResult> {
-    const user = this.ensureUser();
-    this.validateRestricted(user);
-
-    const parsed = CreatePostSchema.safeParse(createPostData);
-    if (!parsed.success) {
-      throw createAppError({
-        code: "VALIDATION_ERROR",
-        message: "Invalid post data",
-        data: { details: formatZodErrorFlat(parsed.error) },
-      });
-    }
-
-    const processed = await this.contentService.process(
-      user.uid,
-      createPostData.text,
-      "posts",
-      createPostData.imageFile,
-    );
-
-    const dbInput: CreatePostPayload = {
-      userId: user.uid,
-      text: createPostData.text,
-      device: "Web",
-      imageMeta: processed.imageMeta ?? null,
-      isPending: processed.isPending,
-      isNSFW: processed.isNSFW,
-      likesCount: 0,
-      commentsCount: 0,
-      userReports: [],
-      reportsMeta: [],
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
-    const postId = await this.repository.createPost(dbInput);
-
-    if (processed.moderationLogPayloadForResource) {
-      await logModerationEvent({
-        ...processed.moderationLogPayloadForResource,
-        resourceType: "post",
-        resourceId: postId,
-      });
-    }
-
-    await logActivity(user.uid, "POST_CREATED", "User created a new post");
-
-    return {
-      postId,
-      isPending: processed.isPending,
-      isNSFW: processed.isNSFW,
-    };
+  async updatePost(
+    postId: string,
+    data: UpdatePostRequest,
+  ): Promise<PublicPostResponse> {
+    return this.updatePostUseCase.execute(postId, data);
   }
 
   async deletePost(postId: string): Promise<void> {
-    const user = this.ensureUser();
+    return this.deletePostUseCase.execute(postId);
+  }
 
-    if (!postId?.trim()) {
-      throw createAppError({
-        code: "INVALID_INPUT",
-        message: "[postService.deletePost] Empty postId",
-      });
-    }
-
-    const post = await this.repository.getPostById(postId);
-    if (!post) {
-      throw createAppError({ code: "NOT_FOUND", message: "Post not found" });
-    }
-
-    if (post.userId !== user.uid) {
-      throw createAppError({
-        code: "FORBIDDEN",
-        message: "Not author of post",
-      });
-    }
-
-    if (post.imageMeta) {
-      await this.imageDeleter(post.imageMeta);
-    }
-
-    await this.repository.deletePost(postId);
-
-    await logActivity(user.uid, "POST_DELETED", `User deleted post ${postId}`);
+  async reportPost(
+    postId: string,
+    reason: string,
+    details?: string,
+  ): Promise<{ hidden: boolean; reportsCount: number }> {
+    return this.reportPostUseCase.execute(postId, reason, details);
   }
 
   async setModerationStatus(
     postId: string,
     status: ModerationStatus.Approved | ModerationStatus.Pending,
-  ) {
+  ): Promise<void> {
+    return this.moderationWorkflow.setModerationStatus(postId, status);
+  }
+
+  async getPostById(postId: string): Promise<PublicPostResponse> {
+    if (!postId?.trim()) {
+      throw createAppError({
+        code: "NOT_FOUND",
+        message: "Empty ID",
+      });
+    }
+
     const post = await this.repository.getPostById(postId);
+
     if (!post) {
-      throw createAppError({ code: "NOT_FOUND", message: "Post not found" });
-    }
-
-    await this.repository.updatePost(postId, {
-      isPending: status === ModerationStatus.Pending,
-    });
-
-    if (post.userId) {
-      await logActivity(
-        post.userId,
-        "POST_MODERATION_STATUS_CHANGED",
-        `Moderation status of post ${postId} changed to ${status}`,
-      );
-    }
-  }
-
-  async updatePost(
-    postId: string,
-    updateData: UpdatePostInput,
-  ): Promise<PublicPost> {
-    const user = this.ensureUser();
-
-    const parsed = UpdatePostSchema.safeParse(updateData);
-    if (!parsed.success) {
       throw createAppError({
-        code: "VALIDATION_ERROR",
-        message: "Invalid update data",
-        data: { details: formatZodErrorFlat(parsed.error) },
+        code: "NOT_FOUND",
+        message: "Post not found",
       });
     }
 
-    const post = await this.repository.getPostById(postId);
-    if (!post)
-      throw createAppError({ code: "NOT_FOUND", message: "Post not found" });
-
-    if (post.userId !== user.uid) {
-      throw createAppError({
-        code: "FORBIDDEN",
-        message: "Not author of post",
-      });
-    }
-
-    const processed = await this.contentService.process(
-      user.uid,
-      updateData.text ?? post.text,
-      "posts",
-      updateData.imageFile,
-    );
-
-    if (processed.moderationLogPayloadForResource) {
-      await logModerationEvent({
-        ...processed.moderationLogPayloadForResource,
-        resourceType: "post",
-        resourceId: postId,
-      });
-    }
-
-    if (processed.imageMeta && post.imageMeta) {
-      await this.imageDeleter(post.imageMeta);
-    }
-
-    await this.repository.updatePost(postId, {
-      text: updateData.text ?? post.text,
-      imageMeta: processed.imageMeta ?? post.imageMeta,
-      isPending: processed.isPending,
-      isNSFW: processed.isNSFW,
-      isEdited: true,
-      updatedAt: new Date(),
-    });
-
-    await logActivity(user.uid, "POST_UPDATED", `User updated post ${postId}`);
-
-    return await this.getPostById(postId);
+    return this.enricher.enrichOne(post, this.session);
   }
 
-  async getPostById(postId: string): Promise<PublicPost> {
-    if (!postId?.trim())
-      throw createAppError({ code: "NOT_FOUND", message: "Empty ID" });
-
-    const post = await this.repository.getPostById(postId);
-    if (!post)
-      throw createAppError({ code: "NOT_FOUND", message: "Post not found" });
-
-    const enriched = await this.enrichPosts([post]);
-    return enriched[0];
-  }
-
-  async getPosts(limit = 20, startAfterId?: string): Promise<PublicPost[]> {
+  async getPosts(
+    limit = 20,
+    startAfterId?: string,
+  ): Promise<PublicPostResponse[]> {
     const posts = await this.repository.getPosts(limit, startAfterId);
-    return this.enrichPosts(posts);
+    return this.enricher.enrich(posts, this.session);
   }
 
   async getPostsByUserId(
     userId: string,
     limit = 20,
     startAfterId?: string,
-  ): Promise<PublicPost[]> {
+  ): Promise<PublicPostResponse[]> {
     const posts = await this.repository.getPostsByUserId(
       userId,
       limit,
       startAfterId,
     );
-    return this.enrichPosts(posts);
-  }
 
-  async reportPost(postId: string, reason: string, details?: string) {
-    const user = this.ensureUser();
-
-    const parsed = ReportPostSchema.safeParse({ reason, details });
-    if (!parsed.success) {
-      throw createAppError({
-        code: "VALIDATION_ERROR",
-        message: "[postService.reportPost] Invalid data",
-        data: { details: formatZodErrorFlat(parsed.error) },
-      });
-    }
-
-    const post = await this.repository.getPostById(postId);
-    if (!post) {
-      throw createAppError({
-        code: "NOT_FOUND",
-        message: "[postService.reportPost] Post not found",
-      });
-    }
-
-    const alreadyReported = await this.repository.hasUserReportedPost(
-      postId,
-      user.uid,
-    );
-    if (alreadyReported) {
-      throw createAppError({
-        code: "CONFLICT",
-        message: "[postService.reportPost] Post already reported by this user",
-      });
-    }
-
-    const result = await this.repository.reportPost(postId, {
-      uid: user.uid,
-      reason,
-      details,
-      createdAt: new Date(),
-    });
-
-    await logModerationEvent({
-      userId: post.userId,
-      timestamp: new Date(),
-      verdict: ModerationStatus.Pending,
-      categories: [reason],
-      actionTaken: "FLAGGED_FOR_REVIEW",
-      resourceType: "post",
-      resourceId: postId,
-      source: "user_report",
-      actorId: user.uid,
-      reasonSummary: "Post reported by user",
-      reasonDetails: details ? `${reason}: ${details}` : reason,
-    });
-
-    await logActivity(
-      user.uid,
-      "POST_REPORTED",
-      `User reported post ${postId} for: ${reason}`,
-    );
-
-    return result;
+    return this.enricher.enrich(posts, this.session);
   }
 }
