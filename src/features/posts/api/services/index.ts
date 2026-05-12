@@ -2,6 +2,7 @@ import { postRepository } from "../repositories";
 import { likeRepository } from "@/features/likes/api/repositories";
 import { deleteImage } from "@/features/images/api/image.service";
 import { PostContentService } from "./post.content.service";
+import { PostEnricher } from "./post.enricher";
 import { PostService } from "./post.service";
 import type {
   CreatePostRequestDto as CreatePostRequest,
@@ -13,6 +14,7 @@ import type { ModerationStatus } from "@/features/shared/types/content.type";
 import type { SessionData } from "@/features/me/me.type";
 
 const postContentService = new PostContentService();
+const postEnricher = new PostEnricher(likeRepository);
 
 export const getPostService = (
   session: SessionData | null,
@@ -20,7 +22,7 @@ export const getPostService = (
   return new PostService(
     postRepository,
     postContentService,
-    likeRepository,
+    postEnricher,
     deleteImage,
     session,
   );
