@@ -3,7 +3,14 @@ import { likeRepository } from "@/features/likes/api/repositories";
 import { deleteImage } from "@/features/images/api/image.service";
 import { PostContentService } from "./post.content.service";
 import { PostEnricher } from "./post.enricher";
+import { PostModerationWorkflow } from "./post.moderation-workflow";
 import { PostService } from "./post.service";
+import {
+  CreatePostUseCase,
+  DeletePostUseCase,
+  ReportPostUseCase,
+  UpdatePostUseCase,
+} from "./use-cases";
 import type {
   CreatePostRequestDto as CreatePostRequest,
   CreatePostResponseDto as CreatePostResponse,
@@ -15,15 +22,47 @@ import type { SessionData } from "@/features/me/me.type";
 
 const postContentService = new PostContentService();
 const postEnricher = new PostEnricher(likeRepository);
+const postModerationWorkflow = new PostModerationWorkflow(postRepository);
 
 export const getPostService = (
   session: SessionData | null,
 ): PostService => {
-  return new PostService(
+  const createPostUseCase = new CreatePostUseCase(
     postRepository,
     postContentService,
+    postModerationWorkflow,
+    session,
+  );
+
+  const updatePostUseCase = new UpdatePostUseCase(
+    postRepository,
+    postContentService,
+    postModerationWorkflow,
     postEnricher,
     deleteImage,
+    session,
+  );
+
+  const deletePostUseCase = new DeletePostUseCase(
+    postRepository,
+    deleteImage,
+    session,
+  );
+
+  const reportPostUseCase = new ReportPostUseCase(
+    postRepository,
+    postModerationWorkflow,
+    session,
+  );
+
+  return new PostService(
+    postRepository,
+    postEnricher,
+    postModerationWorkflow,
+    createPostUseCase,
+    updatePostUseCase,
+    deletePostUseCase,
+    reportPostUseCase,
     session,
   );
 };
