@@ -1,7 +1,5 @@
 import { supabaseAdmin } from "@/lib/supabaseServer";
-import { ModerationStatus } from "@/features/shared/types/content.type";
 import { ReportDetails } from "@/features/shared/types/report.type";
-import { logModerationEvent } from "@/features/moderation/api/services/moderationLog.service";
 import type { PostRepository } from "./post.repository.interface";
 import type {
   CreatePostPayload,
@@ -227,21 +225,6 @@ export class PostSupabaseRepository implements PostRepository {
     if (shouldHide) {
       await this.updatePost(postId, {
         isPending: true,
-      });
-
-      // Log threshold-based moderation triggered by user reports
-      await logModerationEvent({
-        userId: post.userId,
-        timestamp: new Date(),
-        verdict: ModerationStatus.Pending,
-        categories: [reportDetails.reason],
-        actionTaken: "FLAGGED_FOR_REVIEW",
-        resourceType: "post",
-        resourceId: postId,
-        source: "user_report",
-        actorId: reportDetails.uid,
-        reasonSummary: "Post hidden after multiple user reports",
-        reasonDetails: reportDetails.details ?? undefined,
       });
     }
 
