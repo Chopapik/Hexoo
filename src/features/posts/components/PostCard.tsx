@@ -57,26 +57,31 @@ export const PostCard = ({
         onClose={() => setShowPostModal(false)}
         revealNSFW={revealNSFW}
       />
-      <div
+      <article
         onClick={handleCardClick}
-        className="w-full max-w-4xl p-3 sm:p-4 bg-primary-neutral-background-default rounded-xl border-t-2 border-primary-neutral-stroke-default inline-flex flex-col justify-start items-start gap-3 sm:gap-4 cursor-pointer"
+        className="group w-full max-w-4xl bg-primary-neutral-background-default/80 backdrop-blur-sm rounded-2xl border border-primary-neutral-stroke-default/40 hover:border-primary-neutral-stroke-hover/60 transition-all duration-300 cursor-pointer overflow-hidden hover:shadow-lg hover:shadow-primary-fuchsia-background-default/5"
       >
-        <PostMeta post={post} />
+        <div className="p-4 sm:p-5 flex flex-col gap-4">
+          <PostMeta post={post} />
 
-        {isContentVisible ? (
-          <PostBody
-            post={post}
-            isNSFW={post.isNSFW}
-            moderationThumbnailImage={moderationThumbnailImage}
-            onImageReadyChange={(isReady) =>
-              onImageReadyChange?.(post.id, isReady)
-            }
-          />
-        ) : (
-          <PostNsfwNotice className="pointer-events-none" />
-        )}
-        <PostFooter post={post} onCommentClick={() => setShowPostModal(true)} />
-      </div>
+          {isContentVisible ? (
+            <PostBody
+              post={post}
+              isNSFW={post.isNSFW}
+              moderationThumbnailImage={moderationThumbnailImage}
+              onImageReadyChange={(isReady) =>
+                onImageReadyChange?.(post.id, isReady)
+              }
+            />
+          ) : (
+            <PostNsfwNotice className="pointer-events-none" />
+          )}
+        </div>
+        
+        <div className="px-4 sm:px-5 py-3 border-t border-primary-neutral-stroke-default/30 bg-primary-neutral-background-default/50">
+          <PostFooter post={post} onCommentClick={() => setShowPostModal(true)} />
+        </div>
+      </article>
     </>
   );
 };

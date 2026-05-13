@@ -19,46 +19,46 @@ export const PostFooter = ({ post, onCommentClick }: PostFooterProps) => {
   const inactiveTextColor = "text-text-neutral";
 
   return (
-    <div className="w-full bg-transparent inline-flex justify-start items-start gap-3 sm:gap-4 mt-1 sm:mt-2">
-      <div
-        className={`flex justify-start items-center gap-1.5 group ${
-          user ? "cursor-pointer" : "cursor-not-allowed opacity-70"
-        }`}
+    <div className="w-full flex items-center gap-1">
+      <button
+        type="button"
+        className={`flex items-center gap-2 px-3 py-1.5 rounded-full transition-all duration-200 ${
+          user 
+            ? "cursor-pointer hover:bg-primary-fuchsia-background-default/10" 
+            : "cursor-not-allowed opacity-50"
+        } ${post.isLikedByMe ? "bg-primary-fuchsia-background-default/15" : ""}`}
         onClick={(e) => {
           e.stopPropagation();
           if (!user) return;
           toggleLike(post.id);
         }}
+        disabled={!user}
       >
-        <div className="p-1 -m-1 flex items-center justify-center">
-          <LikeIcon isLikedByMe={post.isLikedByMe} />
-        </div>
-        <div
-          className={`justify-start text-xs sm:text-sm font-semibold font-sans ${
+        <LikeIcon isLikedByMe={post.isLikedByMe} />
+        <span
+          className={`text-sm font-medium font-sans tabular-nums ${
             post.isLikedByMe ? activeTextColor : inactiveTextColor
           }`}
         >
           {post.likesCount}
-        </div>
-      </div>
+        </span>
+      </button>
 
-      <div
-        className="flex justify-start items-center gap-1.5 cursor-pointer group"
+      <button
+        type="button"
+        className="flex items-center gap-2 px-3 py-1.5 rounded-full cursor-pointer hover:bg-secondary-neutral-background-default/50 transition-all duration-200 group"
         onClick={(e) => {
           e.stopPropagation();
           onCommentClick();
         }}
       >
-        <div
-          data-svg-wrapper
-          className="group-hover:text-text-main transition-colors"
-        >
+        <div className="group-hover:text-text-main transition-colors">
           <CommentIcon />
         </div>
-        <div className="justify-start text-text-neutral text-xs sm:text-sm font-semibold font-sans group-hover:text-text-main transition-colors">
+        <span className="text-text-neutral text-sm font-medium font-sans tabular-nums group-hover:text-text-main transition-colors">
           {post.commentsCount}
-        </div>
-      </div>
+        </span>
+      </button>
     </div>
   );
 };

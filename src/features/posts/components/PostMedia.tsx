@@ -106,7 +106,7 @@ export function PostMedia({ src, alt, onReadyChange }: PostMediaProps) {
   return (
     <div
       ref={containerRef}
-      className="relative mx-auto overflow-hidden rounded-xl border border-primary-neutral-stroke-default/60 bg-transparent"
+      className="relative mx-auto overflow-hidden rounded-xl border border-primary-neutral-stroke-default/40 bg-primary-neutral-background-default/30 shadow-sm"
       style={{
         width: `${box.width}px`,
         height: `${box.height}px`,
@@ -119,7 +119,7 @@ export function PostMedia({ src, alt, onReadyChange }: PostMediaProps) {
         width={box.width}
         height={box.height}
         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 70vw, 760px"
-        className="h-full w-full object-cover object-center"
+        className="h-full w-full object-cover object-center transition-transform duration-300 hover:scale-[1.02]"
         dithering={dithering}
         isAnimated={isAnimated}
         onReadyChange={onReadyChange}

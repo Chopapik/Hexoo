@@ -76,21 +76,32 @@ export default function PostList({ className = "" }: PostListProps) {
   if (isLoading) {
     return (
       <main className={joinClassNames(className)}>
-        <div className="space-y-3 sm:space-y-4">
+        <div className="space-y-4 sm:space-y-5">
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="w-full max-w-[920px] p-3 sm:p-4 bg-primary-neutral-background-default rounded-xl border-t-2 border-primary-neutral-stroke-default flex flex-col gap-3 sm:gap-4 animate-pulse"
+              className="w-full max-w-4xl bg-primary-neutral-background-default/80 backdrop-blur-sm rounded-2xl border border-primary-neutral-stroke-default/40 overflow-hidden animate-pulse"
             >
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-white/10" />
-                <div className="flex flex-col gap-2">
-                  <div className="w-32 h-3 bg-white/10 rounded" />
-                  <div className="w-20 h-2 bg-white/5 rounded" />
+              <div className="p-4 sm:p-5 flex flex-col gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="size-10 sm:size-11 rounded-full bg-primary-neutral-stroke-default/30" />
+                  <div className="flex flex-col gap-2">
+                    <div className="w-28 h-4 bg-primary-neutral-stroke-default/30 rounded-full" />
+                    <div className="w-16 h-3 bg-primary-neutral-stroke-default/20 rounded-full" />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <div className="w-full h-4 bg-primary-neutral-stroke-default/20 rounded-full" />
+                  <div className="w-3/4 h-4 bg-primary-neutral-stroke-default/20 rounded-full" />
+                  <div className="w-1/2 h-4 bg-primary-neutral-stroke-default/20 rounded-full" />
                 </div>
               </div>
-              <div className="w-full h-4 bg-white/5 rounded" />
-              <div className="w-2/3 h-4 bg-white/5 rounded" />
+              <div className="px-4 sm:px-5 py-3 border-t border-primary-neutral-stroke-default/30 bg-primary-neutral-background-default/50">
+                <div className="flex gap-2">
+                  <div className="w-16 h-8 bg-primary-neutral-stroke-default/20 rounded-full" />
+                  <div className="w-16 h-8 bg-primary-neutral-stroke-default/20 rounded-full" />
+                </div>
+              </div>
             </div>
           ))}
         </div>
@@ -108,7 +119,7 @@ export default function PostList({ className = "" }: PostListProps) {
 
   return (
     <main className={joinClassNames(className)}>
-      <div className="space-y-3 sm:space-y-4">
+      <div className="space-y-4 sm:space-y-5">
         {data?.pages.map((group, i) => (
           <React.Fragment key={i}>
             {group.map((post: PublicPostResponseDto) => (
@@ -119,16 +130,18 @@ export default function PostList({ className = "" }: PostListProps) {
 
         <div
           ref={observerTarget}
-          className="h-4 w-full flex justify-center py-4"
+          className="h-4 w-full flex justify-center py-6"
         >
           {isFetchingNextPage && (
-            <AppLoader size="lg" className="text-text-neutral" />
+            <AppLoader size="lg" className="text-primary-fuchsia-stroke-default" />
           )}
         </div>
 
         {!hasNextPage && data && data.pages.length > 0 && (
-          <div className="text-center text-text-neutral text-sm py-8 font-sans opacity-50">
-            konec
+          <div className="text-center py-10">
+            <span className="text-text-neutral/40 text-sm font-sans tracking-wide">
+              konec
+            </span>
           </div>
         )}
       </div>

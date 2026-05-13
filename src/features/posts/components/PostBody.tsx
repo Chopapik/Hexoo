@@ -23,48 +23,52 @@ export const PostBody = ({
   const hasText = post.text.trim().length > 0;
 
   return (
-    <>
-      <div className="self-stretch inline-flex flex-col justify-center items-center gap-3 sm:gap-4 overflow-hidden w-full">
-        {hasBadges && (
-          <div className="self-start flex items-center gap-2">
-            {isNSFW && (
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-red-500 bg-red-500/10 px-2 py-1 rounded-md">
-                NSFW
-              </span>
-            )}
-            {post.isEdited && (
-              <span className="text-[10px] font-medium text-text-neutral/60 italic">
-                edytowano
-              </span>
-            )}
-          </div>
-        )}
-        {hasText && (
-          <div
-            className={`self-stretch text-text-main text-sm sm:text-base font-normal w-full ${
-              isAscii
-                ? "ascii-art"
-                : "font-sans whitespace-pre-wrap wrap-break-word"
-            }`}
-          >
-            {post.text}
-          </div>
-        )}
+    <div className="w-full flex flex-col gap-3">
+      {hasBadges && (
+        <div className="flex items-center gap-2">
+          {isNSFW && (
+            <span className="text-[10px] font-bold uppercase tracking-widest text-red-400 bg-red-500/15 px-2.5 py-1 rounded-full border border-red-500/20">
+              NSFW
+            </span>
+          )}
+          {post.isEdited && (
+            <span className="text-[10px] font-medium text-text-neutral/70 bg-primary-neutral-stroke-default/30 px-2 py-0.5 rounded-full">
+              edytowano
+            </span>
+          )}
+        </div>
+      )}
+      
+      {hasText && (
+        <p
+          className={`text-text-main leading-relaxed ${
+            isAscii
+              ? "ascii-art text-xs"
+              : "font-sans text-sm sm:text-[15px] whitespace-pre-wrap break-words"
+          }`}
+        >
+          {post.text}
+        </p>
+      )}
 
-        {post.imageUrl &&
-          (moderationThumbnailImage ? (
+      {post.imageUrl && (
+        <div className="mt-1 -mx-4 sm:-mx-5">
+          {moderationThumbnailImage ? (
             <ExpandableImageThumbnail
               src={post.imageUrl}
               alt="Treść obrazkowa posta"
             />
           ) : (
-            <PostMedia
-              src={post.imageUrl}
-              alt="Post content"
-              onReadyChange={onImageReadyChange}
-            />
-          ))}
-      </div>
-    </>
+            <div className="px-4 sm:px-5">
+              <PostMedia
+                src={post.imageUrl}
+                alt="Post content"
+                onReadyChange={onImageReadyChange}
+              />
+            </div>
+          )}
+        </div>
+      )}
+    </div>
   );
 };

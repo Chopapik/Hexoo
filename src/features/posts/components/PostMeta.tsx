@@ -16,40 +16,35 @@ export const PostMeta = ({ post }: PostMetaProps) => {
   };
 
   return (
-    <div className="w-full flex justify-between items-start">
-      <div className="inline-flex justify-start items-center gap-2">
-        <div className="size-9 sm:size-10" onClick={handleLinkClick}>
+    <header className="w-full flex justify-between items-center">
+      <div className="flex items-center gap-3">
+        <div onClick={handleLinkClick} className="relative">
           <Link href={`/profile/${post.userId}`}>
             <Avatar
               src={post.userAvatarUrl ?? undefined}
               alt={post.userName ?? undefined}
-              className="size-9 sm:size-10"
+              className="size-10 sm:size-11 ring-2 ring-primary-neutral-stroke-default/50 hover:ring-primary-fuchsia-stroke-default/50 transition-all duration-200"
             />
           </Link>
         </div>
-        <div className="self-stretch inline-flex flex-col justify-center items-start">
-          <div
-            className="justify-start text-text-main text-xs sm:text-sm font-medium font-sans"
-            onClick={handleLinkClick}
-          >
+        <div className="flex flex-col justify-center">
+          <div onClick={handleLinkClick}>
             <Link
               href={`/profile/${post.userId}`}
-              className="hover:underline"
+              className="text-text-main text-sm sm:text-base font-semibold font-sans hover:text-primary-fuchsia-stroke-default transition-colors duration-200"
             >
               {post.userName}
             </Link>
           </div>
-          <div className="inline-flex justify-center items-center gap-1">
-            <div className="justify-start text-text-neutral text-[11px] sm:text-xs font-normal font-sans">
-              {formatSmartDate(post.createdAt)}
-            </div>
-          </div>
+          <time className="text-text-neutral text-xs font-normal font-sans tracking-wide">
+            {formatSmartDate(post.createdAt)}
+          </time>
         </div>
       </div>
 
-      <div className="pt-1" onClick={handleLinkClick}>
+      <div onClick={handleLinkClick} className="opacity-60 hover:opacity-100 transition-opacity">
         <PostOptions postId={post.id} authorId={post.userId} post={post} />
       </div>
-    </div>
+    </header>
   );
 };
