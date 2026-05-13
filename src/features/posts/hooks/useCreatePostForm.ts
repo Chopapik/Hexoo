@@ -21,6 +21,7 @@ export default function useCreatePostForm() {
     defaultValues: {
       text: "",
       imageFile: undefined,
+      youtubeUrl: "",
     },
   });
 
@@ -52,20 +53,23 @@ export default function useCreatePostForm() {
     const values = rawData ?? getValues();
     const imageFile: File | undefined = values.imageFile;
     const text: string = values.text ?? "";
+    const youtubeUrl: string = values.youtubeUrl?.trim() ?? "";
 
     if (imageFile instanceof File) {
       const fd = new FormData();
       fd.append("text", text);
       fd.append("imageFile", imageFile);
+      if (youtubeUrl) fd.append("youtubeUrl", youtubeUrl);
       return fd;
     }
-    return { text };
+    return { text, ...(youtubeUrl ? { youtubeUrl } : {}) };
   };
 
   const resetForm = () => {
     reset({
       text: "",
       imageFile: undefined,
+      youtubeUrl: "",
     });
     removeImage();
     clearErrors();
@@ -86,5 +90,6 @@ export default function useCreatePostForm() {
     clearErrors,
     triggerPicker,
     resetForm,
+    setValue,
   };
 }

@@ -1,13 +1,15 @@
 "use client";
 
-import React from "react";
+import React, { useState, useRef } from "react";
 import type { UseFormRegisterReturn } from "react-hook-form";
 import { PaperclipIcon } from "../icons/PaperclipIcon";
 import { SendIcon } from "../icons/SendIcon";
+import { YouTubeIcon } from "../icons/YouTubeIcon";
 import Modal from "@/features/shared/components/layout/Modal";
 import Button from "@/features/shared/components/ui/Button";
 import RemoveImageButton from "@/features/shared/components/ui/RemoveImageButton";
 import { POST_MAX_CHARS } from "../types/post.dto";
+import { isValidYouTubeUrl } from "../utils/youtubeUtils";
 
 interface PostComposerModalProps {
   isOpen: boolean;
@@ -30,6 +32,9 @@ interface PostComposerModalProps {
   showRemoveImageButton?: boolean;
   acceptedImageTypes?: string;
   alert?: React.ReactNode;
+  onYouTubeUrl?: (url: string) => void;
+  onYouTubeRemove?: () => void;
+  youtubeUrl?: string | null;
 }
 
 export default function PostComposerModal({
@@ -53,9 +58,37 @@ export default function PostComposerModal({
   showRemoveImageButton = !!imagePreview,
   acceptedImageTypes = "image/png, image/jpeg, image/webp",
   alert,
+  onYouTubeUrl,
+  onYouTubeRemove,
+  youtubeUrl,
 }: PostComposerModalProps) {
   const hasText = textValue.trim().length > 0;
   const currentLength = textValue.length;
+
+  const [showYouTubeInput, setShowYouTubeInput] = useState(false);
+  const [youtubeInputValue, setYoutubeInputValue] = useState("");
+  const youtubeInputRef = useRef<HTMLInputElement>(null);
+
+  const youtubeInputValid = isValidYouTubeUrl(youtubeInputValue);
+
+  const handleYouTubeConfirm = () => {
+    const trimmed = youtubeInputValue.trim();
+    if (!trimmed || !youtubeInputValid) return;
+    onYouTubeUrl?.(trimmed);
+    setYoutubeInputValue("");
+    setShowYouTubeInput(false);
+  };
+
+  const handleYouTubeKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleYouTubeConfirm();
+    }
+    if (e.key === "Escape") {
+      setYoutubeInputValue("");
+      setShowYouTubeInput(false);
+    }
+  };
 
   const footerContent = (
     <div className="flex items-center justify-between w-full">
@@ -74,6 +107,27 @@ export default function PostComposerModal({
           variant="transparent"
           size="icon"
           className="text-text-neutral hover:text-white"
+          type="button"
+        />
+
+        <Button
+          onClick={() => {
+            if (!showYouTubeInput && !youtubeUrl) {
+              setShowYouTubeInput(true);
+              setTimeout(() => youtubeInputRef.current?.focus(), 50);
+            } else if (showYouTubeInput) {
+              setYoutubeInputValue("");
+              setShowYouTubeInput(false);
+            }
+          }}
+          icon={
+            <YouTubeIcon
+              className={`w-5 h-5 transition-colors ${showYouTubeInput || youtubeUrl ? "text-red-500" : ""}`}
+            />
+          }
+          variant="transparent"
+          size="icon"
+          className="text-text-neutral hover:text-red-500"
           type="button"
         />
       </div>
@@ -127,6 +181,50 @@ export default function PostComposerModal({
               )}
             </div>
           )}
+
+          {youtubeUrl ? (
+            <div className="relative group flex items-center gap-2 px-3 py-2 rounded-lg bg-secondary-neutral-background-default/60 w-full animate-in fade-in zoom-in-95 duration-200">
+              <YouTubeIcon className="w-4 h-4 text-red-500 shrink-0" />
+              <span className="text-sm text-text-main truncate flex-1 font-sans pr-4">
+                {youtubeUrl}
+              </span>
+              <RemoveImageButton
+                onClick={(e) => { e.stopPropagation(); onYouTubeRemove?.(); }}
+                variant="dark"
+                position="top-right"
+                showOnHover={true}
+              />
+            </div>
+          ) : showYouTubeInput ? (
+            <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-secondary-neutral-background-default/60 w-full animate-in fade-in zoom-in-95 duration-200">
+              <YouTubeIcon className="w-4 h-4 text-red-500 shrink-0" />
+              <input
+                ref={youtubeInputRef}
+                type="url"
+                value={youtubeInputValue}
+                onChange={(e) => setYoutubeInputValue(e.target.value)}
+                onKeyDown={handleYouTubeKeyDown}
+                placeholder="Wklej link do YouTube..."
+                autoFocus
+                className="flex-1 bg-transparent text-text-main placeholder:text-text-neutral/50 text-sm outline-none"
+              />
+              <Button
+                type="button"
+                onClick={handleYouTubeConfirm}
+                disabled={!youtubeInputValid}
+                text="Dodaj"
+                size="sm"
+                variant="default"
+              />
+              <Button
+                type="button"
+                onClick={() => { setYoutubeInputValue(""); setShowYouTubeInput(false); }}
+                text="Anuluj"
+                size="sm"
+                variant="ghost"
+              />
+            </div>
+          ) : null}
 
           <div className="relative w-full">
             <textarea

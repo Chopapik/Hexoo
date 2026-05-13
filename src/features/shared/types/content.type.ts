@@ -26,6 +26,8 @@ export interface ContentBase {
 
   device?: string | null;
 
+  youtubeUrl?: string | null;
+
   commentsCount: number;
 
   userReports?: string[];

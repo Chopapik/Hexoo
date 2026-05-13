@@ -3,6 +3,8 @@ import { isAsciiArt } from "../utils/asciiDetector";
 import { useMemo } from "react";
 import { PostMedia } from "./PostMedia";
 import { ExpandableImageThumbnail } from "@/features/shared/components/media/ExpandableImageThumbnail";
+import { PostYouTubeEmbed } from "./PostYouTubeEmbed";
+import { extractYouTubeVideoIds } from "../utils/youtubeUtils";
 
 type PostBodyProps = {
   post: PublicPostResponseDto;
@@ -18,6 +20,14 @@ export const PostBody = ({
   moderationThumbnailImage = false,
   onImageReadyChange,
 }: PostBodyProps) => {
+  const youtubeVideoIds = useMemo(
+    () =>
+      post.youtubeUrl
+        ? extractYouTubeVideoIds(post.youtubeUrl)
+        : [],
+    [post.youtubeUrl],
+  );
+  const hasYouTube = youtubeVideoIds.length > 0;
   const isAscii = useMemo(() => isAsciiArt(post.text), [post.text]);
   const hasBadges = isNSFW || post.isEdited;
   const hasText = post.text.trim().length > 0;
@@ -50,6 +60,11 @@ export const PostBody = ({
             {post.text}
           </div>
         )}
+
+        {hasYouTube &&
+          youtubeVideoIds.map((videoId) => (
+            <PostYouTubeEmbed key={videoId} videoId={videoId} />
+          ))}
 
         {post.imageUrl &&
           (moderationThumbnailImage ? (
