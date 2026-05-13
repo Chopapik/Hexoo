@@ -23,12 +23,14 @@ export const CreatePostSchema = z
           ),
         "wrong_file_type",
       ),
+    youtubeUrl: z.string().url("invalid_url").optional().or(z.literal("")),
   })
   .refine(
     (data) => {
       const hasText = data.text.trim().length > 0;
       const hasImage = data.imageFile instanceof File;
-      return hasText || hasImage;
+      const hasYoutube = !!data.youtubeUrl?.trim();
+      return hasText || hasImage || hasYoutube;
     },
     {
       message: "post_empty",

@@ -32,6 +32,7 @@ export default function CreatePostModal({
     watch,
     triggerPicker,
     resetForm,
+    setValue,
   } = useCreatePostForm();
 
   const [rootError, setRootError] = useState<string | null>(null);
@@ -45,6 +46,7 @@ export default function CreatePostModal({
   const clientError = parseErrorMessages(validationErrorRaw)?.text;
 
   const textValue = watch("text") || "";
+  const youtubeUrlValue = watch("youtubeUrl") || "";
   const currentLength = textValue.length;
   const isOverLimit = currentLength > POST_MAX_CHARS;
 
@@ -84,6 +86,14 @@ export default function CreatePostModal({
     }
   };
 
+  const handleYouTubeUrl = (url: string) => {
+    setValue("youtubeUrl", url, { shouldValidate: true });
+  };
+
+  const handleYouTubeRemove = () => {
+    setValue("youtubeUrl", "", { shouldValidate: true });
+  };
+
   const user = useAppStore((s) => s.auth.user);
 
   const displayError = clientError || rootError;
@@ -110,6 +120,9 @@ export default function CreatePostModal({
       isOverLimit={isOverLimit}
       isSubmitDisabled={isOverLimit || !!clientError}
       acceptedImageTypes="image/png, image/jpeg, image/webp, image/gif"
+      onYouTubeUrl={handleYouTubeUrl}
+      onYouTubeRemove={handleYouTubeRemove}
+      youtubeUrl={youtubeUrlValue}
       alert={
         <AlertModal
           isOpen={!!moderationBlockReason}

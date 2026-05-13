@@ -26,6 +26,7 @@ function rowToEntity(row: PostRow): PostEntity {
     isEdited: row.is_edited,
     imageMeta: row.image_meta ?? undefined,
     device: row.device ?? undefined,
+    youtubeUrl: row.youtube_url ?? null,
     userReports: undefined,
     reportsMeta: undefined,
   };
@@ -52,6 +53,7 @@ function createPayloadToRow(data: CreatePostPayload): Record<string, unknown> {
   if (data.isEdited != null) row.is_edited = data.isEdited;
   if (data.imageMeta !== undefined) row.image_meta = data.imageMeta;
   if (data.device !== undefined) row.device = data.device;
+  if (data.youtubeUrl !== undefined) row.youtube_url = data.youtubeUrl || null;
   return row;
 }
 
@@ -70,6 +72,7 @@ function updatePayloadToRow(data: UpdatePostPayload): Record<string, unknown> {
   if (data.isEdited != null) row.is_edited = data.isEdited;
   if (data.imageMeta !== undefined) row.image_meta = data.imageMeta;
   if (data.device !== undefined) row.device = data.device;
+  if (data.youtubeUrl !== undefined) row.youtube_url = data.youtubeUrl || null;
   return row;
 }
 

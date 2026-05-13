@@ -16,4 +16,5 @@ export interface PostRow {
   is_edited: boolean;
   image_meta: ImageMeta | null;
   device: string | null;
+  youtube_url: string | null;
 }

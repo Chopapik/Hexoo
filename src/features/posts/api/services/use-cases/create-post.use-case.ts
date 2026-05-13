@@ -64,6 +64,7 @@ export class CreatePostUseCase {
       reportsMeta: [],
       createdAt: now,
       updatedAt: now,
+      youtubeUrl: data.youtubeUrl?.trim() || null,
     };
 
     const postId = await this.repository.createPost(dbInput);

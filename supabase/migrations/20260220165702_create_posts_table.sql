@@ -13,7 +13,8 @@ create table if not exists public.posts (
   is_edited boolean not null default false,
   image_url text,
   image_meta jsonb,
-  device text
+  device text,
+  youtube_url text
 );
 
 -- Indexes for feed listing and filtering by user and pending state.

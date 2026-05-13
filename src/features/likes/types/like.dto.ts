@@ -10,3 +10,4 @@ export interface ToggleLikeResponseDto {
   isLiked: boolean;
   likesCount: number;
 }
+u  

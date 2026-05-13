@@ -12,10 +12,14 @@ export const POST = withErrorHandling(async (req: NextRequest) => {
     const text = String(form.get("text") || "");
     const device = String(form.get("device"));
     const imageFile = form.get("imageFile");
+    const youtubeUrl = form.get("youtubeUrl")
+      ? String(form.get("youtubeUrl"))
+      : undefined;
     const result = await createPost(session, {
       text,
       device,
       imageFile,
+      youtubeUrl,
     } as CreatePostRequestDto);
     return handleSuccess(result, 201);
   }
