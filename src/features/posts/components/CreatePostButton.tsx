@@ -106,7 +106,7 @@ export default function CreatePostButton({ onClick }: CreatePostButtonProps) {
 
       <div className="relative z-10 w-full inline-flex justify-between items-center pointer-events-none">
         <div className="text-center justify-center text-text-main text-xl sm:text-2xl font-semibold font-serif">
-          co słychać?
+          <b>Dodaj post głubcze</b>
         </div>
         <div data-svg-wrapper>
           <svg
