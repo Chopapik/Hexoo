@@ -1,175 +1,64 @@
-import type { CreateUserRequestDto as CreateUserRequest } from "../../types/user.dto";
-import { resolveImagePublicUrl } from "@/features/images/utils/resolveImagePublicUrl";
-import { createAppError } from "@/lib/AppError";
-import { logActivity } from "@/features/activity/api/services";
-import {
-  CreateUserPayload,
-  UserRepository,
-} from "../repositories/user.repository.interface";
-import type { AuthRepository } from "@/features/auth/api/repositories/authRepository.interface";
-import type { UserService as IUserService } from "./user.service.interface";
-import { SessionData } from "@/features/me/me.type";
-import { UserEntity } from "../../types/user.entity";
+import type {
+  CreateUserRequestDto as CreateUserRequest,
+  RestrictUserRequestDto as RestrictUserRequest,
+  UserProfileResponseDto as UserProfileResponse,
+} from "../../types/user.dto";
+import type { UserEntity } from "../../types/user.entity";
 import type { ImageMeta } from "@/features/images/types/image.type";
-import { UserRole } from "../../types/user.type";
+import type { UserService as IUserService } from "./user.service.interface";
 
-type CreateUserInput = CreateUserRequest;
+import type { CreateUserUseCase } from "./use-cases/create-user.use-case";
+import type { GetUserByUidUseCase } from "./use-cases/get-user-by-uid.use-case";
+import type { GetUserProfileUseCase } from "./use-cases/get-user-profile.use-case";
+import type { TouchLastOnlineUseCase } from "./use-cases/touch-last-online.use-case";
+import type { GetUsersByIdsUseCase } from "./use-cases/get-users-by-ids.use-case";
+import type { UnrestrictUserUseCase } from "./use-cases/unrestrict-user.use-case";
+import type { RestrictUserUseCase } from "./use-cases/restrict-user.use-case";
+import type { RestrictUserBySystemUseCase } from "./use-cases/restrict-user-by-system.use-case";
 
 export class UserService implements IUserService {
   constructor(
-    private readonly repository: UserRepository,
-    private readonly session: SessionData | null = null,
-    private readonly authRepository: AuthRepository | null = null,
+    private readonly createUserUseCase: CreateUserUseCase,
+    private readonly getUserByUidUseCase: GetUserByUidUseCase,
+    private readonly getUserProfileUseCase: GetUserProfileUseCase,
+    private readonly touchLastOnlineUseCase: TouchLastOnlineUseCase,
+    private readonly getUsersByIdsUseCase: GetUsersByIdsUseCase,
+    private readonly unrestrictUserUseCase: UnrestrictUserUseCase,
+    private readonly restrictUserUseCase: RestrictUserUseCase,
+    private readonly restrictUserBySystemUseCase: RestrictUserBySystemUseCase,
   ) {}
 
-  async createUser(uid: string, data: CreateUserInput) {
-    const payload: CreateUserPayload = {
-      uid,
-      name: data.name,
-      email: data.email,
-      role: data.role,
-    };
-    await this.repository.createUser(payload);
+  async createUser(uid: string, data: CreateUserRequest) {
+    return this.createUserUseCase.execute(uid, data);
   }
-
-  private ensureModeratorOrAdmin = async () => {
-    const session = this.session;
-    if (!session) {
-      throw createAppError({
-        code: "AUTH_REQUIRED",
-        message: "[userService.ensureModeratorOrAdmin] No session available",
-      });
-    }
-    if (
-      session.role !== UserRole.Moderator &&
-      session.role !== UserRole.Admin
-    ) {
-      throw createAppError({
-        code: "FORBIDDEN",
-        message:
-          "[userService.ensureModeratorOrAdmin] Missing moderator/admin role",
-      });
-    }
-    return session;
-  };
 
   async getUserByUid(uid: string): Promise<UserEntity | null> {
-    return await this.repository.getUserByUid(uid);
+    return this.getUserByUidUseCase.execute(uid);
   }
 
-  async getUserProfile(uid: string) {
-    console.log("[getUserProfile] raw uid:", uid);
-
-    if (!uid) return null;
-
-    const cleanedUid = uid.trim();
-
-    console.log("[getUserProfile] cleaned uid:", cleanedUid);
-
-    if (!cleanedUid) return null;
-
-    const userData = await this.repository.getUserByUid(cleanedUid);
-
-    console.log("[getUserProfile] userData:", userData);
-
-    if (!userData) return null;
-
-    const userProfile = {
-      uid: userData.uid,
-      name: userData.name,
-      avatarUrl: resolveImagePublicUrl(userData.avatarMeta) ?? undefined,
-      lastOnline: userData.lastOnline,
-      createdAt: userData.createdAt,
-    };
-
-    return { user: userProfile };
+  async getUserProfile(uid: string): Promise<{ user: UserProfileResponse } | null> {
+    return this.getUserProfileUseCase.execute(uid);
   }
 
-  async touchLastOnline(
-    uid: string,
-    minIntervalMs: number = 5 * 60 * 1000,
-  ): Promise<void> {
-    if (!uid) return;
-
-    const user = await this.repository.getUserByUid(uid);
-    if (!user) return;
-
-    const now = Date.now();
-    const lastOnlineTs = user.lastOnline?.getTime?.() ?? 0;
-    if (minIntervalMs > 0 && now - lastOnlineTs < minIntervalMs) return;
-
-    await this.repository.updateUser(uid, { lastOnline: new Date(now) });
-  }
-
-  async unrestrictUser(uid: string) {
-    await this.ensureModeratorOrAdmin();
-
-    if (!uid) {
-      throw createAppError({
-        code: "INVALID_INPUT",
-        message: "[userService.unrestrictUser] No 'uid' provided",
-      });
-    }
-
-    await this.repository.updateUserRestriction({
-      uid,
-      isRestricted: false,
-    });
-
-    await logActivity(uid, "USER_UNRESTRICTED", "User restriction removed");
-  }
-
-  private async _applyRestrictionInternal(
-    uid: string,
-    reason: string,
-    source: "ADMIN" | "AI_SYSTEM",
-  ) {
-    if (!uid) {
-      throw createAppError({
-        code: "INVALID_INPUT",
-        message: "UID is required for restriction",
-      });
-    }
-
-    await this.repository.updateUserRestriction({
-      uid,
-      isRestricted: true,
-      restrictedBy: source,
-      restrictedReason: reason,
-    });
-
-    await logActivity(
-      uid,
-      "USER_RESTRICTED",
-      `Restricted by ${source}. Reason: ${reason}`,
-    );
-  }
-
-  async restrictUser(data: { uid: string; reason: string }) {
-    await this.ensureModeratorOrAdmin();
-
-    await this._applyRestrictionInternal(data.uid, data.reason, "ADMIN");
-  }
-
-  async restrictUserBySystem(uid: string, reason: string) {
-    await this._applyRestrictionInternal(uid, reason, "AI_SYSTEM");
+  async touchLastOnline(uid: string, minIntervalMs?: number): Promise<void> {
+    return this.touchLastOnlineUseCase.execute(uid, minIntervalMs);
   }
 
   async getUsersByIds(
     uids: string[],
   ): Promise<Record<string, { name: string; avatarMeta?: ImageMeta | null }>> {
-    if (!uids || uids.length === 0) {
-      return {};
-    }
+    return this.getUsersByIdsUseCase.execute(uids);
+  }
 
-    try {
-      return await this.repository.getUsersByIds(uids);
-    } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : String(error);
-      throw createAppError({
-        code: "DB_ERROR",
-        message: `[userService.getUsersByIds] Error fetching users by UIDs: ${message}`,
-      });
-    }
+  async unrestrictUser(uid: string): Promise<void> {
+    return this.unrestrictUserUseCase.execute(uid);
+  }
+
+  async restrictUser(data: RestrictUserRequest): Promise<void> {
+    return this.restrictUserUseCase.execute(data);
+  }
+
+  async restrictUserBySystem(uid: string, reason: string): Promise<void> {
+    return this.restrictUserBySystemUseCase.execute(uid, reason);
   }
 }

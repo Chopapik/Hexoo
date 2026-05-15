@@ -1,15 +1,58 @@
 import { UserService } from "./user.service";
 import { userRepository } from "../repositories";
-import { authRepository } from "@/features/auth/api/repositories";
+import { UserProfileMapper } from "./user.profile.mapper";
+import { UserRestrictionApplier } from "./user.restriction";
+import {
+  CreateUserUseCase,
+  GetUserByUidUseCase,
+  GetUserProfileUseCase,
+  TouchLastOnlineUseCase,
+  GetUsersByIdsUseCase,
+  UnrestrictUserUseCase,
+  RestrictUserUseCase,
+  RestrictUserBySystemUseCase,
+} from "./use-cases";
 import type { UserEntity } from "../../types/user.entity";
 import type { ImageMeta } from "@/features/images/types/image.type";
 import { UserRole } from "../../types/user.type";
 import type { SessionData } from "@/features/me/me.type";
 
+const userProfileMapper = new UserProfileMapper();
+const userRestrictionApplier = new UserRestrictionApplier(userRepository);
+
 export const getUserService = (
   session: SessionData | null,
 ): UserService => {
-  return new UserService(userRepository, session, authRepository);
+  const createUserUseCase = new CreateUserUseCase(userRepository);
+  const getUserByUidUseCase = new GetUserByUidUseCase(userRepository);
+  const getUserProfileUseCase = new GetUserProfileUseCase(
+    userRepository,
+    userProfileMapper,
+  );
+  const touchLastOnlineUseCase = new TouchLastOnlineUseCase(userRepository);
+  const getUsersByIdsUseCase = new GetUsersByIdsUseCase(userRepository);
+  const unrestrictUserUseCase = new UnrestrictUserUseCase(
+    userRepository,
+    session,
+  );
+  const restrictUserUseCase = new RestrictUserUseCase(
+    userRestrictionApplier,
+    session,
+  );
+  const restrictUserBySystemUseCase = new RestrictUserBySystemUseCase(
+    userRestrictionApplier,
+  );
+
+  return new UserService(
+    createUserUseCase,
+    getUserByUidUseCase,
+    getUserProfileUseCase,
+    touchLastOnlineUseCase,
+    getUsersByIdsUseCase,
+    unrestrictUserUseCase,
+    restrictUserUseCase,
+    restrictUserBySystemUseCase,
+  );
 };
 
 export async function createUser(
