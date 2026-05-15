@@ -62,7 +62,7 @@ export default function useCreatePostForm() {
       if (youtubeUrl) fd.append("youtubeUrl", youtubeUrl);
       return fd;
     }
-    return { text, ...(youtubeUrl ? { youtubeUrl } : {}) };
+    return { text, youtubeUrl };
   };
 
   const resetForm = () => {
