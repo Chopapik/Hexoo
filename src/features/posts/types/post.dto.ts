@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { PostEntity } from "./post.entity";
 import { ModerationStatus } from "@/features/shared/types/content.type";
+import { isValidYouTubeUrl } from "../utils/youtubeUtils";
 
 export const MAX_IMAGE_FILE_SIZE_BYTES = 5 * 1024 * 1024;
 export const POST_MAX_CHARS = 2048;
@@ -23,7 +24,12 @@ export const CreatePostSchema = z
           ),
         "wrong_file_type",
       ),
-    youtubeUrl: z.string().url("invalid_url").optional().or(z.literal("")),
+    youtubeUrl: z
+      .string()
+      .refine(
+        (val) => val.trim() === "" || isValidYouTubeUrl(val),
+        "invalid_youtube_url",
+      ),
   })
   .refine(
     (data) => {

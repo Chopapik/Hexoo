@@ -9,7 +9,6 @@ import Modal from "@/features/shared/components/layout/Modal";
 import Button from "@/features/shared/components/ui/Button";
 import RemoveImageButton from "@/features/shared/components/ui/RemoveImageButton";
 import { POST_MAX_CHARS } from "../types/post.dto";
-import { isValidYouTubeUrl } from "../utils/youtubeUtils";
 
 interface PostComposerModalProps {
   isOpen: boolean;
@@ -32,9 +31,11 @@ interface PostComposerModalProps {
   showRemoveImageButton?: boolean;
   acceptedImageTypes?: string;
   alert?: React.ReactNode;
-  onYouTubeUrl?: (url: string) => void;
+  onYouTubeConfirm?: (url: string) => Promise<boolean>;
+  onYouTubeDraftChange?: () => void;
   onYouTubeRemove?: () => void;
   youtubeUrl?: string | null;
+  youtubeUrlError?: string | null;
 }
 
 export default function PostComposerModal({
@@ -58,9 +59,11 @@ export default function PostComposerModal({
   showRemoveImageButton = !!imagePreview,
   acceptedImageTypes = "image/png, image/jpeg, image/webp",
   alert,
-  onYouTubeUrl,
+  onYouTubeConfirm,
+  onYouTubeDraftChange,
   onYouTubeRemove,
   youtubeUrl,
+  youtubeUrlError,
 }: PostComposerModalProps) {
   const hasText = textValue.trim().length > 0;
   const currentLength = textValue.length;
@@ -69,12 +72,11 @@ export default function PostComposerModal({
   const [youtubeInputValue, setYoutubeInputValue] = useState("");
   const youtubeInputRef = useRef<HTMLInputElement>(null);
 
-  const youtubeInputValid = isValidYouTubeUrl(youtubeInputValue);
-
-  const handleYouTubeConfirm = () => {
+  const handleYouTubeConfirm = async () => {
     const trimmed = youtubeInputValue.trim();
-    if (!trimmed || !youtubeInputValid) return;
-    onYouTubeUrl?.(trimmed);
+    if (!trimmed) return;
+    const accepted = (await onYouTubeConfirm?.(trimmed)) ?? false;
+    if (!accepted) return;
     setYoutubeInputValue("");
     setShowYouTubeInput(false);
   };
@@ -82,7 +84,7 @@ export default function PostComposerModal({
   const handleYouTubeKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      handleYouTubeConfirm();
+      void handleYouTubeConfirm();
     }
     if (e.key === "Escape") {
       setYoutubeInputValue("");
@@ -196,33 +198,44 @@ export default function PostComposerModal({
               />
             </div>
           ) : showYouTubeInput ? (
-            <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-secondary-neutral-background-default/60 w-full animate-in fade-in zoom-in-95 duration-200">
-              <YouTubeIcon className="w-4 h-4 text-red-500 shrink-0" />
-              <input
-                ref={youtubeInputRef}
-                type="url"
-                value={youtubeInputValue}
-                onChange={(e) => setYoutubeInputValue(e.target.value)}
-                onKeyDown={handleYouTubeKeyDown}
-                placeholder="Wklej link do YouTube..."
-                autoFocus
-                className="flex-1 bg-transparent text-text-main placeholder:text-text-neutral/50 text-sm outline-none"
-              />
-              <Button
-                type="button"
-                onClick={handleYouTubeConfirm}
-                disabled={!youtubeInputValid}
-                text="Dodaj"
-                size="sm"
-                variant="default"
-              />
-              <Button
-                type="button"
-                onClick={() => { setYoutubeInputValue(""); setShowYouTubeInput(false); }}
-                text="Anuluj"
-                size="sm"
-                variant="ghost"
-              />
+            <div className="flex flex-col gap-1 w-full animate-in fade-in zoom-in-95 duration-200">
+              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-secondary-neutral-background-default/60 w-full">
+                <YouTubeIcon className="w-4 h-4 text-red-500 shrink-0" />
+                <input
+                  ref={youtubeInputRef}
+                  type="url"
+                  value={youtubeInputValue}
+                  onChange={(e) => {
+                    setYoutubeInputValue(e.target.value);
+                    onYouTubeDraftChange?.();
+                  }}
+                  onKeyDown={handleYouTubeKeyDown}
+                  placeholder="Wklej link do YouTube..."
+                  autoFocus
+                  className="flex-1 bg-transparent text-text-main placeholder:text-text-neutral/50 text-sm outline-none"
+                />
+                <Button
+                  type="button"
+                  onClick={() => void handleYouTubeConfirm()}
+                  disabled={!youtubeInputValue.trim()}
+                  text="Dodaj"
+                  size="sm"
+                  variant="default"
+                />
+                <Button
+                  type="button"
+                  onClick={() => {
+                    setYoutubeInputValue("");
+                    setShowYouTubeInput(false);
+                  }}
+                  text="Anuluj"
+                  size="sm"
+                  variant="ghost"
+                />
+              </div>
+              {youtubeUrlError ? (
+                <p className="text-xs text-red-500 px-1">{youtubeUrlError}</p>
+              ) : null}
             </div>
           ) : null}
 
