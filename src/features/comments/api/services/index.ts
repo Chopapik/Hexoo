@@ -1,7 +1,15 @@
 import { commentRepository } from "../repositories";
 import { likeRepository } from "@/features/likes/api/repositories";
-import { CommentService } from "./comment.service";
 import { PostContentService } from "@/features/posts/api/services/post.content.service";
+import { CommentService } from "./comment.service";
+import { CommentEnricher } from "./comment.enricher";
+import {
+  AddCommentUseCase,
+  UpdateCommentUseCase,
+  DeleteCommentUseCase,
+  ReportCommentUseCase,
+  GetCommentsByPostIdUseCase,
+} from "./use-cases";
 import type {
   AddCommentRequestDto as AddCommentRequest,
   AddCommentResponseDto as AddCommentResponse,
@@ -11,15 +19,46 @@ import type {
 import type { SessionData } from "@/features/me/me.type";
 
 const postContentService = new PostContentService();
+const commentEnricher = new CommentEnricher(likeRepository);
 
 export const getCommentService = (
   session: SessionData | null,
 ): CommentService => {
-  return new CommentService(
+  const addCommentUseCase = new AddCommentUseCase(
     commentRepository,
     postContentService,
-    likeRepository,
     session,
+  );
+
+  const getCommentsByPostIdUseCase = new GetCommentsByPostIdUseCase(
+    commentRepository,
+    commentEnricher,
+    session,
+  );
+
+  const updateCommentUseCase = new UpdateCommentUseCase(
+    commentRepository,
+    postContentService,
+    commentEnricher,
+    session,
+  );
+
+  const deleteCommentUseCase = new DeleteCommentUseCase(
+    commentRepository,
+    session,
+  );
+
+  const reportCommentUseCase = new ReportCommentUseCase(
+    commentRepository,
+    session,
+  );
+
+  return new CommentService(
+    addCommentUseCase,
+    getCommentsByPostIdUseCase,
+    updateCommentUseCase,
+    deleteCommentUseCase,
+    reportCommentUseCase,
   );
 };
 
