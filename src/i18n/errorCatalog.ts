@@ -19,6 +19,8 @@ export type ClientValidationCode =
   | "name_too_short"
   | "name_too_long"
   | "name_invalid_chars"
+  | "name_forbidden"
+  | "name_policy_violation"
   | "policy_violation_name"
   | "policy_violation_avatar"
   | "policy_violation_profile"
@@ -312,8 +314,24 @@ export const ERROR_CATALOG: Record<GlobalErrorCode, ErrorCatalogEntry> = {
   },
   name_invalid_chars: {
     message: {
-      pl: "Niedozwolone znaki w nazwie",
-      en: "Invalid characters in name",
+      pl: "Nazwa może zawierać tylko litery, cyfry i podkreślenia.",
+      en: "Name can only contain letters, numbers, and underscores.",
+    },
+    field: "name",
+    validationType: "Dismiss",
+  },
+  name_forbidden: {
+    message: {
+      pl: "Ta nazwa jest zarezerwowana.",
+      en: "This name is reserved.",
+    },
+    field: "name",
+    validationType: "Dismiss",
+  },
+  name_policy_violation: {
+    message: {
+      pl: "Nazwa zawiera niedozwolone słowa.",
+      en: "Name contains disallowed words.",
     },
     field: "name",
     validationType: "Dismiss",

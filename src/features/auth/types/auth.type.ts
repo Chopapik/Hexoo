@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { BaseUsernameSchema } from "@/features/shared/utils/usernameSchema";
 
 export type registerFields = "name" | "email" | "password";
 
@@ -16,11 +17,7 @@ export const RegisterSchema = z.object({
     .min(8, { message: "password_too_short" })
     .max(128, { message: "password_too_long" }),
 
-  name: z
-    .string()
-    .min(3, { message: "name_too_short" })
-    .max(50, { message: "name_too_long" })
-    .trim(),
+  name: BaseUsernameSchema,
 
   terms: z.literal(true, {
     error: () => ({ message: "terms_required" }),
@@ -38,11 +35,7 @@ export const LoginSchema = z.object({
 });
 
 export const OAuthCompleteSchema = z.object({
-  name: z
-    .string()
-    .min(3, { message: "name_too_short" })
-    .max(50, { message: "name_too_long" })
-    .trim(),
+  name: BaseUsernameSchema,
 });
 
 export type OAuthCompleteFields = "name";
