@@ -33,6 +33,8 @@ export default function CreatePostModal({
     triggerPicker,
     resetForm,
     setValue,
+    trigger,
+    clearErrors,
   } = useCreatePostForm();
 
   const [rootError, setRootError] = useState<string | null>(null);
@@ -41,9 +43,15 @@ export default function CreatePostModal({
   >(null);
 
   const validationErrorRaw =
-    formState.errors.text?.message || formState.errors.imageFile?.message || "";
+    formState.errors.text?.message ||
+    formState.errors.imageFile?.message ||
+    formState.errors.youtubeUrl?.message ||
+    "";
 
   const clientError = parseErrorMessages(validationErrorRaw)?.text;
+  const youtubeUrlError = parseErrorMessages(
+    formState.errors.youtubeUrl?.message as string,
+  )?.text;
 
   const textValue = watch("text") || "";
   const youtubeUrlValue = watch("youtubeUrl") || "";
@@ -86,12 +94,20 @@ export default function CreatePostModal({
     }
   };
 
-  const handleYouTubeUrl = (url: string) => {
+  const handleYouTubeConfirm = async (url: string): Promise<boolean> => {
     setValue("youtubeUrl", url, { shouldValidate: true });
+    const valid = await trigger("youtubeUrl");
+    if (!valid) {
+      setValue("youtubeUrl", "", { shouldValidate: false });
+      return false;
+    }
+    clearErrors("youtubeUrl");
+    return true;
   };
 
   const handleYouTubeRemove = () => {
     setValue("youtubeUrl", "", { shouldValidate: true });
+    clearErrors("youtubeUrl");
   };
 
   const user = useAppStore((s) => s.auth.user);
@@ -120,9 +136,11 @@ export default function CreatePostModal({
       isOverLimit={isOverLimit}
       isSubmitDisabled={isOverLimit || !!clientError}
       acceptedImageTypes="image/png, image/jpeg, image/webp, image/gif"
-      onYouTubeUrl={handleYouTubeUrl}
+      onYouTubeConfirm={handleYouTubeConfirm}
+      onYouTubeDraftChange={() => clearErrors("youtubeUrl")}
       onYouTubeRemove={handleYouTubeRemove}
       youtubeUrl={youtubeUrlValue}
+      youtubeUrlError={youtubeUrlError}
       alert={
         <AlertModal
           isOpen={!!moderationBlockReason}

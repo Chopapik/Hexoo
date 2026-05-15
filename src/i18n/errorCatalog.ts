@@ -35,6 +35,7 @@ export type ClientValidationCode =
   // posts
   | "text_too_long"
   | "post_empty"
+  | "invalid_youtube_url"
   // comments
   | "comment_empty"
   | "comment_too_long"
@@ -388,10 +389,18 @@ export const ERROR_CATALOG: Record<GlobalErrorCode, ErrorCatalogEntry> = {
   },
   post_empty: {
     message: {
-      pl: "Post nie może być pusty. Dodaj tekst lub zdjęcie.",
-      en: "Post cannot be empty. Add text or an image.",
+      pl: "Post nie może być pusty. Dodaj tekst, zdjęcie lub link YouTube.",
+      en: "Post cannot be empty. Add text, an image, or a YouTube link.",
     },
     field: "text",
+    validationType: "Dismiss",
+  },
+  invalid_youtube_url: {
+    message: {
+      pl: "Podaj prawidłowy link do YouTube (watch, youtu.be, shorts lub embed).",
+      en: "Enter a valid YouTube link (watch, youtu.be, shorts, or embed).",
+    },
+    field: "youtubeUrl",
     validationType: "Dismiss",
   },
 

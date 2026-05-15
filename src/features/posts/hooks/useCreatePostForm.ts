@@ -91,5 +91,6 @@ export default function useCreatePostForm() {
     triggerPicker,
     resetForm,
     setValue,
+    trigger,
   };
 }

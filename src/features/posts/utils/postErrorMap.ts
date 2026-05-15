@@ -5,7 +5,7 @@ export function parseErrorMessages(errorCode: string):
   | {
       type: ValidationStatus;
       text: string;
-      field: "text" | "imageFile" | "root";
+      field: "text" | "imageFile" | "youtubeUrl" | "root";
     }
   | undefined {
   if (!errorCode) return;
@@ -13,9 +13,15 @@ export function parseErrorMessages(errorCode: string):
   const entry = getErrorEntry(errorCode);
   const type = entry.validationType ?? "Dismiss";
   const field =
-    (entry.field as "text" | "imageFile" | "root" | undefined) ?? "root";
+    (entry.field as "text" | "imageFile" | "youtubeUrl" | "root" | undefined) ??
+    "root";
 
-  if (field === "text" || field === "imageFile" || field === "root") {
+  if (
+    field === "text" ||
+    field === "imageFile" ||
+    field === "youtubeUrl" ||
+    field === "root"
+  ) {
     return {
       type,
       text: entry.message.pl,
