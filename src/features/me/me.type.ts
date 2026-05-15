@@ -1,5 +1,6 @@
 import z from "zod";
 import { UserRole } from "../users/types/user.type";
+import { BaseUsernameSchema } from "@/features/shared/utils/usernameSchema";
 
 export type SessionData = {
   uid: string;
@@ -32,12 +33,7 @@ export const UpdatePasswordSchema = z
 export type UpdatePasswordData = z.infer<typeof UpdatePasswordSchema>;
 
 export const UpdateProfileSchema = z.object({
-  name: z
-    .string()
-    .trim()
-    .min(1, { message: "name_too_short" })
-    .max(50, { message: "name_too_long" })
-    .optional(),
+  name: BaseUsernameSchema.optional(),
   avatarFile: z
     .instanceof(File)
     .optional()
