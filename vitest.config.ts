@@ -4,6 +4,9 @@ import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
   plugins: [tsconfigPaths(), react()],
+  resolve: {
+    tsconfigPaths: true,
+  },
   test: {
     environment: "node",
     include: ["src/**/*.{test,spec}.{ts,tsx}"],
