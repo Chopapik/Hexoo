@@ -84,12 +84,6 @@ export class UserSupabaseRepository implements UserRepository {
       .eq("uid", uid)
       .maybeSingle();
 
-    console.log("[getUserByUid]", {
-      uid,
-      data,
-      error,
-    });
-
     if (error) throw new Error(error.message ?? "Database error");
     if (!data) return null;
     return rowToEntity(data as UserRow);

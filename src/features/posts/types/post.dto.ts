@@ -2,6 +2,7 @@ import { z } from "zod";
 import { PostEntity } from "./post.entity";
 import { ModerationStatus } from "@/features/shared/types/content.type";
 import { isValidYouTubeUrl } from "../utils/youtubeUtils";
+import { isFileLike } from "@/features/images/utils/isFileLike";
 
 export const MAX_IMAGE_FILE_SIZE_BYTES = 5 * 1024 * 1024;
 export const POST_MAX_CHARS = 2048;
@@ -10,7 +11,7 @@ export const CreatePostSchema = z
   .object({
     text: z.string().max(POST_MAX_CHARS, "text_too_long"),
     imageFile: z
-      .instanceof(File)
+      .custom<File>(isFileLike, "wrong_file_type")
       .optional()
       .refine(
         (file) => !file || file.size <= MAX_IMAGE_FILE_SIZE_BYTES,
@@ -26,6 +27,8 @@ export const CreatePostSchema = z
       ),
     youtubeUrl: z
       .string()
+      .optional()
+      .default("")
       .refine(
         (val) => val.trim() === "" || isValidYouTubeUrl(val),
         "invalid_youtube_url",
@@ -34,7 +37,7 @@ export const CreatePostSchema = z
   .refine(
     (data) => {
       const hasText = data.text.trim().length > 0;
-      const hasImage = data.imageFile instanceof File;
+      const hasImage = isFileLike(data.imageFile);
       const hasYoutube = !!data.youtubeUrl?.trim();
       return hasText || hasImage || hasYoutube;
     },
@@ -47,7 +50,7 @@ export const CreatePostSchema = z
 export const UpdatePostSchema = z.object({
   text: z.string().min(1).optional(),
   imageFile: z
-    .instanceof(File)
+    .custom<File>(isFileLike, "wrong_file_type")
     .optional()
     .refine(
       (file) => !file || file.size <= MAX_IMAGE_FILE_SIZE_BYTES,

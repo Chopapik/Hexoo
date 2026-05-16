@@ -26,7 +26,7 @@ export class PostContentService {
 
     let imageData: Pick<ContentProcessResult, "imageMeta"> = {};
 
-    if (hasFile(imageFile) && imageFile instanceof File) {
+    if (hasFile(imageFile)) {
       const upload = await uploadImage(imageFile, uid, resource);
       const imageMeta: ImageMeta = {
         storageBucket: upload.storageBucket,

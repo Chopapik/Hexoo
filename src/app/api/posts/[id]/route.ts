@@ -8,6 +8,7 @@ import {
   updatePost,
 } from "@/features/posts/api/services";
 import { getUserFromSession } from "@/features/auth/api/utils/session-user.service";
+import { isFileLike } from "@/features/images/utils/isFileLike";
 
 export const GET = withErrorHandling(
   async (req: NextRequest, context: AnyRouteContext<{ id: string }>) => {
@@ -27,12 +28,11 @@ export const PUT = withErrorHandling(
     if (contentType.includes("multipart/form-data")) {
       const form = await req.formData();
       const text = String(form.get("text") || "");
-      const device = String(form.get("device"));
-      const imageFile = form.get("imageFile");
+      const imageFileRaw = form.get("imageFile");
+      const imageFile = isFileLike(imageFileRaw) ? imageFileRaw : undefined;
 
       const result = await updatePost(session, id, {
         text,
-        device,
         imageFile,
       } as UpdatePostRequestDto);
       return handleSuccess(result);
