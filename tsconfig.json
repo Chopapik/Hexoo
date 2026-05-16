@@ -1,29 +1,4 @@
-{
-  "compilerOptions": {
-    "target": "ES2017",
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "jsx": "react-jsx",
-    "incremental": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-  },
-  "types": ["@types/mdx"],
-  "include": [
+"include": [
     "svgr.d.ts",
     "next-env.d.ts",
     "src/features/shared/types/mdx.d.ts",
@@ -35,11 +10,6 @@
   ],
   "exclude": [
     "node_modules",
-    "vitest.config.ts",
-    "src/test/setupVitest.ts",
-    "**/*.test.ts",
-    "**/*.test.tsx",
-    "**/*.spec.ts",
-    "**/*.spec.tsx"
+    "vitest.config.ts"
   ]
 }
