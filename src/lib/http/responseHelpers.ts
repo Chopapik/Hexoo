@@ -29,7 +29,13 @@ export function handleError<T>(
   status = 500,
   details?: unknown,
 ) {
-  //to do, logging success
-  console.warn(`message: ${message} details: ${details}`); //in future replaced by logging system
+  const payload = {
+    code,
+    status,
+    message,
+    data,
+    details,
+  };
+  console.error("[api-error]", payload); // in future replaced by logging system
   return sendError(code, status, data);
 }

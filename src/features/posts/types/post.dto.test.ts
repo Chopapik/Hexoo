@@ -7,6 +7,15 @@ import {
 } from "./post.dto";
 
 describe("CreatePostSchema", () => {
+  it("accepts image-only payload when youtubeUrl is missing", () => {
+    const imageFile = new File(["img"], "post.png", { type: "image/png" });
+    const result = CreatePostSchema.safeParse({
+      text: "",
+      imageFile,
+    });
+    expect(result.success).toBe(true);
+  });
+
   it("parses valid text-only payload", () => {
     const result = CreatePostSchema.safeParse({
       text: "Hello world",

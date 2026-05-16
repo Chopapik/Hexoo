@@ -177,7 +177,7 @@ const collectModerationFlags = async (
     addModerationSignal("text", textResult, flags);
   }
 
-  if (hasFile(imageFile) && imageFile instanceof File) {
+  if (hasFile(imageFile)) {
     const imageResult = await moderateImage(imageFile);
     addModerationSignal("image", imageResult, flags);
   }
