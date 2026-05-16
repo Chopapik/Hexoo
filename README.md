@@ -1,104 +1,37 @@
-# Hexoo
+<p align="center">
+  <img src="./src/features/shared/assets/Logo.svg" alt="Hexoo logo" />
+</p>
 
-![Hexoo logo](./logo-animated.svg)
+##
 
-Hexoo is a social platform built with Next.js and Supabase. The app includes authentication, posts, comments, likes, user profiles, moderation flows, and protected API routes.
+<p align="center">
+  <img src="./docs/images/header-preview.png" alt="Hexoo preview" width="70%" />
+</p>
 
-## Tech stack
+## What is Hexoo
 
-- **Framework:** Next.js 16 + React 19
-- **Backend / BaaS:** Supabase (Auth, Postgres, Storage)
-- **Client state:** Zustand
-- **Server / async state:** TanStack React Query
-- **Styling:** Tailwind CSS 4
-- **Validation:** Zod
-- **Security:** Google reCAPTCHA v3
-- **Moderation:** OpenAI moderation integration
+Hexoo is a fun, low-pressure posting app with a simple timeline and basic moderation.
+No algorithm, no feed manipulation, just a timeline and fast posting.
+
+## Core idea
+
+- Simple feed without recommendation algorithms
+- Quick posts and quick reactions
+- Basic moderation to block extreme or harmful content
 
 ## Main features
 
-- User authentication (login and registration)
-- Posts, comments, and likes
-- User profile pages
-- Admin and moderator areas
-- API protection and request throttling
-- Content moderation and security-focused server flows
+- User login and registration
+- Create posts with text, image, or YouTube link
+- Comments and reactions
+- User profiles
+- Moderator flow for content review
 
-## Prerequisites
+## Status
 
-Before running the project, make sure you have:
-
-- **Node.js** — latest LTS recommended
-- **npm**
-- A **Supabase project**
-- **Google reCAPTCHA v3** keys
-- An **OpenAI API key** for moderation features
-
-## Setup
-
-1. Install dependencies:
-
-```bash
-npm install
-```
-
-2. Copy the environment template:
-
-```bash
-cp .env.sample .env.local
-```
-
-3. Fill in the required values in `.env.local`.
-
-4. Start the development server:
-
-```bash
-npm run dev
-```
-
-## Available scripts
-
-```bash
-npm run dev
-npm run build
-npm run start
-npm run lint
-```
-
-## Environment variables
-
-Use `.env.sample` as the source of truth.
-
-```env
-# app
-NEXT_PUBLIC_API_URL=
-APP_ENV=development
-
-# supabase
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
-# optional alias used in some deployments
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
-SUPABASE_SERVICE_ROLE_KEY=
-SUPABASE_STORAGE_BUCKET=
-
-# google reCAPTCHA
-NEXT_PUBLIC_RECAPTCHA_SITE_KEY=
-RECAPTCHA_SECRET_KEY=
-
-# moderation
-OPENAI_API_KEY=
-```
-
-## Notes
-
-- `SUPABASE_SERVICE_ROLE_KEY` must only be used in server-side code.
-- Never expose private secrets to the client.
-- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` is optional and exists as a compatibility alias for some deployments.
-- Route access is guarded through `src/proxy.ts`.
-- Local Supabase seeds are split into `supabase/seeds/base.sql` (neutral fixtures) and `supabase/seeds/dev_admin.sql` (development admin account).
+Project status: active, developed in a slower maintenance mode.
 
 ## License
 
-This repository is source-available for viewing and reference only.
+This repository is source-available for viewing and reference only.  
 No permission is granted to copy, modify, redistribute, or use this code, in whole or in part, without prior written permission from the author.
