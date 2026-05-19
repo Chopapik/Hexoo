@@ -536,35 +536,46 @@ export const TRANSLATIONS = {
     "auth.completeProfile.placeholder": "enter a username",
     "auth.completeProfile.submit": "Complete registration",
     "auth.verify.title": "Check your inbox",
-    "auth.verify.copy": "We sent an activation link to your email address. Click it to confirm your account and finish registration.",
-    "auth.verify.help": "If you do not see the message, check Spam or other email filters.",
+    "auth.verify.copy":
+      "We sent an activation link to your email address. Click it to confirm your account and finish registration.",
+    "auth.verify.help":
+      "If you do not see the message, check Spam or other email filters.",
     "auth.verify.resend": "Send again",
     "auth.verify.emailRequired": "Enter an email address to resend the link.",
     "auth.verify.resendError": "Could not resend the email.",
     "auth.verify.resendSuccess": "Activation link has been sent again.",
     "auth.confirm.pending": "Confirming your email...",
     "auth.confirm.invalidLink": "The activation link is invalid.",
-    "auth.confirm.failed": "Could not confirm the email. The link may have expired.",
-    "auth.confirm.missingData": "Account data is missing. Try registering again.",
+    "auth.confirm.failed":
+      "Could not confirm the email. The link may have expired.",
+    "auth.confirm.missingData":
+      "Account data is missing. Try registering again.",
     "auth.confirm.confirmed": "Email confirmed.",
     "auth.confirm.activated": "Account activated.",
-    "auth.confirm.activationError": "An error occurred while activating the account.",
+    "auth.confirm.activationError":
+      "An error occurred while activating the account.",
     "auth.confirm.title": "Account activation",
     "auth.oauth.callbackTitle": "Logging in with Google…",
     "auth.oauth.callbackCopy": "You will be redirected in a moment.",
-    "auth.oauth.sessionFetchError": "Could not fetch the Google session. Try again.",
+    "auth.oauth.sessionFetchError":
+      "Could not fetch the Google session. Try again.",
     "auth.oauth.finalizeError": "An error occurred while finishing login.",
     "auth.oauth.expired": "OAuth session expired. Log in with Google again.",
-    "auth.oauth.googleExpired": "Google session expired. Log in with Google again.",
+    "auth.oauth.googleExpired":
+      "Google session expired. Log in with Google again.",
     "auth.oauth.googleLoginError": "Could not log in with Google.",
-    "auth.oauth.googleUnknownError": "An unknown error occurred while logging in with Google.",
+    "auth.oauth.googleUnknownError":
+      "An unknown error occurred while logging in with Google.",
     "auth.login.error": "Login error.",
     "auth.login.noToken": "Missing session token.",
     "auth.register.error": "Registration error.",
-    "auth.register.unknownError": "An unknown error occurred during registration.",
-    "auth.logout.partialError": "You were logged out locally, but the server logout could not be confirmed. Refresh the page if the issue returns.",
+    "auth.register.unknownError":
+      "An unknown error occurred during registration.",
+    "auth.logout.partialError":
+      "You were logged out locally, but the server logout could not be confirmed. Refresh the page if the issue returns.",
     "auth.session.expiredTitle": "Session expired",
-    "auth.session.expiredCopy": "Your session expired. Log in again to continue.",
+    "auth.session.expiredCopy":
+      "Your session expired. Log in again to continue.",
 
     "post.new": "New post",
     "post.edit": "Edit post",
@@ -577,12 +588,14 @@ export const TRANSLATIONS = {
     "post.youtubePlaceholder": "Paste a YouTube link...",
     "post.delete.confirm": "Yes, delete post",
     "post.delete.title": "Are you sure you want to delete this post?",
-    "post.delete.body": "This action cannot be undone. The post will be permanently deleted.",
+    "post.delete.body":
+      "This action cannot be undone. The post will be permanently deleted.",
     "post.nsfw.title": "NSFW content",
     "post.nsfw.body": "This post contains adult content.",
     "post.showComments": "Show comments",
     "post.backToPost": "Back to post",
-    "post.hiddenNsfw": "Some adult content is hidden according to your settings.",
+    "post.hiddenNsfw":
+      "Some adult content is hidden according to your settings.",
     "post.edited": "edited",
     "post.imageAlt": "Post image content",
     "post.loadError": "Could not load posts.",
@@ -592,10 +605,11 @@ export const TRANSLATIONS = {
     "post.options.report": "Report violation",
     "post.options.moderatorPanel": "Moderator panel",
     "post.options.deleteNow": "Delete immediately",
-    "post.createButton": "Add post",
+    "post.createButton": "What do you want to post today?",
     "post.toast.created": "Post added!",
     "post.toast.pending": "Post added and waiting for moderation review.",
-    "post.toast.nsfw": "Post added as NSFW. It will be marked as adult content in the feed.",
+    "post.toast.nsfw":
+      "Post added as NSFW. It will be marked as adult content in the feed.",
     "post.toast.updated": "Post updated!",
     "post.toast.deleted": "Post deleted.",
     "post.toast.deleteError": "Could not delete post.",
@@ -603,7 +617,8 @@ export const TRANSLATIONS = {
     "post.toast.reportSent": "Report has been sent for review.",
     "post.toast.alreadyReported": "You have already reported this post.",
     "post.toast.quarantined": "Post moved to quarantine.",
-    "post.toast.modActionError": "An error occurred during the moderator action.",
+    "post.toast.modActionError":
+      "An error occurred during the moderator action.",
 
     "comment.empty": "No comments",
     "comment.placeholder": "Write a comment...",
@@ -612,20 +627,22 @@ export const TRANSLATIONS = {
     "comment.add": "Add comment",
     "comment.addTitle": "Comment on {name}'s post",
     "comment.anonymous": "Anonymous",
-    "comment.replyingTo": "Replying to: \"{text}...\"",
+    "comment.replyingTo": 'Replying to: "{text}..."',
     "comment.writePlaceholder": "Write your comment...",
     "comment.edit": "Edit comment",
     "comment.editPlaceholder": "Edit comment...",
     "comment.delete.confirm": "Yes, delete comment",
     "comment.delete.title": "Are you sure you want to delete this comment?",
-    "comment.delete.body": "This action cannot be undone. The comment will be permanently deleted.",
+    "comment.delete.body":
+      "This action cannot be undone. The comment will be permanently deleted.",
     "comment.options.edit": "Edit",
     "comment.options.delete": "Delete",
     "comment.options.report": "Report violation",
     "comment.options.deleteNow": "Delete immediately",
     "comment.toast.added": "Comment added!",
     "comment.toast.pending": "Comment added and waiting for moderation review.",
-    "comment.toast.nsfw": "Comment added as NSFW. It will not be visible in the comments list with your current settings.",
+    "comment.toast.nsfw":
+      "Comment added as NSFW. It will not be visible in the comments list with your current settings.",
     "comment.toast.updated": "Comment updated!",
     "comment.toast.updateError": "Could not update comment.",
     "comment.toast.deleted": "Comment deleted.",
@@ -636,8 +653,10 @@ export const TRANSLATIONS = {
     "report.title": "Report violation",
     "report.postConfirm": "Report post",
     "report.commentConfirm": "Report comment",
-    "report.postDescription": "Help us understand what is wrong with this post. If it violates the rules, it will be removed.",
-    "report.commentDescription": "Help us understand what is wrong with this comment. If it violates the rules, it will be removed.",
+    "report.postDescription":
+      "Help us understand what is wrong with this post. If it violates the rules, it will be removed.",
+    "report.commentDescription":
+      "Help us understand what is wrong with this comment. If it violates the rules, it will be removed.",
     "report.detailsLabel": "Describe the report reason",
     "report.detailsPlaceholder": "Describe the problem...",
     "report.reason.spam": "This is spam",
@@ -654,14 +673,21 @@ export const TRANSLATIONS = {
     "moderation.deleteBanPost": "Delete post and ban author",
     "moderation.deleteBanComment": "Delete comment and ban author",
     "moderation.deleteAndBan": "Delete and ban",
-    "moderation.quarantinePostDescription": "The post will be hidden from other users until another review. Enter the reason for this decision. It will be saved in the database.",
-    "moderation.quarantineCommentDescription": "The comment will remain pending. Enter the reason for this decision. It will be saved in the database.",
-    "moderation.deletePostDescription": "The post will be permanently deleted. Enter the removal reason. It will be saved as justification for this decision.",
-    "moderation.deleteCommentDescription": "The comment will be permanently deleted. Enter the removal reason. It will be saved as justification for this decision.",
-    "moderation.deleteBanPostDescription": "The post will be permanently deleted and the author's account will be banned. Enter the reason. It will be saved in the database.",
-    "moderation.deleteBanCommentDescription": "The comment will be permanently deleted and the author's account will be banned. Enter the reason. It will be saved in the database.",
+    "moderation.quarantinePostDescription":
+      "The post will be hidden from other users until another review. Enter the reason for this decision. It will be saved in the database.",
+    "moderation.quarantineCommentDescription":
+      "The comment will remain pending. Enter the reason for this decision. It will be saved in the database.",
+    "moderation.deletePostDescription":
+      "The post will be permanently deleted. Enter the removal reason. It will be saved as justification for this decision.",
+    "moderation.deleteCommentDescription":
+      "The comment will be permanently deleted. Enter the removal reason. It will be saved as justification for this decision.",
+    "moderation.deleteBanPostDescription":
+      "The post will be permanently deleted and the author's account will be banned. Enter the reason. It will be saved in the database.",
+    "moderation.deleteBanCommentDescription":
+      "The comment will be permanently deleted and the author's account will be banned. Enter the reason. It will be saved in the database.",
     "moderation.reasonLabel": "Reason / Justification",
-    "moderation.reasonPlaceholder": "Enter decision justification or choose one from the list...",
+    "moderation.reasonPlaceholder":
+      "Enter decision justification or choose one from the list...",
     "moderation.reason.spam": "Spam / Unwanted content",
     "moderation.reason.hate": "Hate speech / Violence",
     "moderation.reason.nudity": "Nudity / Sexual content",
@@ -673,8 +699,10 @@ export const TRANSLATIONS = {
     "moderation.dashboard.reportedPosts": "Reported posts",
     "moderation.dashboard.reportedComments": "Reported comments",
     "moderation.dashboard.queue": "Pending queue",
-    "moderation.dashboard.postsSubtitle": "Posts flagged by AI or reported by users.",
-    "moderation.dashboard.commentsSubtitle": "Comments waiting for moderation, such as flags or reports.",
+    "moderation.dashboard.postsSubtitle":
+      "Posts flagged by AI or reported by users.",
+    "moderation.dashboard.commentsSubtitle":
+      "Comments waiting for moderation, such as flags or reports.",
     "moderation.dashboard.loaded": "Loaded",
     "moderation.dashboard.emptyPosts": "No posts need attention.",
     "moderation.dashboard.emptyComments": "No comments need attention.",
@@ -686,10 +714,12 @@ export const TRANSLATIONS = {
     "moderation.queue.banAuthorDeletePost": "Ban author and delete",
     "moderation.queue.approvePost": "Approve post",
     "moderation.queue.approveComment": "Approve comment",
-    "moderation.queue.thread": "Report thread · post context → reported comment",
+    "moderation.queue.thread":
+      "Report thread · post context → reported comment",
     "moderation.queue.parentPost": "Parent post · context",
     "moderation.queue.noPostText": "(post has no text content)",
-    "moderation.queue.parentMissing": "Parent post was not found in the database.",
+    "moderation.queue.parentMissing":
+      "Parent post was not found in the database.",
     "moderation.queue.reportedComment": "Reported comment",
     "moderation.queue.parentImageAlt": "Parent post image",
     "moderation.toast.postApproved": "Post approved",
@@ -705,53 +735,75 @@ export const TRANSLATIONS = {
     "settings.language.copy": "Choose the app interface language.",
     "settings.content.title": "Content",
     "settings.content.nsfwPosts": "Show NSFW content in posts",
-    "settings.content.nsfwPostsCopy": "Enable to automatically show posts marked as NSFW.",
+    "settings.content.nsfwPostsCopy":
+      "Enable to automatically show posts marked as NSFW.",
     "settings.content.nsfwComments": "Show NSFW content in comments",
-    "settings.content.nsfwCommentsCopy": "Enable to show comments marked as NSFW.",
+    "settings.content.nsfwCommentsCopy":
+      "Enable to show comments marked as NSFW.",
     "settings.account.title": "Account",
     "settings.account.passwordTitle": "Change password",
-    "settings.account.passwordCopy": "Update your password to improve account security.",
+    "settings.account.passwordCopy":
+      "Update your password to improve account security.",
     "settings.account.changePassword": "Change password",
     "settings.account.currentPassword": "Current password",
-    "settings.account.currentPasswordPlaceholder": "Enter your current password",
+    "settings.account.currentPasswordPlaceholder":
+      "Enter your current password",
     "settings.account.newPassword": "New password",
     "settings.account.newPasswordPlaceholder": "Minimum 8 characters",
     "settings.account.repeatPassword": "Repeat new password",
     "settings.account.repeatPasswordPlaceholder": "Confirm new password",
-    "settings.account.passwordChangedRelogin": "Password changed. Log in again.",
+    "settings.account.passwordChangedRelogin":
+      "Password changed. Log in again.",
     "settings.account.passwordChanged": "Password changed successfully!",
-    "settings.account.missingEmail": "Error: Missing user email address. Log in to perform this action.",
+    "settings.account.missingEmail":
+      "Error: Missing user email address. Log in to perform this action.",
     "settings.account.tooManyAttempts": "Too many attempts. Try again later.",
-    "settings.account.verifyOldPasswordError": "Could not verify the old password.",
+    "settings.account.verifyOldPasswordError":
+      "Could not verify the old password.",
     "settings.danger.title": "Danger zone",
     "settings.danger.logout": "Log out",
     "settings.danger.logoutCopy": "End the current session on this device.",
     "settings.danger.deleteAccount": "Delete account",
-    "settings.danger.deleteCopy": "Permanently delete the account and all related data. This action cannot be undone.",
+    "settings.danger.deleteCopy":
+      "Permanently delete the account and all related data. This action cannot be undone.",
     "settings.danger.deleteConfirm": "Yes, delete account",
-    "settings.danger.deleteTitle": "Are you sure you want to delete your account?",
-    "settings.danger.deleteBody": "This action cannot be undone. All your data, including posts, comments, and settings, will be permanently deleted.",
+    "settings.danger.deleteTitle":
+      "Are you sure you want to delete your account?",
+    "settings.danger.deleteBody":
+      "This action cannot be undone. All your data, including posts, comments, and settings, will be permanently deleted.",
     "settings.danger.deleteError": "Could not delete the account. Try again.",
     "settings.dithering.title": "Post dithering",
     "settings.dithering.enable": "Enable dithering",
-    "settings.dithering.copy": "Settings affect how images look in posts and previews.",
+    "settings.dithering.copy":
+      "Settings affect how images look in posts and previews.",
     "settings.dithering.summaryTitle": "Current configuration",
-    "settings.dithering.offSummary": "Disabled - images are shown without processing",
+    "settings.dithering.offSummary":
+      "Disabled - images are shown without processing",
     "settings.dithering.colorsSummary": "{count} colors, {palette}, {image}",
     "settings.dithering.modalTitle": "Post dithering settings",
-    "settings.dithering.instantSave": "Changes apply immediately and are saved locally.",
-    "settings.dithering.disableCopy": "Disable to use original images without processing.",
+    "settings.dithering.instantSave":
+      "Changes apply immediately and are saved locally.",
+    "settings.dithering.disableCopy":
+      "Disable to use original images without processing.",
     "settings.dithering.paletteSize": "Color count (palette size)",
-    "settings.dithering.paletteSizeDescription": "How many colors the final palette has.",
+    "settings.dithering.paletteSizeDescription":
+      "How many colors the final palette has.",
     "settings.dithering.processingWidth": "Processing width",
-    "settings.dithering.processingWidthDescription": "Working resolution before final scaling.",
+    "settings.dithering.processingWidthDescription":
+      "Working resolution before final scaling.",
     "settings.dithering.baseWidth": "Dither base width",
-    "settings.dithering.baseWidthDescription": "Micro-grid width that builds the pixel effect.",
-    "settings.dithering.paletteQuantizationDescription": "Palette generation algorithm.",
-    "settings.dithering.colorDistanceDescription": "Metric used to compare color similarity.",
-    "settings.dithering.imageQuantizationDescription": "How image pixels are mapped to the palette.",
-    "settings.dithering.errorDiffusionDescription": "Error propagation mode for diffusion algorithms.",
-    "settings.dithering.disabledHint": "This option has no effect for the selected image quantization mode.",
+    "settings.dithering.baseWidthDescription":
+      "Micro-grid width that builds the pixel effect.",
+    "settings.dithering.paletteQuantizationDescription":
+      "Palette generation algorithm.",
+    "settings.dithering.colorDistanceDescription":
+      "Metric used to compare color similarity.",
+    "settings.dithering.imageQuantizationDescription":
+      "How image pixels are mapped to the palette.",
+    "settings.dithering.errorDiffusionDescription":
+      "Error propagation mode for diffusion algorithms.",
+    "settings.dithering.disabledHint":
+      "This option has no effect for the selected image quantization mode.",
     "settings.dithering.reset": "Reset defaults",
     "settings.dithering.previewMissing": "Add the preview file here:",
     "settings.dithering.original": "Original",
@@ -759,14 +811,17 @@ export const TRANSLATIONS = {
     "settings.dithering.originalAlt": "Original image preview",
     "settings.dithering.afterAlt": "Dithered image preview",
     "settings.dithering.processing": "Processing preview...",
-    "settings.dithering.processingError": "Preview processing failed. Showing the image without modifications.",
-    "settings.dithering.preset": "Current preset: {enabled}, palette {palette}, processing {processing}px, base {base}px.",
+    "settings.dithering.processingError":
+      "Preview processing failed. Showing the image without modifications.",
+    "settings.dithering.preset":
+      "Current preset: {enabled}, palette {palette}, processing {processing}px, base {base}px.",
     "settings.dithering.enabled": "enabled",
     "settings.dithering.disabled": "disabled",
     "settings.dithering.defaults": "Defaults: {palette} / {image}.",
     "settings.appearance.title": "Appearance",
     "settings.appearance.theme": "App theme",
-    "settings.appearance.copy": "Adjust the interface appearance to your preferences (Light / Dark).",
+    "settings.appearance.copy":
+      "Adjust the interface appearance to your preferences (Light / Dark).",
 
     "profile.edit": "edit profile",
     "profile.joined": "joined",
@@ -786,7 +841,8 @@ export const TRANSLATIONS = {
     "profile.changeAvatarHelp": "Click to change profile picture",
     "profile.username": "Username",
     "profile.usernamePlaceholder": "Your public name",
-    "profile.usernameHelp": "This name will be visible publicly. You can use a nickname or your first name.",
+    "profile.usernameHelp":
+      "This name will be visible publicly. You can use a nickname or your first name.",
     "profile.chars": "{count} / 30 characters",
     "profile.updated": "Profile updated!",
 
@@ -822,11 +878,13 @@ export const TRANSLATIONS = {
     "admin.selectRole": "- Select role -",
     "admin.security": "Security",
     "admin.setNewPassword": "Set new password",
-    "admin.passwordHelp": "Leave empty if you do not want to change the user's password.",
+    "admin.passwordHelp":
+      "Leave empty if you do not want to change the user's password.",
     "admin.changePassword": "Change password",
     "admin.newUser": "New user",
     "admin.createAccount": "Create account",
-    "admin.createCopy": "Create an account and configure access for the new user.",
+    "admin.createCopy":
+      "Create an account and configure access for the new user.",
     "admin.passwordPlaceholder": "Enter password...",
     "admin.activityLog": "Activity log",
     "admin.latestEvents": "Latest system events",
@@ -845,11 +903,13 @@ export const TRANSLATIONS = {
     "error.404.title": "Error 404",
     "error.404.copy": "Resource not found.",
     "error.global.title": "Critical Error",
-    "error.global.copy": "Could not load the application. There is probably a problem on our side.",
+    "error.global.copy":
+      "Could not load the application. There is probably a problem on our side.",
     "error.global.retry": "Try again",
     "error.global.reload": "Refresh the whole page",
     "recaptcha.error": "Error connecting to reCAPTCHA",
-    "recaptcha.notReady": "The security system is not ready. Try refreshing the page.",
+    "recaptcha.notReady":
+      "The security system is not ready. Try refreshing the page.",
     "recaptcha.verifyError": "Verification error. Try again.",
     "ui.showPassword": "Show password",
     "ui.hidePassword": "Hide password",
@@ -864,17 +924,21 @@ export const TRANSLATIONS = {
 
     "about.hero.titleStart": "just a",
     "about.hero.titleAccent": "network.",
-    "about.hero.copy": "let someone read what you wrote. or let them not read it. either way, you get it out.",
+    "about.hero.copy":
+      "let someone read what you wrote. or let them not read it. either way, you get it out.",
     "about.hero.note": "(yes, this is a shitpost site. built seriously.)",
     "about.hero.cta": "maybe add a post?",
     "about.what.eyebrow": "what is this?",
     "about.what.card1Strong": "hexoo is a small place on the internet.",
-    "about.what.card1": "you write a post, someone likes it (or not), someone comments (or not). that's it.",
-    "about.what.card2": "no algorithm, no ads, no mission to save the world. a simple network designed with care for",
+    "about.what.card1":
+      "you write a post, someone likes it (or not), someone comments (or not). that's it.",
+    "about.what.card2":
+      "no algorithm, no ads, no mission to save the world. a simple network designed with care for",
     "about.what.shitposts": "shitposts",
     "about.what.card2End": "short thoughts and internet nonsense.",
     "about.what.card3": "built on",
-    "about.what.card3End": "because it had to run on something. lightly moderated (openai is somewhere in there). works surprisingly well.",
+    "about.what.card3End":
+      "because it had to run on something. lightly moderated (openai is somewhere in there). works surprisingly well.",
     "about.features.eyebrow": "what's here",
     "about.features.title": "six things.",
     "about.features.titleMuted": "end of list.",

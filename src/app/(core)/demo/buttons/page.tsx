@@ -28,7 +28,7 @@ export default function ButtonsDemoPage() {
           Button Component Demo
         </h1>
         <p className="text-text-neutral mb-8 font-sans">
-          Wszystkie warianty i rozmiary przycisków z Button.tsx
+          All button variants and sizes from Button.tsx
         </p>
 
         {/* Variants Section */}
@@ -46,7 +46,7 @@ export default function ButtonsDemoPage() {
                 {/* Text buttons with different sizes */}
                 <div className="space-y-4">
                   <h3 className="text-lg font-medium text-text-neutral font-sans">
-                    Z tekstem
+                    With text
                   </h3>
                   <div className="flex flex-wrap items-center gap-4">
                     {sizes
@@ -72,7 +72,7 @@ export default function ButtonsDemoPage() {
                 {/* Icon-only buttons */}
                 <div className="space-y-4">
                   <h3 className="text-lg font-medium text-text-neutral font-sans">
-                    Tylko ikona
+                    Icon only
                   </h3>
                   <div className="flex flex-wrap items-center gap-4">
                     {["icon", "iconSm"].map((size) => (
@@ -96,7 +96,7 @@ export default function ButtonsDemoPage() {
                 {/* Buttons with left icon */}
                 <div className="space-y-4">
                   <h3 className="text-lg font-medium text-text-neutral font-sans">
-                    Z ikoną po lewej
+                    With left icon
                   </h3>
                   <div className="flex flex-wrap items-center gap-4">
                     {sizes
@@ -123,7 +123,7 @@ export default function ButtonsDemoPage() {
                 {/* Buttons with right icon */}
                 <div className="space-y-4">
                   <h3 className="text-lg font-medium text-text-neutral font-sans">
-                    Z ikoną po prawej
+                    With right icon
                   </h3>
                   <div className="flex flex-wrap items-center gap-4">
                     {sizes
@@ -150,7 +150,7 @@ export default function ButtonsDemoPage() {
                 {/* Buttons with both icons */}
                 <div className="space-y-4">
                   <h3 className="text-lg font-medium text-text-neutral font-sans">
-                    Z ikonami po obu stronach
+                    With icons on both sides
                   </h3>
                   <div className="flex flex-wrap items-center gap-4">
                     {sizes
@@ -178,7 +178,7 @@ export default function ButtonsDemoPage() {
                 {/* Loading state */}
                 <div className="space-y-4">
                   <h3 className="text-lg font-medium text-text-neutral font-sans">
-                    Stan ładowania
+                    Loading state
                   </h3>
                   <div className="flex flex-wrap items-center gap-4">
                     {sizes
@@ -205,7 +205,7 @@ export default function ButtonsDemoPage() {
                 {/* Disabled state */}
                 <div className="space-y-4">
                   <h3 className="text-lg font-medium text-text-neutral font-sans">
-                    Wyłączony
+                    Disabled
                   </h3>
                   <div className="flex flex-wrap items-center gap-4">
                     {sizes
@@ -236,21 +236,21 @@ export default function ButtonsDemoPage() {
         {/* Interactive Examples */}
         <div className="mt-16 space-y-6 border-t border-primary-neutral-stroke-default pt-8">
           <h2 className="text-2xl font-semibold text-text-main font-sans">
-            Przykłady interaktywne
+            Interactive examples
           </h2>
           <div className="flex flex-wrap gap-4">
             <Button
               variant="default"
               size="md"
-              text="Kliknij mnie"
-              onClick={() => alert("Kliknięto!")}
+              text="Click me"
+              onClick={() => alert("Clicked!")}
             />
             <Button
               variant="danger"
               size="md"
-              text="Usuń"
+              text="Delete"
               rightIcon={<X className="size-4" />}
-              onClick={() => alert("Usuwanie...")}
+              onClick={() => alert("Deleting...")}
             />
           </div>
         </div>

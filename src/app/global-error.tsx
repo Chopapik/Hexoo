@@ -1,6 +1,7 @@
 "use client";
 
 import Button from "@/features/shared/components/ui/Button";
+import { useI18n } from "@/i18n/useI18n";
 
 export default function GlobalError({
   error,
@@ -9,8 +10,10 @@ export default function GlobalError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const { lang, t } = useI18n();
+
   return (
-    <html lang="pl">
+    <html lang={lang}>
       <body className="bg-page-background text-text-main flex items-center justify-center min-h-screen p-4">
         <div className="max-w-md w-full glass-card p-8 text-center rounded-2xl shadow-2xl border border-primary-neutral-stroke-default">
           <div className="mb-6">
@@ -34,11 +37,10 @@ export default function GlobalError({
             </div>
 
             <h2 className="text-3xl font-bold font-sans text-red-500 mb-2">
-              Krytyczny Błąd
+              {t("error.global.title")}
             </h2>
             <p className="text-text-neutral">
-              Nie udało się załadować aplikacji. Prawdopodobnie wystąpił problem
-              z serwerem.
+              {t("error.global.copy")}
             </p>
           </div>
 
@@ -53,7 +55,7 @@ export default function GlobalError({
 
           <Button
             onClick={() => reset()}
-            text="Spróbuj ponownie"
+            text={t("error.global.retry")}
             size="lg"
             variant="default"
             className="w-full"
@@ -63,7 +65,7 @@ export default function GlobalError({
             onClick={() => window.location.reload()}
             className="w-full mt-3 py-2 px-4 text-text-neutral hover:text-text-main text-sm transition-colors font-medium"
           >
-            Odśwież całą stronę
+            {t("error.global.reload")}
           </button>
         </div>
       </body>
