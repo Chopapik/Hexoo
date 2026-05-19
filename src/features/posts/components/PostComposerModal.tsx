@@ -9,6 +9,7 @@ import Modal from "@/features/shared/components/layout/Modal";
 import Button from "@/features/shared/components/ui/Button";
 import RemoveImageButton from "@/features/shared/components/ui/RemoveImageButton";
 import { POST_MAX_CHARS } from "../types/post.dto";
+import { useI18n } from "@/i18n/useI18n";
 
 interface PostComposerModalProps {
   isOpen: boolean;
@@ -65,6 +66,7 @@ export default function PostComposerModal({
   youtubeUrl,
   youtubeUrlError,
 }: PostComposerModalProps) {
+  const { t } = useI18n();
   const hasText = textValue.trim().length > 0;
   const currentLength = textValue.length;
 
@@ -210,7 +212,7 @@ export default function PostComposerModal({
                     onYouTubeDraftChange?.();
                   }}
                   onKeyDown={handleYouTubeKeyDown}
-                  placeholder="Wklej link do YouTube..."
+                  placeholder={t("post.youtubePlaceholder")}
                   autoFocus
                   className="flex-1 bg-transparent text-text-main placeholder:text-text-neutral/50 text-sm outline-none"
                 />
@@ -218,7 +220,7 @@ export default function PostComposerModal({
                   type="button"
                   onClick={() => void handleYouTubeConfirm()}
                   disabled={!youtubeInputValue.trim()}
-                  text="Dodaj"
+                  text={t("common.add")}
                   size="sm"
                   variant="default"
                 />
@@ -228,7 +230,7 @@ export default function PostComposerModal({
                     setYoutubeInputValue("");
                     setShowYouTubeInput(false);
                   }}
-                  text="Anuluj"
+                  text={t("common.cancel")}
                   size="sm"
                   variant="ghost"
                 />

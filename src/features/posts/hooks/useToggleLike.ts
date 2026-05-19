@@ -2,8 +2,10 @@ import fetchClient from "@/lib/fetchClient";
 import { InfiniteData, useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { PublicPostResponseDto } from "../types/post.dto";
+import { useI18n } from "@/i18n/useI18n";
 
 export function useToggleLike() {
+  const { t } = useI18n();
   const queryClient = useQueryClient();
 
   const likeMutation = useMutation({
@@ -44,7 +46,7 @@ export function useToggleLike() {
       if (context?.previousPosts) {
         queryClient.setQueryData(["posts"], context.previousPosts);
       }
-      toast.error("Nie udało się polubić posta");
+      toast.error(t("post.toast.likeError"));
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["posts"] });

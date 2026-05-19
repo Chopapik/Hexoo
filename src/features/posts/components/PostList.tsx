@@ -5,6 +5,7 @@ import type { PublicPostResponseDto } from "../types/post.dto";
 import { PostCard } from "./PostCard";
 import usePosts from "../hooks/usePosts";
 import { AppLoader } from "@/features/shared/components/ui/AppLoader";
+import { useI18n } from "@/i18n/useI18n";
 
 type PostListProps = {
   className?: string;
@@ -14,6 +15,7 @@ const joinClassNames = (className?: string) =>
   ["w-full", className].filter(Boolean).join(" ");
 
 export default function PostList({ className = "" }: PostListProps) {
+  const { t } = useI18n();
   const {
     data,
     isLoading,
@@ -101,7 +103,7 @@ export default function PostList({ className = "" }: PostListProps) {
   if (isError) {
     return (
       <div className="w-full text-center py-10 text-red-500 font-sans">
-        Nie udało się załadować postów.
+        {t("post.loadError")}
       </div>
     );
   }
@@ -128,7 +130,7 @@ export default function PostList({ className = "" }: PostListProps) {
 
         {!hasNextPage && data && data.pages.length > 0 && (
           <div className="text-center text-text-neutral text-sm py-8 font-sans opacity-50">
-            konec
+            {t("post.end")}
           </div>
         )}
       </div>

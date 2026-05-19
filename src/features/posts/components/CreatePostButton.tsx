@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
+import { useI18n } from "@/i18n/useI18n";
 
 const GEOMETRY_OPACITIES = [0.04, 0.09, 0.14, 0.19];
 
@@ -19,6 +20,7 @@ export default function CreatePostButton({
   className,
   textClassName,
 }: CreatePostButtonProps) {
+  const { t } = useI18n();
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -135,7 +137,7 @@ export default function CreatePostButton({
 
       <div className={rowClassName}>
         <div className={labelClassName}>
-          {text !== undefined ? text : <b>Dodaj post głubcze</b>}
+          {text !== undefined ? text : <b>{t("post.createButton")}</b>}
         </div>
         {showIcon ? (
           <div data-svg-wrapper>

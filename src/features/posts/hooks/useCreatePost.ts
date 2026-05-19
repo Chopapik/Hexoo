@@ -6,6 +6,7 @@ import {
 } from "../types/post.dto";
 import toast from "react-hot-toast";
 import { useAppStore } from "@/lib/store/store";
+import { useI18n } from "@/i18n/useI18n";
 
 const MODERATION_TOAST_DURATION = 7000;
 
@@ -13,6 +14,7 @@ export default function useCreatePost(
   successCallBack?: (data?: CreatePostResponseDto) => void,
   errorCallBack?: (error?: Error) => void,
 ) {
+  const { t } = useI18n();
   const queryClient = useQueryClient();
   const showNSFWPosts = useAppStore((s) => s.settings.showNSFWPosts);
 
@@ -23,20 +25,19 @@ export default function useCreatePost(
 
     onSuccess: async (data) => {
       if (data?.isPending) {
-        toast.success("Post dodany i czeka na weryfikację moderacji.", {
+        toast.success(t("post.toast.pending"), {
           duration: MODERATION_TOAST_DURATION,
         });
       } else if (data?.isNSFW) {
         if (showNSFWPosts) {
-          toast.success("Post dodany!");
+          toast.success(t("post.toast.created"));
         } else {
-          toast.success(
-            "Post dodany jako NSFW. W feedzie będzie oznaczony jako treść dla dorosłych.",
-            { duration: MODERATION_TOAST_DURATION },
-          );
+          toast.success(t("post.toast.nsfw"), {
+            duration: MODERATION_TOAST_DURATION,
+          });
         }
       } else {
-        toast.success("Post dodany!");
+        toast.success(t("post.toast.created"));
       }
 
       await queryClient.invalidateQueries({

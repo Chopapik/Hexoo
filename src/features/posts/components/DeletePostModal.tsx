@@ -3,6 +3,7 @@
 import Modal from "@/features/shared/components/layout/Modal";
 import ModalFooter from "@/features/shared/components/layout/ModalFooter";
 import useDeletePost from "../hooks/useDeletePost";
+import { useI18n } from "@/i18n/useI18n";
 
 interface DeletePostModalProps {
   isOpen: boolean;
@@ -15,13 +16,14 @@ export default function DeletePostModal({
   onClose,
   postId,
 }: DeletePostModalProps) {
+  const { t } = useI18n();
   const { deletePost, isPending } = useDeletePost(postId, () => {
     onClose();
   });
 
   const footerContent = (
     <ModalFooter
-      confirmText="Tak, usuń post"
+      confirmText={t("post.delete.confirm")}
       onCancel={onClose}
       onConfirm={() => deletePost()}
       isPending={isPending}
@@ -33,12 +35,12 @@ export default function DeletePostModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Czy na pewno chcesz usunąć post?"
+      title={t("post.delete.title")}
       footer={footerContent}
     >
       <div className="flex flex-col gap-4 p-6">
         <p className="text-text-neutral">
-          Ta operacja jest nieodwracalna. Post zostanie trwale usunięty.
+          {t("post.delete.body")}
         </p>
       </div>
     </Modal>

@@ -5,6 +5,7 @@ import { PostMedia } from "./PostMedia";
 import { ExpandableImageThumbnail } from "@/features/shared/components/media/ExpandableImageThumbnail";
 import { PostYouTubeEmbed } from "./PostYouTubeEmbed";
 import { extractYouTubeVideoIds } from "../utils/youtubeUtils";
+import { useI18n } from "@/i18n/useI18n";
 
 type PostBodyProps = {
   post: PublicPostResponseDto;
@@ -20,6 +21,7 @@ export const PostBody = ({
   moderationThumbnailImage = false,
   onImageReadyChange,
 }: PostBodyProps) => {
+  const { t } = useI18n();
   const youtubeVideoIds = useMemo(
     () =>
       post.youtubeUrl
@@ -44,7 +46,7 @@ export const PostBody = ({
             )}
             {post.isEdited && (
               <span className="text-[10px] font-medium text-text-neutral/60 italic">
-                edytowano
+                {t("post.edited")}
               </span>
             )}
           </div>
@@ -70,7 +72,7 @@ export const PostBody = ({
           (moderationThumbnailImage ? (
             <ExpandableImageThumbnail
               src={post.imageUrl}
-              alt="Treść obrazkowa posta"
+              alt={t("post.imageAlt")}
             />
           ) : (
             <PostMedia

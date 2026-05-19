@@ -18,6 +18,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import fetchClient from "@/lib/fetchClient";
 import toast from "react-hot-toast";
 import type { PublicPostResponseDto } from "../types/post.dto";
+import { useI18n } from "@/i18n/useI18n";
 
 type ModActionType = "quarantine" | "reject" | null;
 
@@ -30,6 +31,7 @@ export default function PostOptions({
   authorId: string;
   post: PublicPostResponseDto;
 }) {
+  const { t } = useI18n();
   const [pendingAction, setPendingAction] = useState<ModActionType>(null);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -59,14 +61,14 @@ export default function PostOptions({
     onSuccess: (_, { action }) => {
       const msg =
         action === "reject"
-          ? "Post został usunięty."
-          : "Post przeniesiony do kwarantanny.";
+          ? t("post.toast.deleted")
+          : t("post.toast.quarantined");
       toast.success(msg);
       queryClient.invalidateQueries({ queryKey: ["posts"] });
       setPendingAction(null);
     },
     onError: () => {
-      toast.error("Wystąpił błąd podczas akcji moderatora.");
+      toast.error(t("post.toast.modActionError"));
     },
   });
 
@@ -144,7 +146,7 @@ export default function PostOptions({
                           : "text-text-neutral"
                       } group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors`}
                     >
-                      <BsPencil /> Edytuj post
+                      <BsPencil /> {t("post.options.edit")}
                     </button>
                   )}
                 </Menu.Item>
@@ -157,7 +159,7 @@ export default function PostOptions({
                         active ? "bg-red-500/10 text-red-400" : "text-red-500"
                       } group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors`}
                     >
-                      <BsTrash /> Usuń post
+                      <BsTrash /> {t("post.options.delete")}
                     </button>
                   )}
                 </Menu.Item>
@@ -178,7 +180,7 @@ export default function PostOptions({
                           : "text-text-neutral"
                       } group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors`}
                     >
-                      <BsFlag /> Zgłoś naruszenie
+                      <BsFlag /> {t("post.options.report")}
                     </button>
                   )}
                 </Menu.Item>
@@ -189,7 +191,7 @@ export default function PostOptions({
               <div className="p-1 border-t border-white/10">
                 {!isAuthor && (
                   <div className="px-2 py-1.5 text-[10px] text-text-neutral/50 uppercase tracking-widest font-bold">
-                    Panel Moderatora
+                    {t("post.options.moderatorPanel")}
                   </div>
                 )}
 
@@ -204,7 +206,7 @@ export default function PostOptions({
                           : "text-yellow-500"
                       } group flex w-full items-center gap-3 rounded-lg px-2 py-2 text-sm transition-colors`}
                     >
-                      <BsShieldExclamation /> Kwarantanna
+                      <BsShieldExclamation /> {t("post.options.quarantine")}
                     </button>
                   )}
                 </Menu.Item>
@@ -218,7 +220,7 @@ export default function PostOptions({
                         active ? "bg-red-500/10 text-red-400" : "text-red-500"
                       } group flex w-full items-center gap-3 rounded-lg px-2 py-2 text-sm transition-colors`}
                     >
-                      <BsTrash /> Usuń natychmiast
+                      <BsTrash /> {t("post.options.deleteNow")}
                     </button>
                   )}
                 </Menu.Item>

@@ -2,6 +2,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useImagePicker } from "@/features/shared/hooks/useImagePicker";
 import { CreatePostRequestDto, CreatePostSchema } from "../types/post.dto";
+import type { z } from "zod";
+
+type CreatePostFormInput = z.input<typeof CreatePostSchema>;
 
 export default function useCreatePostForm() {
   const {
@@ -15,7 +18,7 @@ export default function useCreatePostForm() {
     formState,
     watch,
     trigger,
-  } = useForm<CreatePostRequestDto>({
+  } = useForm<CreatePostFormInput, unknown, CreatePostRequestDto>({
     resolver: zodResolver(CreatePostSchema),
     mode: "onSubmit",
     defaultValues: {
@@ -49,7 +52,7 @@ export default function useCreatePostForm() {
     clearErrors("imageFile");
   };
 
-  const checkFormat = (rawData: CreatePostRequestDto) => {
+  const checkFormat = (rawData: CreatePostFormInput | CreatePostRequestDto) => {
     const values = rawData ?? getValues();
     const imageFile: File | undefined = values.imageFile;
     const text: string = values.text ?? "";

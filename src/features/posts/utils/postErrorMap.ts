@@ -1,7 +1,7 @@
 import { ValidationStatus } from "@/features/shared/types/validation.type";
-import { getErrorEntry } from "@/i18n/errorCatalog";
+import { getErrorEntry, type Lang } from "@/i18n/errorCatalog";
 
-export function parseErrorMessages(errorCode: string):
+export function parseErrorMessages(errorCode: string, lang: Lang = "pl"):
   | {
       type: ValidationStatus;
       text: string;
@@ -24,15 +24,14 @@ export function parseErrorMessages(errorCode: string):
   ) {
     return {
       type,
-      text: entry.message.pl,
+      text: entry.message[lang],
       field,
     };
   }
 
   return {
     type,
-    text: entry.message.pl,
+    text: entry.message[lang],
     field: "root",
   };
 }
-

@@ -1,16 +1,20 @@
+"use client";
+
 import React from "react";
 import type { PublicPostResponseDto } from "../types/post.dto";
 import { Avatar } from "@/features/shared/components/ui/Avatar";
-import "dayjs/locale/pl";
 import PostOptions from "./PostOptions";
 import Link from "next/link";
 import { formatSmartDate } from "@/features/shared/utils/dateUtils";
+import { useI18n } from "@/i18n/useI18n";
 
 type PostMetaProps = {
   post: PublicPostResponseDto;
 };
 
 export const PostMeta = ({ post }: PostMetaProps) => {
+  const { lang } = useI18n();
+
   const handleLinkClick = (e: React.MouseEvent) => {
     e.stopPropagation();
   };
@@ -41,7 +45,7 @@ export const PostMeta = ({ post }: PostMetaProps) => {
           </div>
           <div className="inline-flex justify-center items-center gap-1">
             <div className="justify-start text-text-neutral text-[11px] sm:text-xs font-normal font-sans">
-              {formatSmartDate(post.createdAt)}
+              {formatSmartDate(post.createdAt, lang)}
             </div>
           </div>
         </div>

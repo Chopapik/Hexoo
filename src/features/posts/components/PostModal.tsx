@@ -11,6 +11,7 @@ import { useAppStore } from "@/lib/store/store";
 import { isAsciiArt } from "../utils/asciiDetector";
 import { PublicPostResponseDto } from "../types/post.dto";
 import { PostNsfwNotice } from "./PostNsfwNotice";
+import { useI18n } from "@/i18n/useI18n";
 
 interface PostModalProps {
   post: PublicPostResponseDto;
@@ -25,6 +26,7 @@ export const PostModal = ({
   onClose,
   revealNSFW,
 }: PostModalProps) => {
+  const { t } = useI18n();
   const user = useAppStore((s) => s.auth.user);
   const showNSFWPosts = useAppStore((s) => s.settings.showNSFWPosts);
   const showNSFWComments = useAppStore((s) => s.settings.showNSFWComments);
@@ -125,7 +127,7 @@ export const PostModal = ({
 
               <div className="mt-auto shrink-0 p-3 sm:p-4">
                 <Button
-                  text="Pokaż komentarze"
+                  text={t("post.showComments")}
                   size="xl"
                   variant="secondary"
                   className="border border-primary-neutral-stroke-default/60 text-sm font-medium"
@@ -139,7 +141,7 @@ export const PostModal = ({
             <div className="flex min-h-0 flex-1 flex-col lg:hidden">
               <div className="shrink-0 border-b border-primary-neutral-stroke-default/60 p-3 sm:p-4">
                 <Button
-                  text="Wróć do posta"
+                  text={t("post.backToPost")}
                   size="xl"
                   variant="secondary"
                   className="border border-primary-neutral-stroke-default/60 text-sm font-medium"
@@ -151,8 +153,7 @@ export const PostModal = ({
                 <CommentList comments={visibleComments} isLoading={isLoading} />
                 {hasHiddenNSFWComments && (
                   <p className="mt-3 text-center text-xs text-text-muted">
-                    Część treści dla dorosłych jest ukryta zgodnie z
-                    ustawieniami.
+                    {t("post.hiddenNsfw")}
                   </p>
                 )}
               </div>
@@ -182,7 +183,7 @@ export const PostModal = ({
               <CommentList comments={visibleComments} isLoading={isLoading} />
               {hasHiddenNSFWComments && (
                 <p className="mb-3 text-center text-xs text-text-muted text-text-neutral">
-                  Część treści dla dorosłych jest ukryta zgodnie z ustawieniami.
+                  {t("post.hiddenNsfw")}
                 </p>
               )}
             </div>
