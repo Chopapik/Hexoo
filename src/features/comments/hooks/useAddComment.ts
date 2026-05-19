@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 import { parseCommentErrorMessages } from "../utils/commentErrorMap";
 import { ApiError } from "@/lib/AppError";
 import { useAppStore } from "@/lib/store/store";
+import { useI18n } from "@/i18n/useI18n";
 
 const MODERATION_TOAST_DURATION = 7000;
 
@@ -15,6 +16,7 @@ export default function useAddComment(
   onSuccessCallback?: () => void,
   onErrorCallback?: (errorCode: string) => void,
 ) {
+  const { lang, t } = useI18n();
   const queryClient = useQueryClient();
   const showNSFWComments = useAppStore((s) => s.settings.showNSFWComments);
 
@@ -35,22 +37,19 @@ export default function useAddComment(
           ? String(variables.get("postId") || "")
           : String(variables.postId || "");
       if (result?.isPending) {
-        toast.success("Komentarz dodany i czeka na weryfikację moderacji.", {
+        toast.success(t("comment.toast.pending"), {
           duration: MODERATION_TOAST_DURATION,
         });
       } else if (result?.isNSFW) {
         if (showNSFWComments) {
-          toast.success("Komentarz dodany!");
+          toast.success(t("comment.toast.added"));
         } else {
-          toast.success(
-            "Komentarz dodany jako NSFW. Nie będzie widoczny na liście komentarzy przy obecnych ustawieniach.",
-            {
-              duration: MODERATION_TOAST_DURATION,
-            },
-          );
+          toast.success(t("comment.toast.nsfw"), {
+            duration: MODERATION_TOAST_DURATION,
+          });
         }
       } else {
-        toast.success("Komentarz dodany!");
+        toast.success(t("comment.toast.added"));
       }
 
       queryClient.invalidateQueries({
@@ -63,13 +62,13 @@ export default function useAddComment(
     onError: (error: ApiError) => {
       const code = error.code;
 
-      const parsedError = parseCommentErrorMessages(code);
+      const parsedError = parseCommentErrorMessages(code, lang);
 
       if (parsedError && onErrorCallback) {
         if (code) {
           onErrorCallback(code);
         } else {
-          toast.error("Nie udało się dodać komentarza.");
+          toast.error(t("comment.toast.addError"));
         }
       }
     },

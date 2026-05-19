@@ -11,6 +11,7 @@ import warningIconUrl from "@/features/shared/assets/icons/warning.svg?url";
 import Image from "next/image";
 import RemoveImageButton from "@/features/shared/components/ui/RemoveImageButton";
 import { PaperclipIcon } from "@/features/posts/icons/PaperclipIcon";
+import { useI18n } from "@/i18n/useI18n";
 
 interface AddCommentModalProps {
   post: PublicPostResponseDto;
@@ -23,6 +24,7 @@ export default function AddCommentModal({
   isOpen,
   onClose,
 }: AddCommentModalProps) {
+  const { lang, t } = useI18n();
   const {
     register,
     handleSubmit,
@@ -40,8 +42,9 @@ export default function AddCommentModal({
 
   const textError = parseCommentErrorMessages(
     errors.text?.message ?? errors.imageFile?.message ?? "",
+    lang,
   );
-  const rootError = parseCommentErrorMessages(errors.root?.message ?? "");
+  const rootError = parseCommentErrorMessages(errors.root?.message ?? "", lang);
 
   const { addComment, isPending } = useAddComment(
     () => {
@@ -62,14 +65,16 @@ export default function AddCommentModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={`Skomentuj post użytkownika: ${post.userName || "Anonim"}`}
+      title={t("comment.addTitle", {
+        name: post.userName || t("comment.anonymous"),
+      })}
     >
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="p-6 flex flex-col gap-6 rounded-xl"
       >
         <div className="bg-secondary-neutral-background-default p-3 rounded-lg text-text-neutral text-sm italic border border-primary-neutral-stroke-default">
-          Odpisujesz na: "{post.text.substring(0, 100)}..."
+          {t("comment.replyingTo", { text: post.text.substring(0, 100) })}
         </div>
 
         <div className="flex flex-col gap-2">
@@ -77,7 +82,7 @@ export default function AddCommentModal({
             <div className="relative w-fit group animate-in fade-in zoom-in-95 duration-200">
               <img
                 src={imagePreview}
-                alt="Podgląd zdjęcia komentarza"
+                alt={t("comment.previewAlt")}
                 width={200}
                 height={200}
                 className="rounded-xl border border-primary-neutral-stroke-default object-cover max-h-48 w-auto"
@@ -93,7 +98,7 @@ export default function AddCommentModal({
 
           <textarea
             {...register("text")}
-            placeholder="Wpisz swój komentarz..."
+            placeholder={t("comment.writePlaceholder")}
             className={`w-full p-3 bg-transparent border rounded-lg text-text-main placeholder:text-text-neutral focus:outline-none resize-none h-32 transition-all ${
               textError
                 ? "border-red-500 focus:border-red-500"
@@ -135,7 +140,7 @@ export default function AddCommentModal({
           <Button
             type="submit"
             isLoading={isLoading}
-            text="Dodaj komentarz"
+            text={t("comment.add")}
             variant="default"
             size="md"
           />

@@ -3,6 +3,7 @@
 import type { PublicCommentResponseDto } from "../types/comment.dto";
 import { CommentItem } from "./CommentItem";
 import { AppLoader } from "@/features/shared/components/ui/AppLoader";
+import { useI18n } from "@/i18n/useI18n";
 
 interface CommentListProps {
   comments: PublicCommentResponseDto[];
@@ -10,6 +11,7 @@ interface CommentListProps {
 }
 
 export const CommentList = ({ comments, isLoading }: CommentListProps) => {
+  const { t } = useI18n();
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-8">
@@ -22,7 +24,7 @@ export const CommentList = ({ comments, isLoading }: CommentListProps) => {
     return (
       <div className="flex flex-col items-center justify-center py-8 text-center">
         <p className="text-text-neutral text-sm font-sans">
-          Brak komentarzy
+          {t("comment.empty")}
         </p>
       </div>
     );

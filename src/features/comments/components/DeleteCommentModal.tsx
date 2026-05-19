@@ -3,6 +3,7 @@
 import Modal from "@/features/shared/components/layout/Modal";
 import ModalFooter from "@/features/shared/components/layout/ModalFooter";
 import useDeleteComment from "../hooks/useDeleteComment";
+import { useI18n } from "@/i18n/useI18n";
 
 interface DeleteCommentModalProps {
   isOpen: boolean;
@@ -17,6 +18,7 @@ export default function DeleteCommentModal({
   commentId,
   postId,
 }: DeleteCommentModalProps) {
+  const { t } = useI18n();
   const { deleteComment, isPending } = useDeleteComment(
     commentId,
     postId,
@@ -27,7 +29,7 @@ export default function DeleteCommentModal({
 
   const footerContent = (
     <ModalFooter
-      confirmText="Tak, usuń komentarz"
+      confirmText={t("comment.delete.confirm")}
       onCancel={onClose}
       onConfirm={() => deleteComment()}
       isPending={isPending}
@@ -39,12 +41,12 @@ export default function DeleteCommentModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Czy na pewno chcesz usunąć komentarz?"
+      title={t("comment.delete.title")}
       footer={footerContent}
     >
       <div className="flex flex-col gap-4 p-6">
         <p className="text-text-neutral">
-          Ta operacja jest nieodwracalna. Komentarz zostanie trwale usunięty.
+          {t("comment.delete.body")}
         </p>
       </div>
     </Modal>

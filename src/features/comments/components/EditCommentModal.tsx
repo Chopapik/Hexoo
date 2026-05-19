@@ -13,6 +13,7 @@ import {
   UpdateCommentRequestDto,
   PublicCommentResponseDto,
 } from "../types/comment.dto";
+import { useI18n } from "@/i18n/useI18n";
 
 interface EditCommentModalProps {
   isOpen: boolean;
@@ -25,6 +26,7 @@ export default function EditCommentModal({
   onClose,
   comment,
 }: EditCommentModalProps) {
+  const { t } = useI18n();
   const {
     register,
     handleSubmit,
@@ -51,7 +53,7 @@ export default function EditCommentModal({
       onClose();
     },
     () => {
-      setRootError("Nie udało się zaktualizować komentarza.");
+      setRootError(t("comment.toast.updateError"));
     },
   );
 
@@ -89,7 +91,7 @@ export default function EditCommentModal({
   return (
     <Modal
       isOpen={isOpen}
-      title="Edytuj komentarz"
+      title={t("comment.edit")}
       onClose={onClose}
       footer={footerContent}
       className="w-full h-fit lg:w-full lg:max-w-xl"
@@ -99,7 +101,7 @@ export default function EditCommentModal({
           <textarea
             {...register("text")}
             onKeyDown={handleKeyDown}
-            placeholder="Edytuj komentarz..."
+            placeholder={t("comment.editPlaceholder")}
             className="w-full bg-transparent text-text-main placeholder:text-text-neutral/50 text-base resize-none outline-none min-h-[120px] leading-relaxed pb-6"
             autoFocus
           />

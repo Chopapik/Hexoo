@@ -1,12 +1,14 @@
 import fetchClient from "@/lib/fetchClient";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
+import { useI18n } from "@/i18n/useI18n";
 
 export default function useDeleteComment(
   commentId: string,
   postId: string,
   successCallBack?: () => void,
 ) {
+  const { t } = useI18n();
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
@@ -15,7 +17,7 @@ export default function useDeleteComment(
     },
 
     onSuccess: async () => {
-      toast.success("Komentarz został usunięty.");
+      toast.success(t("comment.toast.deleted"));
 
       await queryClient.invalidateQueries({
         queryKey: ["comments", postId],
@@ -27,7 +29,7 @@ export default function useDeleteComment(
     },
 
     onError: () => {
-      toast.error("Nie udało się usunąć komentarza.");
+      toast.error(t("comment.toast.deleteError"));
     },
   });
 
