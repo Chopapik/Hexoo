@@ -19,6 +19,7 @@ import ValidationMessage from "@/features/shared/components/ui/ValidationMessage
 import AvatarEditor, { type AvatarEditorRef } from "react-avatar-editor";
 import { canvasToFile } from "../utils/avatarEditor";
 import { useCheckUsername } from "@/features/auth/hooks/useCheckUsername";
+import { useI18n } from "@/i18n/useI18n";
 
 interface EditProfileModalProps {
   user: PublicUserResponseDto | null;
@@ -29,6 +30,7 @@ export default function EditProfileModal({
   user,
   onClose,
 }: EditProfileModalProps) {
+  const { lang, t } = useI18n();
   if (!user) {
     return null;
   }
@@ -100,6 +102,7 @@ export default function EditProfileModal({
 
   const validationNameError = parseUpdateProfileErrorMessages(
     errors.name?.message,
+    lang,
   );
   let nameError: Message[] = validationNameError;
 
@@ -107,7 +110,7 @@ export default function EditProfileModal({
     nameError = [
       {
         type: "Dismiss",
-        text: "Ta nazwa użytkownika jest już zajęta",
+        text: t("auth.usernameTaken"),
       },
     ];
   } else if (
@@ -120,14 +123,15 @@ export default function EditProfileModal({
     nameError = [
       {
         type: "Success",
-        text: "Nazwa użytkownika jest dostępna",
+        text: t("auth.usernameAvailable"),
       },
     ];
   }
   const avatarFileError = parseUpdateProfileErrorMessages(
     errors.avatarFile?.message,
+    lang,
   );
-  const rootError = parseUpdateProfileErrorMessages(errors.root?.message);
+  const rootError = parseUpdateProfileErrorMessages(errors.root?.message, lang);
 
   useEffect(() => {
     return () => {
@@ -208,7 +212,7 @@ export default function EditProfileModal({
     <div className="flex gap-3 justify-end w-full">
       <Button
         onClick={onClose}
-        text="Anuluj"
+        text={t("common.cancel")}
         size="md"
         variant="secondary"
         disabled={isPending}
@@ -216,7 +220,7 @@ export default function EditProfileModal({
       />
       <Button
         onClick={handleSaveClick}
-        text="Zapisz"
+        text={t("common.save")}
         size="md"
         variant="default"
         disabled={!canSubmit}
@@ -231,7 +235,7 @@ export default function EditProfileModal({
       <Modal
         isOpen={!!user}
         onClose={onClose}
-        title={`Edytuj profil — ${user.name}`}
+        title={t("profile.editTitle", { name: user.name })}
         footer={footerContent}
       >
         <form
@@ -259,7 +263,7 @@ export default function EditProfileModal({
 
                   <div className="flex flex-col gap-2">
                     <label className="text-xs font-semibold uppercase tracking-wider text-text-neutral/80">
-                      Powiekszenie
+                      {t("profile.zoom")}
                     </label>
                     <input
                       type="range"
@@ -275,14 +279,14 @@ export default function EditProfileModal({
                   <div className="flex gap-2 justify-end">
                     <Button
                       onClick={clearTemporaryCropState}
-                      text="Anuluj"
+                      text={t("common.cancel")}
                       size="sm"
                       variant="secondary"
                       type="button"
                     />
                     <Button
                       onClick={handleApplyCrop}
-                      text="Zastosuj"
+                      text={t("profile.apply")}
                       size="sm"
                       variant="default"
                       type="button"
@@ -308,13 +312,13 @@ export default function EditProfileModal({
                     <div className="flex flex-col items-center gap-1">
                       <Image
                         src={cameraIcon}
-                        alt="Zmień"
+                        alt={t("profile.change")}
                         width={24}
                         height={24}
                         className="opacity-90"
                       />
                       <span className="text-white text-xs font-medium">
-                        Zmień
+                        {t("profile.change")}
                       </span>
                     </div>
                   </div>
@@ -337,7 +341,7 @@ export default function EditProfileModal({
               {/* Change indicator */}
               {isNewImage && !isCropping && (
                 <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-primary-fuchsia-stroke-default text-white text-[10px] font-semibold px-2 py-0.5 rounded-full whitespace-nowrap animate-in fade-in slide-in-from-bottom-1 duration-200">
-                  Zmieniono
+                  {t("profile.changed")}
                 </div>
               )}
             </div>
@@ -345,8 +349,8 @@ export default function EditProfileModal({
             <div className="flex flex-col items-center ">
               <p className="text-xs sm:text-sm text-text-neutral font-medium text-center">
                 {isCropping
-                  ? "Dopasuj kadr i kliknij Zastosuj"
-                  : "Kliknij, aby zmienić zdjęcie profilowe"}
+                  ? t("profile.cropHelp")
+                  : t("profile.changeAvatarHelp")}
               </p>
             </div>
             <div className="flex flex-col gap-1 h-6">
@@ -369,16 +373,15 @@ export default function EditProfileModal({
           {/* Name Section */}
           <div className="flex flex-col gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl bg-secondary-neutral-background-default/30 border border-primary-neutral-stroke-default/50">
             <TextInput
-              label="Nazwa użytkownika"
-              placeholder="Twoja publiczna nazwa"
+              label={t("profile.username")}
+              placeholder={t("profile.usernamePlaceholder")}
               {...register("name")}
               messages={nameError}
               showButton={false}
             />
             <div className="flex flex-col gap-1">
               <p className="text-xs sm:text-sm text-text-neutral ml-1">
-                Ta nazwa będzie widoczna publicznie — możesz użyć nicku lub
-                imienia.
+                {t("profile.usernameHelp")}
               </p>
               <p
                 className={`text-xs ml-1 transition-colors ${
@@ -388,7 +391,7 @@ export default function EditProfileModal({
                     : "text-text-neutral/60"
                 }`}
               >
-                {nameLength} / 30 znaków
+                {t("profile.chars", { count: nameLength })}
               </p>
             </div>
           </div>

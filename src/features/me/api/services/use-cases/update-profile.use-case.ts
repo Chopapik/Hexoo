@@ -30,7 +30,7 @@ export class UpdateProfileUseCase {
     if (!parsed.success) {
       throw createAppError({
         code: "VALIDATION_ERROR",
-        message: "[UpdateProfileUseCase] Błąd walidacji danych profilu.",
+        message: "[UpdateProfileUseCase] Profile validation failed.",
         data: { details: formatZodErrorFlat(parsed.error) },
       });
     }
@@ -40,7 +40,7 @@ export class UpdateProfileUseCase {
     if (!name && !avatarFile) {
       throw createAppError({
         code: "VALIDATION_ERROR",
-        message: "[UpdateProfileUseCase] Brak danych do aktualizacji.",
+        message: "[UpdateProfileUseCase] No profile fields to update.",
         details: { field: "root", reason: "no_update_fields" },
       });
     }

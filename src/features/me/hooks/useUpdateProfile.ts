@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { ApiError } from "@/lib/AppError";
 import toast from "react-hot-toast";
 import type { SessionData } from "@/features/me/me.type";
+import { useI18n } from "@/i18n/useI18n";
 
 type ErrorCallback = (errorCode: string, field?: string) => void;
 
@@ -14,6 +15,7 @@ interface UpdateProfileParams {
 }
 
 export default function useUpdateProfile(onError?: ErrorCallback) {
+  const { t } = useI18n();
   const setUser = useAppStore((s) => s.setUser);
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -58,7 +60,7 @@ export default function useUpdateProfile(onError?: ErrorCallback) {
           });
         }
 
-        toast.success("Profil został zaktualizowany!");
+        toast.success(t("profile.updated"));
       }
     },
     onError: (error: unknown) => {
@@ -104,7 +106,7 @@ export default function useUpdateProfile(onError?: ErrorCallback) {
         }
       } else {
         console.error("Unexpected error:", error);
-        toast.error("Wystąpił nieoczekiwany błąd");
+        toast.error(t("common.unknown"));
       }
     },
   });

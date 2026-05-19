@@ -10,6 +10,7 @@ import "dayjs/locale/pl";
 import { formatDate, formatSmartDate } from "@/features/shared/utils/dateUtils";
 import { UserProfileResponseDto } from "@/features/users/types/user.dto";
 import { useAppStore } from "@/lib/store/store";
+import { useI18n } from "@/i18n/useI18n";
 
 export const UserProfileCard = ({
   username,
@@ -20,6 +21,7 @@ export const UserProfileCard = ({
   enableEditProfile: boolean;
   initialUser?: UserProfileResponseDto;
 }) => {
+  const { lang, t } = useI18n();
   const { userProfileData } = useProfile(username, initialUser);
 
   const [showEditProfileModal, setShowEditProfileModal] =
@@ -61,7 +63,7 @@ export const UserProfileCard = ({
         {enableEditProfile && (
           <div className="absolute top-3 right-3 sm:top-4 sm:right-4 md:right-7">
             <Button
-              text="edytuj profil"
+              text={t("profile.edit")}
               size="sm"
               onClick={() => setShowEditProfileModal(true)}
             />
@@ -78,10 +80,10 @@ export const UserProfileCard = ({
             <div className="w-auto inline-flex justify-start items-center gap-2 sm:gap-3 md:gap-4">
               <div className="inline-flex flex-col justify-start items-start gap-0.5">
                 <div className="self-stretch h-3.5 justify-start text-text-neutral text-xs font-bold font-sans">
-                  dołączył
+                  {t("profile.joined")}
                 </div>
                 <div className="self-stretch h-3.5 justify-start text-text-main text-xs font-normal font-sans">
-                  {formatDate(createdAt, "MMMM YYYY")}
+                  {formatDate(createdAt, "MMMM YYYY", lang)}
                 </div>
               </div>
 
@@ -90,10 +92,10 @@ export const UserProfileCard = ({
                   <span className="w-px h-5 bg-primary-neutral-stroke-default inline-block" />
                   <div className="inline-flex flex-col justify-start items-start gap-0.5">
                     <div className="self-stretch h-3.5 justify-start text-text-neutral text-xs font-bold font-sans">
-                      ostatnio online
+                      {t("profile.lastOnline")}
                     </div>
                     <div className="self-stretch h-3.5 justify-start text-text-main text-xs font-normal font-sans">
-                      {isOnline ? "teraz" : formatSmartDate(lastOnline)}
+                      {isOnline ? t("profile.now") : formatSmartDate(lastOnline, lang)}
                     </div>
                   </div>
                 </>

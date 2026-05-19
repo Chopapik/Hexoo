@@ -2,6 +2,7 @@
 
 import Modal from "@/features/shared/components/layout/Modal";
 import ModalFooter from "@/features/shared/components/layout/ModalFooter";
+import { useI18n } from "@/i18n/useI18n";
 
 interface ConfirmDeleteModalProps {
   isOpen: boolean;
@@ -16,9 +17,10 @@ export default function ConfirmDeleteModal({
   onConfirm,
   isPending,
 }: ConfirmDeleteModalProps) {
+  const { t } = useI18n();
   const footerContent = (
     <ModalFooter
-      confirmText="Tak, usuń konto"
+      confirmText={t("settings.danger.deleteConfirm")}
       onCancel={onClose}
       onConfirm={onConfirm}
       isPending={isPending}
@@ -30,13 +32,12 @@ export default function ConfirmDeleteModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Czy na pewno chcesz usunąć konto?"
+      title={t("settings.danger.deleteTitle")}
       footer={footerContent}
     >
       <div className="flex flex-col gap-4 p-6">
         <p className="text-text-neutral">
-          Ta operacja jest nieodwracalna. Wszystkie Twoje dane, w tym posty,
-          komentarze i ustawienia, zostaną trwale usunięte.
+          {t("settings.danger.deleteBody")}
         </p>
       </div>
     </Modal>

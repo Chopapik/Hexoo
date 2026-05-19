@@ -1,8 +1,9 @@
 import { ValidationMessage } from "@/features/shared/types/validation.type";
-import { getErrorEntry } from "@/i18n/errorCatalog";
+import { getErrorEntry, type Lang } from "@/i18n/errorCatalog";
 
 export function parseErrorMessages(
   errorCode: string | undefined,
+  lang: Lang = "pl",
 ): ValidationMessage[] | [] {
   if (!errorCode) return [];
 
@@ -11,9 +12,8 @@ export function parseErrorMessages(
   return [
     {
       type: entry.validationType ?? "Dismiss",
-      text: entry.message.pl,
+      text: entry.message[lang],
       field: entry.field ?? "root",
     },
   ];
 }
-

@@ -4,8 +4,10 @@ import { useEffect } from "react";
 import SwitchButton from "@/features/shared/components/ui/SwitchButton";
 import { useAppStore } from "@/lib/store/store";
 import SettingsSection from "../SettingsSection";
+import { useI18n } from "@/i18n/useI18n";
 
 export default function ContentSection() {
+  const { t } = useI18n();
   const showNSFWPosts = useAppStore((s) => s.settings.showNSFWPosts);
   const showNSFWComments = useAppStore((s) => s.settings.showNSFWComments);
   const initializeSettings = useAppStore((s) => s.initializeSettings);
@@ -33,7 +35,7 @@ export default function ContentSection() {
   };
 
   return (
-    <SettingsSection title="Treści">
+    <SettingsSection title={t("settings.content.title")}>
       <div className="flex flex-col gap-4 sm:gap-6">
         <div className="flex flex-row items-center justify-between gap-2 sm:gap-3">
           <div className="min-w-0 flex-1 text-left">
@@ -41,10 +43,10 @@ export default function ContentSection() {
               id="nsfw-posts-label"
               className="font-semibold font-sans text-text-main"
             >
-              Pokaż treść NSFW w postach
+              {t("settings.content.nsfwPosts")}
             </h4>
             <p className="text-xs sm:text-sm font-sans text-text-neutral">
-              Włącz, aby automatycznie pokazywać posty oznaczone jako NSFW.
+              {t("settings.content.nsfwPostsCopy")}
             </p>
           </div>
           <div className="shrink-0">
@@ -62,10 +64,10 @@ export default function ContentSection() {
               id="nsfw-comments-label"
               className="font-semibold font-sans text-text-main"
             >
-              Pokaż treść NSFW w komentarzach
+              {t("settings.content.nsfwComments")}
             </h4>
             <p className="text-xs sm:text-sm font-sans text-text-neutral">
-              Włącz, aby pokazywać komentarze oznaczone jako NSFW.
+              {t("settings.content.nsfwCommentsCopy")}
             </p>
           </div>
           <div className="shrink-0">

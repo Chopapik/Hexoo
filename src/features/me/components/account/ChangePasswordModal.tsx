@@ -6,6 +6,7 @@ import ModalFooter from "@/features/shared/components/layout/ModalFooter";
 import { useUpdatePassword } from "../../hooks/useUpdatePassword";
 import useUpdatePasswordForm from "../../hooks/useUpdatePasswordForm";
 import { parseErrorMessages } from "../../utils/updatePasswordErrorMap";
+import { useI18n } from "@/i18n/useI18n";
 
 interface ChangePasswordModalProps {
   isOpen: boolean;
@@ -16,6 +17,7 @@ export default function ChangePasswordModal({
   isOpen,
   onClose,
 }: ChangePasswordModalProps) {
+  const { lang, t } = useI18n();
   const { register, errors, handleSubmit, handleErrorsMessages } =
     useUpdatePasswordForm();
 
@@ -30,7 +32,7 @@ export default function ChangePasswordModal({
 
   const footerContent = (
     <ModalFooter
-      confirmText="Zapisz zmiany"
+      confirmText={t("common.saveChanges")}
       onCancel={onClose}
       onConfirm={onSubmit}
       isPending={isPending}
@@ -41,34 +43,34 @@ export default function ChangePasswordModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Zmiana hasła"
+      title={t("settings.account.passwordTitle")}
       footer={footerContent}
     >
       <div className="flex flex-col gap-3 sm:gap-4 p-3 sm:p-6 md:p-8">
         <TextInput
           type="password"
-          label="Aktualne hasło"
+          label={t("settings.account.currentPassword")}
           {...register("oldPassword")}
-          placeholder="Wpisz swoje aktualne hasło"
-          messages={parseErrorMessages(errors.oldPassword?.message)}
+          placeholder={t("settings.account.currentPasswordPlaceholder")}
+          messages={parseErrorMessages(errors.oldPassword?.message, lang)}
         />
         <TextInput
           type="password"
-          label="Nowe hasło"
+          label={t("settings.account.newPassword")}
           {...register("newPassword")}
-          placeholder="Minimum 8 znaków"
-          messages={parseErrorMessages(errors.newPassword?.message)}
+          placeholder={t("settings.account.newPasswordPlaceholder")}
+          messages={parseErrorMessages(errors.newPassword?.message, lang)}
         />
         <TextInput
           type="password"
-          label="Powtórz nowe hasło"
+          label={t("settings.account.repeatPassword")}
           {...register("reNewPassword")}
-          placeholder="Potwierdź nowe hasło"
-          messages={parseErrorMessages(errors.reNewPassword?.message)}
+          placeholder={t("settings.account.repeatPasswordPlaceholder")}
+          messages={parseErrorMessages(errors.reNewPassword?.message, lang)}
         />
         {errors.root?.message && (
           <p className="text-sm text-red-400 mt-1">
-            {parseErrorMessages(errors.root.message)[0]?.text}
+            {parseErrorMessages(errors.root.message, lang)[0]?.text}
           </p>
         )}
       </div>

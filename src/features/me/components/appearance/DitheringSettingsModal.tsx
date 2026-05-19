@@ -19,6 +19,7 @@ import {
   type PostDitheringSettings,
 } from "@/features/shared/types/dithering";
 import { useAppStore } from "@/lib/store/store";
+import { useI18n } from "@/i18n/useI18n";
 
 type DitheringSettingsModalProps = {
   isOpen: boolean;
@@ -34,6 +35,7 @@ export default function DitheringSettingsModal({
   isOpen,
   onClose,
 }: DitheringSettingsModalProps) {
+  const { t } = useI18n();
   const settings = useAppStore((s) => s.settings.postDithering);
   const resetDitheringSettings = useAppStore((s) => s.resetDitheringSettings);
   const setDitheringEnabled = useAppStore((s) => s.setDitheringEnabled);
@@ -198,8 +200,16 @@ export default function DitheringSettingsModal({
 
   const footer = (
     <div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-      <Button text="Zamknij" variant="secondary" size="md" onClick={onClose} />
-      <Button text="Przywróć domyślne" onClick={resetDitheringSettings} />
+      <Button
+        text={t("common.close")}
+        variant="secondary"
+        size="md"
+        onClick={onClose}
+      />
+      <Button
+        text={t("settings.dithering.reset")}
+        onClick={resetDitheringSettings}
+      />
     </div>
   );
 
@@ -207,14 +217,14 @@ export default function DitheringSettingsModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Ustawienia ditheringu postów"
+      title={t("settings.dithering.modalTitle")}
       footer={footer}
       className="max-w-5xl"
     >
       <div className="grid max-h-[75vh] grid-cols-1 gap-4 overflow-y-auto p-4 font-sans md:grid-cols-2 md:p-6">
         <div className="flex flex-col gap-3">
           <p className="text-sm font-sans text-text-neutral">
-            Zmiany działają od razu i zapisują się lokalnie.
+            {t("settings.dithering.instantSave")}
           </p>
 
           <div className={controlBlockClass}>
@@ -224,10 +234,10 @@ export default function DitheringSettingsModal({
                   id="dithering-enabled-label"
                   className="text-sm font-semibold font-sans text-text-main"
                 >
-                  Włącz dithering
+                  {t("settings.dithering.enable")}
                 </h4>
                 <p className="text-xs font-sans text-text-neutral">
-                  Wyłącz, aby używać oryginalnych obrazów bez przetwarzania.
+                  {t("settings.dithering.disableCopy")}
                 </p>
               </div>
               <SwitchButton
@@ -240,8 +250,8 @@ export default function DitheringSettingsModal({
 
           {renderNumericControl({
             id: "palette-size",
-            label: "Liczba kolorów (palette size)",
-            description: "Ile kolorów ma finalna paleta.",
+            label: t("settings.dithering.paletteSize"),
+            description: t("settings.dithering.paletteSizeDescription"),
             value: settings.paletteSize,
             min: 2,
             max: 256,
@@ -250,8 +260,8 @@ export default function DitheringSettingsModal({
 
           {renderNumericControl({
             id: "processing-width",
-            label: "Szerokość przetwarzania (processing width)",
-            description: "Rozdzielczość robocza przed końcowym skalowaniem.",
+            label: t("settings.dithering.processingWidth"),
+            description: t("settings.dithering.processingWidthDescription"),
             value: settings.processingWidth,
             min: 64,
             max: 2048,
@@ -260,8 +270,8 @@ export default function DitheringSettingsModal({
 
           {renderNumericControl({
             id: "dither-base-width",
-            label: "Bazowa szerokość ditheru (dither base width)",
-            description: "Szerokość mikrosiatki, która buduje pikselowy efekt.",
+            label: t("settings.dithering.baseWidth"),
+            description: t("settings.dithering.baseWidthDescription"),
             value: settings.ditherBaseWidth,
             min: 16,
             max: 1024,
@@ -271,7 +281,7 @@ export default function DitheringSettingsModal({
           {renderSelectControl({
             id: "palette-quantization",
             label: "Palette quantization",
-            description: "Algorytm budowania palety kolorów.",
+            description: t("settings.dithering.paletteQuantizationDescription"),
             value: settings.paletteQuantization,
             options: PALETTE_QUANTIZATION_OPTIONS,
             setter: (next) =>
@@ -281,7 +291,7 @@ export default function DitheringSettingsModal({
           {renderSelectControl({
             id: "color-distance",
             label: "Color distance formula",
-            description: "Metryka porównywania podobieństwa kolorów.",
+            description: t("settings.dithering.colorDistanceDescription"),
             value: settings.colorDistanceFormula,
             options: COLOR_DISTANCE_FORMULA_OPTIONS,
             setter: (next) =>
@@ -291,7 +301,7 @@ export default function DitheringSettingsModal({
           {renderSelectControl({
             id: "image-quantization",
             label: "Image quantization",
-            description: "Sposób mapowania pikseli obrazu do palety.",
+            description: t("settings.dithering.imageQuantizationDescription"),
             value: settings.imageQuantization,
             options: IMAGE_QUANTIZATION_OPTIONS,
             setter: (next) =>
@@ -301,7 +311,7 @@ export default function DitheringSettingsModal({
           {renderSelectControl({
             id: "error-diffusion-propagation",
             label: "Error diffusion propagation",
-            description: "Tryb propagacji błędu dla algorytmów diffusion.",
+            description: t("settings.dithering.errorDiffusionDescription"),
             value: settings.errorDiffusionPropagation,
             options: ERROR_DIFFUSION_PROPAGATION_OPTIONS,
             setter: (next) =>
@@ -310,7 +320,7 @@ export default function DitheringSettingsModal({
               ),
             disabled: !propagationApplicable,
             disabledHint: !propagationApplicable
-              ? "Dla wybranego trybu image quantization ta opcja nie wpływa na wynik."
+              ? t("settings.dithering.disabledHint")
               : undefined,
           })}
         </div>
@@ -322,7 +332,7 @@ export default function DitheringSettingsModal({
 
           {!previewAssetAvailable ? (
             <div className="rounded-lg border border-dashed border-primary-neutral-stroke-default/70 bg-secondary-neutral-background-default/40 p-4 text-sm font-sans text-text-neutral">
-              Dodaj plik preview tutaj:
+              {t("settings.dithering.previewMissing")}
               <span className="mt-1 block font-mono text-text-main">
                 public/images/settings/dithering-preview.png
               </span>
@@ -331,21 +341,21 @@ export default function DitheringSettingsModal({
             <div className="flex flex-col gap-3">
               <div className="rounded-lg border border-primary-neutral-stroke-default/70 bg-secondary-neutral-background-default/40 p-2">
                 <p className="mb-2 text-xs font-semibold font-sans text-text-neutral">
-                  Oryginał
+                  {t("settings.dithering.original")}
                 </p>
                 <img
                   src={PREVIEW_IMAGE_PATH}
-                  alt="Podgląd oryginalnego obrazu"
+                  alt={t("settings.dithering.originalAlt")}
                   className="h-auto w-full rounded-md"
                 />
               </div>
               <div className="rounded-lg border border-primary-neutral-stroke-default/70 bg-secondary-neutral-background-default/40 p-2">
                 <p className="mb-2 text-xs font-semibold font-sans text-text-neutral">
-                  Po ditheringu
+                  {t("settings.dithering.after")}
                 </p>
                 <DitheredImage
                   src={PREVIEW_IMAGE_PATH}
-                  alt="Podgląd obrazu po ditheringu"
+                  alt={t("settings.dithering.afterAlt")}
                   className="h-auto w-full rounded-md"
                   width={1200}
                   height={800}
@@ -359,25 +369,31 @@ export default function DitheringSettingsModal({
 
           {!isPreviewReady && previewAssetAvailable ? (
             <p className="text-xs font-sans text-text-neutral">
-              Przetwarzanie preview...
+              {t("settings.dithering.processing")}
             </p>
           ) : null}
           {previewProcessingError && previewAssetAvailable ? (
             <p className="text-xs font-sans text-red-400">
-              Przetwarzanie preview nie powiodło się. Pokazano obraz bez
-              modyfikacji.
+              {t("settings.dithering.processingError")}
             </p>
           ) : null}
 
           <div className="rounded-lg border border-primary-neutral-stroke-default/70 bg-secondary-neutral-background-default/40 p-3 text-xs font-sans text-text-neutral">
             <p className="font-sans">
-              Aktualny preset: {settings.enabled ? "włączony" : "wyłączony"},
-              paleta {settings.paletteSize}, processing{" "}
-              {settings.processingWidth}px, base {settings.ditherBaseWidth}px.
+              {t("settings.dithering.preset", {
+                enabled: settings.enabled
+                  ? t("settings.dithering.enabled")
+                  : t("settings.dithering.disabled"),
+                palette: settings.paletteSize,
+                processing: settings.processingWidth,
+                base: settings.ditherBaseWidth,
+              })}
             </p>
             <p className="mt-1 font-sans">
-              Domyślne: {DEFAULT_POST_DITHERING_SETTINGS.paletteQuantization} /{" "}
-              {DEFAULT_POST_DITHERING_SETTINGS.imageQuantization}.
+              {t("settings.dithering.defaults", {
+                palette: DEFAULT_POST_DITHERING_SETTINGS.paletteQuantization,
+                image: DEFAULT_POST_DITHERING_SETTINGS.imageQuantization,
+              })}
             </p>
           </div>
         </div>
