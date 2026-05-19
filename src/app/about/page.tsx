@@ -16,6 +16,7 @@ import {
   HexProfileIcon,
   HexAdminIcon,
 } from "@/features/shared/components/icons/HexNavIcons";
+import { useI18n, type TranslationKey } from "@/i18n/useI18n";
 
 export default function AboutPage() {
   const router = useRouter();
@@ -36,7 +37,7 @@ export default function AboutPage() {
       <Scanlines />
       <Hero
         onGoFeed={() => router.push("/")}
-        onRegister={() => router.push("/auth/register")}
+        onRegister={() => router.push("/register")}
         onCreatePost={goCreatePost}
       />
       <WhatIsThis />
@@ -44,7 +45,7 @@ export default function AboutPage() {
       <NoYesSection />
       <Outro
         onGoFeed={() => router.push("/")}
-        onLogin={() => router.push("/auth/login")}
+        onLogin={() => router.push("/login")}
       />
       <MiniFooter />
     </main>
@@ -87,6 +88,8 @@ function Hero({
   onRegister: () => void;
   onCreatePost: () => void;
 }) {
+  const { t } = useI18n();
+
   return (
     <section className="relative z-10 mx-auto flex max-w-6xl flex-col items-center px-5 pb-10 pt-14 sm:px-8 sm:pt-20">
       <div className="relative">
@@ -100,21 +103,20 @@ function Hero({
         className="relative z-10 mt-10 flex flex-col items-center text-center"
       >
         <h1 className="mt-4 font-serif text-[58px] leading-[0.95] tracking-[-0.03em] text-white sm:text-[88px] md:text-[112px]">
-          po prostu{" "}
+          {t("about.hero.titleStart")}{" "}
           <span className="relative inline-block">
             <span className="bg-gradient-to-r from-fuchsia-300 via-fuchsia-400 to-cyan-300 bg-clip-text text-transparent">
-              sieć.
+              {t("about.hero.titleAccent")}
             </span>
             <span className="absolute -inset-x-3 -bottom-1 -z-10 h-3 rounded-full bg-fuchsia-500/30 blur-2xl" />
           </span>
         </h1>
 
         <p className="mt-7 max-w-xl text-[15px] leading-relaxed text-white/60 sm:text-base">
-          niech ktoś przeczyta to, co napisałeś. albo niech nie czyta — tobie
-          i&nbsp;tak ulży.
+          {t("about.hero.copy")}
           <br />
           <span className="text-white/35">
-            (tak, to jest stronka shitpostowa. zrobiona na poważnie.)
+            {t("about.hero.note")}
           </span>
         </p>
 
@@ -123,7 +125,7 @@ function Hero({
         <div className="mt-10 w-full max-w-3xl">
           <CreatePostButton
             onClick={onCreatePost}
-            text="a moze by tak dodać post głubcze?"
+            text={t("about.hero.cta")}
             showIcon={false}
             className="h-auto min-h-[4.25rem] py-4 sm:h-auto sm:min-h-[5.75rem] sm:py-6 rounded-2xl sm:rounded-3xl"
             textClassName="text-lg leading-snug sm:text-2xl md:text-3xl"
@@ -195,33 +197,33 @@ function BigBrandHex() {
 }
 
 function WhatIsThis() {
+  const { t } = useI18n();
+
   return (
     <section className="relative z-10 mx-auto max-w-5xl px-5 pb-20 pt-10 sm:px-8 sm:pb-28">
       <div className="mb-8 font-sans text-[11px] uppercase tracking-[0.3em] text-fuchsia-300/70">
-        czym to jest?
+        {t("about.what.eyebrow")}
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <NoteCard delay={0}>
           <span className="text-white/85">
-            hexoo to drobne miejsce w&nbsp;internecie.
+            {t("about.what.card1Strong")}
           </span>{" "}
-          piszesz post, ktoś go polubi (albo i&nbsp;nie), ktoś coś skomentuje
-          (albo i&nbsp;nie). tyle.
+          {t("about.what.card1")}
         </NoteCard>
 
         <NoteCard delay={0.08}>
-          bez algorytmu, bez reklam, bez misji ratującej świat. zwykła sieć,
-          zaprojektowana z&nbsp;czułością dla{" "}
-          <span className="text-fuchsia-300">shitpostów</span>, krótkich myśli
-          i&nbsp;internetowych głupot.
+          {t("about.what.card2")}{" "}
+          <span className="text-fuchsia-300">{t("about.what.shitposts")}</span>,{" "}
+          {t("about.what.card2End")}
         </NoteCard>
 
         <NoteCard delay={0.16}>
-          zbudowane na <span className="text-cyan-300">next.js</span> i&nbsp;
-          <span className="text-cyan-300">supabase</span> bo na czymś musi.
-          moderowane lekko (openai gdzieś tam siedzi). działa zaskakująco
-          dobrze.
+          {t("about.what.card3")}{" "}
+          <span className="text-cyan-300">next.js</span> i{" "}
+          <span className="text-cyan-300">supabase</span>{" "}
+          {t("about.what.card3End")}
         </NoteCard>
       </div>
     </section>
@@ -262,38 +264,57 @@ function NoteCard({
 }
 
 const FEATURES = [
-  { Icon: HexCreateIcon, label: "posty", note: "wrzucasz coś, gotowe." },
+  {
+    Icon: HexCreateIcon,
+    labelKey: "about.feature.posts",
+    noteKey: "about.feature.postsNote",
+  },
   {
     Icon: HexActivityIcon,
-    label: "komentarze",
-    note: "wątki w&nbsp;których ktoś coś dorzuci.",
+    labelKey: "about.feature.comments",
+    noteKey: "about.feature.commentsNote",
   },
-  { Icon: HexHomeIcon, label: "lajki", note: "lekkie ❤️ bez kombinowania." },
+  {
+    Icon: HexHomeIcon,
+    labelKey: "about.feature.likes",
+    noteKey: "about.feature.likesNote",
+  },
   {
     Icon: HexProfileIcon,
-    label: "profile",
-    note: "twoja mała strona w&nbsp;sieci.",
+    labelKey: "about.feature.profiles",
+    noteKey: "about.feature.profilesNote",
   },
-  { Icon: HexAdminIcon, label: "moderacja", note: "openai pilnuje granic." },
-  { Icon: HexExploreIcon, label: "feed", note: "po kolei. bez ai-trickery." },
+  {
+    Icon: HexAdminIcon,
+    labelKey: "about.feature.moderation",
+    noteKey: "about.feature.moderationNote",
+  },
+  {
+    Icon: HexExploreIcon,
+    labelKey: "about.feature.feed",
+    noteKey: "about.feature.feedNote",
+  },
 ] as const;
 
 function Honeycomb() {
+  const { t } = useI18n();
+
   return (
     <section className="relative z-10 mx-auto max-w-6xl px-5 py-20 sm:px-8 sm:py-28">
       <div className="mb-12 flex flex-col items-center text-center">
         <div className="font-sans text-[11px] uppercase tracking-[0.3em] text-fuchsia-300/70">
-          co tu jest
+          {t("about.features.eyebrow")}
         </div>
         <h2 className="mt-3 font-serif text-4xl tracking-[-0.02em] sm:text-5xl">
-          sześć rzeczy. <span className="text-white/40">koniec listy.</span>
+          {t("about.features.title")}{" "}
+          <span className="text-white/40">{t("about.features.titleMuted")}</span>
         </h2>
       </div>
 
       <HoneycombRosette />
 
       <div className="mx-auto mt-6 max-w-md text-center font-sans text-[10px] uppercase tracking-[0.25em] text-white/30">
-        i&nbsp;tak naprawdę to wystarczy.
+        {t("about.features.note")}
       </div>
     </section>
   );
@@ -345,7 +366,7 @@ function HoneycombRosette() {
           const y = Math.sin(a) * R;
           return (
             <div
-              key={f.label}
+              key={f.labelKey}
               className="absolute left-1/2 top-1/2 z-[10]"
               style={{
                 transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`,
@@ -371,7 +392,7 @@ function HoneycombRosette() {
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:hidden">
         {FEATURES.map((f, i) => (
           <motion.div
-            key={f.label}
+            key={f.labelKey}
             initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -409,15 +430,17 @@ function CenterHexGlow() {
 
 function FeatureHex({
   Icon,
-  label,
-  note,
+  labelKey,
+  noteKey,
   small,
 }: {
   Icon: (typeof FEATURES)[number]["Icon"];
-  label: string;
-  note: string;
+  labelKey: TranslationKey;
+  noteKey: TranslationKey;
   small?: boolean;
 }) {
+  const { t } = useI18n();
+
   return (
     <div
       className={[
@@ -450,11 +473,11 @@ function FeatureHex({
       <div className="relative flex flex-col items-center px-3 pt-1">
         <Icon className="size-10 text-fuchsia-200/90 transition-transform duration-300 group-hover:scale-110" />
         <div className="mt-1 font-serif text-[15px] tracking-tight text-white">
-          {label}
+          {t(labelKey)}
         </div>
         <div
           className="mt-0.5 px-1 font-sans text-[9.5px] leading-tight text-white/50"
-          dangerouslySetInnerHTML={{ __html: note }}
+          dangerouslySetInnerHTML={{ __html: t(noteKey) }}
         />
       </div>
     </div>
@@ -462,28 +485,29 @@ function FeatureHex({
 }
 
 function NoYesSection() {
+  const { t } = useI18n();
   const noItems = [
-    "algorytmu",
-    "reklam",
-    "śledzenia",
-    "reelsów ani shortów",
-    "ciemnych wzorców",
-    "scrolla bez końca",
+    t("about.no.algorithm"),
+    t("about.no.ads"),
+    t("about.no.tracking"),
+    t("about.no.reels"),
+    t("about.no.darkPatterns"),
+    t("about.no.infiniteScroll"),
   ];
   const yesItems = [
-    "posty po kolei",
-    "lajki, ale po ludzku",
-    "komentarze, wątki",
-    "profile, awatary",
-    "moderacja, gdy trzeba",
-    "koniec feedu (tak, istnieje)",
+    t("about.yes.chrono"),
+    t("about.yes.likes"),
+    t("about.yes.comments"),
+    t("about.yes.profiles"),
+    t("about.yes.moderation"),
+    t("about.yes.feedEnd"),
   ];
 
   return (
     <section className="relative z-10 mx-auto max-w-5xl px-5 py-20 sm:px-8 sm:py-24">
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-        <Column title="nie ma tu" tone="no" items={noItems} />
-        <Column title="jest tu" tone="yes" items={yesItems} />
+        <Column title={t("about.no.title")} tone="no" items={noItems} />
+        <Column title={t("about.yes.title")} tone="yes" items={yesItems} />
       </div>
     </section>
   );
@@ -550,6 +574,8 @@ function Outro({
   onGoFeed: () => void;
   onLogin: () => void;
 }) {
+  const { t } = useI18n();
+
   return (
     <section className="relative z-10 mx-auto max-w-5xl px-5 pb-20 sm:px-8">
       <div className="glass-card relative overflow-hidden rounded-3xl p-10 sm:p-14">
@@ -582,16 +608,16 @@ function Outro({
           </pre>
 
           <h3 className="mt-5 font-serif text-5xl tracking-[-0.03em] sm:text-7xl">
-            tyle.
+            {t("about.outro.title")}
           </h3>
 
           <p className="mt-5 max-w-md font-sans text-[12px] uppercase tracking-[0.18em] text-white/40">
-            koniec strony. nie ma więcej sekcji.
+            {t("about.outro.copy")}
           </p>
 
           <div className="mt-9 flex flex-col items-center gap-3 sm:flex-row">
             <Button
-              text="CHODŹ TU"
+              text={t("about.outro.feed")}
               size="lg"
               variant="default"
               onClick={onGoFeed}
@@ -599,7 +625,7 @@ function Outro({
               className="px-5 text-[12px] font-semibold uppercase tracking-[0.2em] shadow-[0_10px_40px_-12px_rgba(192,38,211,0.9)]"
             />
             <Button
-              text="załóż konto"
+              text={t("about.outro.register")}
               size="lg"
               variant="secondary"
               onClick={onLogin}
@@ -621,10 +647,10 @@ function MiniFooter() {
           <Link href="/" className="hover:text-fuchsia-300">
             feed
           </Link>
-          <Link href="/auth/login" className="hover:text-fuchsia-300">
+          <Link href="/login" className="hover:text-fuchsia-300">
             login
           </Link>
-          <Link href="/auth/register" className="hover:text-fuchsia-300">
+          <Link href="/register" className="hover:text-fuchsia-300">
             register
           </Link>
         </span>

@@ -99,23 +99,23 @@ const buttonSizes: ButtonSize[] = ["sm", "md", "lg", "xl", "icon", "iconSm"];
 const inputStatuses: Status[] = ["Default", "Warning", "Dismiss", "Success"];
 
 const selectOptions = [
-  { value: "user", label: "Użytkownik" },
+  { value: "user", label: "User" },
   { value: "moderator", label: "Moderator" },
   { value: "admin", label: "Administrator" },
 ];
 
 const validationSamples: ValidationMessageType[] = [
-  { type: "Warning", text: "Uwaga: Sprawdź poprawność danych." },
-  { type: "Dismiss", text: "Błąd: To pole jest wymagane." },
-  { type: "Success", text: "Sukces: Wszystko wygląda dobrze." },
+  { type: "Warning", text: "Warning: Check the data." },
+  { type: "Dismiss", text: "Error: This field is required." },
+  { type: "Success", text: "Success: Everything looks good." },
 ];
 
 const reportReasons = [
-  { id: "spam", label: "To jest spam" },
-  { id: "hate", label: "Mowa nienawiści / Przemoc" },
-  { id: "nudity", label: "Nagość / Treści seksualne" },
-  { id: "harassment", label: "Nękanie" },
-  { id: "other", label: "Inny powód" },
+  { id: "spam", label: "This is spam" },
+  { id: "hate", label: "Hate speech / Violence" },
+  { id: "nudity", label: "Nudity / Sexual content" },
+  { id: "harassment", label: "Harassment" },
+  { id: "other", label: "Other reason" },
 ];
 const reportSelectedReasonId = "spam";
 
@@ -160,7 +160,7 @@ const demoPost: PublicPostResponseDto = {
   userId: "user-2",
   userName: "Ola",
   userAvatarUrl: null,
-  text: "Przykładowy post z treścią i linkiem https://hexoo.app",
+  text: "Example post with content and a link https://hexoo.app",
   imageUrl: "https://placehold.co/600x400/png",
   likesCount: 24,
   isLikedByMe: true,
@@ -175,7 +175,7 @@ const demoPostNsfw: PublicPostResponseDto = {
   id: "post-2",
   userId: "user-3",
   userName: "Marek",
-  text: "Post oznaczony jako NSFW — domyślnie ukryty.",
+  text: "Post marked as NSFW - hidden by default.",
   imageUrl: null,
   isNSFW: true,
   likesCount: 1,
@@ -191,13 +191,13 @@ const demoModerationPost: ModerationPostResponseDto = {
     {
       uid: "u-001",
       reason: "spam",
-      details: "Powtarzające się treści reklamowe.",
+      details: "Repeated advertising content.",
       createdAt: new Date(),
     },
     {
       uid: "u-002",
       reason: "hate",
-      details: "Mowa nienawiści.",
+      details: "Hate speech.",
       createdAt: new Date(),
     },
   ],
@@ -300,6 +300,7 @@ function DemoStoreBootstrap() {
         ready: true,
       },
       settings: {
+        language: state.settings.language,
         showNSFWPosts: true,
         showNSFWComments: true,
         postDithering: state.settings.postDithering,
@@ -321,9 +322,9 @@ export default function UiDemoPage() {
   const inputMessages = useMemo<Record<Status, Message[]>>(
     () => ({
       Default: [],
-      Warning: [{ type: "Warning", text: "To pole wymaga uwagi." }],
-      Dismiss: [{ type: "Dismiss", text: "Wykryto błąd." }],
-      Success: [{ type: "Success", text: "Wszystko jest OK." }],
+      Warning: [{ type: "Warning", text: "This field needs attention." }],
+      Dismiss: [{ type: "Dismiss", text: "An error was detected." }],
+      Success: [{ type: "Success", text: "Everything is OK." }],
     }),
     [],
   );
@@ -336,15 +337,15 @@ export default function UiDemoPage() {
 
         <header className="space-y-2">
           <h1 className="text-4xl font-bold text-text-main font-sans">
-            UI Demo – pełny katalog komponentów (offline)
+            UI Demo - full offline component catalog
           </h1>
           <p className="text-text-neutral">
-            Dane pochodzą z tego pliku. Modale są renderowane inline (bez
-            createPortal).
+            Data comes from this file. Modals are rendered inline without
+            createPortal.
           </p>
           <div className="flex items-center gap-3">
             <Button
-              text={showBackground ? "Ukryj tło 3D" : "Pokaż tło 3D"}
+              text={showBackground ? "Hide 3D background" : "Show 3D background"}
               size="sm"
               variant="secondary"
               onClick={() => setShowBackground((prev) => !prev)}
@@ -357,7 +358,7 @@ export default function UiDemoPage() {
             <Logo />
             <Avatar alt="Demo avatar" />
             <Avatar
-              alt="Duży avatar"
+              alt="Large avatar"
               width={64}
               height={64}
               className="w-16 h-16 rounded-2xl"
@@ -365,7 +366,7 @@ export default function UiDemoPage() {
           </div>
         </Section>
 
-        <Section title="Buttons" description="Warianty, rozmiary i stany">
+        <Section title="Buttons" description="Variants, sizes and states">
           <div className="space-y-10">
             {buttonVariants.map((variant) => (
               <div key={variant} className="space-y-4">
@@ -439,19 +440,19 @@ export default function UiDemoPage() {
               <TextInput
                 key={status}
                 label={`Status: ${status}`}
-                placeholder="Wpisz tekst..."
+                placeholder="Enter text..."
                 messages={inputMessages[status]}
               />
             ))}
             <TextInput
-              label="Hasło (showButton: true)"
+              label="Password (showButton: true)"
               type="password"
               placeholder="••••••••"
               showButton={true}
               messages={inputMessages.Default}
             />
             <TextInput
-              label="Hasło (showButton: false)"
+              label="Password (showButton: false)"
               type="password"
               placeholder="••••••••"
               showButton={false}
@@ -469,17 +470,17 @@ export default function UiDemoPage() {
         <Section title="Select">
           <div className="grid gap-6 md:grid-cols-2">
             <Select
-              label="Domyślny"
+              label="Default"
               options={selectOptions}
-              placeholder="Wybierz rolę"
+              placeholder="Choose a role"
             />
             <Select
-              label="Z wybraną wartością"
+              label="With selected value"
               options={selectOptions}
               value="moderator"
             />
             <Select
-              label="Zablokowany"
+              label="Disabled"
               options={selectOptions}
               value="user"
               disabled
@@ -533,19 +534,19 @@ export default function UiDemoPage() {
 
         <Section title="NavItem">
           <div className="flex flex-wrap items-center gap-6">
-            <NavItem label="Aktywny" to="/demo/ui" icon={UserIcon} />
+            <NavItem label="Active" to="/demo/ui" icon={UserIcon} />
             <NavItem
-              label="Powiadomienia"
+              label="Notifications"
               to="/notifications"
               icon={Bell}
               hasNotification
             />
-            <NavItem label="Wiadomości" to="/messages" icon={MessageCircle} />
-            <NavItem label="Bez ikony" to="/plain" />
+            <NavItem label="Messages" to="/messages" icon={MessageCircle} />
+            <NavItem label="No icon" to="/plain" />
           </div>
         </Section>
 
-        <Section title="Header & Nawigacja">
+        <Section title="Header & Navigation">
           <div className="space-y-6">
             <Header user={demoSessionUser} />
             <Header user={null} />
@@ -579,12 +580,12 @@ export default function UiDemoPage() {
         <Section title="ModalFooter">
           <div className="space-y-4">
             <ModalFooter
-              confirmText="Potwierdź"
+              confirmText="Confirm"
               onCancel={() => {}}
               onConfirm={() => {}}
             />
             <ModalFooter
-              confirmText="Usuń"
+              confirmText="Delete"
               confirmVariant="danger"
               confirmSize="sm"
               cancelSize="sm"
@@ -592,7 +593,7 @@ export default function UiDemoPage() {
               onConfirm={() => {}}
             />
             <ModalFooter
-              confirmText="Zapisz"
+              confirmText="Save"
               confirmVariant="secondary"
               confirmSize="lg"
               cancelSize="lg"
@@ -605,10 +606,10 @@ export default function UiDemoPage() {
 
         <Section title="LegalPageWrapper">
           <LegalPageWrapper>
-            <h2>Przykładowy nagłówek</h2>
+            <h2>Example heading</h2>
             <p>
-              To jest przykładowy tekst w opakowaniu LegalPageWrapper. Link na
-              dole prowadzi do strony głównej.
+              This is example text inside LegalPageWrapper. The link at the
+              bottom leads to the home page.
             </p>
           </LegalPageWrapper>
         </Section>
@@ -674,9 +675,9 @@ export default function UiDemoPage() {
 
         <Section title="Settings components">
           <div className="space-y-6">
-            <SettingsSection title="Sekcja ustawień (demo)">
+            <SettingsSection title="Settings section (demo)">
               <div className="text-sm text-text-neutral">
-                Przykładowa zawartość sekcji ustawień.
+                Example settings section content.
               </div>
             </SettingsSection>
             <AppearanceSection />
@@ -699,13 +700,13 @@ export default function UiDemoPage() {
           </div>
         </Section>
 
-        <Section title="Modale (inline, bez createPortal)">
+        <Section title="Modals (inline, no createPortal)">
           <div className="space-y-8">
             <DemoModalShell
-              title="Modal podstawowy"
+              title="Basic modal"
               footer={
                 <ModalFooter
-                  confirmText="Potwierdź"
+                  confirmText="Confirm"
                   onCancel={() => {}}
                   onConfirm={() => {}}
                 />
@@ -713,17 +714,17 @@ export default function UiDemoPage() {
             >
               <div className="space-y-2">
                 <p className="text-text-neutral text-sm">
-                  Przykładowa treść modala wraz z akcjami w stopce.
+                  Example modal content with footer actions.
                 </p>
                 <div className="flex items-center gap-2 text-xs text-text-neutral">
                   <img src={warningIconUrl} alt="warning" className="w-4 h-4" />
-                  <span>Tekst pomocniczy</span>
+                  <span>Helper text</span>
                 </div>
               </div>
             </DemoModalShell>
 
             <DemoModalShell
-              title="Komunikat"
+              title="Message"
               footer={
                 <div className="flex justify-end">
                   <Button text="OK" size="sm" />
@@ -731,12 +732,12 @@ export default function UiDemoPage() {
               }
             >
               <div className="py-2 text-text-main text-base leading-relaxed">
-                To jest przykładowy alert modal.
+                This is an example alert modal.
               </div>
             </DemoModalShell>
 
             <DemoModalShell
-              title="Nowy post"
+              title="New post"
               footer={
                 <div className="flex items-center justify-between w-full">
                   <Button
@@ -747,7 +748,7 @@ export default function UiDemoPage() {
                     type="button"
                   />
                   <span className="text-red-500 text-sm font-medium">
-                    Przykładowy błąd
+                    Example error
                   </span>
                   <Button
                     icon={<SendIcon className="w-5 h-5" />}
@@ -776,7 +777,7 @@ export default function UiDemoPage() {
                 </div>
                 <div className="relative w-full">
                   <textarea
-                    placeholder="Napisz coś..."
+                    placeholder="Write something..."
                     className="w-full bg-transparent text-text-main placeholder:text-text-neutral/50 text-base resize-none outline-none min-h-[100px] scrollbar-hide leading-relaxed pb-6"
                   />
                   <div className="absolute bottom-0 right-0 text-xs font-medium text-text-neutral/70">
@@ -799,10 +800,10 @@ export default function UiDemoPage() {
             </DemoModalShell>
 
             <DemoModalShell
-              title="Usunąć post?"
+              title="Delete post?"
               footer={
                 <ModalFooter
-                  confirmText="Tak, usuń"
+                  confirmText="Yes, delete"
                   onCancel={() => {}}
                   onConfirm={() => {}}
                   confirmVariant="danger"
@@ -810,16 +811,16 @@ export default function UiDemoPage() {
               }
             >
               <p className="text-sm text-text-neutral leading-relaxed">
-                Czy na pewno chcesz trwale usunąć ten post? Tej operacji nie
-                będzie można cofnąć.
+                Are you sure you want to permanently delete this post? This
+                action cannot be undone.
               </p>
             </DemoModalShell>
 
             <DemoModalShell
-              title="Zgłoś naruszenie"
+              title="Report a violation"
               footer={
                 <ModalFooter
-                  confirmText="Zgłoś post"
+                  confirmText="Report post"
                   onCancel={() => {}}
                   onConfirm={() => {}}
                 />
@@ -827,7 +828,7 @@ export default function UiDemoPage() {
             >
               <div className="flex flex-col gap-4">
                 <p className="text-sm text-text-neutral">
-                  Pomóż nam zrozumieć, co jest nie tak z tym postem.
+                  Help us understand what is wrong with this post.
                 </p>
                 <div className="flex flex-col gap-2">
                   {reportReasons.map((item) =>
@@ -862,41 +863,41 @@ export default function UiDemoPage() {
                   )}
                 </div>
                 <TextInput
-                  label="Dodatkowe informacje (opcjonalne)"
-                  placeholder="Opisz problem..."
+                  label="Additional information (optional)"
+                  placeholder="Describe the issue..."
                   value=""
                   onChange={() => {}}
                 />
               </div>
             </DemoModalShell>
 
-            <DemoModalShell title="Skomentuj post użytkownika: Ola">
+            <DemoModalShell title="Comment on Ola's post">
               <div className="space-y-4">
                 <div className="bg-secondary-neutral-background-default p-3 rounded-lg text-text-neutral text-sm italic border border-primary-neutral-stroke-default">
-                  Odpisujesz na: "Przykładowy post..."
+                  Replying to: "Example post..."
                 </div>
                 <textarea
-                  placeholder="Wpisz swój komentarz..."
+                  placeholder="Enter your comment..."
                   className="w-full p-3 bg-transparent border rounded-lg text-text-main placeholder:text-text-neutral focus:outline-none resize-none h-32 transition-all border-primary-neutral-stroke-default"
                 />
                 <div className="flex justify-end">
-                  <Button text="Dodaj komentarz" size="md" />
+                  <Button text="Add comment" size="md" />
                 </div>
               </div>
             </DemoModalShell>
 
             <DemoModalShell
-              title="Edytuj profil — Ola Profile"
+              title="Edit profile - Ola Profile"
               footer={
                 <div className="flex gap-3 justify-end w-full">
                   <Button
-                    text="Anuluj"
+                    text="Cancel"
                     size="md"
                     variant="secondary"
                     type="button"
                   />
                   <Button
-                    text="Zapisz"
+                    text="Save"
                     size="md"
                     variant="default"
                     type="button"
@@ -921,13 +922,13 @@ export default function UiDemoPage() {
                         <div className="flex flex-col items-center gap-1">
                           <img
                             src={cameraIconUrl}
-                            alt="Zmień"
+                            alt="Change"
                             width={24}
                             height={24}
                             className="opacity-90"
                           />
                           <span className="text-white text-xs font-medium">
-                            Zmień
+                            Change
                           </span>
                         </div>
                       </div>
@@ -941,7 +942,7 @@ export default function UiDemoPage() {
                   </div>
                   <div className="flex flex-col items-center gap-1">
                     <p className="text-sm text-text-neutral font-medium">
-                      Kliknij, aby zmienić zdjęcie profilowe
+                      Click to change profile photo
                     </p>
                     <p className="text-xs text-text-neutral/60">
                       PNG, JPG lub WEBP (max 5MB)
@@ -950,19 +951,19 @@ export default function UiDemoPage() {
                 </div>
                 <div className="flex flex-col gap-4 p-4 rounded-xl bg-secondary-neutral-background-default/30 border border-primary-neutral-stroke-default/50">
                   <TextInput
-                    label="Nazwa użytkownika"
-                    placeholder="Twoja publiczna nazwa"
+                    label="Username"
+                    placeholder="Your public name"
                     value="OlaProfile"
                     onChange={() => {}}
                     showButton={false}
                   />
                   <div className="flex flex-col gap-1">
                     <p className="text-sm text-text-neutral ml-1">
-                      Ta nazwa będzie widoczna publicznie — możesz użyć nicku
-                      lub imienia.
+                      This name will be visible publicly. You can use a
+                      nickname or your first name.
                     </p>
                     <p className="text-xs text-text-neutral/60 ml-1">
-                      9 / 30 znaków
+                      9 / 30 characters
                     </p>
                   </div>
                 </div>
@@ -970,10 +971,10 @@ export default function UiDemoPage() {
             </DemoModalShell>
 
             <DemoModalShell
-              title="Zmiana hasła"
+              title="Change password"
               footer={
                 <ModalFooter
-                  confirmText="Zapisz zmiany"
+                  confirmText="Save changes"
                   onCancel={() => {}}
                   onConfirm={() => {}}
                 />
@@ -982,33 +983,33 @@ export default function UiDemoPage() {
               <div className="flex flex-col gap-4 pt-2">
                 <TextInput
                   type="password"
-                  label="Aktualne hasło"
-                  placeholder="Wpisz swoje aktualne hasło"
+                  label="Current password"
+                  placeholder="Enter your current password"
                   messages={inputMessages.Default}
                 />
                 <TextInput
                   type="password"
-                  label="Nowe hasło"
-                  placeholder="Minimum 8 znaków"
+                  label="New password"
+                  placeholder="Minimum 8 characters"
                   messages={inputMessages.Warning}
                 />
                 <TextInput
                   type="password"
-                  label="Powtórz nowe hasło"
-                  placeholder="Potwierdź nowe hasło"
+                  label="Repeat new password"
+                  placeholder="Confirm new password"
                   messages={inputMessages.Success}
                 />
                 <p className="text-sm text-red-400 mt-1">
-                  Przykładowy błąd walidacji.
+                  Example validation error.
                 </p>
               </div>
             </DemoModalShell>
 
             <DemoModalShell
-              title="Czy na pewno chcesz usunąć konto?"
+              title="Are you sure you want to delete your account?"
               footer={
                 <ModalFooter
-                  confirmText="Tak, usuń konto"
+                  confirmText="Yes, delete account"
                   onCancel={() => {}}
                   onConfirm={() => {}}
                   confirmVariant="danger"
@@ -1016,16 +1017,16 @@ export default function UiDemoPage() {
               }
             >
               <p className="text-sm text-text-neutral">
-                Ta operacja jest nieodwracalna. Wszystkie Twoje dane zostaną
-                trwale usunięte.
+                This operation is irreversible. All your data will be
+                permanently deleted.
               </p>
             </DemoModalShell>
 
             <DemoModalShell
-              title="Nowy użytkownik"
+              title="New user"
               footer={
                 <ModalFooter
-                  confirmText="Utwórz konto"
+                  confirmText="Create account"
                   onCancel={() => {}}
                   onConfirm={() => {}}
                   confirmSize="sm"
@@ -1036,42 +1037,42 @@ export default function UiDemoPage() {
             >
               <div className="flex flex-col gap-5 py-2">
                 <p className="text-sm text-text-neutral mb-2">
-                  Utwórz konto i skonfiguruj dostęp dla nowego użytkownika.
+                  Create an account and configure access for the new user.
                 </p>
                 <div className="space-y-4">
                   <TextInput
-                    label="Nazwa użytkownika"
+                    label="Username"
                     value="JanKowalski"
                     onChange={() => {}}
                     showButton={false}
-                    placeholder="np. JanKowalski"
+                    placeholder="e.g. JanKowalski"
                   />
                   <TextInput
                     label="Email"
                     value="jan@hexoo.com"
                     onChange={() => {}}
                     showButton={false}
-                    placeholder="np. jan@hexoo.com"
+                    placeholder="e.g. jan@hexoo.com"
                   />
                   <Select
-                    label="Rola"
+                    label="Role"
                     value="user"
                     onChange={() => {}}
                     options={selectOptions}
                   />
                   <TextInput
-                    label="Hasło"
+                    label="Password"
                     type="password"
                     value="••••••••"
                     onChange={() => {}}
                     showButton={true}
-                    placeholder="Wpisz hasło..."
+                    placeholder="Enter password..."
                   />
                 </div>
               </div>
             </DemoModalShell>
 
-            <DemoModalShell title="Edycja użytkownika" className="max-w-4xl">
+            <DemoModalShell title="Edit user" className="max-w-4xl">
               <div className="flex flex-col gap-6 p-1">
                 <div className="mb-8 p-5 rounded-xl border border-primary-neutral-stroke-default bg-[radial-gradient(ellipse_at_top_right,var(--tw-gradient-stops))] from-white/5 via-transparent to-transparent">
                   <div className="flex flex-col sm:flex-row items-center gap-6">
@@ -1084,7 +1085,7 @@ export default function UiDemoPage() {
                         className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl border border-white/10 shadow-lg object-cover"
                       />
                       <div className="absolute -bottom-2 -right-2 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider shadow-sm border border-black/20 bg-green-600 text-white">
-                        Aktywny
+                        Active
                       </div>
                     </div>
                     <div className="flex-1 text-center sm:text-left w-full overflow-hidden">
@@ -1102,7 +1103,7 @@ export default function UiDemoPage() {
                       <div className="flex flex-wrap justify-center sm:justify-start gap-4 text-xs text-text-neutral/70 border-t border-white/5 pt-3">
                         <div className="flex flex-col">
                           <span className="uppercase text-[10px] font-semibold tracking-wider opacity-50">
-                            ID Użytkownika
+                            User ID
                           </span>
                           <span className="font-mono text-text-neutral select-all">
                             {demoAdminUser.uid}
@@ -1110,7 +1111,7 @@ export default function UiDemoPage() {
                         </div>
                         <div className="flex flex-col">
                           <span className="uppercase text-[10px] font-semibold tracking-wider opacity-50">
-                            Dołączył
+                            Joined
                           </span>
                           <span>15.01.2024</span>
                         </div>
@@ -1122,27 +1123,27 @@ export default function UiDemoPage() {
                   <div className="flex flex-col gap-4">
                     <div className="bg-white/5 p-5 rounded-xl border border-primary-neutral-background-default/30 h-full flex flex-col">
                       <h3 className="text-lg font-medium mb-4 text-text-main">
-                        Dane profilowe
+                        Profile data
                       </h3>
                       <div className="flex flex-col gap-4 flex-1">
                         <TextInput
-                          label="Nazwa wyświetlana"
+                          label="Display name"
                           value="Admin Hexoo"
                           placeholder={demoAdminUser.name}
                           onChange={() => {}}
                           showButton={false}
                         />
                         <Select
-                          label="Rola w systemie"
+                          label="System role"
                           value={demoAdminUser.role}
                           onChange={() => {}}
                           options={selectOptions}
-                          placeholder="— Wybierz rolę —"
+                          placeholder="- Choose a role -"
                         />
                       </div>
                       <div className="mt-6 flex justify-end">
                         <Button
-                          text="Zapisz zmiany"
+                          text="Save changes"
                           size="sm"
                           variant="default"
                           className="w-full md:w-auto"
@@ -1153,24 +1154,24 @@ export default function UiDemoPage() {
                   <div className="flex flex-col gap-4">
                     <div className="bg-white/5 p-5 rounded-xl border border-primary-neutral-background-default/30 h-full flex flex-col">
                       <h3 className="text-lg font-medium mb-4 text-text-main">
-                        Bezpieczeństwo
+                        Security
                       </h3>
                       <div className="flex flex-col gap-4 flex-1">
                         <TextInput
-                          label="Ustaw nowe hasło"
+                          label="Set new password"
                           value=""
-                          placeholder="Min. 8 znaków"
+                          placeholder="Min. 8 characters"
                           onChange={() => {}}
                           type="password"
                           showButton={true}
                         />
                         <p className="text-xs text-text-neutral/60">
-                          Pozostaw puste, jeśli nie chcesz zmieniać hasła.
+                          Leave empty if you do not want to change the password.
                         </p>
                       </div>
                       <div className="mt-6 flex justify-end">
                         <Button
-                          text="Zmień hasło"
+                          text="Change password"
                           size="sm"
                           variant="default"
                           className="w-full md:w-auto"
@@ -1181,7 +1182,7 @@ export default function UiDemoPage() {
                 </div>
                 <div className="flex flex-col md:flex-row justify-between items-center gap-4 w-full">
                   <Button
-                    text="Anuluj i zamknij"
+                    text="Cancel and close"
                     disabled={false}
                     className="text-text-neutral hover:text-white order-2 md:order-1 border-transparent"
                     variant="secondary"
@@ -1189,13 +1190,13 @@ export default function UiDemoPage() {
                   />
                   <div className="flex gap-3 w-full md:w-auto order-1 md:order-2 justify-end">
                     <Button
-                      text="Zablokuj konto"
+                      text="Block account"
                       size="sm"
                       variant="secondary"
                       className="text-yellow-400 border-yellow-500/30 hover:bg-yellow-500/10"
                     />
                     <Button
-                      text="Usuń użytkownika"
+                      text="Delete user"
                       size="sm"
                       variant="danger"
                     />
