@@ -7,6 +7,7 @@ import fetchClient from "@/lib/fetchClient";
 import { supabaseClient } from "@/lib/supabaseClient";
 import { useAppStore } from "@/lib/store/store";
 import type { UserRole } from "@/features/users/types/user.type";
+import { useI18n } from "@/i18n/useI18n";
 
 type OAuthLoginResponse =
   | {
@@ -36,6 +37,7 @@ type Phase = "initial" | "verifying" | "redirecting" | "error";
  * the backend detects the pending DB record and signals NEEDS_USERNAME again.
  */
 export default function useOAuthCallback() {
+  const { t } = useI18n();
   const router = useRouter();
   const setUser = useAppStore((s) => s.setUser);
   const didRunRef = useRef(false);
@@ -56,7 +58,7 @@ export default function useOAuthCallback() {
         if (sessionErr || !sessionResult.session) {
           setErrorCode("NO_SUPABASE_SESSION");
           setPhase("error");
-          toast.error("Nie udało się pobrać sesji Google. Spróbuj ponownie.");
+          toast.error(t("auth.oauth.sessionFetchError"));
           router.replace("/login");
           return;
         }
@@ -88,11 +90,11 @@ export default function useOAuthCallback() {
         console.error("[useOAuthCallback]", err);
         setErrorCode("NETWORK_ERROR");
         setPhase("error");
-        toast.error("Wystąpił błąd przy finalizacji logowania.");
+        toast.error(t("auth.oauth.finalizeError"));
         router.replace("/login");
       }
     })();
-  }, [router, setUser]);
+  }, [router, setUser, t]);
 
   return { phase, errorCode };
 }

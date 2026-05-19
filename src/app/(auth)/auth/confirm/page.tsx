@@ -10,16 +10,18 @@ import { supabaseClient } from "@/lib/supabaseClient";
 import fetchClient from "@/lib/fetchClient";
 import { useAppStore } from "@/lib/store/store";
 import type { SessionData } from "@/features/me/me.type";
+import { useI18n } from "@/i18n/useI18n";
 
 type RegisterResponse = {
   user: SessionData;
 };
 
 export default function AuthConfirmPage() {
+  const { t } = useI18n();
   const router = useRouter();
   const { executeRecaptcha } = useGoogleReCaptcha();
   const setUser = useAppStore((s) => s.setUser);
-  const [message, setMessage] = useState("Potwierdzamy Twój email...");
+  const [message, setMessage] = useState(t("auth.confirm.pending"));
 
   useEffect(() => {
     if (!executeRecaptcha) return;
@@ -31,7 +33,7 @@ export default function AuthConfirmPage() {
       const type = params.get("type") as EmailOtpType | null;
 
       if (!tokenHash || !type) {
-        setMessage("Link aktywacyjny jest nieprawidłowy.");
+        setMessage(t("auth.confirm.invalidLink"));
         return;
       }
 
@@ -51,7 +53,7 @@ export default function AuthConfirmPage() {
 
         if (error || !data.session) {
           console.error("verifyOtp error:", error);
-          setMessage("Nie udało się potwierdzić emaila. Link mógł wygasnąć.");
+          setMessage(t("auth.confirm.failed"));
           return;
         }
 
@@ -60,13 +62,11 @@ export default function AuthConfirmPage() {
         const name = user.user_metadata?.name;
 
         if (!email || !name) {
-          setMessage(
-            "Brakuje danych konta. Spróbuj zarejestrować się ponownie.",
-          );
+          setMessage(t("auth.confirm.missingData"));
           return;
         }
 
-        setMessage("Email potwierdzony.");
+        setMessage(t("auth.confirm.confirmed"));
 
         const recaptchaToken = await executeRecaptcha("register_confirm");
 
@@ -82,22 +82,22 @@ export default function AuthConfirmPage() {
         );
 
         setUser(response.user);
-        toast.success("Konto aktywowane.");
+        toast.success(t("auth.confirm.activated"));
         router.replace("/");
       } catch (error) {
         console.error("Email confirmation finalize error:", error);
-        setMessage("Wystąpił błąd podczas aktywacji konta.");
+        setMessage(t("auth.confirm.activationError"));
       }
     };
 
     void confirmEmail();
-  }, [executeRecaptcha, router, setUser]);
+  }, [executeRecaptcha, router, setUser, t]);
 
   return (
     <div className="flex-1 flex items-center justify-center">
       <div className="flex w-full max-w-md flex-col items-center gap-4 px-4 py-8 text-center max-sm:bg-transparent sm:gap-6 sm:rounded-[20px] sm:px-10 sm:py-8 sm:glass-card">
         <div className="text-text-main text-2xl font-bold font-serif">
-          Aktywacja konta
+          {t("auth.confirm.title")}
         </div>
         <div className="text-text-neutral text-base font-semibold font-serif">
           {message}

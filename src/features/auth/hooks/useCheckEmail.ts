@@ -41,7 +41,7 @@ export function useCheckEmail(email: string) {
       return;
     }
 
-    // Sprawdź dostępność email
+    // Check email availability
     const checkEmail = async () => {
       setIsChecking(true);
       setError(null);

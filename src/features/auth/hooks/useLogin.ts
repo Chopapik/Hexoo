@@ -9,6 +9,7 @@ import { supabaseClient } from "@/lib/supabaseClient";
 import useRecaptcha from "@/features/shared/hooks/useRecaptcha";
 import toast from "react-hot-toast";
 import type { UserRole } from "@/features/users/types/user.type";
+import { useI18n } from "@/i18n/useI18n";
 
 type ErrorCallback = (errorCode: string, field?: string) => void;
 
@@ -25,6 +26,7 @@ type LoginResponse = {
 };
 
 export default function useLogin(onError: ErrorCallback) {
+  const { t } = useI18n();
   const { getRecaptchaToken } = useRecaptcha();
   const router = useRouter();
   const setUser = useAppStore((s) => s.setUser);
@@ -72,7 +74,7 @@ export default function useLogin(onError: ErrorCallback) {
         } else if (msg.includes("disabled") || msg.includes("banned")) {
           onError("ACCOUNT_BANNED", "root");
         } else {
-          toast.error(signInError.message ?? "Błąd logowania.");
+          toast.error(signInError.message ?? t("auth.login.error"));
         }
 
         return;
@@ -81,7 +83,7 @@ export default function useLogin(onError: ErrorCallback) {
       const accessToken = sessionData.session?.access_token;
 
       if (!accessToken) {
-        toast.error("Brak tokena sesji.");
+        toast.error(t("auth.login.noToken"));
         return;
       }
 
@@ -95,7 +97,7 @@ export default function useLogin(onError: ErrorCallback) {
       });
     } catch (error) {
       console.error(error);
-      toast.error("Wystąpił nieznany błąd.");
+      toast.error(t("common.unknown"));
     } finally {
       setIsSigningIn(false);
     }

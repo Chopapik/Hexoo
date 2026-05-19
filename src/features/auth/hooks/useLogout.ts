@@ -4,8 +4,10 @@ import toast from "react-hot-toast";
 
 import fetchClient from "@/lib/fetchClient";
 import { useAppStore } from "@/lib/store/store";
+import { useI18n } from "@/i18n/useI18n";
 
 export function useLogout() {
+  const { t } = useI18n();
   const router = useRouter();
   const clearUser = useAppStore((s) => s.clearUser);
 
@@ -26,9 +28,7 @@ export function useLogout() {
     onError: (error) => {
       console.error("Logout cleanup failed", error);
 
-      toast.error(
-        "Wylogowano lokalnie, ale nie udało się potwierdzić wylogowania na serwerze. Odśwież stronę, jeśli problem wróci.",
-      );
+      toast.error(t("auth.logout.partialError"));
     },
   });
 

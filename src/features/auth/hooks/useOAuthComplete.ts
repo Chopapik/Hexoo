@@ -9,6 +9,7 @@ import { supabaseClient } from "@/lib/supabaseClient";
 import { useAppStore } from "@/lib/store/store";
 import { OAuthCompleteData, OAuthCompleteFields } from "../types/auth.type";
 import type { UserRole } from "@/features/users/types/user.type";
+import { useI18n } from "@/i18n/useI18n";
 
 type ErrorCallback = (errorCode: string, field?: OAuthCompleteFields) => void;
 
@@ -28,6 +29,7 @@ type CompleteOAuthResponse = {
  * backend creates the app session and this hook finalises client state.
  */
 export default function useOAuthComplete(onError: ErrorCallback) {
+  const { t } = useI18n();
   const router = useRouter();
   const setUser = useAppStore((s) => s.setUser);
 
@@ -70,7 +72,7 @@ export default function useOAuthComplete(onError: ErrorCallback) {
       }
 
       if (error.code === "USER_NOT_FOUND") {
-        toast.error("Sesja OAuth wygasła, zaloguj się ponownie przez Google.");
+        toast.error(t("auth.oauth.expired"));
         router.replace("/login");
         return;
       }
@@ -85,9 +87,7 @@ export default function useOAuthComplete(onError: ErrorCallback) {
         await supabaseClient.auth.getSession();
 
       if (sessionErr || !sessionResult.session) {
-        toast.error(
-          "Sesja Google wygasła. Zaloguj się ponownie przez Google.",
-        );
+        toast.error(t("auth.oauth.googleExpired"));
         router.replace("/login");
         return;
       }
@@ -102,7 +102,7 @@ export default function useOAuthComplete(onError: ErrorCallback) {
       });
     } catch (error) {
       console.error("[useOAuthComplete]", error);
-      toast.error("Wystąpił nieznany błąd.");
+      toast.error(t("common.unknown"));
     }
   };
 

@@ -1,14 +1,15 @@
 import { ValidationMessage } from "@/features/shared/types/validation.type";
 import { parseUserNameErrorMessages } from "@/features/shared/utils/userNameErrorMap";
-import { getErrorEntry } from "@/i18n/errorCatalog";
+import { getErrorEntry, type Lang } from "@/i18n/errorCatalog";
 
 export function parseRegisterErrorMessages(
   errorCode: string | undefined,
+  lang: Lang = "pl",
 ): ValidationMessage[] | [] {
   if (!errorCode) return [];
 
   // First, check if it's a user name error
-  const userNameError = parseUserNameErrorMessages(errorCode);
+  const userNameError = parseUserNameErrorMessages(errorCode, lang);
   if (userNameError.length > 0) {
     return userNameError;
   }
@@ -19,9 +20,8 @@ export function parseRegisterErrorMessages(
   return [
     {
       type: entry.validationType ?? "Dismiss",
-      text: entry.message.pl,
+      text: entry.message[lang],
       field: entry.field,
     },
   ];
 }
-

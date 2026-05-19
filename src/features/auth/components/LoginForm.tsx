@@ -11,8 +11,10 @@ import useLogin from "../hooks/useLogin";
 import useGoogleLogin from "../hooks/useGoogleLogin";
 import { LoginData } from "../types/auth.type";
 import { parseErrorMessages } from "../utils/loginErrorMap";
+import { useI18n } from "@/i18n/useI18n";
 
 export default function LoginForm() {
+  const { lang, t } = useI18n();
   const { register, handleSubmit, errors, handleServerErrors } = useLoginForm();
 
   const { handleLogin, isLoading } = useLogin(handleServerErrors);
@@ -26,7 +28,7 @@ export default function LoginForm() {
     <div className="mx-auto inline-flex w-full max-w-md flex-col items-center justify-center gap-6 overflow-hidden px-4 py-8 xs:px-6 sm:max-w-2xl sm:gap-10 sm:rounded-[20px] sm:px-12 sm:py-12 sm:glass-card md:px-32 md:py-20">
       <div className="py-0.5 flex flex-col justify-start items-center overflow-hidden">
         <div className="justify-start text-text-main text-4xl sm:text-6xl font-serif">
-          Logowanie
+          {t("auth.login.title")}
         </div>
       </div>
 
@@ -38,15 +40,15 @@ export default function LoginForm() {
           label="Email"
           placeholder="example@hexoo.com"
           {...register("email")}
-          messages={parseErrorMessages(errors.email?.message)}
+          messages={parseErrorMessages(errors.email?.message, lang)}
         />
 
         <TextInput
-          label="Hasło"
+          label={t("auth.register.password")}
           type="password"
           placeholder="•••••••••"
           {...register("password")}
-          messages={parseErrorMessages(errors.password?.message)}
+          messages={parseErrorMessages(errors.password?.message, lang)}
         />
 
         <div className="inline-flex flex-col justify-start items-start overflow-hidden h-8 min-w-1">
@@ -54,7 +56,7 @@ export default function LoginForm() {
             <div className="min-w-48 px-3 h-full bg-red-600 rounded-lg shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] inline-flex justify-center items-center gap-2 overflow-hidden">
               <Image src={warningIconUrl} alt="warning!" />
               <div className="justify-start text-white text-xs font-semibold font-sans">
-                {parseErrorMessages(errors.root?.message)[0]?.text}
+                {parseErrorMessages(errors.root?.message, lang)[0]?.text}
               </div>
             </div>
           )}
@@ -62,14 +64,14 @@ export default function LoginForm() {
 
         <div className="self-stretch flex flex-col justify-center items-end gap-1 mt-3 sm:mt-4 space-y-3 sm:space-y-4">
           <Button
-            text="Zaloguj się"
+            text={t("auth.login.submit")}
             size="xl"
             rightIconUrl={keyIconUrl}
             type="submit"
             isLoading={isLoading}
           />
           <Button
-            text="Zaloguj się przez Google"
+            text={t("auth.login.google")}
             size="xl"
             variant="secondary"
             leftIcon={[
@@ -98,10 +100,10 @@ export default function LoginForm() {
 
       <div className="self-stretch text-center justify-start mt-2 sm:mt-4">
         <span className="text-text-main text-sm sm:text-base font-semibold font-sans">
-          Nie masz konta?
+          {t("auth.login.noAccount")}
         </span>
         <span className="text-text-main text-sm sm:text-base font-semibold font-sans underline ml-1">
-          <Link href="/register">Zarejestruj się</Link>
+          <Link href="/register">{t("auth.login.register")}</Link>
         </span>
       </div>
     </div>

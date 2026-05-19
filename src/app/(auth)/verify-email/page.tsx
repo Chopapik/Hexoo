@@ -6,8 +6,10 @@ import toast from "react-hot-toast";
 
 import { supabaseClient } from "@/lib/supabaseClient";
 import Button from "@/features/shared/components/ui/Button";
+import { useI18n } from "@/i18n/useI18n";
 
 export default function VerifyEmailPage() {
+  const { t } = useI18n();
   const [email, setEmail] = useState("");
   const [isResending, setIsResending] = useState(false);
 
@@ -19,7 +21,7 @@ export default function VerifyEmailPage() {
 
   const handleResend = async () => {
     if (!email.trim()) {
-      toast.error("Wpisz email, żeby wysłać link ponownie.");
+      toast.error(t("auth.verify.emailRequired"));
       return;
     }
 
@@ -40,10 +42,10 @@ export default function VerifyEmailPage() {
       }
     } catch (error) {
       console.error("Resend confirmation error:", error);
-      toast.error("Nie udało się wysłać maila ponownie.");
+      toast.error(t("auth.verify.resendError"));
     } finally {
       setIsResending(false);
-      toast.success("Link aktywacyjny został wysłany ponownie.");
+      toast.success(t("auth.verify.resendSuccess"));
     }
   };
 
@@ -51,17 +53,15 @@ export default function VerifyEmailPage() {
     <div className="flex-1 flex items-center justify-center">
       <div className="flex w-full max-w-md flex-col items-center gap-4 px-4 py-8 text-center max-sm:bg-transparent sm:gap-6 sm:rounded-[20px] sm:p-10 sm:glass-card">
         <div className="text-text-main text-2xl font-bold font-serif">
-          Sprawdź swoją skrzynkę
+          {t("auth.verify.title")}
         </div>
 
         <div className="text-text-neutral text-base font-semibold font-sans">
-          Wysłaliśmy link aktywacyjny na Twój adres email. Kliknij go, żeby
-          potwierdzić konto i dokończyć rejestrację.
+          {t("auth.verify.copy")}
         </div>
 
         <p className="text-text-neutral text-sm font-normal font-sans">
-          Jeśli nie widzisz wiadomości, sprawdź folder Spam lub inne filtry
-          poczty.
+          {t("auth.verify.help")}
         </p>
 
         <span className="mt-4 w-full px-4 py-3 text-xl outline-none break-all text-text-main font-bold">
@@ -69,7 +69,7 @@ export default function VerifyEmailPage() {
         </span>
 
         <Button
-          text="Wyślij ponownie"
+          text={t("auth.verify.resend")}
           onClick={handleResend}
           isLoading={isResending}
         />
@@ -78,7 +78,7 @@ export default function VerifyEmailPage() {
           href="/login"
           className="mt-2 text-sm underline text-text-neutral"
         >
-          Wróć do logowania
+          {t("common.backToLogin")}
         </Link>
       </div>
     </div>

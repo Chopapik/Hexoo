@@ -15,8 +15,10 @@ import { parseRegisterErrorMessages } from "../utils/registerErrorMap";
 import { useRegisterForm } from "../hooks/useRegisterForm";
 import { useCheckUsername } from "../hooks/useCheckUsername";
 import { useCheckEmail } from "../hooks/useCheckEmail";
+import { useI18n } from "@/i18n/useI18n";
 
 export default function RegisterForm() {
+  const { lang, t } = useI18n();
   const {
     register,
     handleSubmit,
@@ -40,7 +42,10 @@ export default function RegisterForm() {
   } = useCheckEmail(watchedEmail || "");
 
   const nameMessages = useMemo((): Message[] => {
-    const validationMessages = parseRegisterErrorMessages(errors.name?.message);
+    const validationMessages = parseRegisterErrorMessages(
+      errors.name?.message,
+      lang,
+    );
 
     if (validationMessages.length > 0) {
       return validationMessages;
@@ -50,7 +55,7 @@ export default function RegisterForm() {
       return [
         {
           type: "Dismiss",
-          text: "Ta nazwa użytkownika jest już zajęta",
+          text: t("auth.usernameTaken"),
         },
       ];
     }
@@ -64,7 +69,7 @@ export default function RegisterForm() {
       return [
         {
           type: "Success",
-          text: "Nazwa użytkownika jest dostępna",
+          text: t("auth.usernameAvailable"),
         },
       ];
     }
@@ -72,6 +77,8 @@ export default function RegisterForm() {
     return [];
   }, [
     errors.name?.message,
+    lang,
+    t,
     usernameError,
     isUsernameAvailable,
     watchedName,
@@ -81,6 +88,7 @@ export default function RegisterForm() {
   const emailMessages = useMemo((): Message[] => {
     const validationMessages = parseRegisterErrorMessages(
       errors.email?.message,
+      lang,
     );
 
     if (validationMessages.length > 0) {
@@ -91,7 +99,7 @@ export default function RegisterForm() {
       return [
         {
           type: "Dismiss",
-          text: "Ten email jest już zajęty",
+          text: t("auth.emailTaken"),
         },
       ];
     }
@@ -107,7 +115,7 @@ export default function RegisterForm() {
         return [
           {
             type: "Success",
-            text: "Email jest dostępny",
+            text: t("auth.emailAvailable"),
           },
         ];
       }
@@ -116,6 +124,8 @@ export default function RegisterForm() {
     return [];
   }, [
     errors.email?.message,
+    lang,
+    t,
     emailError,
     isEmailAvailable,
     watchedEmail,
@@ -125,6 +135,7 @@ export default function RegisterForm() {
   const passwordMessages = useMemo((): Message[] => {
     const validationMessages = parseRegisterErrorMessages(
       errors.password?.message,
+      lang,
     );
 
     if (validationMessages.length > 0) {
@@ -135,13 +146,13 @@ export default function RegisterForm() {
       return [
         {
           type: "Success",
-          text: "Hasło jest poprawne",
+          text: t("auth.passwordValid"),
         },
       ];
     }
 
     return [];
-  }, [errors.password?.message, watchedPassword]);
+  }, [errors.password?.message, lang, t, watchedPassword]);
 
   const onSubmit = async (data: RegisterData) => {
     await handleRegister(data);
@@ -151,10 +162,10 @@ export default function RegisterForm() {
     <div className="mx-auto inline-flex w-full max-w-md flex-col items-center justify-center gap-6 overflow-hidden px-4 py-8 xs:px-6 sm:max-w-2xl sm:gap-10 sm:rounded-[20px] sm:px-12 sm:py-12 sm:glass-card md:px-32 md:py-20">
       <div className="py-0.5 flex flex-col justify-start items-center overflow-hidden">
         <div className="justify-start text-text-main text-4xl sm:text-6xl font-serif">
-          Rejestracja
+          {t("auth.register.title")}
         </div>
         <div className="justify-start text-text-neutral text-lg sm:text-2xl font-bold font-serif">
-          Załóż konto
+          {t("auth.register.subtitle")}
         </div>
       </div>
 
@@ -163,24 +174,24 @@ export default function RegisterForm() {
         className="self-stretch flex flex-col justify-center items-center gap-2 sm:gap-3 overflow-hidden"
       >
         <TextInput
-          label="Nazwa użytkownika"
-          placeholder="podaj imię"
+          label={t("auth.register.username")}
+          placeholder={t("auth.register.namePlaceholder")}
           {...register("name")}
           messages={nameMessages}
         />
 
         <TextInput
           label="Email"
-          placeholder="podaj email"
+          placeholder={t("auth.register.emailPlaceholder")}
           type="email"
           {...register("email")}
           messages={emailMessages}
         />
 
         <TextInput
-          label="Hasło"
+          label={t("auth.register.password")}
           type="password"
-          placeholder="podaj hasło"
+          placeholder={t("auth.register.passwordPlaceholder")}
           {...register("password")}
           messages={passwordMessages}
         />
@@ -206,16 +217,16 @@ export default function RegisterForm() {
               </svg>
             </div>
             <span className="inline-flex items-center gap-1 text-text-main text-xs sm:text-sm font-medium font-sans">
-              <span>Akceptuję</span>
+              <span>{t("auth.register.accept")}</span>
               <span>
                 <Link
                   href="/terms"
                   className="underline hover:text-white transition-colors"
                 >
-                  regulamin
+                  {t("auth.register.terms")}
                 </Link>
               </span>
-              <span>serwisu</span>
+              <span>{t("auth.register.service")}</span>
             </span>
           </label>
 
@@ -230,7 +241,7 @@ export default function RegisterForm() {
                 </svg>
               </div>
               <span className="text-red-500 text-xs font-normal font-sans">
-                {parseRegisterErrorMessages(errors.terms.message)[0]?.text}
+                {parseRegisterErrorMessages(errors.terms.message, lang)[0]?.text}
               </span>
             </div>
           )}
@@ -241,7 +252,7 @@ export default function RegisterForm() {
             <div className="min-w-48 px-4 py-2 bg-red-600 rounded-lg shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] inline-flex justify-center items-center gap-2 overflow-hidden">
               <Image src={warningIconUrl} alt="warning!" />
               <div className="justify-start text-white text-xs font-semibold font-sans">
-                {parseRegisterErrorMessages(errors.root?.message)[0]?.text}
+                {parseRegisterErrorMessages(errors.root?.message, lang)[0]?.text}
               </div>
             </div>
           )}
@@ -249,7 +260,7 @@ export default function RegisterForm() {
 
         <div className="self-stretch flex flex-col justify-center items-end gap-1 mt-3 sm:mt-4">
           <Button
-            text="Zarejestruj się"
+            text={t("auth.register.submit")}
             size="xl"
             rightIconUrl={keyIconUrl}
             type="submit"
@@ -260,10 +271,10 @@ export default function RegisterForm() {
 
       <div className="self-stretch text-center justify-start mt-2 sm:mt-4">
         <span className="text-text-main text-sm sm:text-base font-semibold font-sans">
-          Masz już konto?
+          {t("auth.register.haveAccount")}
         </span>
         <span className="text-text-main text-sm sm:text-base font-semibold font-sans underline ml-1">
-          <Link href="/login">Zaloguj się</Link>
+          <Link href="/login">{t("auth.login.submit")}</Link>
         </span>
       </div>
     </div>
