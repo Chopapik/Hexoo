@@ -1,8 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import fetchClient from "@/lib/fetchClient";
 import { toast } from "react-hot-toast";
+import { useI18n } from "@/i18n/useI18n";
 
 export default function useAdminDeleteUser() {
+  const { t } = useI18n();
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
@@ -11,10 +13,10 @@ export default function useAdminDeleteUser() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "allUsers"] });
-      toast.success("Użytkownik został usunięty");
+      toast.success(t("admin.userDeleted"));
     },
     onError: (error) => {
-      toast.error("Nie udało się usunąć użytkownika");
+      toast.error(t("admin.userDeleteError"));
     },
   });
 

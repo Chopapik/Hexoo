@@ -5,6 +5,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import fetchClient from "@/lib/fetchClient";
 import Button from "@/features/shared/components/ui/Button";
 import { AppLoader } from "@/features/shared/components/ui/AppLoader";
+import { useI18n } from "@/i18n/useI18n";
 
 type ActivityLog = {
   id: string;
@@ -24,6 +25,7 @@ type GetActivityLogsResponse = {
 const PAGE_SIZE = 20;
 
 export default function ActivityLogTable() {
+  const { lang, t } = useI18n();
   const {
     data,
     isLoading,
@@ -87,16 +89,16 @@ export default function ActivityLogTable() {
       <div className="flex items-center justify-between mb-4">
         <div className="flex flex-col">
           <h2 className="text-lg font-sans font-semibold">
-            Log aktywności
+            {t("admin.activityLog")}
           </h2>
           <div className="text-sm text-text-neutral">
-            Ostatnie zdarzenia w systemie
+            {t("admin.latestEvents")}
           </div>
         </div>
 
         <Button
           onClick={() => refetch()}
-          text="Odśwież"
+          text={t("common.refresh")}
           size="sm"
           isLoading={isFetching}
         />
@@ -104,16 +106,16 @@ export default function ActivityLogTable() {
 
       {isLoading ? (
         <div className="py-12 text-center text-text-neutral">
-          Ładowanie logów aktywności…
+          {t("admin.loadingLogs")}
         </div>
       ) : isError ? (
         <div className="py-6 text-center text-red-500">
-          Błąd podczas pobierania: {error?.message ?? "unknown"}
+          {t("admin.fetchError", { message: error?.message ?? "unknown" })}
         </div>
       ) : (
         <>
           <div className="mb-3 text-sm text-text-neutral flex gap-1">
-            Załadowano:
+            {t("admin.loaded")}
             <span className="font-medium text-text-main">{logs.length}</span>
           </div>
 
@@ -124,12 +126,12 @@ export default function ActivityLogTable() {
             <table className="min-w-full bg-transparent text-sm">
               <thead className="bg-primary-neutral-background-default/60 sticky top-0 z-10">
                 <tr className="text-left text-xs text-text-neutral uppercase tracking-wide">
-                  <th className="px-3 py-2 w-[190px]">Czas</th>
-                  <th className="px-3 py-2 w-[220px]">Użytkownik</th>
+                  <th className="px-3 py-2 w-[190px]">{t("admin.time")}</th>
+                  <th className="px-3 py-2 w-[220px]">{t("admin.user")}</th>
                   <th className="px-3 py-2 w-[220px]">Email</th>
-                  <th className="px-3 py-2 w-[120px]">Rola</th>
-                  <th className="px-3 py-2 w-[160px]">Akcja</th>
-                  <th className="px-3 py-2">Szczegóły</th>
+                  <th className="px-3 py-2 w-[120px]">{t("admin.role")}</th>
+                  <th className="px-3 py-2 w-[160px]">{t("admin.action")}</th>
+                  <th className="px-3 py-2">{t("admin.details")}</th>
                 </tr>
               </thead>
 
@@ -141,7 +143,7 @@ export default function ActivityLogTable() {
                       className="hover:bg-primary-neutral-background-default/60 border-t border-primary-neutral-stroke-default/40 align-top"
                     >
                       <td className="px-3 py-2 text-xs text-text-neutral whitespace-nowrap">
-                        {new Date(log.createdAt).toLocaleString("pl-PL", {
+                        {new Date(log.createdAt).toLocaleString(lang === "pl" ? "pl-PL" : "en-US", {
                           year: "2-digit",
                           month: "2-digit",
                           day: "2-digit",
@@ -185,7 +187,7 @@ export default function ActivityLogTable() {
                       colSpan={6}
                       className="px-3 py-6 text-center text-text-neutral"
                     >
-                      Brak zarejestrowanych zdarzeń
+                      {t("admin.noEvents")}
                     </td>
                   </tr>
                 )}
@@ -206,7 +208,7 @@ export default function ActivityLogTable() {
 
           {!hasNextPage && logs.length > 0 && (
             <div className="text-center text-text-neutral text-sm py-6 font-sans opacity-50">
-              To już wszystkie załadowane wpisy
+              {t("admin.allLoaded")}
             </div>
           )}
         </>

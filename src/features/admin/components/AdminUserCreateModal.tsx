@@ -8,12 +8,14 @@ import Select from "@/features/shared/components/ui/Select";
 import adminCreateUser from "../hooks/user/useAdminCreateUser";
 import type { UserRole } from "@/features/users/types/user.type";
 import { USER_ROLE_OPTIONS } from "@/features/users/constants/userRoleOptions";
+import { useI18n } from "@/i18n/useI18n";
 
 export default function AdminUserCreateModal({
   onClose,
 }: {
   onClose: () => void;
 }) {
+  const { t } = useI18n();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -29,8 +31,8 @@ export default function AdminUserCreateModal({
 
   const footer = (
     <ModalFooter
-      cancelText="Anuluj"
-      confirmText="Utwórz konto"
+      cancelText={t("common.cancel")}
+      confirmText={t("admin.createAccount")}
       onCancel={onClose}
       onConfirm={handleCreate}
       isPending={isPending}
@@ -45,17 +47,17 @@ export default function AdminUserCreateModal({
     <Modal
       isOpen={true}
       onClose={onClose}
-      title="Nowy użytkownik"
+      title={t("admin.newUser")}
       footer={footer}
     >
       <div className="flex flex-col gap-5 py-2">
         <p className="text-sm text-text-neutral mb-2">
-          Utwórz konto i skonfiguruj dostęp dla nowego użytkownika.
+          {t("admin.createCopy")}
         </p>
 
         <div className="space-y-4">
           <TextInput
-            label="Nazwa użytkownika"
+            label={t("auth.register.username")}
             value={name}
             onChange={(e) => setName(e.target.value)}
             showButton={false}
@@ -71,19 +73,19 @@ export default function AdminUserCreateModal({
           />
 
           <Select
-            label="Rola"
+            label={t("admin.role")}
             value={role}
             onChange={(e) => setRole(e.target.value as UserRole)}
             options={USER_ROLE_OPTIONS}
           />
 
           <TextInput
-            label="Hasło"
+            label={t("auth.register.password")}
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             showButton={true}
-            placeholder="Wpisz hasło..."
+            placeholder={t("admin.passwordPlaceholder")}
           />
         </div>
       </div>

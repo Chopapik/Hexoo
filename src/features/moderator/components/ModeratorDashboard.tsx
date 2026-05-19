@@ -12,8 +12,10 @@ import { ModerationPostResponseDto } from "@/features/posts/types/post.dto";
 import type { ModerationCommentResponseDto } from "@/features/comments/types/comment.dto";
 import ModerationQueueItem from "./ModerationQueueItem";
 import ModerationCommentQueueItem from "./ModerationCommentQueueItem";
+import { useI18n } from "@/i18n/useI18n";
 
 export default function ModeratorDashboard() {
+  const { t } = useI18n();
   const [queueTab, setQueueTab] = useState<ModeratorQueueTab>("posts");
   const {
     data,
@@ -57,19 +59,19 @@ export default function ModeratorDashboard() {
 
   const queueSubtitle =
     queueTab === "posts"
-      ? "Posty oflagowane przez AI lub zgłoszone przez użytkowników."
-      : "Komentarze oczekujące na moderację (np. flagi lub zgłoszenia).";
+      ? t("moderation.dashboard.postsSubtitle")
+      : t("moderation.dashboard.commentsSubtitle");
 
   const emptyMessage =
     queueTab === "posts"
-      ? "Brak postów wymagających uwagi."
-      : "Brak komentarzy wymagających uwagi.";
+      ? t("moderation.dashboard.emptyPosts")
+      : t("moderation.dashboard.emptyComments");
 
   return (
     <div className="w-full flex flex-col p-10 gap-10">
       <div className="w-full flex items-center justify-between gap-4">
         <span className="text-text-main text-xl font-semibold">
-          Panel Moderatora
+          {t("moderation.dashboard.title")}
         </span>
       </div>
 
@@ -82,21 +84,21 @@ export default function ModeratorDashboard() {
                   isSelected={queueTab === "posts"}
                   onClick={() => setQueueTab("posts")}
                 >
-                  Zgłoszone posty
+                  {t("moderation.dashboard.reportedPosts")}
                 </SelectionTabButton>
                 <SelectionTabButton
                   isSelected={queueTab === "comments"}
                   onClick={() => setQueueTab("comments")}
                 >
-                  Zgłoszone komentarze
+                  {t("moderation.dashboard.reportedComments")}
                 </SelectionTabButton>
               </div>
               <div>
                 <h2 className="text-lg font-sans font-semibold">
-                  Kolejka oczekujących
+                  {t("moderation.dashboard.queue")}
                 </h2>
                 <div className="text-sm text-text-neutral">
-                  {queueSubtitle} Załadowano:{" "}
+                  {queueSubtitle} {t("moderation.dashboard.loaded")}:{" "}
                   <span className="text-fuchsia-400 font-bold">
                     {loadedCount}
                   </span>
@@ -107,7 +109,7 @@ export default function ModeratorDashboard() {
             <div className="flex items-center gap-3 shrink-0">
               <Button
                 onClick={() => refetch()}
-                text="Odśwież"
+              text={t("common.refresh")}
                 size="sm"
                 isLoading={isFetching}
               />
@@ -116,11 +118,11 @@ export default function ModeratorDashboard() {
 
           {isLoading ? (
             <div className="py-12 text-center text-text-neutral animate-pulse">
-              Ładowanie zgłoszeń...
+              {t("moderation.dashboard.loading")}
             </div>
           ) : isError ? (
             <div className="py-6 text-center text-red-500">
-              Błąd podczas pobierania zgłoszeń
+              {t("moderation.dashboard.error")}
             </div>
           ) : (
             <div className="flex flex-col gap-4 mt-6">
@@ -170,7 +172,7 @@ export default function ModeratorDashboard() {
                 data.pages.length > 0 &&
                 data.pages[0].length > 0 && (
                   <div className="text-center text-text-neutral text-sm py-8 font-sans opacity-50">
-                    konec
+                    {t("common.end")}
                   </div>
                 )}
             </div>
