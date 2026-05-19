@@ -8,6 +8,7 @@ import type { PrivateUserResponseDto } from "@/features/users/types/user.dto";
 import AdminUserEditModal from "./AdminUserEditModal";
 import AdminUserCreateModal from "./AdminUserCreateModal";
 import { formatDate } from "@/features/shared/utils/dateUtils";
+import { useI18n } from "@/i18n/useI18n";
 
 type GetUsersResponse = {
   users: PrivateUserResponseDto[];
@@ -25,6 +26,7 @@ const ROLE_STYLES: Record<string, string> = {
 };
 
 export default function AllUsersList() {
+  const { lang, t } = useI18n();
   const [modal, setModal] = useState<AdminModal>(AdminModal.NONE);
   const [selectedUser, setSelectedUser] =
     useState<PrivateUserResponseDto | null>(null);
@@ -86,23 +88,23 @@ export default function AllUsersList() {
         <div className="flex items-center justify-between mb-4">
           <div className="flex flex-col">
             <h2 className="text-lg font-sans font-semibold">
-              Wszyscy użytkownicy
+              {t("admin.allUsers")}
             </h2>
             <div className="text-sm text-text-neutral">
-              Przegląd kont w systemie
+              {t("admin.accountsOverview")}
             </div>
           </div>
 
           <div className="flex items-center gap-3">
             <Button
               onClick={() => refetch()}
-              text="Odśwież"
+              text={t("common.refresh")}
               size="sm"
               isLoading={isFetching}
             />
             <Button
               onClick={openCreateModal}
-              text="+ Dodaj użytkownika"
+              text={t("admin.addUser")}
               size="sm"
               variant="default"
             />
@@ -111,16 +113,16 @@ export default function AllUsersList() {
 
         {isLoading ? (
           <div className="py-12 text-center text-text-neutral">
-            Ładowanie użytkowników…
+            {t("admin.loadingUsers")}
           </div>
         ) : isError ? (
           <div className="py-6 text-center text-red-500">
-            Błąd podczas pobierania: {error?.message ?? "unknown"}
+            {t("admin.fetchError", { message: error?.message ?? "unknown" })}
           </div>
         ) : (
           <>
             <div className="mb-3 text-sm text-text-neutral flex gap-1">
-              Razem:
+              {t("admin.total")}
               <span className="font-medium text-text-main">
                 {users?.length ?? 0}
               </span>
@@ -131,12 +133,12 @@ export default function AllUsersList() {
                 <thead>
                   <tr className="text-left text-sm text-text-neutral">
                     <th className="px-3 py-2">ID</th>
-                    <th className="px-3 py-2">Nazwa</th>
+                    <th className="px-3 py-2">{t("admin.name")}</th>
                     <th className="px-3 py-2">Email</th>
-                    <th className="px-3 py-2">Rola</th>
-                    <th className="px-3 py-2">Utworzono</th>
-                    <th className="px-3 py-2">Status</th>
-                    <th className="px-3 py-2">Akcje</th>
+                    <th className="px-3 py-2">{t("admin.role")}</th>
+                    <th className="px-3 py-2">{t("admin.created")}</th>
+                    <th className="px-3 py-2">{t("admin.status")}</th>
+                    <th className="px-3 py-2">{t("admin.actions")}</th>
                   </tr>
                 </thead>
 
@@ -171,13 +173,13 @@ export default function AllUsersList() {
                         </td>
 
                         <td className="px-3 py-2 text-sm text-text-neutral">
-                          {formatDate(u.createdAt)}
+                          {formatDate(u.createdAt, undefined, lang)}
                         </td>
 
                         <td className="px-3 py-2">
                           {u.isBanned ? (
                             <span className="inline-block px-2 py-0.5 rounded-md text-xs bg-red-600 text-white">
-                              ZBANOWANY
+                              {t("admin.banned")}
                             </span>
                           ) : (
                             <span className="inline-block px-2 py-0.5 rounded-md text-xs bg-green-600 text-white">
@@ -190,7 +192,7 @@ export default function AllUsersList() {
                           <Button
                             onClick={() => openEditModal(u)}
                             variant="secondary"
-                            text="edytuj"
+                            text={t("admin.edit")}
                             size="sm"
                           />
                         </td>
@@ -202,7 +204,7 @@ export default function AllUsersList() {
                         colSpan={7}
                         className="px-3 py-6 text-center text-text-neutral"
                       >
-                        Brak użytkowników
+                        {t("admin.noUsers")}
                       </td>
                     </tr>
                   )}

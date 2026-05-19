@@ -9,10 +9,12 @@ import fetchClient from "@/lib/fetchClient";
 import toast from "react-hot-toast";
 import type { ModerationPostResponseDto } from "@/features/posts/types/post.dto";
 import type { ModerationCommentResponseDto } from "@/features/comments/types/comment.dto";
+import { useI18n } from "@/i18n/useI18n";
 
 export type ModeratorQueueTab = "posts" | "comments";
 
 export function useModeratorDashboard(queueTab: ModeratorQueueTab) {
+  const { t } = useI18n();
   const queryClient = useQueryClient();
 
   const {
@@ -69,16 +71,16 @@ export function useModeratorDashboard(queueTab: ModeratorQueueTab) {
     },
     onSuccess: (_, variables) => {
       const messages = {
-        approve: "Post zatwierdzony",
-        reject: "Post usunięty",
-        quarantine: "Post przeniesiony do kwarantanny",
+        approve: t("moderation.toast.postApproved"),
+        reject: t("moderation.toast.postRejected"),
+        quarantine: t("moderation.toast.postQuarantined"),
       };
       toast.success(messages[variables.action]);
 
       queryClient.invalidateQueries({ queryKey: ["moderator", "queue"] });
       queryClient.invalidateQueries({ queryKey: ["posts"] });
     },
-    onError: () => toast.error("Błąd podczas akcji moderatora"),
+    onError: () => toast.error(t("moderation.toast.error")),
   });
 
   const commentMutation = useMutation({
@@ -93,9 +95,9 @@ export function useModeratorDashboard(queueTab: ModeratorQueueTab) {
     },
     onSuccess: (_, variables) => {
       const messages = {
-        approve: "Komentarz zatwierdzony",
-        reject: "Komentarz usunięty",
-        quarantine: "Komentarz w kwarantannie",
+        approve: t("moderation.toast.commentApproved"),
+        reject: t("moderation.toast.commentRejected"),
+        quarantine: t("moderation.toast.commentQuarantined"),
       };
       toast.success(messages[variables.action]);
 
@@ -103,7 +105,7 @@ export function useModeratorDashboard(queueTab: ModeratorQueueTab) {
       queryClient.invalidateQueries({ queryKey: ["posts"] });
       queryClient.invalidateQueries({ queryKey: ["comments"] });
     },
-    onError: () => toast.error("Błąd podczas akcji moderatora"),
+    onError: () => toast.error(t("moderation.toast.error")),
   });
 
   return {

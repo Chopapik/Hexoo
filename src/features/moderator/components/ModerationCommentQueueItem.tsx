@@ -11,6 +11,7 @@ import Button from "@/features/shared/components/ui/Button";
 import { ExpandableImageThumbnail } from "@/features/shared/components/media/ExpandableImageThumbnail";
 import { ReportDetails } from "@/features/shared/types/report.type";
 import { useState } from "react";
+import { useI18n } from "@/i18n/useI18n";
 
 type ModerationAction = "approve" | "reject" | "quarantine" | "reject-ban";
 
@@ -65,6 +66,7 @@ export default function ModerationCommentQueueItem({
   }) => void;
   isPending: boolean;
 }) {
+  const { t } = useI18n();
   const [pendingAction, setPendingAction] = useState<ModerationAction | null>(
     null,
   );
@@ -106,14 +108,14 @@ export default function ModerationCommentQueueItem({
 
       <div className="border-2 border-primary-neutral-background-default rounded-xl overflow-hidden relative ">
         <p className="border-b border-fuchsia-500/10 bg-fuchsia-950/20 px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-fuchsia-300/90 font-sans">
-          Wątek zgłoszenia · post (kontekst) → komentarz (zgłoszenie)
+          {t("moderation.queue.thread")}
         </p>
 
         <div className="grid grid-cols-[28px_1fr] border-b border-white/10 bg-black/15">
           <TreePostGutter />
           <div className="min-w-0 px-2 py-2 sm:px-3">
             <p className="text-[9px] uppercase tracking-widest text-text-neutral/55 mb-1.5 font-semibold font-sans">
-              Post nadrzędny · kontekst
+              {t("moderation.queue.parentPost")}
             </p>
             {parent ? (
               <div className="flex flex-col gap-2 min-w-0 sm:flex-row sm:items-start sm:gap-3">
@@ -144,7 +146,7 @@ export default function ModerationCommentQueueItem({
                     <p className="text-xs leading-snug text-text-neutral/75 font-sans whitespace-pre-wrap line-clamp-2 wrap-break-word">
                       {parent.text?.trim()
                         ? parent.text
-                        : "(post bez treści tekstowej)"}
+                        : t("moderation.queue.noPostText")}
                     </p>
                   </div>
                 </div>
@@ -152,7 +154,7 @@ export default function ModerationCommentQueueItem({
                   <div className="shrink-0">
                     <ExpandableImageThumbnail
                       src={parent.imageUrl}
-                      alt="Obraz z posta nadrzędnego"
+                      alt={t("moderation.queue.parentImageAlt")}
                       variant="compact"
                     />
                   </div>
@@ -160,7 +162,7 @@ export default function ModerationCommentQueueItem({
               </div>
             ) : (
               <p className="text-[11px] text-text-neutral/70 italic">
-                Nie znaleziono posta nadrzędnego w bazie.{" "}
+                {t("moderation.queue.parentMissing")}{" "}
                 <span className="font-mono not-italic opacity-80">
                   post_id: {comment.postId.slice(0, 8)}…
                 </span>
@@ -174,11 +176,11 @@ export default function ModerationCommentQueueItem({
           <div className="flex-1 min-w-0 flex flex-col border-l border-fuchsia-500/20 bg-black/30">
             <div className=" p-5 border-b border-white/10 ">
               <p className="text-xs uppercase tracking-widest text-fuchsia-300/95 mb-3 font-bold font-sans">
-                Zgłoszony komentarz
+                {t("moderation.queue.reportedComment")}
               </p>
               <div className="flex flex-wrap gap-3 mb-3 font-mono text-sm">
                 <span className="text-yellow-200 font-bold bg-yellow-500/20 px-2 py-0.5 rounded">
-                  STATUS: {comment.moderationStatus.toUpperCase()}
+                  {t("common.status")}: {comment.moderationStatus.toUpperCase()}
                 </span>
                 {!parent && (
                   <span className="text-slate-300 bg-slate-500/20 px-2 py-0.5 rounded">
@@ -187,18 +189,18 @@ export default function ModerationCommentQueueItem({
                 )}
                 {comment.flaggedReasons && comment.flaggedReasons.length > 0 && (
                   <span className="text-orange-300 bg-orange-500/20 px-2 py-0.5 rounded">
-                    FLAGA: {comment.flaggedReasons.join(", ")}
+                    {t("common.flag")}: {comment.flaggedReasons.join(", ")}
                   </span>
                 )}
                 {comment.moderationInfo?.source && (
                   <span className="text-cyan-200 bg-cyan-500/20 px-2 py-0.5 rounded">
-                    ŹRÓDŁO:{" "}
+                    {t("common.source")}:{" "}
                     {comment.moderationInfo.source === "ai"
                       ? "AI"
                       : comment.moderationInfo.source === "moderator"
                         ? "Moderator"
                         : comment.moderationInfo.source === "user_report"
-                          ? "Zgłoszenie użytkownika"
+                          ? t("common.userReport")
                           : comment.moderationInfo.source}
                   </span>
                 )}
@@ -208,7 +210,7 @@ export default function ModerationCommentQueueItem({
                 <div className="mt-2 text-xs text-text-neutral space-y-1">
                   {comment.moderationInfo.reasonSummary && (
                     <p className="font-semibold">
-                      Powód:{" "}
+                      {t("common.reason")}:{" "}
                       <span className="font-normal">
                         {comment.moderationInfo.reasonSummary}
                       </span>
@@ -216,7 +218,7 @@ export default function ModerationCommentQueueItem({
                   )}
                   {comment.moderationInfo.reasonDetails && (
                     <p className="text-[11px] opacity-80 wrap-break-word">
-                      Szczegóły:{" "}
+                      {t("common.details")}:{" "}
                       <span className="italic">
                         {comment.moderationInfo.reasonDetails}
                       </span>
@@ -228,7 +230,7 @@ export default function ModerationCommentQueueItem({
               {comment.reportsMeta && comment.reportsMeta.length > 0 ? (
                 <div className="mt-3 pt-3">
                   <p className="text-[10px] uppercase tracking-widest text-text-neutral mb-2 font-bold opacity-70">
-                    Zgłoszenia użytkowników ({comment.reportsMeta.length}):
+                    {t("moderation.queue.userReports", { count: comment.reportsMeta.length })}
                   </p>
                   <div className="flex flex-col gap-2">
                     {comment.reportsMeta.map(
@@ -253,13 +255,13 @@ export default function ModerationCommentQueueItem({
                                     : "text-yellow-400 bg-yellow-900/30"
                               }`}
                             >
-                              {report.reason || "zgłoszenie"}
+                              {report.reason || t("common.report")}
                             </span>
                           </div>
                           <span className="text-gray-300 italic border-l-2 border-white/20 pl-2 text-xs break-all">
                             {report.details
                               ? `"${report.details}"`
-                              : "(brak opisu)"}
+                              : t("common.noDescription")}
                           </span>
                         </div>
                       ),
@@ -268,7 +270,7 @@ export default function ModerationCommentQueueItem({
                 </div>
               ) : (
                 <div className="text-xs text-text-neutral opacity-50 mt-1 italic">
-                  Brak szczegółowych zgłoszeń od użytkowników.
+                  {t("moderation.queue.noReports")}
                 </div>
               )}
             </div>
@@ -283,14 +285,14 @@ export default function ModerationCommentQueueItem({
 
             <div className="bg-secondary-neutral-background-default p-3 flex flex-wrap justify-end gap-3 border-t border-white/10 shadow-[0_-5px_15px_rgba(0,0,0,0.5)]">
               <Button
-                text="Banuj autora i usuń"
+                text={t("moderation.queue.banAuthorDelete")}
                 variant="danger"
                 size="sm"
                 onClick={() => setPendingAction("reject-ban")}
                 disabled={isPending}
               />
               <Button
-                text="Usuń komentarz"
+                text={t("moderation.deleteComment")}
                 variant="danger"
                 className="border-red-500/50 text-red-500 hover:bg-red-500/10"
                 size="sm"
@@ -298,14 +300,14 @@ export default function ModerationCommentQueueItem({
                 disabled={isPending}
               />
               <Button
-                text="Kwarantanna"
+                text={t("moderation.quarantine")}
                 variant="secondary"
                 size="sm"
                 onClick={() => setPendingAction("quarantine")}
                 disabled={isPending}
               />
               <Button
-                text="Zatwierdź komentarz"
+                text={t("moderation.queue.approveComment")}
                 variant="default"
                 size="sm"
                 onClick={() =>

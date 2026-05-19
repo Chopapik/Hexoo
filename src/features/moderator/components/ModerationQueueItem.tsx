@@ -4,6 +4,7 @@ import { ReportDetails } from "@/features/shared/types/report.type";
 import Button from "@/features/shared/components/ui/Button";
 import ModerationReasonModal from "@/features/posts/components/ModerationReasonModal";
 import { useState } from "react";
+import { useI18n } from "@/i18n/useI18n";
 
 type ModerationAction = "approve" | "reject" | "quarantine" | "reject-ban";
 
@@ -21,6 +22,7 @@ export default function ModerationQueueItem({
   }) => void;
   isPending: boolean;
 }) {
+  const { t } = useI18n();
   const [pendingAction, setPendingAction] = useState<ModerationAction | null>(null);
 
   const handleReasonConfirm = (justification: string) => {
@@ -49,22 +51,22 @@ export default function ModerationQueueItem({
         <div className=" p-4 border-b ">
           <div className="flex flex-wrap gap-3 mb-3 font-mono text-xs">
             <span className="text-yellow-200 font-bold bg-yellow-500/20 px-2 py-0.5 rounded">
-              STATUS: {post.moderationStatus.toUpperCase()}
+              {t("common.status")}: {post.moderationStatus.toUpperCase()}
             </span>
             {post.flaggedReasons && post.flaggedReasons.length > 0 && (
               <span className="text-orange-300 bg-orange-500/20 px-2 py-0.5 rounded">
-                FLAGA: {post.flaggedReasons.join(", ")}
+                {t("common.flag")}: {post.flaggedReasons.join(", ")}
               </span>
             )}
             {post.moderationInfo?.source && (
               <span className="text-cyan-200 bg-cyan-500/20 px-2 py-0.5 rounded">
-                ŹRÓDŁO:{" "}
+                {t("common.source")}:{" "}
                 {post.moderationInfo.source === "ai"
                   ? "AI"
                   : post.moderationInfo.source === "moderator"
                   ? "Moderator"
                   : post.moderationInfo.source === "user_report"
-                  ? "Zgłoszenie użytkownika"
+                  ? t("common.userReport")
                   : post.moderationInfo.source}
               </span>
             )}
@@ -74,7 +76,7 @@ export default function ModerationQueueItem({
             <div className="mt-2 text-xs text-text-neutral space-y-1">
               {post.moderationInfo.reasonSummary && (
                 <p className="font-semibold">
-                  Powód:{" "}
+                  {t("common.reason")}:{" "}
                   <span className="font-normal">
                     {post.moderationInfo.reasonSummary}
                   </span>
@@ -82,7 +84,7 @@ export default function ModerationQueueItem({
               )}
               {post.moderationInfo.reasonDetails && (
                 <p className="text-[11px] opacity-80 wrap-break-word">
-                  Szczegóły:{" "}
+                  {t("common.details")}:{" "}
                   <span className="italic">
                     {post.moderationInfo.reasonDetails}
                   </span>
@@ -94,7 +96,7 @@ export default function ModerationQueueItem({
           {post.reportsMeta && post.reportsMeta.length > 0 ? (
             <div className="mt-3 pt-3">
               <p className="text-[10px] uppercase tracking-widest text-text-neutral mb-2 font-bold opacity-70">
-                Zgłoszenia użytkowników ({post.reportsMeta.length}):
+                {t("moderation.queue.userReports", { count: post.reportsMeta.length })}
               </p>
               <div className="flex flex-col gap-2">
                 {post.reportsMeta.map((report: ReportDetails, idx: number) => (
@@ -116,11 +118,11 @@ export default function ModerationQueueItem({
                             : "text-yellow-400 bg-yellow-900/30"
                         }`}
                       >
-                        {report.reason || "zgłoszenie"}
+                        {report.reason || t("common.report")}
                       </span>
                     </div>
                     <span className="text-gray-300 italic border-l-2 border-white/20 pl-2 text-xs break-all">
-                      {report.details ? `"${report.details}"` : "(brak opisu)"}
+                      {report.details ? `"${report.details}"` : t("common.noDescription")}
                     </span>
                   </div>
                 ))}
@@ -128,7 +130,7 @@ export default function ModerationQueueItem({
             </div>
           ) : (
             <div className="text-xs text-text-neutral opacity-50 mt-1 italic">
-              Brak szczegółowych zgłoszeń od użytkowników.
+              {t("moderation.queue.noReports")}
             </div>
           )}
         </div>
@@ -141,14 +143,14 @@ export default function ModerationQueueItem({
 
         <div className="bg-secondary-neutral-background-default p-3 flex flex-wrap justify-end gap-3 border-t border-white/10 shadow-[0_-5px_15px_rgba(0,0,0,0.5)]">
           <Button
-            text="Banuj Autora & Usuń"
+            text={t("moderation.queue.banAuthorDeletePost")}
             variant="danger"
             size="sm"
             onClick={() => setPendingAction("reject-ban")}
             disabled={isPending}
           />
           <Button
-            text="Usuń Post"
+            text={t("moderation.deletePost")}
             variant="danger"
             className="border-red-500/50 text-red-500 hover:bg-red-500/10"
             size="sm"
@@ -156,14 +158,14 @@ export default function ModerationQueueItem({
             disabled={isPending}
           />
           <Button
-            text="Kwarantanna"
+            text={t("moderation.quarantine")}
             variant="secondary"
             size="sm"
             onClick={() => setPendingAction("quarantine")}
             disabled={isPending}
           />
           <Button
-            text="Zatwierdź post"
+            text={t("moderation.queue.approvePost")}
             variant="default"
             size="sm"
             onClick={() => onAction({ postId: post.id, action: "approve" })}

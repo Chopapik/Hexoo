@@ -18,6 +18,7 @@ import defaultAvatarUrl from "@/features/shared/assets/defaultAvatar.svg?url";
 import useAdminDeleteUser from "../hooks/user/useAdminDeleteUser";
 import { formatDate } from "@/features/shared/utils/dateUtils";
 import { USER_ROLE_OPTIONS } from "@/features/users/constants/userRoleOptions";
+import { useI18n } from "@/i18n/useI18n";
 
 export default function AdminUserEditModal({
   user,
@@ -26,6 +27,7 @@ export default function AdminUserEditModal({
   user: PrivateUserResponseDto | null;
   onClose: () => void;
 }) {
+  const { lang, t } = useI18n();
   const [newUserData, setNewUserData] = useState<Partial<UpdateUserRequestDto>>(
     {
       name: "",
@@ -72,7 +74,7 @@ export default function AdminUserEditModal({
     <div className="flex flex-col md:flex-row justify-between items-center gap-4 w-full">
       <Button
         onClick={onClose}
-        text="Anuluj i zamknij"
+        text={t("admin.cancelClose")}
         disabled={isUpdatingData || isUpdatingPassword}
         className="text-text-neutral hover:text-white order-2 md:order-1 border-transparent"
         variant="secondary"
@@ -83,7 +85,7 @@ export default function AdminUserEditModal({
         {user.isBanned ? (
           <Button
             onClick={() => unBlockUser({ uid: user.uid })}
-            text="Odblokuj konto"
+            text={t("admin.unblockAccount")}
             size="sm"
             variant="success"
             disabled={isUnblockingUser}
@@ -92,7 +94,7 @@ export default function AdminUserEditModal({
         ) : (
           <Button
             onClick={() => blockUser({ uid: user.uid })}
-            text="Zablokuj konto"
+            text={t("admin.blockAccount")}
             size="sm"
             variant="warning"
             disabled={isBlockingUser}
@@ -102,7 +104,7 @@ export default function AdminUserEditModal({
 
         <Button
           onClick={() => adminDeleteUser(user.uid)}
-          text="Usuń użytkownika"
+          text={t("admin.deleteUser")}
           size="sm"
           variant="danger"
           disabled={isUpdatingData}
@@ -116,7 +118,7 @@ export default function AdminUserEditModal({
     <Modal
       isOpen={true}
       onClose={onClose}
-      title="Edycja użytkownika"
+      title={t("admin.editUser")}
       className="max-w-3xl"
       footer={footer}
     >
@@ -139,7 +141,7 @@ export default function AdminUserEditModal({
                     : "bg-green-600 text-white"
                 }`}
               >
-                {user.isBanned ? "Zbanowany" : "Aktywny"}
+                {user.isBanned ? t("admin.bannedLabel") : t("admin.activeLabel")}
               </div>
             </div>
 
@@ -160,7 +162,7 @@ export default function AdminUserEditModal({
               <div className="flex flex-wrap justify-center sm:justify-start gap-4 text-xs text-text-neutral/70 border-t border-white/5 pt-3">
                 <div className="flex flex-col">
                   <span className="uppercase text-[10px] font-semibold tracking-wider opacity-50">
-                    ID Użytkownika
+                    {t("admin.userId")}
                   </span>
                   <span className="font-mono text-text-neutral select-all">
                     {user.uid}
@@ -168,9 +170,9 @@ export default function AdminUserEditModal({
                 </div>
                 <div className="flex flex-col">
                   <span className="uppercase text-[10px] font-semibold tracking-wider opacity-50">
-                    Dołączył
+                    {t("admin.joined")}
                   </span>
-                  <span>{formatDate(user.createdAt)}</span>
+                  <span>{formatDate(user.createdAt, undefined, lang)}</span>
                 </div>
               </div>
             </div>
@@ -183,12 +185,12 @@ export default function AdminUserEditModal({
           <div className="flex flex-col gap-4">
             <div className="bg-white/5 p-5 rounded-xl border border-primary-neutral-background-default/30 h-full flex flex-col">
               <h3 className="text-lg font-medium mb-4 text-text-main flex items-center gap-2">
-                Dane profilowe
+                {t("admin.profileData")}
               </h3>
 
               <div className="flex flex-col gap-4 flex-1">
                 <TextInput
-                  label="Nazwa wyświetlana"
+                  label={t("admin.displayName")}
                   value={newUserData.name ?? ""}
                   placeholder={user.name}
                   onChange={(e) => handleFieldChange("name", e.target.value)}
@@ -196,13 +198,13 @@ export default function AdminUserEditModal({
                 />
 
                 <Select
-                  label="Rola w systemie"
+                  label={t("admin.systemRole")}
                   value={newUserData.role ?? ""}
                   onChange={(e) =>
                     handleFieldChange("role", e.target.value as UserRole)
                   }
                   options={USER_ROLE_OPTIONS}
-                  placeholder="— Wybierz rolę —"
+                  placeholder={t("admin.selectRole")}
                 />
               </div>
 
@@ -211,7 +213,7 @@ export default function AdminUserEditModal({
                   onClick={() =>
                     adminUpdateUserAccount({ uid: user.uid, data: newUserData })
                   }
-                  text="Zapisz zmiany"
+                  text={t("common.saveChanges")}
                   size="sm"
                   variant="default"
                   disabled={isUpdatingData}
@@ -226,20 +228,20 @@ export default function AdminUserEditModal({
           <div className="flex flex-col gap-4">
             <div className="bg-white/5 p-5 rounded-xl border border-primary-neutral-background-default/30 h-full flex flex-col">
               <h3 className="text-lg font-medium mb-4 text-text-main flex items-center gap-2">
-                Bezpieczeństwo
+                {t("admin.security")}
               </h3>
 
               <div className="flex flex-col gap-4 flex-1">
                 <TextInput
-                  label="Ustaw nowe hasło"
+                  label={t("admin.setNewPassword")}
                   value={newPassword}
-                  placeholder="Min. 8 znaków"
+                  placeholder={t("settings.account.newPasswordPlaceholder")}
                   onChange={(e) => setNewPassword(e.target.value)}
                   type="password"
                   showButton={true}
                 />
                 <p className="text-xs text-text-neutral/60">
-                  Pozostaw puste, jeśli nie chcesz zmieniać hasła użytkownika.
+                  {t("admin.passwordHelp")}
                 </p>
               </div>
 
@@ -251,7 +253,7 @@ export default function AdminUserEditModal({
                       newPassword: newPassword,
                     })
                   }
-                  text="Zmień hasło"
+                  text={t("admin.changePassword")}
                   size="sm"
                   variant="default"
                   disabled={isUpdatingPassword || !newPassword}
