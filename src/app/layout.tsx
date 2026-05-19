@@ -9,6 +9,7 @@ import QueryProvider from "@/lib/providers/QueryProvider";
 import RecaptchaProvider from "@/lib/providers/RecaptchaProvider";
 import ToastContainer from "@/lib/providers/ToastContainer";
 import ThemeScript from "@/features/shared/components/ThemeScript";
+import LanguageBootstrap from "@/i18n/LanguageBootstrap";
 
 export const metadata: Metadata = {
   title: "Hexoo",
@@ -31,6 +32,7 @@ export default function RootLayout({
       <body className="antialiased">
         <RecaptchaProvider>
           <QueryProvider>
+            <LanguageBootstrap />
             {children}
             <ToastContainer />
           </QueryProvider>
