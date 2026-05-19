@@ -4,8 +4,10 @@ import toast from "react-hot-toast";
 import { ApiError } from "@/lib/AppError";
 import { CommentReportRequestDto } from "../types/comment.dto";
 import { translateError } from "@/i18n/errorCatalog";
+import { useI18n } from "@/i18n/useI18n";
 
 export default function useReportComment(onSuccessCallback?: () => void) {
+  const { lang, t } = useI18n();
   return useMutation({
     mutationFn: async ({
       commentId,
@@ -18,11 +20,11 @@ export default function useReportComment(onSuccessCallback?: () => void) {
       });
     },
     onSuccess: () => {
-      toast.success("Zgłoszenie zostało wysłane do weryfikacji.");
+      toast.success(t("post.toast.reportSent"));
       onSuccessCallback?.();
     },
     onError: (error: ApiError) => {
-      toast.error(translateError(error?.code));
+      toast.error(translateError(error?.code, lang));
     },
   });
 }

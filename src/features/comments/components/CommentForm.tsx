@@ -8,12 +8,14 @@ import { parseCommentErrorMessages } from "../utils/commentErrorMap";
 import { SendIcon } from "@/features/posts/icons/SendIcon";
 import { PaperclipIcon } from "@/features/posts/icons/PaperclipIcon";
 import RemoveImageButton from "@/features/shared/components/ui/RemoveImageButton";
+import { useI18n } from "@/i18n/useI18n";
 
 interface CommentFormProps {
   postId: string;
 }
 
 export const CommentForm = ({ postId }: CommentFormProps) => {
+  const { lang, t } = useI18n();
   const {
     register,
     handleSubmit,
@@ -32,7 +34,7 @@ export const CommentForm = ({ postId }: CommentFormProps) => {
 
   const validationErrorRaw =
     errors.text?.message || errors.imageFile?.message || errors.root?.message || "";
-  const parsedError = parseCommentErrorMessages(validationErrorRaw);
+  const parsedError = parseCommentErrorMessages(validationErrorRaw, lang);
   const displayError = parsedError?.text;
 
   const { addComment, isPending } = useAddComment(
@@ -67,7 +69,7 @@ export const CommentForm = ({ postId }: CommentFormProps) => {
         <div className="relative w-fit group animate-in fade-in zoom-in-95 duration-200">
           <img
             src={imagePreview}
-            alt="Podgląd zdjęcia komentarza"
+            alt={t("comment.previewAlt")}
             width={200}
             height={200}
             className="rounded-xl border border-primary-neutral-stroke-default object-cover max-h-48 w-auto"
@@ -85,7 +87,7 @@ export const CommentForm = ({ postId }: CommentFormProps) => {
         <textarea
           {...register("text")}
           onKeyDown={handleKeyDown}
-          placeholder="Napisz komentarz..."
+          placeholder={t("comment.placeholder")}
           className="w-full bg-transparent text-text-main placeholder:text-text-neutral/50 text-base resize-none outline-none min-h-[90px] scrollbar-hide leading-relaxed pb-6"
         />
         <div

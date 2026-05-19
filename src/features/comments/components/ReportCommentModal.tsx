@@ -6,13 +6,14 @@ import useReportCommentForm from "../hooks/useReportCommentForm";
 import useReportComment from "../hooks/useReportComment";
 import { REPORT_DETAILS_MAX_CHARS } from "../types/comment.dto";
 import { parseReportCommentError } from "../utils/reportCommentErrorMap";
+import { useI18n } from "@/i18n/useI18n";
 
 const REPORT_REASONS = [
-  { id: "spam", label: "To jest spam" },
-  { id: "hate", label: "Mowa nienawiści / Przemoc" },
-  { id: "nudity", label: "Nagość / Treści seksualne" },
-  { id: "harassment", label: "Nękanie" },
-  { id: "other", label: "Inny powód" },
+  { id: "spam", labelKey: "report.reason.spam" },
+  { id: "hate", labelKey: "report.reason.hate" },
+  { id: "nudity", labelKey: "report.reason.nudity" },
+  { id: "harassment", labelKey: "report.reason.harassment" },
+  { id: "other", labelKey: "report.reason.other" },
 ] as const;
 
 interface ReportCommentModalProps {
@@ -24,6 +25,7 @@ export default function ReportCommentModal({
   commentId,
   onClose,
 }: ReportCommentModalProps) {
+  const { lang, t } = useI18n();
   const { handleSubmit, setValue, watch, errors, isSubmitted } =
     useReportCommentForm();
   const { mutate: report, isPending } = useReportComment(onClose);
@@ -35,8 +37,12 @@ export default function ReportCommentModal({
     errors.details?.message === "report_details_too_long";
   const detailsError = parseReportCommentError(
     errors.details?.message as string,
+    lang,
   );
-  const rootError = parseReportCommentError(errors.root?.message as string);
+  const rootError = parseReportCommentError(
+    errors.root?.message as string,
+    lang,
+  );
 
   const onValid = (data: Record<string, unknown>) => {
     report({
@@ -48,7 +54,7 @@ export default function ReportCommentModal({
 
   const footer = (
     <ModalFooter
-      confirmText="Zgłoś komentarz"
+      confirmText={t("report.commentConfirm")}
       onCancel={onClose}
       onConfirm={handleSubmit(onValid)}
       isPending={isPending}
@@ -60,14 +66,13 @@ export default function ReportCommentModal({
     <Modal
       isOpen={true}
       onClose={onClose}
-      title="Zgłoś naruszenie"
+      title={t("report.title")}
       footer={footer}
       className="max-w-md"
     >
       <div className="flex flex-col gap-4 p-2">
         <p className="text-sm text-text-neutral">
-          Pomóż nam zrozumieć, co jest nie tak z tym komentarzem. Jeśli
-          komentarz narusza zasady, zostanie usunięty.
+          {t("report.commentDescription")}
         </p>
         <div className="flex flex-col gap-2">
           {REPORT_REASONS.map((item) => (
@@ -103,14 +108,14 @@ export default function ReportCommentModal({
                   <div className="w-2 h-2 bg-fuchsia-500 rounded-full" />
                 )}
               </div>
-              <span className="text-sm font-medium">{item.label}</span>
+              <span className="text-sm font-medium">{t(item.labelKey)}</span>
             </label>
           ))}
         </div>
         {reason === "other" && (
           <div className="mt-2 animate-in fade-in slide-in-from-top-2 flex flex-col gap-1.5">
             <label className="text-xs uppercase tracking-widest text-text-neutral/60 font-bold">
-              Opisz powód zgłoszenia <span className="text-red-400">*</span>
+              {t("report.detailsLabel")} <span className="text-red-400">*</span>
             </label>
             <textarea
               value={details}
@@ -119,7 +124,7 @@ export default function ReportCommentModal({
                   shouldValidate: isSubmitted,
                 })
               }
-              placeholder="Opisz problem..."
+              placeholder={t("report.detailsPlaceholder")}
               rows={3}
               className="w-full bg-black/30 rounded-lg border border-white/10 p-3 text-sm text-text-main placeholder:text-text-neutral/40 resize-none outline-none transition-all focus:ring-1 focus:ring-fuchsia-500/30 focus:border-fuchsia-500/50"
             />

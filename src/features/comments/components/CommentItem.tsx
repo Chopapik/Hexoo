@@ -22,6 +22,7 @@ import EditCommentModal from "./EditCommentModal";
 import DeleteCommentModal from "./DeleteCommentModal";
 import ReportCommentModal from "./ReportCommentModal";
 import ModerationReasonModal from "@/features/posts/components/ModerationReasonModal";
+import { useI18n } from "@/i18n/useI18n";
 
 type ModActionType = "quarantine" | "reject" | null;
 
@@ -38,6 +39,7 @@ export const CommentItem = ({
   moderationCompactImage = false,
   moderationProminent = false,
 }: CommentItemProps) => {
+  const { lang, t } = useI18n();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
@@ -67,15 +69,15 @@ export const CommentItem = ({
     onSuccess: (_, { action }) => {
       const msg =
         action === "reject"
-          ? "Komentarz został usunięty."
-          : "Komentarz przeniesiony do kwarantanny.";
+          ? t("comment.toast.deleted")
+          : t("comment.toast.quarantined");
       toast.success(msg);
       queryClient.invalidateQueries({ queryKey: ["comments", comment.postId] });
       queryClient.invalidateQueries({ queryKey: ["posts"] });
       setPendingModAction(null);
     },
     onError: () => {
-      toast.error("Wystąpił błąd podczas akcji moderatora.");
+      toast.error(t("post.toast.modActionError"));
     },
   });
 
@@ -165,11 +167,11 @@ export const CommentItem = ({
                 {comment.userName}
               </Link>
               <span className={dateClass}>
-                {formatSmartDate(comment.createdAt)}
+                {formatSmartDate(comment.createdAt, lang)}
               </span>
               {comment.isEdited && (
                 <span className="text-[10px] font-medium text-text-neutral/60 italic">
-                  edytowano
+                  {t("post.edited")}
                 </span>
               )}
             </div>
@@ -205,7 +207,7 @@ export const CommentItem = ({
                                   : "text-text-neutral"
                               } group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors`}
                             >
-                              <BsPencil /> Edytuj
+                              <BsPencil /> {t("comment.options.edit")}
                             </button>
                           )}
                         </Menu.Item>
@@ -220,7 +222,7 @@ export const CommentItem = ({
                                   : "text-red-500"
                               } group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors`}
                             >
-                              <BsTrash /> Usuń
+                              <BsTrash /> {t("comment.options.delete")}
                             </button>
                           )}
                         </Menu.Item>
@@ -239,7 +241,7 @@ export const CommentItem = ({
                                   : "text-text-neutral"
                               } group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors`}
                             >
-                              <BsFlag /> Zgłoś naruszenie
+                              <BsFlag /> {t("comment.options.report")}
                             </button>
                           )}
                         </Menu.Item>
@@ -250,7 +252,7 @@ export const CommentItem = ({
                       <div className="p-1 border-t border-white/10">
                         {!isAuthor && (
                           <div className="px-2 py-1.5 text-[10px] text-text-neutral/50 uppercase tracking-widest font-bold">
-                            Panel Moderatora
+                            {t("post.options.moderatorPanel")}
                           </div>
                         )}
 
@@ -265,7 +267,7 @@ export const CommentItem = ({
                                   : "text-yellow-500"
                               } group flex w-full items-center gap-3 rounded-lg px-2 py-2 text-sm transition-colors`}
                             >
-                              <BsShieldExclamation /> Kwarantanna
+                              <BsShieldExclamation /> {t("post.options.quarantine")}
                             </button>
                           )}
                         </Menu.Item>
@@ -281,7 +283,7 @@ export const CommentItem = ({
                                   : "text-red-500"
                               } group flex w-full items-center gap-3 rounded-lg px-2 py-2 text-sm transition-colors`}
                             >
-                              <BsTrash /> Usuń natychmiast
+                              <BsTrash /> {t("comment.options.deleteNow")}
                             </button>
                           )}
                         </Menu.Item>
@@ -299,13 +301,13 @@ export const CommentItem = ({
               <div className="mt-2">
                 <ExpandableImageThumbnail
                   src={comment.imageUrl}
-                  alt="Zdjęcie komentarza"
+                  alt={t("comment.imageAlt")}
                 />
               </div>
             ) : (
               <img
                 src={comment.imageUrl}
-                alt="Zdjęcie komentarza"
+                alt={t("comment.imageAlt")}
                 className="mt-2 w-full max-w-xs rounded-xl border border-primary-neutral-stroke-default object-cover"
               />
             ))}

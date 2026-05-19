@@ -5,6 +5,7 @@ import {
   UpdateCommentRequestDto,
 } from "../types/comment.dto";
 import toast from "react-hot-toast";
+import { useI18n } from "@/i18n/useI18n";
 
 export default function useEditComment(
   commentId: string,
@@ -12,6 +13,7 @@ export default function useEditComment(
   successCallBack?: () => void,
   errorCallBack?: (error?: Error) => void,
 ) {
+  const { t } = useI18n();
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
@@ -23,7 +25,7 @@ export default function useEditComment(
     },
 
     onSuccess: async () => {
-      toast.success("Komentarz został zaktualizowany!");
+      toast.success(t("comment.toast.updated"));
 
       await queryClient.invalidateQueries({
         queryKey: ["comments", postId],
@@ -32,7 +34,7 @@ export default function useEditComment(
     },
 
     onError: (error) => {
-      toast.error("Nie udało się zaktualizować komentarza.");
+      toast.error(t("comment.toast.updateError"));
       errorCallBack?.(error);
     },
   });
