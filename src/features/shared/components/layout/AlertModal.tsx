@@ -1,5 +1,6 @@
 import Modal from "./Modal";
 import Button from "@/features/shared/components/ui/Button";
+import { useI18n } from "@/i18n/useI18n";
 
 interface AlertModalProps {
   isOpen: boolean;
@@ -11,9 +12,11 @@ interface AlertModalProps {
 export default function AlertModal({
   isOpen,
   onClose,
-  title = "Komunikat",
+  title,
   message,
 }: AlertModalProps) {
+  const { t } = useI18n();
+  const resolvedTitle = title ?? t("common.message");
   const footerContent = (
     <div className="flex justify-end w-full">
       <Button onClick={onClose} text="OK" size="sm"  />
@@ -24,7 +27,7 @@ export default function AlertModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={title}
+      title={resolvedTitle}
       footer={footerContent}
       className="max-w-md"
     >

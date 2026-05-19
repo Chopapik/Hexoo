@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { useI18n } from "@/i18n/useI18n";
 
 type ExpandableImageThumbnailProps = {
   src: string;
@@ -20,6 +21,7 @@ export function ExpandableImageThumbnail({
   thumbClassName,
   variant = "default",
 }: ExpandableImageThumbnailProps) {
+  const { t } = useI18n();
   const thumbImgClass =
     variant === "compact"
       ? "h-16 w-auto max-w-[min(100%,140px)] object-cover transition-transform duration-200 group-hover:scale-[1.03]"
@@ -55,9 +57,9 @@ export function ExpandableImageThumbnail({
                 e.stopPropagation();
                 setOpen(false);
               }}
-              aria-label="Zamknij podgląd"
+              aria-label={t("ui.closePreview")}
             >
-              ✕ Zamknij
+              ✕ {t("ui.close")}
             </button>
             {/* eslint-disable-next-line @next/next/no-img-element -- fullscreen uses raw img */}
             <img
@@ -77,7 +79,7 @@ export function ExpandableImageThumbnail({
         type="button"
         onClick={() => setOpen(true)}
         className={`group relative block max-w-full overflow-hidden rounded-xl border border-white/15 text-left transition focus:outline-none focus-visible:ring-2 focus-visible:ring-fuchsia-500/60 ${thumbClassName ?? ""}`}
-        aria-label={`Powiększ obraz: ${alt}`}
+        aria-label={t("ui.expandImage", { alt })}
       >
         <Image
           src={src}
@@ -88,7 +90,7 @@ export function ExpandableImageThumbnail({
         />
         <span className="pointer-events-none absolute inset-0 flex items-end justify-center bg-linear-to-t from-black/70 via-black/20 to-transparent pb-2 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
           <span className="rounded-md bg-black/55 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-white">
-            Pełny ekran
+            {t("ui.fullscreen")}
           </span>
         </span>
       </button>

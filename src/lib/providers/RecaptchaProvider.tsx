@@ -11,7 +11,7 @@ export default function RecaptchaProvider({
   const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
 
   if (!siteKey) {
-    console.error("Brak klucza RECAPTCHA_SITE_KEY w .env!");
+    console.error("Missing RECAPTCHA_SITE_KEY in .env!");
     return <>{children}</>;
   }
 

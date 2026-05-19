@@ -1,4 +1,5 @@
 import { RightNavActiveUsers } from "./RightNavActiveUsers";
+import { useI18n } from "@/i18n/useI18n";
 
 function RightNavContent() {
   return (
@@ -31,6 +32,8 @@ export function RightNavOverlay({
   open = false,
   onClose,
 }: RightNavOverlayProps) {
+  const { t } = useI18n();
+
   return (
     <>
       <div
@@ -43,7 +46,7 @@ export function RightNavOverlay({
 
       {open && (
         <button
-          aria-label="Close right sidebar"
+          aria-label={t("nav.closeRightSidebar")}
           onClick={onClose}
           className="md:hidden fixed inset-0 bg-black/30 z-40"
         />

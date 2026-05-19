@@ -15,7 +15,7 @@ export const setTheme = (theme: ThemeName) => {
   try {
     localStorage.setItem(STORAGE_KEY, theme);
   } catch (e) {
-    console.error("Nie udało się zapisać motywu:", e);
+    console.error("Failed to save theme:", e);
   }
 };
 

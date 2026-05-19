@@ -10,6 +10,7 @@ import {
   HexProfileIcon,
   HexSettingsIcon,
 } from "@/features/shared/components/icons/HexNavIcons";
+import { useI18n } from "@/i18n/useI18n";
 
 type BottomNavProps = {
   onOpenRight?: () => void;
@@ -21,6 +22,7 @@ function roleKey(role: SessionData["role"] | undefined): string {
 }
 
 export function BottomNav({ user }: BottomNavProps) {
+  const { t } = useI18n();
   const openCreatePostModal = useAppStore((s) => s.openCreatePostModal);
 
   const r = roleKey(user?.role);
@@ -32,21 +34,21 @@ export function BottomNav({ user }: BottomNavProps) {
     <div className="flex bg-primary-neutral-background-default border-t border-primary-neutral-stroke-default rounded-xl overflow-hidden h-11 px-1 w-full flex-row justify-between items-center gap-1.5">
       <div className="flex flex-row items-center min-w-0 px-1">
         <NavItem
-          label="Strona główna"
+          label={t("nav.home")}
           to="/"
           icon={HexHomeIcon}
           variant="bottom"
         />
 
         <NavItem
-          label="Twój profil"
+          label={t("nav.profile")}
           to={`/profile/${user.uid}`}
           icon={HexProfileIcon}
           variant="bottom"
         />
 
         <NavItem
-          label="Ustawienia"
+          label={t("nav.settings")}
           to="/settings"
           icon={HexSettingsIcon}
           variant="bottom"
@@ -56,14 +58,14 @@ export function BottomNav({ user }: BottomNavProps) {
           isAdmin ? (
             <>
               <NavItem
-                label="Panel admina"
+                label={t("nav.admin")}
                 to="/admin"
                 icon={HexActivityIcon}
                 variant="bottom"
               />
 
               <NavItem
-                label="Moderacja"
+                label={t("nav.moderation")}
                 to="/moderator"
                 icon={HexActivityIcon}
                 variant="bottom"
@@ -71,7 +73,7 @@ export function BottomNav({ user }: BottomNavProps) {
             </>
           ) : (
             <NavItem
-              label="Panel admina"
+              label={t("nav.admin")}
               to="/moderator"
               icon={HexActivityIcon}
               variant="bottom"

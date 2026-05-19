@@ -44,6 +44,8 @@ export const Layout: React.FC<{
 
   const user = useAppStore((s) => s.auth.user);
   const setUser = useAppStore((s) => s.setUser);
+  const language = useAppStore((s) => s.settings.language);
+  const initializeLanguage = useAppStore((s) => s.initializeLanguage);
   const isCreatePostModalOpen = useAppStore((s) => s.createPostModal.isOpen);
   const closeCreatePostModal = useAppStore((s) => s.closeCreatePostModal);
 
@@ -53,7 +55,12 @@ export const Layout: React.FC<{
 
   useEffect(() => {
     setIsHydrated(true);
-  }, []);
+    initializeLanguage();
+  }, [initializeLanguage]);
+
+  useEffect(() => {
+    document.documentElement.lang = language;
+  }, [language]);
 
   useEffect(() => {
     let ticking = false;
