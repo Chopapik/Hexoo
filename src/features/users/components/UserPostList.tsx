@@ -6,8 +6,10 @@ import { ApiError } from "@/lib/AppError";
 import useUserPosts from "../hooks/useUserPosts";
 import { PostCard } from "@/features/posts/components/PostCard";
 import { AppLoader } from "@/features/shared/components/ui/AppLoader";
+import { useI18n } from "@/i18n/useI18n";
 
 export function UserPostList({ userId }: { userId: string }) {
+  const { t } = useI18n();
   const {
     data,
     isLoading,
@@ -23,9 +25,9 @@ export function UserPostList({ userId }: { userId: string }) {
   useEffect(() => {
     if (isError) {
       if (error instanceof ApiError) {
-        toast.error(`Błąd: ${error.code}`);
+        toast.error(`${t("common.errorPrefix")}: ${error.code}`);
       } else {
-        toast.error("Wystąpił nieznany błąd podczas ładowania postów");
+        toast.error(t("profile.loadPostsError"));
       }
     }
   }, [isError, error]);
@@ -85,13 +87,13 @@ export function UserPostList({ userId }: { userId: string }) {
 
       {!hasNextPage && data?.pages[0]?.length !== 0 && (
         <p className="text-center text-text-neutral opacity-50 text-sm py-4">
-          To wszystkie posty tego użytkownika
+          {t("profile.allPosts")}
         </p>
       )}
 
       {data?.pages[0]?.length === 0 && (
         <div className="text-center py-10 text-text-neutral font-sans">
-          Ten użytkownik nie dodał jeszcze żadnych postów.
+          {t("profile.noPosts")}
         </div>
       )}
     </div>

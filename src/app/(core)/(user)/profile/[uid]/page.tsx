@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (!profileData || !profileData.user) {
     return {
-      title: "Nie znaleziono profilu - Hexoo",
+      title: "Profile not found - Hexoo",
       robots: { index: false, follow: false },
     };
   }
@@ -24,11 +24,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { user } = profileData;
 
   return {
-    title: `${user.name} - Profil Hexoo`,
-    description: `Zobacz profil użytkownika ${user.name} w aplikacji Hexoo. Sprawdź posty i aktywność.`,
+    title: `${user.name} - Hexoo Profile`,
+    description: `View ${user.name}'s profile in Hexoo. See posts and activity.`,
     openGraph: {
-      title: `${user.name} na Hexoo`,
-      description: `Profil użytkownika ${user.name}. Dołączył: ${
+      title: `${user.name} on Hexoo`,
+      description: `${user.name}'s profile. Joined: ${
         user.createdAt ? new Date(user.createdAt).toLocaleDateString() : ""
       }`,
       images: user.avatarUrl ? [user.avatarUrl] : [],

@@ -5,6 +5,7 @@ import Button from "@/features/shared/components/ui/Button";
 import { toggleTheme } from "@/features/shared/utils/theme";
 import { LuSun, LuMoon } from "react-icons/lu";
 import SettingsSection from "../SettingsSection";
+import { useI18n } from "@/i18n/useI18n";
 
 const ThemeToggleIcon = ({ isDark }: { isDark: boolean }) => {
   return (
@@ -28,6 +29,7 @@ const ThemeToggleIcon = ({ isDark }: { isDark: boolean }) => {
 };
 
 export default function AppearanceSection() {
+  const { t } = useI18n();
   const [isDark, setIsDark] = useState(false);
   const [isMounted, setMounted] = useState(false);
 
@@ -45,14 +47,14 @@ export default function AppearanceSection() {
   };
 
   return (
-    <SettingsSection title="Wygląd">
+    <SettingsSection title={t("settings.appearance.title")}>
       <div className="flex flex-row items-center justify-between gap-3">
         <div className="min-w-0 flex-1 text-left">
           <h4 className="font-semibold font-sans text-text-main">
-            Motyw aplikacji
+            {t("settings.appearance.theme")}
           </h4>
           <p className="text-sm font-sans text-text-neutral">
-            Dostosuj wygląd interfejsu do swoich preferencji (Jasny / Ciemny).
+            {t("settings.appearance.copy")}
           </p>
         </div>
         <div className="shrink-0">

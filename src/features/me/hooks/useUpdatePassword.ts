@@ -6,10 +6,12 @@ import toast from "react-hot-toast";
 import { supabaseClient } from "@/lib/supabaseClient";
 import { useAppStore } from "@/lib/store/store";
 import { ApiError } from "@/lib/AppError";
+import { useI18n } from "@/i18n/useI18n";
 
 type ErrorCallback = (errorCode: string, field?: string) => void;
 
 export const useUpdatePassword = (onError: ErrorCallback) => {
+  const { t } = useI18n();
   const { getRecaptchaToken } = useRecaptcha();
   const userEmail = useAppStore((s) => s.auth.user?.email);
 
@@ -23,7 +25,7 @@ export const useUpdatePassword = (onError: ErrorCallback) => {
       if (error.code) {
         toast.error(error.code);
       } else {
-        toast.error("wystąpił nieznany błąd");
+        toast.error(t("common.unknown"));
       }
     },
     onSuccess: async (_response, variables) => {
@@ -38,7 +40,7 @@ export const useUpdatePassword = (onError: ErrorCallback) => {
           });
 
         if (signInError || !signInData.session?.access_token) {
-          toast.success("Hasło zmienione. Zaloguj się ponownie.");
+          toast.success(t("settings.account.passwordChangedRelogin"));
           return;
         }
 
@@ -46,10 +48,10 @@ export const useUpdatePassword = (onError: ErrorCallback) => {
           idToken: signInData.session.access_token,
           recaptchaToken: token,
         });
-        toast.success("Hasło zmienione pomyślnie!");
+        toast.success(t("settings.account.passwordChanged"));
       } catch (err) {
         console.error(err);
-        toast.success("Hasło zmienione. Zaloguj się ponownie.");
+        toast.success(t("settings.account.passwordChangedRelogin"));
       }
     },
   });
@@ -58,9 +60,7 @@ export const useUpdatePassword = (onError: ErrorCallback) => {
     data: UpdatePasswordData
   ): Promise<boolean> => {
     if (!userEmail) {
-      toast.error(
-        "Błąd: Brak adresu email użytkownika. Zaloguj się aby wykonać akcję."
-      );
+      toast.error(t("settings.account.missingEmail"));
       return false;
     }
 
@@ -79,15 +79,15 @@ export const useUpdatePassword = (onError: ErrorCallback) => {
         ) {
           onError("auth/wrong-password", "oldPassword");
         } else if (msg.includes("too many") || msg.includes("rate")) {
-          toast.error("Zbyt wiele prób. Spróbuj później.");
+          toast.error(t("settings.account.tooManyAttempts"));
         } else {
-          toast.error("Nie udało się zweryfikować starego hasła.");
+          toast.error(t("settings.account.verifyOldPasswordError"));
         }
         return false;
       }
     } catch (error) {
       console.error(error);
-      toast.error("Wystąpił nieoczekiwany błąd.");
+      toast.error(t("common.unknown"));
       return false;
     }
 

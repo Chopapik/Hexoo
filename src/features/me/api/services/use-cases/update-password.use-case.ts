@@ -20,7 +20,7 @@ export class UpdatePasswordUseCase {
     if (!parsed.success) {
       throw createAppError({
         code: "VALIDATION_ERROR",
-        message: "[UpdatePasswordUseCase] Błąd walidacji hasła.",
+        message: "[UpdatePasswordUseCase] Password validation failed.",
         data: { details: formatZodErrorFlat(parsed.error) },
       });
     }
