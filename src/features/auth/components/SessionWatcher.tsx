@@ -8,6 +8,7 @@ import fetchClient from "@/lib/fetchClient";
 import { useAppStore } from "@/lib/store/store";
 import Modal from "@/features/shared/components/layout/Modal";
 import Button from "@/features/shared/components/ui/Button";
+import { useI18n } from "@/i18n/useI18n";
 
 const SESSION_HEARTBEAT_MS = 60_000;
 
@@ -26,6 +27,7 @@ function isAuthPage(pathname: string) {
 }
 
 export default function SessionWatcher() {
+  const { t } = useI18n();
   const pathname = usePathname();
   const router = useRouter();
 
@@ -108,7 +110,7 @@ export default function SessionWatcher() {
     <div className="flex justify-end w-full gap-2">
       <Button
         onClick={goToLogin}
-        text="Wróć do logowania"
+        text={t("common.backToLogin")}
         variant="secondary"
       />
       <Button onClick={closeModal} text="OK" />
@@ -123,12 +125,12 @@ export default function SessionWatcher() {
     <Modal
       isOpen={true}
       onClose={closeModal}
-      title="Sesja wygasła"
+      title={t("auth.session.expiredTitle")}
       footer={footer}
       className="max-w-md"
     >
       <div className="p-4  text-text-main text-base leading-relaxed">
-        Twoja sesja wygasła. Zaloguj się ponownie, aby kontynuować.
+        {t("auth.session.expiredCopy")}
       </div>
     </Modal>
   );

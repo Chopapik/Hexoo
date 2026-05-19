@@ -12,8 +12,10 @@ import useOAuthComplete from "../hooks/useOAuthComplete";
 import { useCheckUsername } from "../hooks/useCheckUsername";
 import { OAuthCompleteData } from "../types/auth.type";
 import { parseRegisterErrorMessages } from "../utils/registerErrorMap";
+import { useI18n } from "@/i18n/useI18n";
 
 export default function OAuthCompleteProfileForm() {
+  const { lang, t } = useI18n();
   const { register, handleSubmit, errors, handleServerErrors, watchedName } =
     useOAuthCompleteForm();
 
@@ -26,13 +28,14 @@ export default function OAuthCompleteProfileForm() {
   } = useCheckUsername(watchedName || "");
 
   const nameMessages = useMemo((): Message[] => {
-    const validationMessages = parseRegisterErrorMessages(errors.name?.message);
+    const validationMessages = parseRegisterErrorMessages(
+      errors.name?.message,
+      lang,
+    );
     if (validationMessages.length > 0) return validationMessages;
 
     if (usernameError === "CONFLICT") {
-      return [
-        { type: "Dismiss", text: "Ta nazwa użytkownika jest już zajęta" },
-      ];
+      return [{ type: "Dismiss", text: t("auth.usernameTaken") }];
     }
 
     if (
@@ -41,12 +44,14 @@ export default function OAuthCompleteProfileForm() {
       watchedName.trim().length >= 3 &&
       !isCheckingUsername
     ) {
-      return [{ type: "Success", text: "Nazwa użytkownika jest dostępna" }];
+      return [{ type: "Success", text: t("auth.usernameAvailable") }];
     }
 
     return [];
   }, [
     errors.name?.message,
+    lang,
+    t,
     usernameError,
     isUsernameAvailable,
     watchedName,
@@ -61,10 +66,10 @@ export default function OAuthCompleteProfileForm() {
     <div className="mx-auto inline-flex w-full max-w-md flex-col items-center justify-center gap-6 overflow-hidden px-4 py-8 xs:px-6 sm:max-w-2xl sm:gap-10 sm:rounded-[20px] sm:px-12 sm:py-12 sm:glass-card md:px-32 md:py-20">
       <div className="py-0.5 flex flex-col justify-start items-center overflow-hidden">
         <div className="justify-start text-text-main text-4xl sm:text-5xl font-bold font-serif">
-          Ustaw nazwę
+          {t("auth.completeProfile.title")}
         </div>
         <div className="justify-start text-text-neutral text-base sm:text-2xl font-bold font-sans text-center">
-          Dokończ rejestrację, aby korzystać z Hexoo.
+          {t("auth.completeProfile.subtitle")}
         </div>
       </div>
 
@@ -73,8 +78,8 @@ export default function OAuthCompleteProfileForm() {
         className="self-stretch flex flex-col justify-center items-center gap-1.5 sm:gap-2 overflow-hidden"
       >
         <TextInput
-          label="Nazwa użytkownika"
-          placeholder="podaj nazwę"
+          label={t("auth.register.username")}
+          placeholder={t("auth.completeProfile.placeholder")}
           {...register("name")}
           messages={nameMessages}
         />
@@ -84,7 +89,7 @@ export default function OAuthCompleteProfileForm() {
             <div className="min-w-48 px-3 h-full bg-red-600 rounded-lg shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] inline-flex justify-center items-center gap-2 overflow-hidden">
               <Image src={warningIconUrl} alt="warning!" />
               <div className="justify-start text-white text-xs font-semibold font-sans">
-                {parseRegisterErrorMessages(errors.root?.message)[0]?.text}
+                {parseRegisterErrorMessages(errors.root?.message, lang)[0]?.text}
               </div>
             </div>
           )}
@@ -92,7 +97,7 @@ export default function OAuthCompleteProfileForm() {
 
         <div className="self-stretch flex flex-col justify-center items-end gap-1 mt-3 sm:mt-4">
           <Button
-            text="Dokończ rejestrację"
+            text={t("auth.completeProfile.submit")}
             size="xl"
             rightIconUrl={keyIconUrl}
             type="submit"

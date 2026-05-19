@@ -4,10 +4,12 @@ import toast from "react-hot-toast";
 import { RegisterData, registerFields } from "../types/auth.type";
 import { ApiError } from "@/lib/AppError";
 import { supabaseClient } from "@/lib/supabaseClient";
+import { useI18n } from "@/i18n/useI18n";
 
 type ErrorCallback = (errorCode: string, field: registerFields) => void;
 
 export default function useRegister(onError: ErrorCallback) {
+  const { t } = useI18n();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -35,7 +37,7 @@ export default function useRegister(onError: ErrorCallback) {
         } else if (msg.includes("password") || msg.includes("weak")) {
           onError("password_too_short", "password");
         } else {
-          toast.error(signUpError.message ?? "Błąd rejestracji.");
+          toast.error(signUpError.message ?? t("auth.register.error"));
         }
 
         return;
@@ -50,7 +52,7 @@ export default function useRegister(onError: ErrorCallback) {
       }
 
       console.error("Register error:", error);
-      toast.error("Wystąpił nieznany błąd podczas rejestracji.");
+      toast.error(t("auth.register.unknownError"));
     } finally {
       if (!shouldKeepLoading) {
         setIsLoading(false);
