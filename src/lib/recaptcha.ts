@@ -32,7 +32,7 @@ export async function verifyRecaptchaToken(token: string) {
     if (!data.success || data.score < 0.5) {
       throw createAppError({
         code: "FORBIDDEN", // 403 - Forbidden
-        message: "Weryfikacja reCAPTCHA nieudana. Wykryto bota.",
+        message: "reCAPTCHA verification failed. Bot activity detected.",
         data: { score: data.score, errors: data["error-codes"] },
       });
     }
@@ -43,7 +43,7 @@ export async function verifyRecaptchaToken(token: string) {
 
     throw createAppError({
       code: "EXTERNAL_SERVICE",
-      message: "Błąd łączenia z usługą reCAPTCHA",
+      message: "Failed to connect to the reCAPTCHA service",
       details: error,
     });
   }

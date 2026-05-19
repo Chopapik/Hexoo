@@ -1,9 +1,10 @@
 "use client";
 
 import React from "react";
+import { useI18n } from "@/i18n/useI18n";
 
 interface RemoveImageButtonProps {
-  /** Funkcja wywoływana po kliknięciu przycisku */
+  /** Called after the button is clicked. */
   onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
   /** Wariant stylu przycisku: 'dark' (czarny) lub 'red' (czerwony) */
   variant?: "dark" | "red";
@@ -11,17 +12,17 @@ interface RemoveImageButtonProps {
   position?: "top-right" | "top-left" | "bottom-right" | "bottom-left";
   /** Opcjonalne klasy CSS */
   className?: string;
-  /** Czy przycisk ma być widoczny tylko na hover (wymaga grupy parent) */
+  /** Whether the button should only be visible on hover (requires a parent group). */
   showOnHover?: boolean;
-  /** Czy przycisk ma być zawsze widoczny */
+  /** Whether the button should always be visible. */
   alwaysVisible?: boolean;
-  /** Rozmiar ikony (domyślnie 12) */
+  /** Icon size (defaults to 12). */
   iconSize?: number;
 }
 
 /**
- * Przycisk z ikoną krzyżyka do usuwania zdjęć.
- * Może być używany jako osobny element lub w komponencie RemovableImagePreview.
+ * Button with a close icon for removing images.
+ * Can be used as a standalone element or inside RemovableImagePreview.
  */
 export default function RemoveImageButton({
   onClick,
@@ -32,6 +33,7 @@ export default function RemoveImageButton({
   alwaysVisible = false,
   iconSize = 12,
 }: RemoveImageButtonProps) {
+  const { t } = useI18n();
   const positionClasses = {
     "top-right": "top-1 right-1",
     "top-left": "top-1 left-1",
@@ -48,7 +50,7 @@ export default function RemoveImageButton({
   const variantClass = variantClasses[variant];
   const opacityClass = alwaysVisible || !showOnHover ? "opacity-100" : "opacity-0 group-hover:opacity-100";
 
-  // Jeśli className zawiera własne pozycjonowanie (top-, right-, left-, bottom-), nie używaj positionClass
+  // If className contains its own positioning, do not apply positionClass.
   const hasCustomPosition = className.match(/\b(top|right|left|bottom)-/);
   const finalPositionClass = hasCustomPosition ? "" : positionClass;
 
@@ -57,7 +59,7 @@ export default function RemoveImageButton({
       onClick={onClick}
       className={`absolute ${finalPositionClass} ${variantClass} rounded-full p-1 hover:scale-110 transition-all ${opacityClass} z-10 ${className}`}
       type="button"
-      title="Usuń zdjęcie"
+      title={t("ui.removeImage")}
     >
       <svg
         width={iconSize}

@@ -6,13 +6,14 @@ import {
   buttonDefaultSurfaceClass,
   buttonSecondarySurfaceClass,
 } from "./buttonSurfaceClasses";
+import { useI18n } from "@/i18n/useI18n";
 
 export type SwitchButtonProps = {
   checked: boolean;
   onChange: (next: boolean) => void;
   /** `id` of the visible heading/label for `aria-labelledby` */
   labelledBy?: string;
-  /** Short on/off hint beside the track (e.g. Wł. / Wył.) */
+  /** Short on/off hint beside the track (e.g. On / Off) */
   onLabel?: string;
   offLabel?: string;
   showOnOffLabels?: boolean;
@@ -25,12 +26,17 @@ export default function SwitchButton({
   checked,
   onChange,
   labelledBy,
-  onLabel = "Wł.",
-  offLabel = "Wył.",
+  onLabel,
+  offLabel,
   showOnOffLabels = true,
-  switchLabel = "Przełącz",
+  switchLabel,
   className,
 }: SwitchButtonProps) {
+  const { t } = useI18n();
+  const resolvedOnLabel = onLabel ?? t("ui.on");
+  const resolvedOffLabel = offLabel ?? t("ui.off");
+  const resolvedSwitchLabel = switchLabel ?? t("ui.switch");
+
   return (
     <div className={clsx("flex items-center gap-3 shrink-0", className)}>
       {showOnOffLabels && (
@@ -38,7 +44,7 @@ export default function SwitchButton({
           className="text-sm font-medium font-sans tabular-nums text-text-neutral min-w-9 text-right"
           aria-hidden
         >
-          {checked ? onLabel : offLabel}
+          {checked ? resolvedOnLabel : resolvedOffLabel}
         </span>
       )}
       <Switch
@@ -50,7 +56,7 @@ export default function SwitchButton({
           checked ? buttonDefaultSurfaceClass : buttonSecondarySurfaceClass,
         )}
       >
-        <span className="sr-only font-sans">{switchLabel}</span>
+        <span className="sr-only font-sans">{resolvedSwitchLabel}</span>
         <span
           aria-hidden
           className="pointer-events-none inline-block size-6 rounded-full bg-white shadow-md ring-1 ring-black/10 transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-data-checked:translate-x-6"

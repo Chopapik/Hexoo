@@ -3,6 +3,7 @@ import eyeIconUrl from "../../assets/icons/eye.svg?url";
 import eyeOffIconUrl from "../../assets/icons/eye-off.svg?url";
 import Image from "next/image";
 import ValidationMessage from "./ValidationMessage";
+import { useI18n } from "@/i18n/useI18n";
 
 export type Status = "Default" | "Warning" | "Dismiss" | "Success";
 
@@ -49,6 +50,7 @@ export default function TextInput({
   onBlur,
   showButton = true,
 }: TextInputProps) {
+  const { t } = useI18n();
   const [showPassword, setShowPassword] = useState(false);
   const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
 
@@ -88,7 +90,7 @@ export default function TextInput({
           >
             <Image
               src={showPassword ? eyeOffIconUrl : eyeIconUrl}
-              alt={showPassword ? "Ukryj hasło" : "Pokaż hasło"}
+              alt={showPassword ? t("ui.hidePassword") : t("ui.showPassword")}
               className="w-5 h-5"
             />
           </button>

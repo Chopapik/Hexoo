@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef } from "react";
+import { useI18n } from "@/i18n/useI18n";
 
 const GUEST_OPACITIES = [0.12, 0.18, 0.25, 0.34];
 const GUEST_MAX_BLOBS = 2;
@@ -225,6 +226,8 @@ function RightNavGuestBackground() {
 }
 
 export function RightNavGuestDisclaimer() {
+  const { t } = useI18n();
+
   return (
     <div className="hidden md:flex md:sticky md:top-4 self-start md:w-20 lg:w-[244px] xl:w-72 h-full">
       <div className="relative overflow-hidden">
@@ -232,10 +235,10 @@ export function RightNavGuestDisclaimer() {
           <RightNavGuestBackground />
           <div className="relative z-10 h-full p-3 flex flex-col justify-end">
             <p className="text-xs uppercase font-serif tracking-[0.16em] text-text-neutral/80">
-              czesc nise siemas
+              {t("right.guestEyebrow")}
             </p>
             <p className="text-sm font-semibold text-text-main font-sans">
-              Dołącz do Hexoo i odblokuj pełny podgląd społeczności.
+              {t("right.guestCopy")}
             </p>
           </div>
         </div>

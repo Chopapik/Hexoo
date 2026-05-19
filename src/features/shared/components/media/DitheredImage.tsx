@@ -13,7 +13,7 @@ type DitheredImageProps = {
   height?: number;
   sizes?: string;
   dithering: PostDitheringSettings;
-  isAnimated?: boolean; // Nowy prop informujący o animacji
+  isAnimated?: boolean; // Indicates that the image is animated.
   onReadyChange?: (isReady: boolean) => void;
   onErrorChange?: (hasError: boolean) => void;
 };

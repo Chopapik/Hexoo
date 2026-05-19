@@ -11,6 +11,7 @@ import {
   HexSettingsIcon,
 } from "@/features/shared/components/icons/HexNavIcons";
 import { Plus } from "lucide-react";
+import { useI18n } from "@/i18n/useI18n";
 
 type LeftNavProps = {
   onOpenRight?: () => void;
@@ -22,6 +23,7 @@ function roleKey(role: SessionData["role"] | undefined): string {
 }
 
 export function LeftNav({ onOpenRight, user }: LeftNavProps) {
+  const { t } = useI18n();
   const openCreatePostModal = useAppStore((s) => s.openCreatePostModal);
   const r = roleKey(user?.role);
   const isAdmin = r === UserRole.Admin;
@@ -33,14 +35,14 @@ export function LeftNav({ onOpenRight, user }: LeftNavProps) {
       {user ? (
         <div className="h-full py-5 gap-16 flex flex-col w-full items-center">
           <div className="flex flex-col md:justify-start items-center xl:items-start w-full xl:w-fit font-sans">
-            <NavItem label={"Strona główna"} to="/" icon={HexHomeIcon} />
+            <NavItem label={t("nav.home")} to="/" icon={HexHomeIcon} />
             <NavItem
-              label={"Twój profil"}
+              label={t("nav.profile")}
               to={`/profile/${user.uid}`}
               icon={HexProfileIcon}
             />
             <NavItem
-              label={"Ustawienia"}
+              label={t("nav.settings")}
               to="/settings"
               icon={HexSettingsIcon}
             />
@@ -48,19 +50,19 @@ export function LeftNav({ onOpenRight, user }: LeftNavProps) {
               isAdmin ? (
                 <>
                   <NavItem
-                    label="Panel admina"
+                    label={t("nav.admin")}
                     to="/admin"
                     icon={HexActivityIcon}
                   />
                   <NavItem
-                    label="Moderacja"
+                    label={t("nav.moderation")}
                     to="/moderator"
                     icon={HexActivityIcon}
                   />
                 </>
               ) : (
                 <NavItem
-                  label="Panel admina"
+                  label={t("nav.admin")}
                   to="/moderator"
                   icon={HexActivityIcon}
                 />
@@ -79,7 +81,7 @@ export function LeftNav({ onOpenRight, user }: LeftNavProps) {
 
             <div className="hidden xl:block w-full">
               <Button
-                text="Dodaj post"
+                text={t("nav.addPost")}
                 size="xl"
                 rightIcon={<Plus className="size-5" />}
                 className="w-full justify-center font-semibold"
@@ -97,7 +99,7 @@ export function LeftNav({ onOpenRight, user }: LeftNavProps) {
               href="mailto:contact@hexoo.eu"
               className="hover:text-text-neutral transition-colors text-xs font-medium text-text-neutral/45"
             >
-              Kontakt
+              {t("nav.contact")}
             </Link>
           </li>
           <li>
@@ -105,7 +107,7 @@ export function LeftNav({ onOpenRight, user }: LeftNavProps) {
               href="/privacy"
               className="hover:text-text-neutral transition-colors text-xs font-medium text-text-neutral/45"
             >
-              Prywatność i Cookies
+              {t("nav.privacy")}
             </Link>
           </li>
           <li>
@@ -113,7 +115,7 @@ export function LeftNav({ onOpenRight, user }: LeftNavProps) {
               href="/terms"
               className="hover:text-text-neutral transition-colors text-xs font-medium text-text-neutral/45"
             >
-              Regulamin
+              {t("nav.terms")}
             </Link>
           </li>
         </ul>

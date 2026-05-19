@@ -4,8 +4,12 @@ import { Logo } from "../ui/Logo";
 import chevronRightUrl from "@/features/shared/assets/icons/chevronRight.svg?url";
 import { Avatar } from "@/features/shared/components/ui/Avatar";
 import { SessionData } from "@/features/me/me.type";
+import LanguageSwitch from "@/features/shared/components/i18n/LanguageSwitch";
+import { useI18n } from "@/i18n/useI18n";
 
 export const Header = ({ user }: { user: SessionData | null }) => {
+  const { t } = useI18n();
+
   return (
     <div className="h-12 md:h-14 w-full bg-primary-neutral-background-default rounded-xl border-t-2 border-primary-neutral-stroke-default inline-flex justify-between items-center shadow-lg">
       <Link
@@ -16,7 +20,8 @@ export const Header = ({ user }: { user: SessionData | null }) => {
         <Logo className="h-full w-auto flex items-center p-2.5 md:p-3 " />
       </Link>
 
-      <div>
+      <div className="flex items-center gap-2">
+        <LanguageSwitch compact className="hidden xs:inline-flex" />
         {user ? (
           <Link href={`/profile/${user.uid}`}>
             <div className="flex items-center gap-2 md:gap-3 pl-1 pr-3 md:pl-1.5 md:pr-4 py-1 rounded-2xl border border-transparent hover:bg-white/5 transition-all duration-200 cursor-pointer group">
@@ -26,7 +31,7 @@ export const Header = ({ user }: { user: SessionData | null }) => {
 
               <div className="hidden xs:flex flex-col justify-center items-start">
                 <span className="text-[10px] leading-none text-text-neutral font-sans font-medium tracking-wide uppercase mb-0.5">
-                  Zalogowany jako
+                  {t("header.loggedAs")}
                 </span>
                 <span className="text-sm leading-none font-bold text-text-main font-sans  transition-colors">
                   {user.name}
@@ -37,7 +42,7 @@ export const Header = ({ user }: { user: SessionData | null }) => {
         ) : (
           <div className="mr-4">
             <Link href="/login" prefetch={false}>
-              <Button text="Zaloguj się" rightIconUrl={chevronRightUrl} />
+              <Button text={t("header.login")} rightIconUrl={chevronRightUrl} />
             </Link>
           </div>
         )}
