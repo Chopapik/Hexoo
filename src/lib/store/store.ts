@@ -1,6 +1,11 @@
 import { create } from "zustand";
 import type { SessionData } from "@/features/me/me.type";
 import {
+  DEFAULT_LANG,
+  normalizeLang,
+  type Lang,
+} from "@/i18n/translations";
+import {
   COLOR_DISTANCE_FORMULA_OPTIONS,
   DEFAULT_POST_DITHERING_SETTINGS,
   ERROR_DIFFUSION_PROPAGATION_OPTIONS,
@@ -19,6 +24,7 @@ export interface AuthState {
 }
 
 export interface SettingsState {
+  language: Lang;
   showNSFWPosts: boolean;
   showNSFWComments: boolean;
   postDithering: PostDitheringSettings;
@@ -45,6 +51,8 @@ interface AppState {
 
   setPresenceOnlineUids: (uids: Set<string>) => void;
 
+  setLanguage: (value: Lang) => void;
+  initializeLanguage: () => void;
   setNsfwVisibility: (value: boolean) => void;
   setCommentsNsfwVisibility: (value: boolean) => void;
   initializeSettings: () => void;
@@ -100,6 +108,8 @@ const DITHERING_LOCAL_STORAGE_KEYS = {
     "user_settings_dithering_error_diffusion_propagation",
 } as const;
 
+const LANGUAGE_LOCAL_STORAGE_KEY = "hexoo_language";
+
 const writeLocalStorage = (key: string, value: string) => {
   if (typeof window === "undefined") return;
   localStorage.setItem(key, value);
@@ -119,6 +129,7 @@ export const useAppStore = create<AppState>((set) => ({
     ready: true,
   },
   settings: {
+    language: DEFAULT_LANG,
     showNSFWPosts: false,
     showNSFWComments: false,
     postDithering: DEFAULT_POST_DITHERING_SETTINGS,
@@ -139,6 +150,27 @@ export const useAppStore = create<AppState>((set) => ({
       presence: { ...s.presence, onlineUids: new Set(onlineUids) },
     })),
 
+  setLanguage: (language) => {
+    writeLocalStorage(LANGUAGE_LOCAL_STORAGE_KEY, language);
+    if (typeof document !== "undefined") {
+      document.documentElement.lang = language;
+    }
+    set((s) => ({ settings: { ...s.settings, language } }));
+  },
+  initializeLanguage: () => {
+    if (typeof window === "undefined") return;
+    const storedLanguage = normalizeLang(
+      localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY),
+    );
+    const browserLanguage = normalizeLang(navigator.language?.slice(0, 2));
+    const language =
+      localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY) === null
+        ? browserLanguage
+        : storedLanguage;
+
+    document.documentElement.lang = language;
+    set((s) => ({ settings: { ...s.settings, language } }));
+  },
   setNsfwVisibility: (value) =>
     set((s) => ({ settings: { ...s.settings, showNSFWPosts: value } })),
   setCommentsNsfwVisibility: (value) =>
@@ -154,9 +186,9 @@ export const useAppStore = create<AppState>((set) => ({
     );
     set((s) => ({
       settings: {
+        ...s.settings,
         showNSFWPosts: storedPosts ?? s.settings.showNSFWPosts,
         showNSFWComments: storedComments ?? s.settings.showNSFWComments,
-        postDithering: s.settings.postDithering,
       },
     }));
   },

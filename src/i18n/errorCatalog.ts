@@ -1,7 +1,7 @@
 import type { ErrorCode } from "@/lib/AppError";
 import type { ValidationStatus } from "@/features/shared/types/validation.type";
 
-type Lang = "pl" | "en";
+export type Lang = "pl" | "en";
 
 // Codes produced on the client side (Zod / hooks / forms)
 export type ClientValidationCode =
