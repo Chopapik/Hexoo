@@ -2,6 +2,7 @@
 
 import Modal from "@/features/shared/components/layout/Modal";
 import ModalFooter from "@/features/shared/components/layout/ModalFooter";
+import { useI18n } from "@/i18n/useI18n";
 
 interface ConfirmDeletePostModalProps {
   isOpen: boolean;
@@ -16,9 +17,10 @@ export default function ConfirmDeletePostModal({
   onConfirm,
   isPending,
 }: ConfirmDeletePostModalProps) {
+  const { t } = useI18n();
   const footerContent = (
     <ModalFooter
-      confirmText="Tak, usuń"
+      confirmText={t("post.delete.confirm")}
       onCancel={onClose}
       onConfirm={onConfirm}
       isPending={isPending}
@@ -30,15 +32,13 @@ export default function ConfirmDeletePostModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Usunąć post?"
+      title={t("post.delete.title")}
       footer={footerContent}
       className="max-w-md"
     >
       <div className="flex flex-col gap-3 pt-1">
         <p className="text-sm text-text-neutral leading-relaxed">
-          Czy na pewno chcesz trwale usunąć ten post?
-          <br />
-          Tej operacji nie będzie można cofnąć.
+          {t("post.delete.body")}
         </p>
       </div>
     </Modal>

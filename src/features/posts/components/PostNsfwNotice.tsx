@@ -1,8 +1,12 @@
+import { useI18n } from "@/i18n/useI18n";
+
 type PostNsfwNoticeProps = {
   className?: string;
 };
 
 export const PostNsfwNotice = ({ className = "" }: PostNsfwNoticeProps) => {
+  const { t } = useI18n();
+
   return (
     <div
       className={`flex flex-col items-center justify-center gap-3 transition-colors group w-full h-full ${className}`.trim()}
@@ -27,10 +31,10 @@ export const PostNsfwNotice = ({ className = "" }: PostNsfwNoticeProps) => {
       </div>
       <div className="text-center">
         <p className="text-red-500 font-bold text-sm uppercase tracking-wider mb-1">
-          Treść NSFW
+          {t("post.nsfw.title")}
         </p>
         <p className="text-text-neutral text-xs">
-          Ten post zawiera treści dla dorosłych.
+          {t("post.nsfw.body")}
         </p>
       </div>
     </div>

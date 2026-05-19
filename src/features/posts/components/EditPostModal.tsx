@@ -9,6 +9,7 @@ import { parseErrorMessages } from "../utils/postErrorMap";
 import { POST_MAX_CHARS } from "../types/post.dto";
 import { ApiError } from "@/lib/AppError";
 import PostComposerModal from "./PostComposerModal";
+import { useI18n } from "@/i18n/useI18n";
 
 interface EditPostModalProps {
   isOpen: boolean;
@@ -21,6 +22,7 @@ export default function EditPostModal({
   onClose,
   post,
 }: EditPostModalProps) {
+  const { lang, t } = useI18n();
   const {
     register,
     handleSubmit,
@@ -43,7 +45,7 @@ export default function EditPostModal({
   const validationErrorRaw =
     formState.errors.text?.message || formState.errors.imageFile?.message || "";
 
-  const clientError = parseErrorMessages(validationErrorRaw)?.text;
+  const clientError = parseErrorMessages(validationErrorRaw, lang)?.text;
 
   const textValue = watch("text") || "";
   const currentLength = textValue.length;
@@ -59,12 +61,12 @@ export default function EditPostModal({
     },
     (error) => {
       const code = error instanceof ApiError ? error.code : "INTERNAL_ERROR";
-      const parsedError = parseErrorMessages(code);
+      const parsedError = parseErrorMessages(code, lang);
 
       if (parsedError?.text) {
         setRootError(parsedError.text);
       } else {
-        setRootError("Wystąpił nieznany błąd. Spróbuj ponownie.");
+        setRootError(t("post.unknownErrorRetry"));
       }
     },
   );
@@ -93,8 +95,8 @@ export default function EditPostModal({
   return (
     <PostComposerModal
       isOpen={isOpen}
-      title="Edytuj post"
-      placeholder="Edytuj treść posta..."
+      title={t("post.edit")}
+      placeholder={t("post.editPlaceholder")}
       onClose={onClose}
       onSubmit={submit}
       onImageSelect={triggerPicker}
@@ -114,7 +116,7 @@ export default function EditPostModal({
         <AlertModal
           isOpen={!!moderationBlockReason}
           onClose={() => setModerationBlockReason(null)}
-          title="Edycja odrzucona"
+          title={t("post.editRejected")}
           message={moderationBlockReason || ""}
         />
       }

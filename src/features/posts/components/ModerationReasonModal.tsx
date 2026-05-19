@@ -9,6 +9,7 @@ import {
   ModerationReasonFormData,
 } from "@/features/moderator/types/moderator.dto";
 import { parseModerationReasonError } from "@/features/moderator/utils/moderationReasonErrorMap";
+import { useI18n, type TranslationKey } from "@/i18n/useI18n";
 
 type ModerationAction = "quarantine" | "reject" | "reject-ban";
 
@@ -25,65 +26,65 @@ interface ModerationReasonModalProps {
 const ACTION_CONFIG: Record<
   ModerationAction,
   {
-    title: Record<"post" | "comment", string>;
-    confirmText: Record<"post" | "comment", string>;
-    description: Record<"post" | "comment", string>;
+    titleKey: Record<"post" | "comment", TranslationKey>;
+    confirmTextKey: Record<"post" | "comment", TranslationKey>;
+    descriptionKey: Record<"post" | "comment", TranslationKey>;
     icon: React.ReactNode;
     color: string;
   }
 > = {
   quarantine: {
-    title: {
-      post: "Przenieś do kwarantanny",
-      comment: "Przenieś komentarz do kwarantanny",
+    titleKey: {
+      post: "moderation.quarantinePost",
+      comment: "moderation.quarantineComment",
     },
-    confirmText: { post: "Kwarantanna", comment: "Kwarantanna" },
-    description: {
-      post:
-        "Post zostanie ukryty dla innych użytkowników do czasu ponownego przeglądu. Podaj powód tej decyzji — zostanie zapisany w bazie danych.",
-      comment:
-        "Komentarz pozostanie w trybie oczekującym. Podaj powód tej decyzji — zostanie zapisany w bazie danych.",
+    confirmTextKey: {
+      post: "moderation.quarantine",
+      comment: "moderation.quarantine",
+    },
+    descriptionKey: {
+      post: "moderation.quarantinePostDescription",
+      comment: "moderation.quarantineCommentDescription",
     },
     icon: <BsShieldExclamation className="w-5 h-5" />,
     color: "yellow",
   },
   reject: {
-    title: { post: "Usuń post", comment: "Usuń komentarz" },
-    confirmText: { post: "Usuń post", comment: "Usuń komentarz" },
-    description: {
-      post:
-        "Post zostanie trwale usunięty. Podaj powód usunięcia — zostanie zapisany w bazie danych jako uzasadnienie dla tej decyzji.",
-      comment:
-        "Komentarz zostanie trwale usunięty. Podaj powód usunięcia — zostanie zapisany w bazie danych jako uzasadnienie dla tej decyzji.",
+    titleKey: { post: "moderation.deletePost", comment: "moderation.deleteComment" },
+    confirmTextKey: { post: "moderation.deletePost", comment: "moderation.deleteComment" },
+    descriptionKey: {
+      post: "moderation.deletePostDescription",
+      comment: "moderation.deleteCommentDescription",
     },
     icon: <BsTrash className="w-5 h-5" />,
     color: "red",
   },
   "reject-ban": {
-    title: {
-      post: "Usuń post i zbanuj autora",
-      comment: "Usuń komentarz i zbanuj autora",
+    titleKey: {
+      post: "moderation.deleteBanPost",
+      comment: "moderation.deleteBanComment",
     },
-    confirmText: { post: "Usuń i zbanuj", comment: "Usuń i zbanuj" },
-    description: {
-      post:
-        "Post zostanie trwale usunięty, a konto autora zablokowane. Podaj powód — zostanie zapisany w bazie danych.",
-      comment:
-        "Komentarz zostanie trwale usunięty, a konto autora zablokowane. Podaj powód — zostanie zapisany w bazie danych.",
+    confirmTextKey: {
+      post: "moderation.deleteAndBan",
+      comment: "moderation.deleteAndBan",
+    },
+    descriptionKey: {
+      post: "moderation.deleteBanPostDescription",
+      comment: "moderation.deleteBanCommentDescription",
     },
     icon: <BsTrash className="w-5 h-5" />,
     color: "red",
   },
 };
 
-const PRESET_REASONS = [
-  "Spam / Niechciane treści",
-  "Mowa nienawiści / Przemoc",
-  "Nagość / Treści seksualne",
-  "Nękanie / Zastraszanie",
-  "Treść niebezpieczna / Nielegalna",
-  "Łamanie regulaminu serwisu",
-  "Oszustwo / Wyłudzanie informacji",
+const PRESET_REASONS: TranslationKey[] = [
+  "moderation.reason.spam",
+  "moderation.reason.hate",
+  "moderation.reason.nudity",
+  "moderation.reason.harassment",
+  "moderation.reason.danger",
+  "moderation.reason.terms",
+  "moderation.reason.fraud",
 ];
 
 export default function ModerationReasonModal({
@@ -94,6 +95,7 @@ export default function ModerationReasonModal({
   onConfirm,
   resource = "post",
 }: ModerationReasonModalProps) {
+  const { lang, t } = useI18n();
   const {
     handleSubmit,
     errors,
@@ -104,9 +106,9 @@ export default function ModerationReasonModal({
   } = useModerationReasonForm(action);
 
   const config = ACTION_CONFIG[action];
-  const title = config.title[resource];
-  const confirmText = config.confirmText[resource];
-  const description = config.description[resource];
+  const title = t(config.titleKey[resource]);
+  const confirmText = t(config.confirmTextKey[resource]);
+  const description = t(config.descriptionKey[resource]);
 
   const currentLength = justification.length;
   const hasTooLongError =
@@ -114,6 +116,7 @@ export default function ModerationReasonModal({
   const showValidationError = isSubmitted;
   const justificationError = parseModerationReasonError(
     errors.justification?.message as string,
+    lang,
   );
 
   const handleClose = () => {
@@ -155,7 +158,7 @@ export default function ModerationReasonModal({
     <Modal
       isOpen={isOpen}
       onClose={handleClose}
-      title="Akcja moderatora"
+      title={t("moderation.actionTitle")}
       footer={footer}
       className="max-w-md"
     >
@@ -173,10 +176,12 @@ export default function ModerationReasonModal({
 
         <div className="flex flex-col gap-1.5">
           <label className="text-xs uppercase tracking-widest text-text-neutral/60 font-bold">
-            Powód / Uzasadnienie <span className="text-red-400">*</span>
+            {t("moderation.reasonLabel")} <span className="text-red-400">*</span>
           </label>
           <div className="flex flex-wrap gap-2 mb-2">
-            {PRESET_REASONS.map((preset, idx) => (
+            {PRESET_REASONS.map((presetKey, idx) => {
+              const preset = t(presetKey);
+              return (
               <button
                 key={idx}
                 type="button"
@@ -189,13 +194,14 @@ export default function ModerationReasonModal({
               >
                 {preset}
               </button>
-            ))}
+              );
+            })}
           </div>
 
           <textarea
             value={justification}
             onChange={(e) => updateJustification(e.target.value)}
-            placeholder="Wpisz uzasadnienie decyzji lub wybierz z listy..."
+            placeholder={t("moderation.reasonPlaceholder")}
             rows={4}
             className={`
               w-full bg-black/30 rounded-lg border border-white/10 p-3
