@@ -1,4 +1,3 @@
-/** @vitest-environment jsdom */
 import { beforeEach, describe, expect, it } from "vitest";
 import { DEFAULT_LANG } from "@/i18n/translations";
 import { useAppStore } from "./store";
