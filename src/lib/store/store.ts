@@ -25,6 +25,7 @@ export interface AuthState {
 
 export interface SettingsState {
   language: Lang;
+  languageOverriddenByUser: boolean;
   showNSFWPosts: boolean;
   showNSFWComments: boolean;
   postDithering: PostDitheringSettings;
@@ -109,10 +110,29 @@ const DITHERING_LOCAL_STORAGE_KEYS = {
 } as const;
 
 const LANGUAGE_LOCAL_STORAGE_KEY = "hexoo_language";
+const LANGUAGE_OVERRIDE_LOCAL_STORAGE_KEY = "hexoo_language_overridden_by_user";
 
 const writeLocalStorage = (key: string, value: string) => {
   if (typeof window === "undefined") return;
   localStorage.setItem(key, value);
+};
+
+const detectClientLanguage = (): Lang => {
+  if (typeof navigator === "undefined") {
+    return DEFAULT_LANG;
+  }
+  const preferredLocales = [
+    ...(navigator.languages ?? []),
+    navigator.language,
+    Intl.DateTimeFormat().resolvedOptions().locale,
+  ];
+  for (const locale of preferredLocales) {
+    if (typeof locale !== "string") continue;
+    const lowerLocale = locale.toLowerCase();
+    if (!lowerLocale.startsWith("en") && !lowerLocale.startsWith("pl")) continue;
+    return normalizeLang(locale);
+  }
+  return DEFAULT_LANG;
 };
 
 const readEnumValue = <T extends string>(
@@ -130,6 +150,7 @@ export const useAppStore = create<AppState>((set) => ({
   },
   settings: {
     language: DEFAULT_LANG,
+    languageOverriddenByUser: false,
     showNSFWPosts: false,
     showNSFWComments: false,
     postDithering: DEFAULT_POST_DITHERING_SETTINGS,
@@ -152,24 +173,29 @@ export const useAppStore = create<AppState>((set) => ({
 
   setLanguage: (language) => {
     writeLocalStorage(LANGUAGE_LOCAL_STORAGE_KEY, language);
+    writeLocalStorage(LANGUAGE_OVERRIDE_LOCAL_STORAGE_KEY, "1");
     if (typeof document !== "undefined") {
       document.documentElement.lang = language;
     }
-    set((s) => ({ settings: { ...s.settings, language } }));
+    set((s) => ({
+      settings: { ...s.settings, language, languageOverriddenByUser: true },
+    }));
   },
   initializeLanguage: () => {
     if (typeof window === "undefined") return;
-    const storedLanguage = normalizeLang(
-      localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY),
-    );
-    const browserLanguage = normalizeLang(navigator.language?.slice(0, 2));
+    const storedLanguageRaw = localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY);
+    const languageOverriddenByUser =
+      localStorage.getItem(LANGUAGE_OVERRIDE_LOCAL_STORAGE_KEY) === "1";
     const language =
-      localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY) === null
-        ? browserLanguage
-        : storedLanguage;
+      languageOverriddenByUser && storedLanguageRaw !== null
+        ? normalizeLang(storedLanguageRaw)
+        : detectClientLanguage();
 
     document.documentElement.lang = language;
-    set((s) => ({ settings: { ...s.settings, language } }));
+    writeLocalStorage(LANGUAGE_LOCAL_STORAGE_KEY, language);
+    set((s) => ({
+      settings: { ...s.settings, language, languageOverriddenByUser },
+    }));
   },
   setNsfwVisibility: (value) =>
     set((s) => ({ settings: { ...s.settings, showNSFWPosts: value } })),
