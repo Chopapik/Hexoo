@@ -15,6 +15,19 @@ export type RefreshTokens = {
   refresh_token: string;
 };
 
+export type AuthUpdateUserProperties = {
+  disabled?: boolean;
+  displayName?: string;
+  email?: string;
+  password?: string;
+};
+
+export type AuthCreateUserProperties = {
+  displayName?: string;
+  email: string;
+  password: string;
+};
+
 export interface AuthRepository {
   verifyIdToken(idToken: string): Promise<AuthDecodedToken>;
   createSessionCookie(idToken: string, expiresIn: number): Promise<string>;
@@ -22,11 +35,6 @@ export interface AuthRepository {
   refreshSession(refreshToken: string): Promise<RefreshTokens>;
   getUserByEmail(email: string): Promise<AuthUserRecord | null>;
   deleteUser(uid: string): Promise<void>;
-  updateUser(uid: string, properties: Record<string, unknown>): Promise<void>;
-  createUser(properties: {
-    email: string;
-    password: string;
-    displayName?: string;
-    [key: string]: unknown;
-  }): Promise<{ uid: string }>;
+  updateUser(uid: string, properties: AuthUpdateUserProperties): Promise<void>;
+  createUser(properties: AuthCreateUserProperties): Promise<{ uid: string }>;
 }

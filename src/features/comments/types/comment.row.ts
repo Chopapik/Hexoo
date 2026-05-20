@@ -1,20 +1,12 @@
-import { ImageMeta } from "@/features/images/types/image.type";
+import type {
+  Database,
+  Tables,
+  TablesInsert,
+  TablesUpdate,
+} from "@/lib/supabase.database.types";
 
-/**
- * Row shape for table `comments` in Supabase (snake_case).
- */
-export interface CommentRow {
-  id: string;
-  post_id: string;
-  user_id: string;
-  text: string;
-  likes_count: number;
-  comments_count: number;
-  created_at: string;
-  updated_at: string | null;
-  is_nsfw: boolean;
-  is_pending: boolean;
-  is_edited: boolean;
-  image_meta: ImageMeta | null;
-  device: string | null;
-}
+export type CommentRow = Tables<"comments">;
+export type CommentUpdateRow = TablesUpdate<"comments">;
+export type CommentReportInsertRow = TablesInsert<"comment_reports">;
+export type DeleteCommentTxArgs =
+  Database["public"]["Functions"]["delete_comment_tx"]["Args"];

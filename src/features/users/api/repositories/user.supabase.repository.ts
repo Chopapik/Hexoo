@@ -1,4 +1,5 @@
 import { supabaseAdmin } from "@/lib/supabaseServer";
+import { throwDbError } from "@/lib/supabaseRepository";
 import type {
   UserRepository,
   BlockUserPayload,
@@ -7,74 +8,37 @@ import type {
   UpdateUserRestrictionPayload,
 } from "./user.repository.interface";
 import type { UserEntity } from "../../types/user.entity";
-import type { UserRow } from "../../types/user.row";
 import type { ImageMeta } from "@/features/images/types/image.type";
-import { parseDate } from "@/features/shared/utils/dateUtils";
-import { normalizeDisplayName } from "@/features/users/utils/displayName";
-const TABLE = "users";
+import type { UserSummaryRow } from "../../types/user.row";
+import {
+  mapUserRow,
+  mapUserSummaryRow,
+  toBlockUserRow,
+  toCreateUserRow,
+  toOAuthPendingUserRow,
+  toRestrictionUpdateRow,
+  toUnblockUserRow,
+  toUpdateUserRow,
+} from "./user.supabase.mapper";
 
-function rowToEntity(row: UserRow): UserEntity {
-  return {
-    uid: row.uid,
-    name: row.display_name,
-    hasUsername: row.display_name.trim().length > 0,
-    email: row.email,
-    role: row.role,
-    avatarMeta: row.avatar_meta ?? undefined,
-    createdAt: parseDate(row.created_at) ?? new Date(0),
-    updatedAt: parseDate(row.updated_at),
-    lastOnline: parseDate(row.last_online) ?? new Date(0),
-    isActive: row.is_active ?? undefined,
-    isBanned: row.is_banned ?? undefined,
-    bannedAt: parseDate(row.banned_at),
-    bannedBy: row.banned_by ?? undefined,
-    bannedReason: row.banned_reason ?? undefined,
-    isRestricted: row.is_restricted ?? undefined,
-    restrictedAt: parseDate(row.restricted_at),
-    restrictedBy: row.restricted_by ?? undefined,
-    restrictionReason: row.restriction_reason ?? undefined,
-    lastKnownIp: row.last_known_ip ?? undefined,
-  };
-}
+const TABLE = "users";
 
 export class UserSupabaseRepository implements UserRepository {
   async createUser(data: CreateUserPayload): Promise<void> {
-    const displayName = data.name.trim();
-    const row = {
-      uid: data.uid,
-      display_name: displayName,
-      display_name_normalized: normalizeDisplayName(displayName),
-      email: data.email,
-      role: data.role ?? "user",
-      avatar_meta: data.avatarMeta ?? null,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-      last_online: new Date().toISOString(),
-    };
+    const row = toCreateUserRow(data);
     const { error } = await supabaseAdmin.from(TABLE).upsert(row, {
       onConflict: "uid",
     });
-    if (error) throw new Error(error.message ?? "Database error");
+    throwDbError(error);
   }
 
   async createOAuthPendingUser(data: {
     uid: string;
     email: string;
   }): Promise<void> {
-    const now = new Date().toISOString();
-    const row = {
-      uid: data.uid,
-      display_name: "",
-      display_name_normalized: "",
-      email: data.email,
-      role: "user" as const,
-      avatar_meta: null,
-      created_at: now,
-      updated_at: now,
-      last_online: now,
-    };
+    const row = toOAuthPendingUserRow(data);
     const { error } = await supabaseAdmin.from(TABLE).insert(row);
-    if (error) throw new Error(error.message ?? "Database error");
+    throwDbError(error);
   }
 
   async getUserByUid(uid: string): Promise<UserEntity | null> {
@@ -84,9 +48,9 @@ export class UserSupabaseRepository implements UserRepository {
       .eq("uid", uid)
       .maybeSingle();
 
-    if (error) throw new Error(error.message ?? "Database error");
+    throwDbError(error);
     if (!data) return null;
-    return rowToEntity(data as UserRow);
+    return mapUserRow(data);
   }
 
   async getUsersByIds(
@@ -102,17 +66,9 @@ export class UserSupabaseRepository implements UserRepository {
         .from(TABLE)
         .select("uid, display_name, avatar_meta")
         .in("uid", chunk);
-      if (error) throw new Error(error.message ?? "Database error");
-      for (const row of data ?? []) {
-        const r = row as {
-          uid: string;
-          display_name: string;
-          avatar_meta: ImageMeta | null;
-        };
-        out[r.uid] = {
-          name: r.display_name,
-          avatarMeta: r.avatar_meta ?? null,
-        };
+      throwDbError(error);
+      for (const row of (data ?? []) as UserSummaryRow[]) {
+        out[row.uid] = mapUserSummaryRow(row);
       }
     }
     return out;
@@ -122,30 +78,18 @@ export class UserSupabaseRepository implements UserRepository {
     if (!data.uidToBlock) throw new Error("uidToBlock is required");
     const { error } = await supabaseAdmin
       .from(TABLE)
-      .update({
-        is_banned: true,
-        banned_at: new Date().toISOString(),
-        banned_by: data.bannedBy,
-        banned_reason: data.bannedReason,
-        updated_at: new Date().toISOString(),
-      })
+      .update(toBlockUserRow(data))
       .eq("uid", data.uidToBlock);
-    if (error) throw new Error(error.message ?? "Database error");
+    throwDbError(error);
     // Ban enforced in app via is_banned; Supabase Auth has no "disabled" flag.
   }
 
   async unblockUser(uid: string): Promise<void> {
     const { error } = await supabaseAdmin
       .from(TABLE)
-      .update({
-        is_banned: false,
-        banned_at: null,
-        banned_by: null,
-        banned_reason: null,
-        updated_at: new Date().toISOString(),
-      })
+      .update(toUnblockUserRow())
       .eq("uid", uid);
-    if (error) throw new Error(error.message ?? "Database error");
+    throwDbError(error);
   }
 
   async updateUserRestriction({
@@ -154,60 +98,36 @@ export class UserSupabaseRepository implements UserRepository {
     restrictedBy,
     restrictedReason,
   }: UpdateUserRestrictionPayload): Promise<void> {
-    const update: Record<string, unknown> = {
-      is_restricted: isRestricted,
-      updated_at: new Date().toISOString(),
-    };
-    if (isRestricted) {
-      update.restricted_at = new Date().toISOString();
-      update.restricted_by = restrictedBy ?? null;
-      update.restriction_reason = restrictedReason ?? null;
-    } else {
-      update.restricted_at = null;
-      update.restricted_by = null;
-      update.restriction_reason = null;
-    }
+    const update = toRestrictionUpdateRow({
+      uid,
+      isRestricted,
+      restrictedBy,
+      restrictedReason,
+    });
     const { error } = await supabaseAdmin
       .from(TABLE)
       .update(update)
       .eq("uid", uid);
-    if (error) throw new Error(error.message ?? "Database error");
+    throwDbError(error);
   }
 
   async getAllUsers(): Promise<UserEntity[]> {
     const { data, error } = await supabaseAdmin.from(TABLE).select("*");
-    if (error) throw new Error(error.message ?? "Database error");
-    return (data ?? []).map((row) => rowToEntity(row as UserRow));
+    throwDbError(error);
+    return (data ?? []).map(mapUserRow);
   }
 
   async deleteUser(uid: string): Promise<void> {
     const { error } = await supabaseAdmin.from(TABLE).delete().eq("uid", uid);
-    if (error) throw new Error(error.message ?? "Database error");
+    throwDbError(error);
   }
 
   async updateUser(uid: string, data: UpdateUserPayload): Promise<void> {
-    const row: Record<string, unknown> = {
-      updated_at: new Date().toISOString(),
-    };
-    if (data.name !== undefined) {
-      const displayName = data.name.trim();
-      row.display_name = displayName;
-      row.display_name_normalized = normalizeDisplayName(displayName);
-    }
-    if (data.email !== undefined) row.email = data.email;
-    if (data.role !== undefined) row.role = data.role;
-    if (data.avatarMeta !== undefined) row.avatar_meta = data.avatarMeta;
-    if (data.lastOnline !== undefined)
-      row.last_online =
-        data.lastOnline instanceof Date
-          ? data.lastOnline.toISOString()
-          : data.lastOnline;
-    if (data.isActive !== undefined) row.is_active = data.isActive;
-    if (data.lastKnownIp !== undefined) row.last_known_ip = data.lastKnownIp;
+    const row = toUpdateUserRow(data);
     const { error } = await supabaseAdmin
       .from(TABLE)
       .update(row)
       .eq("uid", uid);
-    if (error) throw new Error(error.message ?? "Database error");
+    throwDbError(error);
   }
 }

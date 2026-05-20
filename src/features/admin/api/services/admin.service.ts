@@ -6,6 +6,7 @@ import { logActivity } from "@/features/activity/api/services";
 import type { SessionData } from "@/features/me/me.type";
 import type { AdminUserCreate } from "@/features/admin/types/admin.type";
 import type { AdminService as IAdminService } from "./admin.service.interface";
+import type { AuthUpdateUserProperties } from "@/features/auth/api/repositories/authRepository.interface";
 import type { UpdateUserPayload } from "@/features/users/types/user.payload";
 import { UserRole } from "@/features/users/types/user.type";
 
@@ -135,7 +136,7 @@ export class AdminService implements IAdminService {
 
     await userRepository.updateUser(uid, updatePayload);
 
-    const authUpdate: Record<string, unknown> = {};
+    const authUpdate: AuthUpdateUserProperties = {};
     if (updatePayload.name) authUpdate.displayName = updatePayload.name;
     if (updatePayload.email) authUpdate.email = updatePayload.email;
 

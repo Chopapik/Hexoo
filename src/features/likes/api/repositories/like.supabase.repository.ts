@@ -1,8 +1,14 @@
 import { supabaseAdmin } from "@/lib/supabaseServer";
+import { throwDbError } from "@/lib/supabaseRepository";
+import type { Database, Tables } from "@/lib/supabase.database.types";
 import type { LikeRepository } from "./like.repository.interface";
 import type { ToggleLikePayload } from "@/features/likes/types/like.payload";
 
 const LIKES_TABLE = "likes";
+
+type ToggleLikeTxArgs =
+  Database["public"]["Functions"]["toggle_like_tx"]["Args"];
+type LikeParentRow = Pick<Tables<"likes">, "parent_id">;
 
 export class LikeSupabaseRepository implements LikeRepository {
   async toggleLike({
@@ -10,12 +16,13 @@ export class LikeSupabaseRepository implements LikeRepository {
     parentId,
     parentCollection,
   }: ToggleLikePayload): Promise<void> {
-    const { error } = await supabaseAdmin.rpc("toggle_like_tx", {
+    const payload: ToggleLikeTxArgs = {
       p_user_id: userId,
       p_parent_id: parentId,
       p_parent_collection: parentCollection,
-    });
-    if (error) throw new Error(error.message ?? "Database error");
+    };
+    const { error } = await supabaseAdmin.rpc("toggle_like_tx", payload);
+    throwDbError(error);
   }
 
   async getLikesForParents(
@@ -29,8 +36,8 @@ export class LikeSupabaseRepository implements LikeRepository {
       .select("parent_id")
       .eq("user_id", userId)
       .in("parent_id", parentIds);
-    if (error) throw new Error(error.message ?? "Database error");
+    throwDbError(error);
 
-    return (data ?? []).map((r: { parent_id: string }) => r.parent_id);
+    return ((data ?? []) as LikeParentRow[]).map((row) => row.parent_id);
   }
 }
