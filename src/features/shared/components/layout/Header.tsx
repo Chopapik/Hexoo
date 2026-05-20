@@ -4,7 +4,6 @@ import { Logo } from "../ui/Logo";
 import chevronRightUrl from "@/features/shared/assets/icons/chevronRight.svg?url";
 import { Avatar } from "@/features/shared/components/ui/Avatar";
 import { SessionData } from "@/features/me/me.type";
-import LanguageSwitch from "@/features/shared/components/i18n/LanguageSwitch";
 import { useI18n } from "@/i18n/useI18n";
 
 export const Header = ({ user }: { user: SessionData | null }) => {
@@ -21,7 +20,6 @@ export const Header = ({ user }: { user: SessionData | null }) => {
       </Link>
 
       <div className="flex items-center gap-2">
-        <LanguageSwitch compact className="hidden xs:inline-flex" />
         {user ? (
           <Link href={`/profile/${user.uid}`}>
             <div className="flex items-center gap-2 md:gap-3 pl-1 pr-3 md:pl-1.5 md:pr-4 py-1 rounded-2xl border border-transparent hover:bg-white/5 transition-all duration-200 cursor-pointer group">
