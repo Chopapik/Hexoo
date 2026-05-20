@@ -1,7 +1,8 @@
-import { parseImageMeta } from "@/features/images/utils/imageMeta";
+import {
+  imageMetaToJson,
+  parseImageMeta,
+} from "@/features/images/utils/imageMeta";
 import { parseDate } from "@/features/shared/utils/dateUtils";
-import type { Json } from "@/lib/supabase.database.types";
-import type { ImageMeta } from "@/features/images/types/image.type";
 import type {
   CreatePostPayload,
   UpdatePostPayload,
@@ -24,20 +25,6 @@ function requireValue<T>(value: T | null | undefined, fieldName: string): T {
 
 function toDbTimestamp(value: DbDateValue): string {
   return value instanceof Date ? value.toISOString() : value;
-}
-
-function imageMetaToJson(value: ImageMeta | null): Json | null {
-  if (!value) return null;
-
-  return {
-    storageBucket: value.storageBucket,
-    storageLocation: value.storageLocation,
-    fileName: value.fileName,
-    downloadToken: value.downloadToken,
-    contentType: value.contentType,
-    sizeBytes: value.sizeBytes,
-    ...(value.isAnimated === undefined ? {} : { isAnimated: value.isAnimated }),
-  };
 }
 
 export function mapPostRow(row: PostRow): PostEntity {

@@ -2,7 +2,9 @@ import { createAppError } from "@/lib/AppError";
 import { supabaseAdmin } from "@/lib/supabaseServer";
 import type {
   AuthRepository,
+  AuthCreateUserProperties,
   AuthDecodedToken,
+  AuthUpdateUserProperties,
   AuthUserRecord,
   RefreshTokens,
 } from "../authRepository.interface";
@@ -131,20 +133,19 @@ export class SupabaseAuthRepository implements AuthRepository {
 
   async updateUser(
     uid: string,
-    properties: Record<string, unknown>
+    properties: AuthUpdateUserProperties,
   ): Promise<void> {
     const attrs: {
       email?: string;
       password?: string;
-      user_metadata?: Record<string, unknown>;
+      user_metadata?: { name?: string };
     } = {};
 
-    if (typeof properties.email === "string") attrs.email = properties.email;
-    if (typeof properties.password === "string")
-      attrs.password = properties.password;
+    if (properties.email) attrs.email = properties.email;
+    if (properties.password) attrs.password = properties.password;
 
-    const meta: Record<string, unknown> = {};
-    if (typeof properties.displayName === "string") meta.name = properties.displayName;
+    const meta: { name?: string } = {};
+    if (properties.displayName) meta.name = properties.displayName;
     if (Object.keys(meta).length > 0) attrs.user_metadata = meta;
 
     // Supabase has no "disabled" flag; ban is enforced via our DB (is_banned). Skip no-op.
@@ -160,12 +161,9 @@ export class SupabaseAuthRepository implements AuthRepository {
     }
   }
 
-  async createUser(properties: {
-    email: string;
-    password: string;
-    displayName?: string;
-    [key: string]: unknown;
-  }): Promise<{ uid: string }> {
+  async createUser(
+    properties: AuthCreateUserProperties,
+  ): Promise<{ uid: string }> {
     const { email, password, displayName } = properties;
     const attrs: { email: string; password: string; user_metadata?: object } = {
       email,

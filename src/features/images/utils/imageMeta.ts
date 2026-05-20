@@ -1,4 +1,5 @@
 import type { ImageMeta } from "../types/image.type";
+import type { Json } from "@/lib/supabase.database.types";
 
 export function buildObjectKey(meta: ImageMeta): string {
   const loc = meta.storageLocation.replace(/^\/+/, "").replace(/\/+$/, "");
@@ -37,5 +38,19 @@ export function parseImageMeta(raw: unknown): ImageMeta | null {
     contentType: o.contentType,
     sizeBytes: o.sizeBytes,
     ...(typeof o.isAnimated === "boolean" ? { isAnimated: o.isAnimated } : {}),
+  };
+}
+
+export function imageMetaToJson(value: ImageMeta | null | undefined): Json | null {
+  if (!value) return null;
+
+  return {
+    storageBucket: value.storageBucket,
+    storageLocation: value.storageLocation,
+    fileName: value.fileName,
+    downloadToken: value.downloadToken,
+    contentType: value.contentType,
+    sizeBytes: value.sizeBytes,
+    ...(value.isAnimated === undefined ? {} : { isAnimated: value.isAnimated }),
   };
 }
