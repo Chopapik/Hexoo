@@ -301,6 +301,7 @@ function DemoStoreBootstrap() {
       },
       settings: {
         language: state.settings.language,
+        languageOverriddenByUser: state.settings.languageOverriddenByUser,
         showNSFWPosts: true,
         showNSFWComments: true,
         postDithering: state.settings.postDithering,
