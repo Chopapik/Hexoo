@@ -981,7 +981,17 @@ export type TranslationKey = keyof typeof PL;
 type TranslationParams = Record<string, string | number>;
 
 export function normalizeLang(value: unknown): Lang {
-  return value === "en" ? "en" : DEFAULT_LANG;
+  if (typeof value !== "string") {
+    return DEFAULT_LANG;
+  }
+  const normalized = value.trim().toLowerCase();
+  if (normalized.startsWith("en")) {
+    return "en";
+  }
+  if (normalized.startsWith("pl")) {
+    return "pl";
+  }
+  return DEFAULT_LANG;
 }
 
 export function translate(
