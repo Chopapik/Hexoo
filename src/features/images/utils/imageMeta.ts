@@ -36,5 +36,6 @@ export function parseImageMeta(raw: unknown): ImageMeta | null {
     downloadToken: o.downloadToken,
     contentType: o.contentType,
     sizeBytes: o.sizeBytes,
+    ...(typeof o.isAnimated === "boolean" ? { isAnimated: o.isAnimated } : {}),
   };
 }

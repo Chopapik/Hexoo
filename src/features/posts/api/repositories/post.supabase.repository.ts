@@ -1,4 +1,8 @@
 import { supabaseAdmin } from "@/lib/supabaseServer";
+import {
+  applyCursorPagination,
+  throwDbError,
+} from "@/lib/supabaseRepository";
 import { ReportDetails } from "@/features/shared/types/report.type";
 import type { PostRepository } from "./post.repository.interface";
 import type {
@@ -6,100 +10,37 @@ import type {
   UpdatePostPayload,
 } from "../../types/post.payload";
 import type { PostEntity } from "../../types/post.entity";
-import type { PostRow } from "../../types/post.row";
-import { parseDate } from "@/features/shared/utils/dateUtils";
+import type { PostReportInsertRow } from "../../types/post.row";
+import { mapPostRow, toInsertRow, toUpdateRow } from "./post.supabase.mapper";
+
 const POST_REPORTS_TABLE = "post_reports";
 
 const TABLE = "posts";
 
-function rowToEntity(row: PostRow): PostEntity {
-  return {
-    id: row.id,
-    userId: row.user_id,
-    text: row.text,
-    likesCount: row.likes_count,
-    commentsCount: row.comments_count,
-    createdAt: parseDate(row.created_at) ?? new Date(0),
-    updatedAt: parseDate(row.updated_at),
-    isPending: row.is_pending,
-    isNSFW: row.is_nsfw,
-    isEdited: row.is_edited,
-    imageMeta: row.image_meta ?? undefined,
-    device: row.device ?? undefined,
-    youtubeUrl: row.youtube_url ?? null,
-    userReports: undefined,
-    reportsMeta: undefined,
-  };
-}
-
-function createPayloadToRow(data: CreatePostPayload): Record<string, unknown> {
-  const row: Record<string, unknown> = {};
-  if (data.userId != null) row.user_id = data.userId;
-  if (data.text != null) row.text = data.text;
-  if (data.likesCount != null) row.likes_count = data.likesCount;
-  if (data.commentsCount != null) row.comments_count = data.commentsCount;
-  if (data.createdAt != null)
-    row.created_at =
-      data.createdAt instanceof Date
-        ? data.createdAt.toISOString()
-        : data.createdAt;
-  if (data.updatedAt != null)
-    row.updated_at =
-      data.updatedAt instanceof Date
-        ? data.updatedAt.toISOString()
-        : data.updatedAt;
-  if (data.isNSFW != null) row.is_nsfw = data.isNSFW;
-  if (data.isPending != null) row.is_pending = data.isPending;
-  if (data.isEdited != null) row.is_edited = data.isEdited;
-  if (data.imageMeta !== undefined) row.image_meta = data.imageMeta;
-  if (data.device !== undefined) row.device = data.device;
-  if (data.youtubeUrl !== undefined) row.youtube_url = data.youtubeUrl || null;
-  return row;
-}
-
-function updatePayloadToRow(data: UpdatePostPayload): Record<string, unknown> {
-  const row: Record<string, unknown> = {};
-  if (data.text != null) row.text = data.text;
-  if (data.likesCount != null) row.likes_count = data.likesCount;
-  if (data.commentsCount != null) row.comments_count = data.commentsCount;
-  if (data.updatedAt != null)
-    row.updated_at =
-      data.updatedAt instanceof Date
-        ? data.updatedAt.toISOString()
-        : data.updatedAt;
-  if (data.isNSFW != null) row.is_nsfw = data.isNSFW;
-  if (data.isPending != null) row.is_pending = data.isPending;
-  if (data.isEdited != null) row.is_edited = data.isEdited;
-  if (data.imageMeta !== undefined) row.image_meta = data.imageMeta;
-  if (data.device !== undefined) row.device = data.device;
-  if (data.youtubeUrl !== undefined) row.youtube_url = data.youtubeUrl || null;
-  return row;
-}
-
 export class PostSupabaseRepository implements PostRepository {
   async createPost(data: CreatePostPayload): Promise<string> {
-    const row = createPayloadToRow(data);
+    const row = toInsertRow(data);
     const { data: inserted, error } = await supabaseAdmin
       .from(TABLE)
       .insert(row)
       .select("id")
       .single();
-    if (error) throw new Error(error.message ?? "Database error");
-    return (inserted as { id: string }).id;
+    throwDbError(error);
+    return inserted.id;
   }
 
   async updatePost(postId: string, data: UpdatePostPayload): Promise<void> {
-    const row = updatePayloadToRow(data);
+    const row = toUpdateRow(data);
     const { error } = await supabaseAdmin
       .from(TABLE)
       .update(row)
       .eq("id", postId);
-    if (error) throw new Error(error.message ?? "Database error");
+    throwDbError(error);
   }
 
   async deletePost(postId: string): Promise<void> {
     const { error } = await supabaseAdmin.from(TABLE).delete().eq("id", postId);
-    if (error) throw new Error(error.message ?? "Database error");
+    throwDbError(error);
   }
 
   async getPostById(postId: string): Promise<PostEntity | null> {
@@ -108,9 +49,9 @@ export class PostSupabaseRepository implements PostRepository {
       .select("*")
       .eq("id", postId)
       .maybeSingle();
-    if (error) throw new Error(error.message ?? "Database error");
+    throwDbError(error);
     if (!data) return null;
-    return rowToEntity(data as PostRow);
+    return mapPostRow(data);
   }
 
   async getPostsByIds(postIds: string[]): Promise<PostEntity[]> {
@@ -119,38 +60,23 @@ export class PostSupabaseRepository implements PostRepository {
       .from(TABLE)
       .select("*")
       .in("id", postIds);
-    if (error) throw new Error(error.message ?? "Database error");
-    return (data ?? []).map((row) => rowToEntity(row as PostRow));
+    throwDbError(error);
+    return (data ?? []).map(mapPostRow);
   }
 
   async getPosts(limit: number, startAfterId?: string): Promise<PostEntity[]> {
-    let query = supabaseAdmin
+    const query = supabaseAdmin
       .from(TABLE)
       .select("*")
       .eq("is_pending", false)
       .order("created_at", { ascending: false })
       .limit(limit);
 
-    if (startAfterId) {
-      const cursorRow = await supabaseAdmin
-        .from(TABLE)
-        .select("created_at, id")
-        .eq("id", startAfterId)
-        .maybeSingle();
-      if (cursorRow.data) {
-        const { created_at, id } = cursorRow.data as {
-          created_at: string;
-          id: string;
-        };
-        query = query.or(
-          `created_at.lt.${created_at},and(created_at.eq.${created_at},id.lt.${id})`,
-        );
-      }
-    }
+    await applyCursorPagination(query, TABLE, startAfterId);
 
     const { data, error } = await query;
-    if (error) throw new Error(error.message ?? "Database error");
-    return (data ?? []).map((row) => rowToEntity(row as PostRow));
+    throwDbError(error);
+    return (data ?? []).map(mapPostRow);
   }
 
   async getPostsByUserId(
@@ -158,7 +84,7 @@ export class PostSupabaseRepository implements PostRepository {
     limit: number,
     startAfterId?: string,
   ): Promise<PostEntity[]> {
-    let query = supabaseAdmin
+    const query = supabaseAdmin
       .from(TABLE)
       .select("*")
       .eq("user_id", userId)
@@ -166,26 +92,11 @@ export class PostSupabaseRepository implements PostRepository {
       .order("created_at", { ascending: false })
       .limit(limit);
 
-    if (startAfterId) {
-      const cursorRow = await supabaseAdmin
-        .from(TABLE)
-        .select("created_at, id")
-        .eq("id", startAfterId)
-        .maybeSingle();
-      if (cursorRow.data) {
-        const { created_at, id } = cursorRow.data as {
-          created_at: string;
-          id: string;
-        };
-        query = query.or(
-          `created_at.lt.${created_at},and(created_at.eq.${created_at},id.lt.${id})`,
-        );
-      }
-    }
+    await applyCursorPagination(query, TABLE, startAfterId);
 
     const { data, error } = await query;
-    if (error) throw new Error(error.message ?? "Database error");
-    return (data ?? []).map((row) => rowToEntity(row as PostRow));
+    throwDbError(error);
+    return (data ?? []).map(mapPostRow);
   }
 
   async reportPost(
@@ -195,33 +106,32 @@ export class PostSupabaseRepository implements PostRepository {
     const post = await this.getPostById(postId);
     if (!post) return { hidden: false, reportsCount: 0 };
 
+    const reportRow: PostReportInsertRow = {
+      post_id: postId,
+      user_id: reportDetails.uid,
+      reason: reportDetails.reason,
+      details: reportDetails.details ?? null,
+      created_at:
+        reportDetails.createdAt instanceof Date
+          ? reportDetails.createdAt.toISOString()
+          : new Date().toISOString(),
+    };
+
     const { error: insertError } = await supabaseAdmin
       .from(POST_REPORTS_TABLE)
-      .upsert(
-        {
-          post_id: postId,
-          user_id: reportDetails.uid,
-          reason: reportDetails.reason,
-          details: reportDetails.details ?? null,
-          created_at:
-            reportDetails.createdAt instanceof Date
-              ? reportDetails.createdAt.toISOString()
-              : new Date().toISOString(),
-        },
-        {
-          onConflict: "post_id,user_id",
-          ignoreDuplicates: true,
-        },
-      );
+      .upsert(reportRow, {
+        onConflict: "post_id,user_id",
+        ignoreDuplicates: true,
+      });
 
-    if (insertError) throw new Error(insertError.message ?? "Database error");
+    throwDbError(insertError);
 
     const { count, error: countError } = await supabaseAdmin
       .from(POST_REPORTS_TABLE)
       .select("*", { count: "exact", head: true })
       .eq("post_id", postId);
 
-    if (countError) throw new Error(countError.message ?? "Database error");
+    throwDbError(countError);
     const reportsCount = count ?? 0;
     const shouldHide = reportsCount >= 3;
 
@@ -242,7 +152,7 @@ export class PostSupabaseRepository implements PostRepository {
       .eq("user_id", userId)
       .maybeSingle();
 
-    if (error) throw new Error(error.message ?? "Database error");
+    throwDbError(error);
     return !!data;
   }
 
@@ -250,32 +160,17 @@ export class PostSupabaseRepository implements PostRepository {
     limit: number,
     startAfterId?: string,
   ): Promise<PostEntity[]> {
-    let query = supabaseAdmin
+    const query = supabaseAdmin
       .from(TABLE)
       .select("*")
       .eq("is_pending", true)
       .order("created_at", { ascending: false })
       .limit(limit);
 
-    if (startAfterId) {
-      const cursorRow = await supabaseAdmin
-        .from(TABLE)
-        .select("created_at, id")
-        .eq("id", startAfterId)
-        .maybeSingle();
-      if (cursorRow.data) {
-        const { created_at, id } = cursorRow.data as {
-          created_at: string;
-          id: string;
-        };
-        query = query.or(
-          `created_at.lt.${created_at},and(created_at.eq.${created_at},id.lt.${id})`,
-        );
-      }
-    }
+    await applyCursorPagination(query, TABLE, startAfterId);
 
     const { data, error } = await query;
-    if (error) throw new Error(error.message ?? "Database error");
-    return (data ?? []).map((row) => rowToEntity(row as PostRow));
+    throwDbError(error);
+    return (data ?? []).map(mapPostRow);
   }
 }
