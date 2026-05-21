@@ -1,7 +1,18 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import Button from "@/features/shared/components/ui/Button";
-import { Send, Heart, Plus, X, Search, Settings } from "lucide-react";
+import {
+  Send,
+  Heart,
+  Plus,
+  X,
+  Search,
+  Settings,
+  Smartphone,
+  Tablet,
+  Monitor,
+} from "lucide-react";
 import type {
   ButtonVariant,
   ButtonSize,
@@ -15,21 +26,197 @@ const variants: ButtonVariant[] = [
   "warning",
   "info",
   "secondary",
+  "outline",
+  "outline-fuchsia",
+  "ghost",
   "transparent",
 ];
 
 const sizes: ButtonSize[] = ["sm", "md", "lg", "xl", "icon", "iconSm"];
 
+const viewportFrames = [
+  {
+    id: "mobile",
+    label: "Mobile",
+    viewport: "375 x 812",
+    width: 375,
+    height: 812,
+    Icon: Smartphone,
+  },
+  {
+    id: "tablet",
+    label: "Tablet",
+    viewport: "768 x 900",
+    width: 768,
+    height: 900,
+    Icon: Tablet,
+  },
+  {
+    id: "desktop",
+    label: "Desktop",
+    viewport: "1500 x 860",
+    width: 1500,
+    height: 860,
+    Icon: Monitor,
+  },
+];
+
 export default function ButtonsDemoPage() {
+  const [frameHeights, setFrameHeights] = useState<Record<string, number>>(
+    () =>
+      Object.fromEntries(
+        viewportFrames.map((frame) => [frame.id, frame.height]),
+      ),
+  );
+  const cleanupByFrameRef = useRef<Record<string, () => void>>({});
+
+  useEffect(() => {
+    return () => {
+      Object.values(cleanupByFrameRef.current).forEach((cleanup) =>
+        cleanup?.(),
+      );
+    };
+  }, []);
+
+  const connectAutoHeightFrame = (
+    frameId: string,
+    iframe: HTMLIFrameElement,
+  ) => {
+    cleanupByFrameRef.current[frameId]?.();
+
+    const frameWindow = iframe.contentWindow;
+    const frameDocument = iframe.contentDocument ?? frameWindow?.document;
+    const root = frameDocument?.documentElement;
+    const body = frameDocument?.body;
+
+    if (!frameWindow || !frameDocument || !root || !body) {
+      return;
+    }
+
+    root.style.overflow = "hidden";
+    body.style.overflow = "hidden";
+    body.style.height = "auto";
+
+    const updateHeight = () => {
+      const nextHeight = Math.ceil(
+        Math.max(
+          root.scrollHeight,
+          body.scrollHeight,
+          root.offsetHeight,
+          body.offsetHeight,
+        ),
+      );
+
+      setFrameHeights((current) =>
+        current[frameId] === nextHeight
+          ? current
+          : { ...current, [frameId]: nextHeight },
+      );
+    };
+
+    updateHeight();
+
+    const resizeObserver =
+      typeof ResizeObserver !== "undefined"
+        ? new ResizeObserver(updateHeight)
+        : null;
+    resizeObserver?.observe(root);
+    resizeObserver?.observe(body);
+
+    frameWindow.addEventListener("resize", updateHeight);
+
+    const images = Array.from(frameDocument.images);
+    images.forEach((image) => {
+      image.addEventListener("load", updateHeight);
+      image.addEventListener("error", updateHeight);
+    });
+
+    const timeoutIds = [100, 500, 1500, 3000].map((delay) =>
+      window.setTimeout(updateHeight, delay),
+    );
+
+    cleanupByFrameRef.current[frameId] = () => {
+      resizeObserver?.disconnect();
+      frameWindow.removeEventListener("resize", updateHeight);
+      images.forEach((image) => {
+        image.removeEventListener("load", updateHeight);
+        image.removeEventListener("error", updateHeight);
+      });
+      timeoutIds.forEach((timeoutId) => window.clearTimeout(timeoutId));
+    };
+  };
+
   return (
-    <div className="min-h-screen bg-primary-neutral-background-default p-8">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-bold text-text-main font-sans mb-2">
-          Button Component Demo
-        </h1>
-        <p className="text-text-neutral mb-8 font-sans">
-          All button variants and sizes from Button.tsx
-        </p>
+    <div className="min-h-screen bg-page-background p-3 sm:p-6">
+      <div className="mx-auto max-w-7xl space-y-8">
+        <header className="rounded-lg border border-primary-neutral-stroke-default bg-primary-neutral-background-default p-4 sm:p-6">
+          <h1 className="text-3xl font-bold text-text-main font-sans sm:text-4xl">
+            Button Component Demo
+          </h1>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-text-neutral font-sans sm:text-base">
+            All button variants, sizes and states, plus one 1:1 board with real
+            mobile, tablet and desktop iframe previews from the full UI demo.
+          </p>
+        </header>
+
+        <section className="space-y-4 rounded-lg border border-primary-neutral-stroke-default bg-primary-neutral-background-default p-4 sm:p-6">
+          <div>
+            <h2 className="text-2xl font-semibold text-text-main font-sans">
+              Responsive previews
+            </h2>
+            <p className="mt-1 text-sm text-text-neutral">
+              All three viewports are rendered 1:1 in one horizontal board. The
+              page owns the vertical scroll; the board only scrolls sideways
+              when it needs more width.
+            </p>
+          </div>
+          <div className="overflow-x-auto pb-2">
+            <div className="flex w-max gap-4">
+            {viewportFrames.map((frame) => {
+              const Icon = frame.Icon;
+              const frameHeight = frameHeights[frame.id] ?? frame.height;
+              return (
+                <article
+                  key={frame.id}
+                  className="overflow-hidden rounded-lg border border-primary-neutral-stroke-default bg-black/40"
+                  style={{ width: frame.width + 24 }}
+                >
+                  <div className="flex items-center justify-between gap-3 border-b border-primary-neutral-stroke-default bg-secondary-neutral-background-default/50 px-3 py-3">
+                    <div className="flex items-center gap-3">
+                      <Icon className="size-4 text-fuchsia-200" />
+                      <h3 className="font-semibold text-text-main">
+                        {frame.label}
+                      </h3>
+                    </div>
+                    <span className="rounded-md border border-white/10 bg-white/5 px-2 py-1 font-mono text-xs text-text-neutral">
+                      {frame.viewport}
+                    </span>
+                  </div>
+                  <div className="bg-page-background p-2">
+                    <iframe
+                      title={`${frame.label} UI preview`}
+                      src={`/demo/ui#${frame.id}`}
+                      width={frame.width}
+                      height={frameHeight}
+                      loading="lazy"
+                      scrolling="no"
+                      onLoad={(event) =>
+                        connectAutoHeightFrame(frame.id, event.currentTarget)
+                      }
+                      className="block max-w-none rounded-md border border-primary-neutral-stroke-default bg-page-background"
+                      style={{
+                        width: frame.width,
+                        height: frameHeight,
+                        overflow: "hidden",
+                      }}
+                    />
+                  </div>
+                </article>
+              );
+            })}
+            </div>
+          </div>
+        </section>
 
         {/* Variants Section */}
         <div className="space-y-12">
