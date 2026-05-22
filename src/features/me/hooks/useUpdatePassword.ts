@@ -22,11 +22,34 @@ export const useUpdatePassword = (onError: ErrorCallback) => {
       await fetchClient.put(`/me/password`, payload);
     },
     onError: (error: ApiError) => {
-      if (error.code) {
-        toast.error(error.code);
-      } else {
+      if (!(error instanceof ApiError)) {
         toast.error(t("common.unknown"));
+        return;
       }
+
+      if (error.code === "INVALID_CREDENTIALS") {
+        onError("auth/wrong-password", "oldPassword");
+        return;
+      }
+
+      if (error.code === "VALIDATION_ERROR") {
+        const errorData = error.data as Record<string, unknown> | undefined;
+        const details = errorData?.details as
+          | Record<string, string[]>
+          | undefined;
+
+        if (details) {
+          Object.keys(details).forEach((field) => {
+            const messages = details[field];
+            if (messages && messages.length > 0) {
+              onError(messages[0], field);
+            }
+          });
+          return;
+        }
+      }
+
+      onError(error.code, "root");
     },
     onSuccess: async (_response, variables) => {
       if (!userEmail) return;

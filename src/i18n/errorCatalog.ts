@@ -27,6 +27,7 @@ export type ClientValidationCode =
   | "file_too_big"
   | "wrong_file_type"
   // change password
+  | "auth/wrong-password"
   | "newPassword_too_short"
   | "newPassword_too_long"
   | "reNewPassword_required"
@@ -255,6 +256,14 @@ export const ERROR_CATALOG: Record<GlobalErrorCode, ErrorCatalogEntry> = {
   },
 
   // change password
+  "auth/wrong-password": {
+    message: {
+      pl: "Aktualne hasło jest nieprawidłowe",
+      en: "Current password is incorrect",
+    },
+    field: "oldPassword",
+    validationType: "Dismiss",
+  },
   newPassword_too_short: {
     message: {
       pl: "Nowe hasło musi mieć min. 8 znaków",

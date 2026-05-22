@@ -14,6 +14,20 @@ const supabaseAnonKey =
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ??
   process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
+function requirePasswordAuthConfig() {
+  if (!supabaseUrl || !supabaseAnonKey) {
+    throw createAppError({
+      code: "INTERNAL_ERROR",
+      message: "Supabase URL or anon key missing for password verification.",
+    });
+  }
+
+  return {
+    supabaseUrl,
+    supabaseAnonKey,
+  };
+}
+
 export class SupabaseAuthRepository implements AuthRepository {
   async verifyIdToken(idToken: string): Promise<AuthDecodedToken> {
     const {
@@ -40,6 +54,57 @@ export class SupabaseAuthRepository implements AuthRepository {
       uid: user.id,
       email: user.email ?? null,
     };
+  }
+
+  async verifyPassword(
+    email: string,
+    password: string,
+  ): Promise<AuthDecodedToken> {
+    const normalizedEmail = email.trim().toLowerCase();
+
+    if (!normalizedEmail || !password) {
+      throw createAppError({
+        code: "INVALID_CREDENTIALS",
+        message: "Current password verification failed.",
+        data: { field: "oldPassword" },
+      });
+    }
+
+    const config = requirePasswordAuthConfig();
+    const res = await fetch(
+      `${config.supabaseUrl}/auth/v1/token?grant_type=password`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          apikey: config.supabaseAnonKey,
+        },
+        body: JSON.stringify({
+          email: normalizedEmail,
+          password,
+        }),
+      },
+    );
+
+    if (!res.ok) {
+      throw createAppError({
+        code: "INVALID_CREDENTIALS",
+        message: "Current password is invalid.",
+        data: { field: "oldPassword" },
+        details: { status: res.status },
+      });
+    }
+
+    const data = (await res.json()) as { access_token?: string };
+    if (!data.access_token) {
+      throw createAppError({
+        code: "INVALID_CREDENTIALS",
+        message: "Password verification response did not include an access token.",
+        data: { field: "oldPassword" },
+      });
+    }
+
+    return this.verifyIdToken(data.access_token);
   }
 
   async createSessionCookie(idToken: string, _expiresIn: number): Promise<string> {

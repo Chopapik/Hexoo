@@ -25,7 +25,31 @@ export class UpdatePasswordUseCase {
       });
     }
 
-    const { newPassword } = parsed.data;
+    const { oldPassword, newPassword } = parsed.data;
+    const email = this.session.email?.trim();
+
+    if (!email) {
+      throw createAppError({
+        code: "INVALID_CREDENTIALS",
+        message:
+          "[UpdatePasswordUseCase] Cannot verify current password without email.",
+        data: { field: "oldPassword" },
+      });
+    }
+
+    const verifiedUser = await this.authRepository.verifyPassword(
+      email,
+      oldPassword,
+    );
+
+    if (verifiedUser.uid !== uid) {
+      throw createAppError({
+        code: "INVALID_CREDENTIALS",
+        message:
+          "[UpdatePasswordUseCase] Current password verified for a different user.",
+        data: { field: "oldPassword" },
+      });
+    }
 
     await this.authRepository.updateUser(uid, {
       password: newPassword,
