@@ -49,3 +49,6 @@ supabase/.branches/
 # Local dumps / temp files
 *.json
 dump_src.py
+
+*storybook.log
+storybook-static
