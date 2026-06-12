@@ -16,6 +16,7 @@ import { useRegisterForm } from "../hooks/useRegisterForm";
 import { useCheckUsername } from "../hooks/useCheckUsername";
 import { useCheckEmail } from "../hooks/useCheckEmail";
 import { useI18n } from "@/i18n/useI18n";
+import AuthFormCard from "./AuthFormCard";
 
 export default function RegisterForm() {
   const { lang, t } = useI18n();
@@ -159,16 +160,13 @@ export default function RegisterForm() {
   };
 
   return (
-    <div className="mx-auto inline-flex w-full max-w-md flex-col items-center justify-center gap-6 overflow-hidden px-4 py-8 xs:px-6 sm:max-w-2xl sm:gap-10 sm:rounded-[20px] sm:px-12 sm:py-12 sm:glass-card md:px-32 md:py-20">
-      <div className="py-0.5 flex flex-col justify-start items-center overflow-hidden">
-        <div className="justify-start text-text-main text-4xl sm:text-6xl font-serif">
-          {t("auth.register.title")}
-        </div>
-        <div className="justify-start text-text-neutral text-lg sm:text-2xl font-bold font-serif">
-          {t("auth.register.subtitle")}
-        </div>
-      </div>
-
+    <AuthFormCard
+      title={t("auth.register.title")}
+      subtitle={t("auth.register.subtitle")}
+      footerText={t("auth.register.haveAccount")}
+      footerLinkHref="/login"
+      footerLinkText={t("auth.login.submit")}
+    >
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="self-stretch flex flex-col justify-center items-center gap-2 sm:gap-3 overflow-hidden"
@@ -269,14 +267,6 @@ export default function RegisterForm() {
         </div>
       </form>
 
-      <div className="self-stretch text-center justify-start mt-2 sm:mt-4">
-        <span className="text-text-main text-sm sm:text-base font-semibold font-sans">
-          {t("auth.register.haveAccount")}
-        </span>
-        <span className="text-text-main text-sm sm:text-base font-semibold font-sans underline ml-1">
-          <Link href="/login">{t("auth.login.submit")}</Link>
-        </span>
-      </div>
-    </div>
+    </AuthFormCard>
   );
 }
