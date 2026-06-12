@@ -11,7 +11,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "extract:storybook-ir": "npx tsx scripts/extract-storybook-ir.ts"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.9",

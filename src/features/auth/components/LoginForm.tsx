@@ -3,7 +3,6 @@
 import Button from "@/features/shared/components/ui/Button";
 import TextInput from "@/features/shared/components/ui/TextInput";
 import keyIconUrl from "@/features/shared/assets/icons/key.svg?url";
-import Link from "next/link";
 import warningIconUrl from "@/features/shared/assets/icons/warning.svg?url";
 import Image from "next/image";
 import { useLoginForm } from "../hooks/useLoginForm";
@@ -12,6 +11,7 @@ import useGoogleLogin from "../hooks/useGoogleLogin";
 import { LoginData } from "../types/auth.type";
 import { parseErrorMessages } from "../utils/loginErrorMap";
 import { useI18n } from "@/i18n/useI18n";
+import AuthFormCard from "./AuthFormCard";
 
 export default function LoginForm() {
   const { lang, t } = useI18n();
@@ -25,13 +25,12 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="mx-auto inline-flex w-full max-w-md flex-col items-center justify-center gap-6 overflow-hidden px-4 py-8 xs:px-6 sm:max-w-2xl sm:gap-10 sm:rounded-[20px] sm:px-12 sm:py-12 sm:glass-card md:px-32 md:py-20">
-      <div className="py-0.5 flex flex-col justify-start items-center overflow-hidden">
-        <div className="justify-start text-text-main text-4xl sm:text-6xl font-serif">
-          {t("auth.login.title")}
-        </div>
-      </div>
-
+    <AuthFormCard
+      title={t("auth.login.title")}
+      footerText={t("auth.login.noAccount")}
+      footerLinkHref="/register"
+      footerLinkText={t("auth.login.register")}
+    >
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="self-stretch flex flex-col justify-center items-center gap-1.5 sm:gap-2 overflow-hidden"
@@ -98,14 +97,6 @@ export default function LoginForm() {
         </div>
       </form>
 
-      <div className="self-stretch text-center justify-start mt-2 sm:mt-4">
-        <span className="text-text-main text-sm sm:text-base font-semibold font-sans">
-          {t("auth.login.noAccount")}
-        </span>
-        <span className="text-text-main text-sm sm:text-base font-semibold font-sans underline ml-1">
-          <Link href="/register">{t("auth.login.register")}</Link>
-        </span>
-      </div>
-    </div>
+    </AuthFormCard>
   );
 }
