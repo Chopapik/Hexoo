@@ -40,7 +40,7 @@ export default function Modal({
       {isOpen && (
         <div className="fixed inset-0 z-100 flex items-center justify-center p-0 lg:p-4 ">
           <motion.div
-            className="absolute inset-0 bg-black/80 backdrop-blur- "
+            className="absolute inset-0 bg-modal-overlay-background-default backdrop-blur-sm"
             onClick={onClose}
             aria-hidden="true"
             initial={{ opacity: 0 }}
@@ -53,9 +53,9 @@ export default function Modal({
             onClick={handleModalClick}
             className={`
               relative w-full max-lg:h-dvh max-lg:max-h-dvh max-lg:max-w-none max-lg:rounded-none lg:max-w-3xl lg:rounded-2xl
-              bg-surface-chrome-background-default/60 backdrop-blur-xl
-              " text-foreground-primary-default
-              border border-surface-card-border-default
+              bg-modal-chrome-background-default backdrop-blur-xl
+              text-foreground-primary-default
+              border border-modal-chrome-border-default
               shadow-2xl overflow-hidden flex flex-col
               ${className}
             `}
@@ -65,13 +65,13 @@ export default function Modal({
             transition={{ duration: 0.2 }}
           >
             {title && (
-              <div className="flex items-center justify-between px-3 py-2.5 sm:px-4 sm:py-3 border-b border-surface-card-border-default bg-surface-chrome-background-default/60  ">
+              <div className="flex items-center justify-between px-3 py-2.5 sm:px-4 sm:py-3 border-b border-modal-chrome-border-default bg-modal-chrome-background-default">
                 <span className="text-sm font-semibold text-foreground-primary-default font-sans">
                   {title}
                 </span>
                 <button
                   onClick={onClose}
-                  className="text-foreground-secondary-default hover:text-foreground-primary-default transition-colors p-1"
+                  className="bg-button-transparent-background-default text-foreground-secondary-default hover:bg-button-transparent-background-hover hover:text-foreground-primary-default transition-colors p-1"
                 >
                   ✕
                 </button>
@@ -81,7 +81,7 @@ export default function Modal({
             <div className="flex-1 min-h-0 overflow-hidden">{children}</div>
 
             {footer && (
-              <div className="px-3 py-2.5 sm:px-4 sm:py-3 border-t border-surface-card-border-default/60 bg-surface-chrome-background-default/60">
+              <div className="px-3 py-2.5 sm:px-4 sm:py-3 border-t border-modal-chrome-border-default bg-modal-chrome-background-default">
                 {footer}
               </div>
             )}

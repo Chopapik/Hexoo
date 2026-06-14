@@ -74,7 +74,7 @@ export default function EditCommentModal({
 
   const footerContent = (
     <div className="flex items-center justify-between w-full">
-      <span className="text-red-500 text-sm font-medium">{displayError}</span>
+      <span className="text-validation-error-text text-sm font-medium">{displayError}</span>
 
       <Button
         onClick={submit}
@@ -111,7 +111,7 @@ export default function EditCommentModal({
               absolute bottom-0 right-0 text-xs font-medium transition-colors duration-200 pointer-events-none select-none
               ${
                 isOverLimit
-                  ? "text-red-500"
+                  ? "text-validation-error-text"
                   : "text-foreground-secondary-default/40 group-focus-within:text-foreground-secondary-default/70"
               }
             `}

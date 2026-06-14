@@ -247,7 +247,7 @@ export default function EditProfileModal({
           <div className="flex flex-col items-center gap-2 sm:gap-3">
             <div className="relative">
               {isCropping && cropImageSrc ? (
-                <div className="w-full max-w-sm rounded-xl border border-surface-card-border-default/50 bg-surface-chrome-background-default/30 p-3 sm:p-4 flex flex-col gap-3 sm:gap-4">
+                <div className="w-full max-w-sm rounded-xl border border-modal-surface-border-default bg-modal-surface-background-default p-3 sm:p-4 flex flex-col gap-3 sm:gap-4">
                   <div className="mx-auto overflow-hidden rounded-xl">
                     <AvatarEditor
                       ref={editorRef}
@@ -308,7 +308,7 @@ export default function EditProfileModal({
                     />
                   </div>
 
-                  <div className="absolute inset-0 bg-black/60 rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm">
+                  <div className="absolute inset-0 bg-modal-overlay-background-default rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm">
                     <div className="flex flex-col items-center gap-1">
                       <Image
                         src={cameraIcon}
@@ -317,7 +317,7 @@ export default function EditProfileModal({
                         height={24}
                         className="opacity-90"
                       />
-                      <span className="text-white text-xs font-medium">
+                      <span className="text-foreground-primary-default text-xs font-medium">
                         {t("profile.change")}
                       </span>
                     </div>
@@ -340,7 +340,7 @@ export default function EditProfileModal({
 
               {/* Change indicator */}
               {isNewImage && !isCropping && (
-                <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-accent-fuchsia-border-default text-white text-[10px] font-semibold px-2 py-0.5 rounded-full whitespace-nowrap animate-in fade-in slide-in-from-bottom-1 duration-200">
+                <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-accent-fuchsia-border-default text-foreground-primary-default text-[10px] font-semibold px-2 py-0.5 rounded-full whitespace-nowrap animate-in fade-in slide-in-from-bottom-1 duration-200">
                   {t("profile.changed")}
                 </div>
               )}
@@ -371,7 +371,7 @@ export default function EditProfileModal({
           </div>
 
           {/* Name Section */}
-          <div className="flex flex-col gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl bg-surface-chrome-background-default/30 border border-surface-card-border-default/50">
+          <div className="flex flex-col gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl bg-modal-surface-background-default border border-modal-surface-border-default">
             <TextInput
               label={t("profile.username")}
               placeholder={t("profile.usernamePlaceholder")}
@@ -387,7 +387,7 @@ export default function EditProfileModal({
                 className={`text-xs ml-1 transition-colors ${
                   nameErrorCode === "name_too_short" ||
                   nameErrorCode === "name_too_long"
-                    ? "text-red-500"
+                    ? "text-validation-error-text"
                     : "text-foreground-secondary-default/60"
                 }`}
               >

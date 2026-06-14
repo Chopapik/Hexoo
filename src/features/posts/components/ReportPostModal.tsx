@@ -79,8 +79,8 @@ export default function ReportPostModal({
                 flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all
                 ${
                   reason === item.id
-                    ? "bg-fuchsia-500/10 border-fuchsia-500 text-white"
-                    : "bg-white/5 border-transparent hover:bg-white/10 text-foreground-secondary-default"
+                    ? "bg-accent-fuchsia-background-default/10 border-accent-fuchsia-border-default text-foreground-primary-default"
+                    : "bg-button-transparent-background-default border-transparent hover:bg-button-transparent-background-hover text-foreground-secondary-default"
                 }
               `}
             >
@@ -97,12 +97,12 @@ export default function ReportPostModal({
               <div
                 className={`w-4 h-4 rounded-full border flex items-center justify-center ${
                   reason === item.id
-                    ? "border-fuchsia-500"
+                    ? "border-accent-fuchsia-border-default"
                     : "border-foreground-secondary-default"
                 }`}
               >
                 {reason === item.id && (
-                  <div className="w-2 h-2 bg-fuchsia-500 rounded-full" />
+                  <div className="w-2 h-2 bg-accent-fuchsia-background-default rounded-full" />
                 )}
               </div>
               <span className="text-sm font-medium">{t(item.labelKey)}</span>
@@ -112,7 +112,7 @@ export default function ReportPostModal({
         {reason === "other" && (
           <div className="mt-2 animate-in fade-in slide-in-from-top-2 flex flex-col gap-1.5">
             <label className="text-xs uppercase tracking-widest text-foreground-secondary-default/60 font-bold">
-              {t("report.detailsLabel")} <span className="text-red-400">*</span>
+              {t("report.detailsLabel")} <span className="text-validation-error-text">*</span>
             </label>
             <textarea
               value={details}
@@ -123,14 +123,14 @@ export default function ReportPostModal({
               }
               placeholder={t("report.detailsPlaceholder")}
               rows={3}
-              className="w-full bg-black/30 rounded-lg border border-white/10 p-3 text-sm text-foreground-primary-default placeholder:text-foreground-secondary-default/40 resize-none outline-none transition-all focus:ring-1 focus:ring-fuchsia-500/30 focus:border-fuchsia-500/50"
+              className="w-full bg-input-background-default rounded-lg border border-input-border-default p-3 text-sm text-input-text-value placeholder:text-input-text-placeholder resize-none outline-none transition-all focus:border-input-border-hover"
             />
             <div className="flex items-center justify-between">
               {isSubmitted && errors.details && (
-                <p className="text-xs text-red-500">{detailsError}</p>
+                <p className="text-xs text-validation-error-text">{detailsError}</p>
               )}
               <span
-                className={`text-xs ml-auto ${hasTooLongError ? "text-red-500 font-bold" : "text-white"}`}
+                className={`text-xs ml-auto ${hasTooLongError ? "text-validation-error-text font-bold" : "text-foreground-primary-default"}`}
               >
                 {details.length} / {REPORT_DETAILS_MAX_CHARS}
               </span>
@@ -138,7 +138,7 @@ export default function ReportPostModal({
           </div>
         )}
         {isSubmitted && errors.root && (
-          <p className="text-xs text-red-500 mt-1">{rootError}</p>
+          <p className="text-xs text-validation-error-text mt-1">{rootError}</p>
         )}
       </div>
     </Modal>

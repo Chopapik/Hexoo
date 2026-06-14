@@ -76,7 +76,7 @@ export default function AdminUserEditModal({
         onClick={onClose}
         text={t("admin.cancelClose")}
         disabled={isUpdatingData || isUpdatingPassword}
-        className="text-foreground-secondary-default hover:text-white order-2 md:order-1 border-transparent"
+        className="text-foreground-secondary-default hover:text-foreground-primary-default order-2 md:order-1 border-transparent"
         variant="secondary"
         size="sm"
       />
@@ -132,13 +132,13 @@ export default function AdminUserEditModal({
                 alt={user.name}
                 width={80}
                 height={80}
-                className="rounded-2xl border border-white/10 shadow-lg object-cover w-20 h-20 sm:w-24 sm:h-24"
+                className="rounded-2xl border border-modal-surface-border-default shadow-lg object-cover w-20 h-20 sm:w-24 sm:h-24"
               />
               <div
                 className={`absolute -bottom-2 -right-2 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider shadow-sm border border-black/20 ${
                   user.isBanned
-                    ? "bg-red-600 text-white"
-                    : "bg-green-600 text-white"
+                    ? "bg-red-600 text-foreground-primary-default"
+                    : "bg-green-600 text-foreground-primary-default"
                 }`}
               >
                 {user.isBanned ? t("admin.bannedLabel") : t("admin.activeLabel")}
@@ -159,7 +159,7 @@ export default function AdminUserEditModal({
                 {user.email}
               </p>
 
-              <div className="flex flex-wrap justify-center sm:justify-start gap-4 text-xs text-foreground-secondary-default/70 border-t border-white/5 pt-3">
+              <div className="flex flex-wrap justify-center sm:justify-start gap-4 text-xs text-foreground-secondary-default/70 border-t border-divider-subtle pt-3">
                 <div className="flex flex-col">
                   <span className="uppercase text-[10px] font-semibold tracking-wider opacity-50">
                     {t("admin.userId")}
@@ -183,7 +183,7 @@ export default function AdminUserEditModal({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Profile Data */}
           <div className="flex flex-col gap-4">
-            <div className="bg-white/5 p-5 rounded-xl border border-surface-card-background-default/30 h-full flex flex-col">
+            <div className="bg-modal-surface-background-default p-5 rounded-xl border border-surface-card-background-default/30 h-full flex flex-col">
               <h3 className="text-lg font-medium mb-4 text-foreground-primary-default flex items-center gap-2">
                 {t("admin.profileData")}
               </h3>
@@ -226,7 +226,7 @@ export default function AdminUserEditModal({
 
           {/* Security */}
           <div className="flex flex-col gap-4">
-            <div className="bg-white/5 p-5 rounded-xl border border-surface-card-background-default/30 h-full flex flex-col">
+            <div className="bg-modal-surface-background-default p-5 rounded-xl border border-surface-card-background-default/30 h-full flex flex-col">
               <h3 className="text-lg font-medium mb-4 text-foreground-primary-default flex items-center gap-2">
                 {t("admin.security")}
               </h3>

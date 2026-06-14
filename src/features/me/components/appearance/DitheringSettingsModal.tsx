@@ -101,7 +101,7 @@ export default function DitheringSettingsModal({
   };
 
   const controlBlockClass =
-    "rounded-lg border border-surface-card-border-default/70 bg-surface-chrome-background-default/40 p-3";
+    "rounded-lg border border-modal-surface-border-default bg-modal-surface-background-default p-3";
 
   const renderNumericControl = ({
     id,
@@ -144,7 +144,7 @@ export default function DitheringSettingsModal({
           max={max}
           value={value}
           onChange={(e) => handleNumberChange(e.target.value, min, max, setter)}
-          className="w-24 rounded-md border border-surface-card-border-default/70 bg-surface-card-background-default px-2 py-1 text-sm font-sans text-foreground-primary-default"
+          className="w-24 rounded-md border border-modal-surface-border-default bg-surface-card-background-default px-2 py-1 text-sm font-sans text-foreground-primary-default"
         />
       </div>
     </div>
@@ -182,7 +182,7 @@ export default function DitheringSettingsModal({
         value={value}
         disabled={disabled}
         onChange={(e) => setter(e.target.value as T)}
-        className="mt-3 w-full rounded-md border border-surface-card-border-default/70 bg-surface-card-background-default px-3 py-2 text-sm font-sans text-foreground-primary-default disabled:cursor-not-allowed disabled:opacity-60"
+        className="mt-3 w-full rounded-md border border-modal-surface-border-default bg-surface-card-background-default px-3 py-2 text-sm font-sans text-foreground-primary-default disabled:cursor-not-allowed disabled:opacity-60"
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>
@@ -331,7 +331,7 @@ export default function DitheringSettingsModal({
           </h4>
 
           {!previewAssetAvailable ? (
-            <div className="rounded-lg border border-dashed border-surface-card-border-default/70 bg-surface-chrome-background-default/40 p-4 text-sm font-sans text-foreground-secondary-default">
+            <div className="rounded-lg border border-dashed border-modal-surface-border-default bg-modal-surface-background-default p-4 text-sm font-sans text-foreground-secondary-default">
               {t("settings.dithering.previewMissing")}
               <span className="mt-1 block font-mono text-foreground-primary-default">
                 public/images/settings/dithering-preview.png
@@ -339,7 +339,7 @@ export default function DitheringSettingsModal({
             </div>
           ) : (
             <div className="flex flex-col gap-3">
-              <div className="rounded-lg border border-surface-card-border-default/70 bg-surface-chrome-background-default/40 p-2">
+              <div className="rounded-lg border border-modal-surface-border-default bg-modal-surface-background-default p-2">
                 <p className="mb-2 text-xs font-semibold font-sans text-foreground-secondary-default">
                   {t("settings.dithering.original")}
                 </p>
@@ -349,7 +349,7 @@ export default function DitheringSettingsModal({
                   className="h-auto w-full rounded-md"
                 />
               </div>
-              <div className="rounded-lg border border-surface-card-border-default/70 bg-surface-chrome-background-default/40 p-2">
+              <div className="rounded-lg border border-modal-surface-border-default bg-modal-surface-background-default p-2">
                 <p className="mb-2 text-xs font-semibold font-sans text-foreground-secondary-default">
                   {t("settings.dithering.after")}
                 </p>
@@ -373,12 +373,12 @@ export default function DitheringSettingsModal({
             </p>
           ) : null}
           {previewProcessingError && previewAssetAvailable ? (
-            <p className="text-xs font-sans text-red-400">
+            <p className="text-xs font-sans text-validation-error-text">
               {t("settings.dithering.processingError")}
             </p>
           ) : null}
 
-          <div className="rounded-lg border border-surface-card-border-default/70 bg-surface-chrome-background-default/40 p-3 text-xs font-sans text-foreground-secondary-default">
+          <div className="rounded-lg border border-modal-surface-border-default bg-modal-surface-background-default p-3 text-xs font-sans text-foreground-secondary-default">
             <p className="font-sans">
               {t("settings.dithering.preset", {
                 enabled: settings.enabled

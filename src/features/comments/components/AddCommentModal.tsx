@@ -73,7 +73,7 @@ export default function AddCommentModal({
         onSubmit={handleSubmit(onSubmit)}
         className="p-6 flex flex-col gap-6 rounded-xl"
       >
-        <div className="bg-surface-chrome-background-default p-3 rounded-lg text-foreground-secondary-default text-sm italic border border-surface-card-border-default">
+        <div className="bg-modal-surface-background-default p-3 rounded-lg text-foreground-secondary-default text-sm italic border border-modal-surface-border-default">
           {t("comment.replyingTo", { text: post.text.substring(0, 100) })}
         </div>
 
@@ -101,21 +101,21 @@ export default function AddCommentModal({
             placeholder={t("comment.writePlaceholder")}
             className={`w-full p-3 bg-transparent border rounded-lg text-foreground-primary-default placeholder:text-foreground-secondary-default focus:outline-none resize-none h-32 transition-all ${
               textError
-                ? "border-red-500 focus:border-red-500"
-                : "border-surface-card-border-default focus:border-accent-fuchsia-border-default"
+                ? "border-validation-error-border focus:border-validation-error-border"
+                : "border-input-border-default focus:border-input-border-hover"
             }`}
           />
           {textError && (
-            <p className="text-red-400 text-xs font-medium ml-1">
+            <p className="text-validation-error-text text-xs font-medium ml-1">
               {textError.text}
             </p>
           )}
         </div>
 
         {rootError && (
-          <div className="w-full px-3 py-2 bg-red-600/10 border border-red-600/50 rounded-lg flex items-center gap-2">
+          <div className="w-full px-3 py-2 bg-validation-error-background/10 border border-validation-error-border/50 rounded-lg flex items-center gap-2">
             <Image src={warningIconUrl} alt="warning" width={16} height={16} />
-            <span className="text-red-400 text-xs font-semibold">
+            <span className="text-validation-error-text text-xs font-semibold">
               {rootError.text}
             </span>
           </div>
@@ -134,7 +134,7 @@ export default function AddCommentModal({
             icon={<PaperclipIcon className="w-5 h-5" />}
             variant="transparent"
             size="icon"
-            className="text-foreground-secondary-default hover:text-white"
+            className="text-foreground-secondary-default hover:text-foreground-primary-default"
             type="button"
           />
           <Button
