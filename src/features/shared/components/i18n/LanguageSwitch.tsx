@@ -30,7 +30,7 @@ export default function LanguageSwitch({
               "rounded-md px-2 py-1 text-[11px] font-bold uppercase tracking-wide transition-colors",
               compact ? "min-w-8" : "min-w-10",
               isActive
-                ? "bg-accent-fuchsia-border-default text-white"
+                ? "bg-accent-fuchsia-border-default text-foreground-primary-default"
                 : "text-foreground-secondary-default hover:text-foreground-primary-default",
             ].join(" ")}
             aria-pressed={isActive}

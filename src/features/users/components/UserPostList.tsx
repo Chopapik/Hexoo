@@ -55,11 +55,11 @@ export function UserPostList({ userId }: { userId: string }) {
             className="w-full p-4 bg-surface-card-background-default rounded-xl border-t-2 border-surface-card-border-default animate-pulse"
           >
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-white/10" />
-              <div className="w-32 h-3 bg-white/10 rounded" />
+              <div className="w-10 h-10 rounded-xl bg-button-glass-card-background-hover" />
+              <div className="w-32 h-3 bg-button-glass-card-background-hover rounded" />
             </div>
-            <div className="w-full h-4 bg-white/5 rounded mb-2" />
-            <div className="w-2/3 h-4 bg-white/5 rounded" />
+            <div className="w-full h-4 bg-button-glass-card-background-default rounded mb-2" />
+            <div className="w-2/3 h-4 bg-button-glass-card-background-default rounded" />
           </div>
         ))}
       </div>

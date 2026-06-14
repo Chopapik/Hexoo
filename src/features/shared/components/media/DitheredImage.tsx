@@ -48,7 +48,7 @@ export function DitheredImage({
   if (!effectiveReady) {
     return (
       <div
-        className={`${className ?? ""} animate-pulse bg-white/10`}
+        className={`${className ?? ""} animate-pulse bg-button-glass-card-background-hover`}
         style={{ aspectRatio: `${width} / ${height}` }}
         aria-hidden
       />

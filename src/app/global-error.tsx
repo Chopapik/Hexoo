@@ -17,7 +17,7 @@ export default function GlobalError({
       <body className="bg-page-background-default text-foreground-primary-default flex items-center justify-center min-h-screen p-4">
         <div className="max-w-md w-full border border-surface-card-border-default bg-surface-card-background-default p-8 text-center rounded-2xl shadow-2xl">
           <div className="mb-6">
-            <div className="mx-auto size-14 mb-4 p-3 bg-red-500/10 rounded-full border border-red-500/30 text-red-400 flex items-center justify-center">
+            <div className="mx-auto size-14 mb-4 p-3 bg-validation-error-background/10 rounded-full border border-validation-error-border/30 text-validation-error-text flex items-center justify-center">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -36,7 +36,7 @@ export default function GlobalError({
               </svg>
             </div>
 
-            <h2 className="text-3xl font-bold font-sans text-red-500 mb-2">
+            <h2 className="text-3xl font-bold font-sans text-validation-error-text mb-2">
               {t("error.global.title")}
             </h2>
             <p className="text-foreground-secondary-default">
@@ -44,8 +44,8 @@ export default function GlobalError({
             </p>
           </div>
 
-          <div className="bg-white/5 p-4 rounded-lg border border-white/10 text-sm font-mono text-left mb-6 overflow-auto">
-            <p className="text-red-400">Error: {error.message}</p>
+          <div className="bg-button-glass-card-background-default p-4 rounded-lg border border-divider-default text-sm font-mono text-left mb-6 overflow-auto">
+            <p className="text-validation-error-text">Error: {error.message}</p>
             {error.digest && (
               <p className="text-foreground-secondary-default/50 text-xs mt-1">
                 Digest: {error.digest}

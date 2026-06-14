@@ -178,17 +178,17 @@ export default function ButtonsDemoPage() {
               return (
                 <article
                   key={frame.id}
-                  className="overflow-hidden rounded-lg border border-surface-card-border-default bg-black/40"
+                  className="overflow-hidden rounded-lg border border-surface-card-border-default bg-surface-card-background-default"
                   style={{ width: frame.width + 24 }}
                 >
                   <div className="flex items-center justify-between gap-3 border-b border-surface-card-border-default bg-surface-chrome-background-default/50 px-3 py-3">
                     <div className="flex items-center gap-3">
-                      <Icon className="size-4 text-fuchsia-200" />
+                      <Icon className="size-4 text-accent-fuchsia-foreground-default" />
                       <h3 className="font-semibold text-foreground-primary-default">
                         {frame.label}
                       </h3>
                     </div>
-                    <span className="rounded-md border border-white/10 bg-white/5 px-2 py-1 font-mono text-xs text-foreground-secondary-default">
+                    <span className="rounded-md border border-divider-default bg-button-glass-card-background-default px-2 py-1 font-mono text-xs text-foreground-secondary-default">
                       {frame.viewport}
                     </span>
                   </div>

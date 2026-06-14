@@ -109,7 +109,7 @@ export default function ActivityLogTable() {
           {t("admin.loadingLogs")}
         </div>
       ) : isError ? (
-        <div className="py-6 text-center text-red-500">
+        <div className="py-6 text-center text-validation-error-text">
           {t("admin.fetchError", { message: error?.message ?? "unknown" })}
         </div>
       ) : (

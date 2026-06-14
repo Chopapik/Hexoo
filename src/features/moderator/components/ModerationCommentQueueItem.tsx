@@ -107,11 +107,11 @@ export default function ModerationCommentQueueItem({
       )}
 
       <div className="border-2 border-surface-card-background-default rounded-xl overflow-hidden relative ">
-        <p className="border-b border-fuchsia-500/10 bg-fuchsia-950/20 px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-fuchsia-300/90 font-sans">
+        <p className="border-b border-fuchsia-500/10 bg-fuchsia-950/20 px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-accent-fuchsia-background-hover/90 font-sans">
           {t("moderation.queue.thread")}
         </p>
 
-        <div className="grid grid-cols-[28px_1fr] border-b border-white/10 bg-black/15">
+        <div className="grid grid-cols-[28px_1fr] border-b border-divider-default bg-surface-card-background-default">
           <TreePostGutter />
           <div className="min-w-0 px-2 py-2 sm:px-3">
             <p className="text-[9px] uppercase tracking-widest text-foreground-secondary-default/55 mb-1.5 font-semibold font-sans">
@@ -173,13 +173,13 @@ export default function ModerationCommentQueueItem({
 
         <div className="grid grid-cols-[36px_1fr]">
           <TreeCommentGutter />
-          <div className="flex-1 min-w-0 flex flex-col border-l border-fuchsia-500/20 bg-black/30">
-            <div className=" p-5 border-b border-white/10 ">
-              <p className="text-xs uppercase tracking-widest text-fuchsia-300/95 mb-3 font-bold font-sans">
+          <div className="flex-1 min-w-0 flex flex-col border-l border-fuchsia-500/20 bg-surface-card-background-default">
+            <div className=" p-5 border-b border-divider-default ">
+              <p className="text-xs uppercase tracking-widest text-accent-fuchsia-background-hover/95 mb-3 font-bold font-sans">
                 {t("moderation.queue.reportedComment")}
               </p>
               <div className="flex flex-wrap gap-3 mb-3 font-mono text-sm">
-                <span className="text-yellow-200 font-bold bg-yellow-500/20 px-2 py-0.5 rounded">
+                <span className="text-validation-warning-text font-bold bg-validation-warning-background/20 px-2 py-0.5 rounded">
                   {t("common.status")}: {comment.moderationStatus.toUpperCase()}
                 </span>
                 {!parent && (
@@ -237,10 +237,10 @@ export default function ModerationCommentQueueItem({
                       (report: ReportDetails, idx: number) => (
                         <div
                           key={idx}
-                          className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-3 text-sm bg-black/40 p-2 rounded border border-white/5"
+                          className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-3 text-sm bg-surface-card-background-default p-2 rounded border border-divider-subtle"
                         >
                           <div className="flex items-center gap-2 min-w-fit">
-                            <span className="text-fuchsia-400 font-mono text-[10px] bg-fuchsia-500/10 px-1.5 py-0.5 rounded border border-fuchsia-500/20">
+                            <span className="text-accent-fuchsia-background-default font-mono text-[10px] bg-accent-fuchsia-background-default/10 px-1.5 py-0.5 rounded border border-accent-fuchsia-border-default/20">
                               UID:{" "}
                               {report.uid
                                 ? report.uid.slice(0, 5) + "..."
@@ -249,16 +249,16 @@ export default function ModerationCommentQueueItem({
                             <span
                               className={`font-bold px-1.5 rounded text-[11px] uppercase ${
                                 report.reason === "hate"
-                                  ? "text-red-400 bg-red-900/30"
+                                  ? "text-validation-error-text bg-validation-error-background/30"
                                   : report.reason === "spam"
                                     ? "text-blue-400 bg-blue-900/30"
-                                    : "text-yellow-400 bg-yellow-900/30"
+                                    : "text-validation-warning-text bg-validation-warning-background/30"
                               }`}
                             >
                               {report.reason || t("common.report")}
                             </span>
                           </div>
-                          <span className="text-gray-300 italic border-l-2 border-white/20 pl-2 text-xs break-all">
+                          <span className="text-foreground-secondary-default italic border-l-2 border-button-outline-border-default pl-2 text-xs break-all">
                             {report.details
                               ? `"${report.details}"`
                               : t("common.noDescription")}
@@ -283,7 +283,7 @@ export default function ModerationCommentQueueItem({
               />
             </div>
 
-            <div className="bg-surface-chrome-background-default p-3 flex flex-wrap justify-end gap-3 border-t border-white/10 shadow-[0_-5px_15px_rgba(0,0,0,0.5)]">
+            <div className="bg-surface-chrome-background-default p-3 flex flex-wrap justify-end gap-3 border-t border-divider-default shadow-[0_-5px_15px_rgba(0,0,0,0.5)]">
               <Button
                 text={t("moderation.queue.banAuthorDelete")}
                 variant="danger"
@@ -294,7 +294,7 @@ export default function ModerationCommentQueueItem({
               <Button
                 text={t("moderation.deleteComment")}
                 variant="danger"
-                className="border-red-500/50 text-red-500 hover:bg-red-500/10"
+                className="border-validation-error-border/50 text-validation-error-text hover:bg-validation-error-background/10"
                 size="sm"
                 onClick={() => setPendingAction("reject")}
                 disabled={isPending}

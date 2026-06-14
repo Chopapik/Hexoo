@@ -39,7 +39,7 @@ export default function DangerZoneSection() {
         <div className="w-full h-px bg-surface-card-border-default my-2" />
         <div className="flex flex-row items-center justify-between gap-2 sm:gap-3">
           <div className="min-w-0 flex-1 text-left">
-            <h4 className="font-semibold font-sans text-red-500">
+            <h4 className="font-semibold font-sans text-validation-error-text">
               {t("settings.danger.deleteAccount")}
             </h4>
             <p className="text-xs sm:text-sm font-sans text-foreground-secondary-default">
