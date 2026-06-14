@@ -231,13 +231,13 @@ export function RightNavGuestDisclaimer() {
   return (
     <div className="hidden md:flex md:sticky md:top-4 self-start md:w-20 lg:w-[244px] xl:w-72 h-full">
       <div className="relative overflow-hidden">
-        <div className="relative min-h-32 rounded-xl border-t-2 border-primary-neutral-stroke-default/75 overflow-hidden">
+        <div className="relative min-h-32 rounded-xl border-t-2 border-surface-card-border-default/75 overflow-hidden">
           <RightNavGuestBackground />
           <div className="relative z-10 h-full p-3 flex flex-col justify-end">
-            <p className="text-xs uppercase font-serif tracking-[0.16em] text-text-neutral/80">
+            <p className="text-xs uppercase font-serif tracking-[0.16em] text-foreground-secondary-default/80">
               {t("right.guestEyebrow")}
             </p>
-            <p className="text-sm font-semibold text-text-main font-sans">
+            <p className="text-sm font-semibold text-foreground-primary-default font-sans">
               {t("right.guestCopy")}
             </p>
           </div>

@@ -50,10 +50,10 @@ export default function AppearanceSection() {
     <SettingsSection title={t("settings.appearance.title")}>
       <div className="flex flex-row items-center justify-between gap-3">
         <div className="min-w-0 flex-1 text-left">
-          <h4 className="font-semibold font-sans text-text-main">
+          <h4 className="font-semibold font-sans text-foreground-primary-default">
             {t("settings.appearance.theme")}
           </h4>
-          <p className="text-sm font-sans text-text-neutral">
+          <p className="text-sm font-sans text-foreground-secondary-default">
             {t("settings.appearance.copy")}
           </p>
         </div>

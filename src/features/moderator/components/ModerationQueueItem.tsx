@@ -47,7 +47,7 @@ export default function ModerationQueueItem({
         />
       )}
 
-      <div className="border-2 border-primary-neutral-background-default rounded-xl overflow-hidden relative ">
+      <div className="border-2 border-surface-card-background-default rounded-xl overflow-hidden relative ">
         <div className=" p-4 border-b ">
           <div className="flex flex-wrap gap-3 mb-3 font-mono text-xs">
             <span className="text-yellow-200 font-bold bg-yellow-500/20 px-2 py-0.5 rounded">
@@ -73,7 +73,7 @@ export default function ModerationQueueItem({
           </div>
 
           {post.moderationInfo && (
-            <div className="mt-2 text-xs text-text-neutral space-y-1">
+            <div className="mt-2 text-xs text-foreground-secondary-default space-y-1">
               {post.moderationInfo.reasonSummary && (
                 <p className="font-semibold">
                   {t("common.reason")}:{" "}
@@ -95,7 +95,7 @@ export default function ModerationQueueItem({
 
           {post.reportsMeta && post.reportsMeta.length > 0 ? (
             <div className="mt-3 pt-3">
-              <p className="text-[10px] uppercase tracking-widest text-text-neutral mb-2 font-bold opacity-70">
+              <p className="text-[10px] uppercase tracking-widest text-foreground-secondary-default mb-2 font-bold opacity-70">
                 {t("moderation.queue.userReports", { count: post.reportsMeta.length })}
               </p>
               <div className="flex flex-col gap-2">
@@ -129,7 +129,7 @@ export default function ModerationQueueItem({
               </div>
             </div>
           ) : (
-            <div className="text-xs text-text-neutral opacity-50 mt-1 italic">
+            <div className="text-xs text-foreground-secondary-default opacity-50 mt-1 italic">
               {t("moderation.queue.noReports")}
             </div>
           )}
@@ -141,7 +141,7 @@ export default function ModerationQueueItem({
           moderationThumbnailImage
         />
 
-        <div className="bg-secondary-neutral-background-default p-3 flex flex-wrap justify-end gap-3 border-t border-white/10 shadow-[0_-5px_15px_rgba(0,0,0,0.5)]">
+        <div className="bg-surface-chrome-background-default p-3 flex flex-wrap justify-end gap-3 border-t border-white/10 shadow-[0_-5px_15px_rgba(0,0,0,0.5)]">
           <Button
             text={t("moderation.queue.banAuthorDeletePost")}
             variant="danger"

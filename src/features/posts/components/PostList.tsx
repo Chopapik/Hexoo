@@ -82,7 +82,7 @@ export default function PostList({ className = "" }: PostListProps) {
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="w-full max-w-[920px] p-3 sm:p-4 bg-primary-neutral-background-default rounded-xl border-t-2 border-primary-neutral-stroke-default flex flex-col gap-3 sm:gap-4 animate-pulse"
+              className="w-full max-w-[920px] p-3 sm:p-4 bg-surface-card-background-default rounded-xl border-t-2 border-surface-card-border-default flex flex-col gap-3 sm:gap-4 animate-pulse"
             >
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-white/10" />
@@ -124,12 +124,12 @@ export default function PostList({ className = "" }: PostListProps) {
           className="h-4 w-full flex justify-center py-4"
         >
           {isFetchingNextPage && (
-            <AppLoader size="lg" className="text-text-neutral" />
+            <AppLoader size="lg" className="text-foreground-secondary-default" />
           )}
         </div>
 
         {!hasNextPage && data && data.pages.length > 0 && (
-          <div className="text-center text-text-neutral text-sm py-8 font-sans opacity-50">
+          <div className="text-center text-foreground-secondary-default text-sm py-8 font-sans opacity-50">
             {t("post.end")}
           </div>
         )}

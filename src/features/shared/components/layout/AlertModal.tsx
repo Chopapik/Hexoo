@@ -31,7 +31,7 @@ export default function AlertModal({
       footer={footerContent}
       className="max-w-md"
     >
-      <div className="py-2 text-text-main text-base leading-relaxed">
+      <div className="py-2 text-foreground-primary-default text-base leading-relaxed">
         {message}
       </div>
     </Modal>

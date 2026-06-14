@@ -14,8 +14,8 @@ export default function GlobalError({
 
   return (
     <html lang={lang}>
-      <body className="bg-page-background text-text-main flex items-center justify-center min-h-screen p-4">
-        <div className="max-w-md w-full glass-card p-8 text-center rounded-2xl shadow-2xl border border-primary-neutral-stroke-default">
+      <body className="bg-page-background-default text-foreground-primary-default flex items-center justify-center min-h-screen p-4">
+        <div className="max-w-md w-full glass-card p-8 text-center rounded-2xl shadow-2xl border border-surface-card-border-default">
           <div className="mb-6">
             <div className="mx-auto size-14 mb-4 p-3 bg-red-500/10 rounded-full border border-red-500/30 text-red-400 flex items-center justify-center">
               <svg
@@ -39,7 +39,7 @@ export default function GlobalError({
             <h2 className="text-3xl font-bold font-sans text-red-500 mb-2">
               {t("error.global.title")}
             </h2>
-            <p className="text-text-neutral">
+            <p className="text-foreground-secondary-default">
               {t("error.global.copy")}
             </p>
           </div>
@@ -47,7 +47,7 @@ export default function GlobalError({
           <div className="bg-white/5 p-4 rounded-lg border border-white/10 text-sm font-mono text-left mb-6 overflow-auto">
             <p className="text-red-400">Error: {error.message}</p>
             {error.digest && (
-              <p className="text-text-neutral/50 text-xs mt-1">
+              <p className="text-foreground-secondary-default/50 text-xs mt-1">
                 Digest: {error.digest}
               </p>
             )}
@@ -63,7 +63,7 @@ export default function GlobalError({
 
           <button
             onClick={() => window.location.reload()}
-            className="w-full mt-3 py-2 px-4 text-text-neutral hover:text-text-main text-sm transition-colors font-medium"
+            className="w-full mt-3 py-2 px-4 text-foreground-secondary-default hover:text-foreground-primary-default text-sm transition-colors font-medium"
           >
             {t("error.global.reload")}
           </button>

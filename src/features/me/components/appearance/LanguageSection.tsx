@@ -11,10 +11,10 @@ export default function LanguageSection() {
     <SettingsSection title={t("settings.language.title")}>
       <div className="flex flex-row items-center justify-between gap-2 sm:gap-3">
         <div className="min-w-0 flex-1 text-left">
-          <h4 className="font-semibold font-sans text-text-main">
+          <h4 className="font-semibold font-sans text-foreground-primary-default">
             {t("common.language")}
           </h4>
-          <p className="text-xs sm:text-sm font-sans text-text-neutral">
+          <p className="text-xs sm:text-sm font-sans text-foreground-secondary-default">
             {t("settings.language.copy")}
           </p>
         </div>

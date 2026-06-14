@@ -33,7 +33,7 @@ export const PostNsfwNotice = ({ className = "" }: PostNsfwNoticeProps) => {
         <p className="text-red-500 font-bold text-sm uppercase tracking-wider mb-1">
           {t("post.nsfw.title")}
         </p>
-        <p className="text-text-neutral text-xs">
+        <p className="text-foreground-secondary-default text-xs">
           {t("post.nsfw.body")}
         </p>
       </div>

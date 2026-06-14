@@ -20,7 +20,7 @@ export default function SelectionTabButton({
   const selected =
     `text-fuchsia-100 ${fuchsiaGradientSurfaceClass} shadow-sm brightness-90 saturate-90 cursor-default`;
 
-  const unselected = "text-text-neutral hover:text-text-main hover:bg-white/5";
+  const unselected = "text-foreground-secondary-default hover:text-foreground-primary-default hover:bg-white/5";
 
   return (
     <button

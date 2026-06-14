@@ -36,7 +36,7 @@ export default function ConfirmDeleteModal({
       footer={footerContent}
     >
       <div className="flex flex-col gap-4 p-6">
-        <p className="text-text-neutral">
+        <p className="text-foreground-secondary-default">
           {t("settings.danger.deleteBody")}
         </p>
       </div>

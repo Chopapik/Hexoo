@@ -247,7 +247,7 @@ export default function EditProfileModal({
           <div className="flex flex-col items-center gap-2 sm:gap-3">
             <div className="relative">
               {isCropping && cropImageSrc ? (
-                <div className="w-full max-w-sm rounded-xl border border-primary-neutral-stroke-default/50 bg-secondary-neutral-background-default/30 p-3 sm:p-4 flex flex-col gap-3 sm:gap-4">
+                <div className="w-full max-w-sm rounded-xl border border-surface-card-border-default/50 bg-surface-chrome-background-default/30 p-3 sm:p-4 flex flex-col gap-3 sm:gap-4">
                   <div className="mx-auto overflow-hidden rounded-xl">
                     <AvatarEditor
                       ref={editorRef}
@@ -262,7 +262,7 @@ export default function EditProfileModal({
                   </div>
 
                   <div className="flex flex-col gap-2">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-text-neutral/80">
+                    <label className="text-xs font-semibold uppercase tracking-wider text-foreground-secondary-default/80">
                       {t("profile.zoom")}
                     </label>
                     <input
@@ -272,7 +272,7 @@ export default function EditProfileModal({
                       step={0.01}
                       value={scale}
                       onChange={(e) => setScale(Number(e.target.value))}
-                      className="accent-primary-fuchsia-stroke-default"
+                      className="accent-accent-fuchsia-border-default"
                     />
                   </div>
 
@@ -340,14 +340,14 @@ export default function EditProfileModal({
 
               {/* Change indicator */}
               {isNewImage && !isCropping && (
-                <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-primary-fuchsia-stroke-default text-white text-[10px] font-semibold px-2 py-0.5 rounded-full whitespace-nowrap animate-in fade-in slide-in-from-bottom-1 duration-200">
+                <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-accent-fuchsia-border-default text-white text-[10px] font-semibold px-2 py-0.5 rounded-full whitespace-nowrap animate-in fade-in slide-in-from-bottom-1 duration-200">
                   {t("profile.changed")}
                 </div>
               )}
             </div>
 
             <div className="flex flex-col items-center ">
-              <p className="text-xs sm:text-sm text-text-neutral font-medium text-center">
+              <p className="text-xs sm:text-sm text-foreground-secondary-default font-medium text-center">
                 {isCropping
                   ? t("profile.cropHelp")
                   : t("profile.changeAvatarHelp")}
@@ -371,7 +371,7 @@ export default function EditProfileModal({
           </div>
 
           {/* Name Section */}
-          <div className="flex flex-col gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl bg-secondary-neutral-background-default/30 border border-primary-neutral-stroke-default/50">
+          <div className="flex flex-col gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl bg-surface-chrome-background-default/30 border border-surface-card-border-default/50">
             <TextInput
               label={t("profile.username")}
               placeholder={t("profile.usernamePlaceholder")}
@@ -380,7 +380,7 @@ export default function EditProfileModal({
               showButton={false}
             />
             <div className="flex flex-col gap-1">
-              <p className="text-xs sm:text-sm text-text-neutral ml-1">
+              <p className="text-xs sm:text-sm text-foreground-secondary-default ml-1">
                 {t("profile.usernameHelp")}
               </p>
               <p
@@ -388,7 +388,7 @@ export default function EditProfileModal({
                   nameErrorCode === "name_too_short" ||
                   nameErrorCode === "name_too_long"
                     ? "text-red-500"
-                    : "text-text-neutral/60"
+                    : "text-foreground-secondary-default/60"
                 }`}
               >
                 {t("profile.chars", { count: nameLength })}

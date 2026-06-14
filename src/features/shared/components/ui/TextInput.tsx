@@ -28,14 +28,14 @@ interface TextInputProps {
 }
 
 const borderClasses: Record<Status, string> = {
-  Default: "border-b-4 border-secondary-neutral-stroke-default",
+  Default: "border-b-4 border-divider-default",
   Warning: "border-b-4 border-yellow-500",
   Dismiss: "border-b-4 border-red-600",
   Success: "border-b-4 border-green-500/50",
 };
 
 const baseBorderClasses =
-  "bg-secondary-neutral-background-default/50 backdrop-blur-sm rounded-lg focus-within:border-white";
+  "bg-surface-chrome-background-default/50 backdrop-blur-sm rounded-lg focus-within:border-white";
 
 export default function TextInput({
   ref,
@@ -60,7 +60,7 @@ export default function TextInput({
   return (
     <div className="w-full min-w-0 sm:min-w-64 inline-flex flex-col justify-start items-start gap-1 sm:gap-1.5 font-sans">
       {label && (
-        <div className="text-text-neutral text-xs sm:text-sm font-semibold font-sans ml-1">
+        <div className="text-foreground-secondary-default text-xs sm:text-sm font-semibold font-sans ml-1">
           {label}
         </div>
       )}
@@ -74,7 +74,7 @@ export default function TextInput({
           type={type === "password" && showPassword ? "text" : type}
           name={name}
           placeholder={placeholder}
-          className="flex-1 h-full w-full border-none outline-none text-text-main placeholder:text-text-neutral/50 text-base font-medium font-sans bg-transparent"
+          className="flex-1 h-full w-full border-none outline-none text-foreground-primary-default placeholder:text-foreground-secondary-default/50 text-base font-medium font-sans bg-transparent"
           defaultValue={defaultValue}
           value={value}
           onChange={onChange}

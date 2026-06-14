@@ -12,15 +12,15 @@ export function UiDemoBoard() {
 
   return (
     <QueryClientProvider client={demoQueryClient}>
-      <div className="min-h-screen bg-page-background px-4 py-8 sm:px-8">
+      <div className="min-h-screen bg-page-background-default px-4 py-8 sm:px-8">
         <header className="mx-auto mb-10 max-w-[1500px] space-y-2">
           <p className="text-xs font-semibold uppercase tracking-wide text-fuchsia-200">
             Hexoo UI lab
           </p>
-          <h1 className="text-2xl font-bold text-text-main font-sans sm:text-3xl">
+          <h1 className="text-2xl font-bold text-foreground-primary-default font-sans sm:text-3xl">
             Component catalog — mobile, tablet, desktop
           </h1>
-          <p className="max-w-2xl text-sm text-text-neutral">
+          <p className="max-w-2xl text-sm text-foreground-secondary-default">
             Wszystkie viewporty na jednej stronie, ułożone w pionie. Bez iframeów.
           </p>
         </header>

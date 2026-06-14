@@ -73,7 +73,7 @@ export default function AddCommentModal({
         onSubmit={handleSubmit(onSubmit)}
         className="p-6 flex flex-col gap-6 rounded-xl"
       >
-        <div className="bg-secondary-neutral-background-default p-3 rounded-lg text-text-neutral text-sm italic border border-primary-neutral-stroke-default">
+        <div className="bg-surface-chrome-background-default p-3 rounded-lg text-foreground-secondary-default text-sm italic border border-surface-card-border-default">
           {t("comment.replyingTo", { text: post.text.substring(0, 100) })}
         </div>
 
@@ -85,7 +85,7 @@ export default function AddCommentModal({
                 alt={t("comment.previewAlt")}
                 width={200}
                 height={200}
-                className="rounded-xl border border-primary-neutral-stroke-default object-cover max-h-48 w-auto"
+                className="rounded-xl border border-surface-card-border-default object-cover max-h-48 w-auto"
               />
               <RemoveImageButton
                 onClick={removeImage}
@@ -99,10 +99,10 @@ export default function AddCommentModal({
           <textarea
             {...register("text")}
             placeholder={t("comment.writePlaceholder")}
-            className={`w-full p-3 bg-transparent border rounded-lg text-text-main placeholder:text-text-neutral focus:outline-none resize-none h-32 transition-all ${
+            className={`w-full p-3 bg-transparent border rounded-lg text-foreground-primary-default placeholder:text-foreground-secondary-default focus:outline-none resize-none h-32 transition-all ${
               textError
                 ? "border-red-500 focus:border-red-500"
-                : "border-primary-neutral-stroke-default focus:border-primary-fuchsia-stroke-default"
+                : "border-surface-card-border-default focus:border-accent-fuchsia-border-default"
             }`}
           />
           {textError && (
@@ -134,7 +134,7 @@ export default function AddCommentModal({
             icon={<PaperclipIcon className="w-5 h-5" />}
             variant="transparent"
             size="icon"
-            className="text-text-neutral hover:text-white"
+            className="text-foreground-secondary-default hover:text-white"
             type="button"
           />
           <Button

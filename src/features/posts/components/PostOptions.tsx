@@ -116,7 +116,7 @@ export default function PostOptions({
 
       <Menu as="div" className="relative inline-block text-left">
         <div>
-          <Menu.Button className="p-2 text-text-neutral hover:text-text-main transition-colors rounded-xl hover:bg-primary-neutral-background-hover">
+          <Menu.Button className="p-2 text-foreground-secondary-default hover:text-foreground-primary-default transition-colors rounded-xl hover:bg-button-transparent-background-hover">
             <BsThreeDots size={20} />
           </Menu.Button>
         </div>
@@ -132,7 +132,7 @@ export default function PostOptions({
         >
           <Menu.Items
             modal={false}
-            className="absolute right-0 mt-2 w-56 origin-top-right bg-primary-neutral-background-default border border-primary-neutral-stroke-default rounded-xl shadow-2xl z-50 overflow-hidden focus:outline-none"
+            className="absolute right-0 mt-2 w-56 origin-top-right bg-surface-card-background-default border border-surface-card-border-default rounded-xl shadow-2xl z-50 overflow-hidden focus:outline-none"
           >
             {isAuthor && (
               <div className="p-1">
@@ -142,8 +142,8 @@ export default function PostOptions({
                       onClick={() => setIsEditModalOpen(true)}
                       className={`${
                         active
-                          ? "bg-primary-neutral-background-hover text-text-main"
-                          : "text-text-neutral"
+                          ? "bg-button-transparent-background-hover text-foreground-primary-default"
+                          : "text-foreground-secondary-default"
                       } group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors`}
                     >
                       <BsPencil /> {t("post.options.edit")}
@@ -176,8 +176,8 @@ export default function PostOptions({
                       onClick={() => setIsReportModalOpen(true)}
                       className={`${
                         active
-                          ? "bg-primary-neutral-background-hover text-text-main"
-                          : "text-text-neutral"
+                          ? "bg-button-transparent-background-hover text-foreground-primary-default"
+                          : "text-foreground-secondary-default"
                       } group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors`}
                     >
                       <BsFlag /> {t("post.options.report")}
@@ -190,7 +190,7 @@ export default function PostOptions({
             {(isModerator || isAdmin) && (
               <div className="p-1 border-t border-white/10">
                 {!isAuthor && (
-                  <div className="px-2 py-1.5 text-[10px] text-text-neutral/50 uppercase tracking-widest font-bold">
+                  <div className="px-2 py-1.5 text-[10px] text-foreground-secondary-default/50 uppercase tracking-widest font-bold">
                     {t("post.options.moderatorPanel")}
                   </div>
                 )}

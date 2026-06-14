@@ -93,14 +93,14 @@ export const CommentItem = ({
   const avatarClass = moderationProminent ? "size-10" : "size-8";
   const avatarPx = moderationProminent ? 40 : 32;
   const nameClass = moderationProminent
-    ? "text-text-main text-base font-semibold font-sans hover:underline"
-    : "text-text-main text-sm font-medium font-sans hover:underline";
+    ? "text-foreground-primary-default text-base font-semibold font-sans hover:underline"
+    : "text-foreground-primary-default text-sm font-medium font-sans hover:underline";
   const bodyClass = moderationProminent
-    ? "text-text-main text-base leading-relaxed font-sans whitespace-pre-wrap wrap-break-word"
-    : "text-text-main text-sm font-sans whitespace-pre-wrap wrap-break-word";
+    ? "text-foreground-primary-default text-base leading-relaxed font-sans whitespace-pre-wrap wrap-break-word"
+    : "text-foreground-primary-default text-sm font-sans whitespace-pre-wrap wrap-break-word";
   const dateClass = moderationProminent
-    ? "text-text-neutral text-sm font-sans"
-    : "text-text-neutral text-xs font-sans";
+    ? "text-foreground-secondary-default text-sm font-sans"
+    : "text-foreground-secondary-default text-xs font-sans";
 
   const showMenu = !!currentUser;
 
@@ -142,7 +142,7 @@ export const CommentItem = ({
       )}
 
       <div
-        className={`flex gap-3 py-3 border-b border-primary-neutral-stroke-default/30 last:border-b-0 ${moderationProminent ? "gap-4" : ""}`}
+        className={`flex gap-3 py-3 border-b border-surface-card-border-default/30 last:border-b-0 ${moderationProminent ? "gap-4" : ""}`}
       >
         <div className="shrink-0" onClick={handleLinkClick}>
           <Link href={`/profile/${comment.userId}`}>
@@ -170,7 +170,7 @@ export const CommentItem = ({
                 {formatSmartDate(comment.createdAt, lang)}
               </span>
               {comment.isEdited && (
-                <span className="text-[10px] font-medium text-text-neutral/60 italic">
+                <span className="text-[10px] font-medium text-foreground-secondary-default/60 italic">
                   {t("post.edited")}
                 </span>
               )}
@@ -178,7 +178,7 @@ export const CommentItem = ({
 
             {showMenu && (
               <Menu as="div" className="relative inline-block text-left">
-                <Menu.Button className="p-1 text-text-neutral hover:text-text-main transition-colors rounded-lg hover:bg-primary-neutral-background-hover">
+                <Menu.Button className="p-1 text-foreground-secondary-default hover:text-foreground-primary-default transition-colors rounded-lg hover:bg-button-transparent-background-hover">
                   <BsThreeDots size={14} />
                 </Menu.Button>
 
@@ -193,7 +193,7 @@ export const CommentItem = ({
                 >
                   <Menu.Items
                     modal={false}
-                    className="absolute right-0 mt-1 w-48 origin-top-right bg-primary-neutral-background-default border border-primary-neutral-stroke-default rounded-xl shadow-2xl z-50 overflow-hidden focus:outline-none"
+                    className="absolute right-0 mt-1 w-48 origin-top-right bg-surface-card-background-default border border-surface-card-border-default rounded-xl shadow-2xl z-50 overflow-hidden focus:outline-none"
                   >
                     {isAuthor && (
                       <div className="p-1">
@@ -203,8 +203,8 @@ export const CommentItem = ({
                               onClick={() => setIsEditModalOpen(true)}
                               className={`${
                                 active
-                                  ? "bg-primary-neutral-background-hover text-text-main"
-                                  : "text-text-neutral"
+                                  ? "bg-button-transparent-background-hover text-foreground-primary-default"
+                                  : "text-foreground-secondary-default"
                               } group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors`}
                             >
                               <BsPencil /> {t("comment.options.edit")}
@@ -237,8 +237,8 @@ export const CommentItem = ({
                               onClick={() => setIsReportModalOpen(true)}
                               className={`${
                                 active
-                                  ? "bg-primary-neutral-background-hover text-text-main"
-                                  : "text-text-neutral"
+                                  ? "bg-button-transparent-background-hover text-foreground-primary-default"
+                                  : "text-foreground-secondary-default"
                               } group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors`}
                             >
                               <BsFlag /> {t("comment.options.report")}
@@ -251,7 +251,7 @@ export const CommentItem = ({
                     {(isModerator || isAdmin) && (
                       <div className="p-1 border-t border-white/10">
                         {!isAuthor && (
-                          <div className="px-2 py-1.5 text-[10px] text-text-neutral/50 uppercase tracking-widest font-bold">
+                          <div className="px-2 py-1.5 text-[10px] text-foreground-secondary-default/50 uppercase tracking-widest font-bold">
                             {t("post.options.moderatorPanel")}
                           </div>
                         )}
@@ -308,7 +308,7 @@ export const CommentItem = ({
               <img
                 src={comment.imageUrl}
                 alt={t("comment.imageAlt")}
-                className="mt-2 w-full max-w-xs rounded-xl border border-primary-neutral-stroke-default object-cover"
+                className="mt-2 w-full max-w-xs rounded-xl border border-surface-card-border-default object-cover"
               />
             ))}
         </div>

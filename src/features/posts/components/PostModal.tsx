@@ -45,9 +45,9 @@ export const PostModal = ({
   const hasImage = !!post.imageUrl;
   const isContentVisible = !post.isNSFW || showNSFWPosts || revealNSFW;
 
-  const textClassName = `text-text-main text-base ${
+  const textClassName = `text-foreground-primary-default text-base ${
     isAscii
-      ? "ascii-art"
+      ? "max-w-full overflow-x-auto whitespace-pre rounded p-2 font-mono text-xs"
       : "font-sans whitespace-pre-wrap wrap-break-word"
   }`;
 
@@ -89,16 +89,16 @@ export const PostModal = ({
         )}
 
         <div
-          className={`flex h-full min-h-0 flex-col border-primary-neutral-stroke-default/60 ${sidebarClassName}`}
+          className={`flex h-full min-h-0 flex-col border-surface-card-border-default/60 ${sidebarClassName}`}
         >
-          <div className="shrink-0 border-b border-primary-neutral-stroke-default/60 p-3 sm:p-4">
+          <div className="shrink-0 border-b border-surface-card-border-default/60 p-3 sm:p-4">
             <PostMeta post={post} />
           </div>
 
           {!showCommentsMobile && (
             <div className="flex min-h-0 flex-1 flex-col lg:hidden">
               {isContentVisible && post.text && (
-                <div className="shrink-0 border-b border-primary-neutral-stroke-default/60 p-3 sm:p-4">
+                <div className="shrink-0 border-b border-surface-card-border-default/60 p-3 sm:p-4">
                   <p className={textClassName}>{post.text}</p>
                 </div>
               )}
@@ -130,7 +130,7 @@ export const PostModal = ({
                   text={t("post.showComments")}
                   size="xl"
                   variant="secondary"
-                  className="border border-primary-neutral-stroke-default/60 text-sm font-medium"
+                  className="border border-surface-card-border-default/60 text-sm font-medium"
                   onClick={() => setShowCommentsMobile(true)}
                 />
               </div>
@@ -139,12 +139,12 @@ export const PostModal = ({
 
           {showCommentsMobile && (
             <div className="flex min-h-0 flex-1 flex-col lg:hidden">
-              <div className="shrink-0 border-b border-primary-neutral-stroke-default/60 p-3 sm:p-4">
+              <div className="shrink-0 border-b border-surface-card-border-default/60 p-3 sm:p-4">
                 <Button
                   text={t("post.backToPost")}
                   size="xl"
                   variant="secondary"
-                  className="border border-primary-neutral-stroke-default/60 text-sm font-medium"
+                  className="border border-surface-card-border-default/60 text-sm font-medium"
                   onClick={() => setShowCommentsMobile(false)}
                 />
               </div>
@@ -152,14 +152,14 @@ export const PostModal = ({
               <div className="min-h-0 flex-1 overflow-y-auto p-3 sm:p-4 scrollbar-hide">
                 <CommentList comments={visibleComments} isLoading={isLoading} />
                 {hasHiddenNSFWComments && (
-                  <p className="mt-3 text-center text-xs text-text-muted">
+                  <p className="mt-3 text-center text-xs text-foreground-muted-default">
                     {t("post.hiddenNsfw")}
                   </p>
                 )}
               </div>
 
               {user && (
-                <div className="shrink-0 border-t border-primary-neutral-stroke-default/60 bg-secondary-neutral-background-default/60 p-3 sm:p-4">
+                <div className="shrink-0 border-t border-surface-card-border-default/60 bg-surface-chrome-background-default/60 p-3 sm:p-4">
                   <CommentForm postId={post.id} />
                 </div>
               )}
@@ -168,7 +168,7 @@ export const PostModal = ({
 
           <div className="hidden min-h-0 flex-1 lg:flex lg:flex-col">
             {isContentVisible && post.text && (
-              <div className="shrink-0 border-b border-primary-neutral-stroke-default/60 p-4">
+              <div className="shrink-0 border-b border-surface-card-border-default/60 p-4">
                 <p className={textClassName}>{post.text}</p>
               </div>
             )}
@@ -182,14 +182,14 @@ export const PostModal = ({
             <div className="min-h-0 flex-1 flex flex-col overflow-y-auto p-4 scrollbar-hide justify-between">
               <CommentList comments={visibleComments} isLoading={isLoading} />
               {hasHiddenNSFWComments && (
-                <p className="mb-3 text-center text-xs text-text-muted text-text-neutral">
+                <p className="mb-3 text-center text-xs text-foreground-muted-default">
                   {t("post.hiddenNsfw")}
                 </p>
               )}
             </div>
 
             {user && (
-              <div className="shrink-0 border-t border-primary-neutral-stroke-default/60 bg-secondary-neutral-background-default/60 p-4">
+              <div className="shrink-0 border-t border-surface-card-border-default/60 bg-surface-chrome-background-default/60 p-4">
                 <CommentForm postId={post.id} />
               </div>
             )}

@@ -12,8 +12,8 @@ const meta = {
     alwaysVisible: true,
   },
   render: (args) => (
-    <div className="relative size-28 overflow-hidden rounded-xl border border-primary-neutral-stroke-default bg-secondary-neutral-background-default">
-      <div className="flex h-full items-center justify-center text-xs text-text-neutral">
+    <div className="relative size-28 overflow-hidden rounded-xl border border-surface-card-border-default bg-surface-chrome-background-default">
+      <div className="flex h-full items-center justify-center text-xs text-foreground-secondary-default">
         Preview
       </div>
       <RemoveImageButton {...args} />

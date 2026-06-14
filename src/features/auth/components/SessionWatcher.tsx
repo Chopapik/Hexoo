@@ -129,7 +129,7 @@ export default function SessionWatcher() {
       footer={footer}
       className="max-w-md"
     >
-      <div className="p-4  text-text-main text-base leading-relaxed">
+      <div className="p-4  text-foreground-primary-default text-base leading-relaxed">
         {t("auth.session.expiredCopy")}
       </div>
     </Modal>

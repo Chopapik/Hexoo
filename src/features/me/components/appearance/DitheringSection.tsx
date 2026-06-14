@@ -41,11 +41,11 @@ export default function DitheringSection() {
             <div className="min-w-0 flex-1 text-left">
               <h4
                 id="posts-dithering-label"
-                className="font-semibold font-sans text-text-main"
+                className="font-semibold font-sans text-foreground-primary-default"
               >
                 {t("settings.dithering.enable")}
               </h4>
-              <p className="text-xs sm:text-sm font-sans text-text-neutral">
+              <p className="text-xs sm:text-sm font-sans text-foreground-secondary-default">
                 {t("settings.dithering.copy")}
               </p>
             </div>
@@ -58,8 +58,8 @@ export default function DitheringSection() {
             </div>
           </div>
 
-          <div className="rounded-lg border border-primary-neutral-stroke-default/70 bg-secondary-neutral-background-default/40 p-2.5 sm:p-3 text-xs sm:text-sm font-sans text-text-neutral">
-            <p className="font-medium font-sans text-text-main">
+          <div className="rounded-lg border border-surface-card-border-default/70 bg-surface-chrome-background-default/40 p-2.5 sm:p-3 text-xs sm:text-sm font-sans text-foreground-secondary-default">
+            <p className="font-medium font-sans text-foreground-primary-default">
               {t("settings.dithering.summaryTitle")}
             </p>
             <p className="mt-1 font-sans">{summary}</p>

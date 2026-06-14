@@ -104,13 +104,13 @@ export const Layout: React.FC<{
   }
 
   return (
-    <div className="flex justify-center bg-page-background w-full min-h-screen">
+    <div className="flex justify-center bg-page-background-default w-full min-h-screen">
       <PresenceSubscription />
       <SessionWatcher />
       <div className="flex flex-col w-full max-w-[1440px]">
         <header
           className={
-            "sticky top-0 z-50 bg-page-background px-1.5 py-1.5 md:px-4 md:py-4 transition-transform duration-300 ease-out will-change-transform " +
+            "sticky top-0 z-50 bg-page-background-default px-1.5 py-1.5 md:px-4 md:py-4 transition-transform duration-300 ease-out will-change-transform " +
             (isHeaderVisible ? "" : "max-md:-translate-y-full")
           }
         >
@@ -134,7 +134,7 @@ export const Layout: React.FC<{
           </div>
         </div>
         {user ? (
-          <div className="md:hidden sticky bottom-0 px-1.5 pb-1.5 bg-page-background">
+          <div className="md:hidden sticky bottom-0 px-1.5 pb-1.5 bg-page-background-default">
             <div className="mx-auto w-full pt-1.5">
               <BottomNav onOpenRight={openRight} user={user} />
             </div>

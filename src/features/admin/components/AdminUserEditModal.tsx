@@ -76,7 +76,7 @@ export default function AdminUserEditModal({
         onClick={onClose}
         text={t("admin.cancelClose")}
         disabled={isUpdatingData || isUpdatingPassword}
-        className="text-text-neutral hover:text-white order-2 md:order-1 border-transparent"
+        className="text-foreground-secondary-default hover:text-white order-2 md:order-1 border-transparent"
         variant="secondary"
         size="sm"
       />
@@ -124,7 +124,7 @@ export default function AdminUserEditModal({
     >
       <div className="flex flex-col gap-6 p-1">
         {/* User Summary Card */}
-        <div className="mb-8 p-5 rounded-xl border border-primary-neutral-stroke-default bg-[radial-gradient(ellipse_at_top_right,var(--tw-gradient-stops))] from-white/5 via-transparent to-transparent">
+        <div className="mb-8 p-5 rounded-xl border border-surface-card-border-default bg-[radial-gradient(ellipse_at_top_right,var(--tw-gradient-stops))] from-white/5 via-transparent to-transparent">
           <div className="flex flex-col sm:flex-row items-center gap-6">
             <div className="relative shrink-0">
               <Image
@@ -147,24 +147,24 @@ export default function AdminUserEditModal({
 
             <div className="flex-1 text-center sm:text-left w-full overflow-hidden">
               <div className="flex flex-col sm:flex-row sm:items-end gap-2 mb-1">
-                <h3 className="text-2xl sm:text-3xl font-bold text-text-main font-sans truncate">
+                <h3 className="text-2xl sm:text-3xl font-bold text-foreground-primary-default font-sans truncate">
                   {displayName}
                 </h3>
-                <span className="px-2 py-1 rounded text-xs font-medium bg-primary-neutral-stroke-default text-text-neutral mb-1.5">
+                <span className="px-2 py-1 rounded text-xs font-medium bg-surface-card-border-default text-foreground-secondary-default mb-1.5">
                   {displayRole}
                 </span>
               </div>
 
-              <p className="text-text-neutral text-sm mb-3 font-mono">
+              <p className="text-foreground-secondary-default text-sm mb-3 font-mono">
                 {user.email}
               </p>
 
-              <div className="flex flex-wrap justify-center sm:justify-start gap-4 text-xs text-text-neutral/70 border-t border-white/5 pt-3">
+              <div className="flex flex-wrap justify-center sm:justify-start gap-4 text-xs text-foreground-secondary-default/70 border-t border-white/5 pt-3">
                 <div className="flex flex-col">
                   <span className="uppercase text-[10px] font-semibold tracking-wider opacity-50">
                     {t("admin.userId")}
                   </span>
-                  <span className="font-mono text-text-neutral select-all">
+                  <span className="font-mono text-foreground-secondary-default select-all">
                     {user.uid}
                   </span>
                 </div>
@@ -183,8 +183,8 @@ export default function AdminUserEditModal({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Profile Data */}
           <div className="flex flex-col gap-4">
-            <div className="bg-white/5 p-5 rounded-xl border border-primary-neutral-background-default/30 h-full flex flex-col">
-              <h3 className="text-lg font-medium mb-4 text-text-main flex items-center gap-2">
+            <div className="bg-white/5 p-5 rounded-xl border border-surface-card-background-default/30 h-full flex flex-col">
+              <h3 className="text-lg font-medium mb-4 text-foreground-primary-default flex items-center gap-2">
                 {t("admin.profileData")}
               </h3>
 
@@ -226,8 +226,8 @@ export default function AdminUserEditModal({
 
           {/* Security */}
           <div className="flex flex-col gap-4">
-            <div className="bg-white/5 p-5 rounded-xl border border-primary-neutral-background-default/30 h-full flex flex-col">
-              <h3 className="text-lg font-medium mb-4 text-text-main flex items-center gap-2">
+            <div className="bg-white/5 p-5 rounded-xl border border-surface-card-background-default/30 h-full flex flex-col">
+              <h3 className="text-lg font-medium mb-4 text-foreground-primary-default flex items-center gap-2">
                 {t("admin.security")}
               </h3>
 
@@ -240,7 +240,7 @@ export default function AdminUserEditModal({
                   type="password"
                   showButton={true}
                 />
-                <p className="text-xs text-text-neutral/60">
+                <p className="text-xs text-foreground-secondary-default/60">
                   {t("admin.passwordHelp")}
                 </p>
               </div>

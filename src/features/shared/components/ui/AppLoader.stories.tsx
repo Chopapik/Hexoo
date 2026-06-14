@@ -6,7 +6,7 @@ const meta = {
   component: AppLoader,
   tags: ["ai-generated"],
   args: {
-    className: "text-text-neutral",
+    className: "text-foreground-secondary-default",
   },
 } satisfies Meta<typeof AppLoader>;
 

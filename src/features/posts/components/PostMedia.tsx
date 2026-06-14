@@ -106,7 +106,7 @@ export function PostMedia({ src, alt, onReadyChange }: PostMediaProps) {
   return (
     <div
       ref={containerRef}
-      className="relative mx-auto overflow-hidden rounded-xl border border-primary-neutral-stroke-default/60 bg-transparent"
+      className="relative mx-auto overflow-hidden rounded-xl border border-surface-card-border-default/60 bg-transparent"
       style={{
         width: `${box.width}px`,
         height: `${box.height}px`,

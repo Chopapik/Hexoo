@@ -84,13 +84,13 @@ export default function AllUsersList() {
         />
       )}
 
-      <div className="w-full p-6 glass-card rounded-2xl border border-primary-neutral-stroke-default max-w-[1300px]">
+      <div className="w-full p-6 glass-card rounded-2xl border border-surface-card-border-default max-w-[1300px]">
         <div className="flex items-center justify-between mb-4">
           <div className="flex flex-col">
             <h2 className="text-lg font-sans font-semibold">
               {t("admin.allUsers")}
             </h2>
-            <div className="text-sm text-text-neutral">
+            <div className="text-sm text-foreground-secondary-default">
               {t("admin.accountsOverview")}
             </div>
           </div>
@@ -112,7 +112,7 @@ export default function AllUsersList() {
         </div>
 
         {isLoading ? (
-          <div className="py-12 text-center text-text-neutral">
+          <div className="py-12 text-center text-foreground-secondary-default">
             {t("admin.loadingUsers")}
           </div>
         ) : isError ? (
@@ -121,9 +121,9 @@ export default function AllUsersList() {
           </div>
         ) : (
           <>
-            <div className="mb-3 text-sm text-text-neutral flex gap-1">
+            <div className="mb-3 text-sm text-foreground-secondary-default flex gap-1">
               {t("admin.total")}
-              <span className="font-medium text-text-main">
+              <span className="font-medium text-foreground-primary-default">
                 {users?.length ?? 0}
               </span>
             </div>
@@ -131,7 +131,7 @@ export default function AllUsersList() {
             <div className="overflow-x-auto rounded-md">
               <table className="min-w-full bg-transparent">
                 <thead>
-                  <tr className="text-left text-sm text-text-neutral">
+                  <tr className="text-left text-sm text-foreground-secondary-default">
                     <th className="px-3 py-2">ID</th>
                     <th className="px-3 py-2">{t("admin.name")}</th>
                     <th className="px-3 py-2">Email</th>
@@ -147,17 +147,17 @@ export default function AllUsersList() {
                     users.map((u) => (
                       <tr
                         key={u.uid}
-                        className="hover:bg-primary-neutral-background-default/50"
+                        className="hover:bg-surface-card-background-default/50"
                       >
-                        <td className="px-3 py-2 text-xs text-text-neutral truncate">
+                        <td className="px-3 py-2 text-xs text-foreground-secondary-default truncate">
                           {u.uid}
                         </td>
 
-                        <td className="px-3 py-2 text-text-main">
+                        <td className="px-3 py-2 text-foreground-primary-default">
                           {u.name ?? "—"}
                         </td>
 
-                        <td className="px-3 py-2 text-sm text-text-neutral">
+                        <td className="px-3 py-2 text-sm text-foreground-secondary-default">
                           {u.email ?? "—"}
                         </td>
 
@@ -165,14 +165,14 @@ export default function AllUsersList() {
                           <span
                             className={`inline-block px-2 py-0.5 rounded-md text-xs ${
                               ROLE_STYLES[u.role ?? ""] ??
-                              "bg-primary-neutral-stroke-default text-text-neutral"
+                              "bg-surface-card-border-default text-foreground-secondary-default"
                             }`}
                           >
                             {u.role ?? "user"}
                           </span>
                         </td>
 
-                        <td className="px-3 py-2 text-sm text-text-neutral">
+                        <td className="px-3 py-2 text-sm text-foreground-secondary-default">
                           {formatDate(u.createdAt, undefined, lang)}
                         </td>
 
@@ -202,7 +202,7 @@ export default function AllUsersList() {
                     <tr>
                       <td
                         colSpan={7}
-                        className="px-3 py-6 text-center text-text-neutral"
+                        className="px-3 py-6 text-center text-foreground-secondary-default"
                       >
                         {t("admin.noUsers")}
                       </td>

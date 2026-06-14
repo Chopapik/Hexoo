@@ -15,8 +15,8 @@ export const PostFooter = ({ post, onCommentClick }: PostFooterProps) => {
   const { toggleLike } = useToggleLike();
   const user = useAppStore((s) => s.auth.user);
 
-  const activeTextColor = "text-primary-fuchsia-stroke-default";
-  const inactiveTextColor = "text-text-neutral";
+  const activeTextColor = "text-accent-fuchsia-border-default";
+  const inactiveTextColor = "text-foreground-secondary-default";
 
   return (
     <div className="w-full bg-transparent inline-flex justify-start items-start gap-3 sm:gap-4 mt-1 sm:mt-2">
@@ -51,11 +51,11 @@ export const PostFooter = ({ post, onCommentClick }: PostFooterProps) => {
       >
         <div
           data-svg-wrapper
-          className="group-hover:text-text-main transition-colors"
+          className="group-hover:text-foreground-primary-default transition-colors"
         >
           <CommentIcon />
         </div>
-        <div className="justify-start text-text-neutral text-xs sm:text-sm font-semibold font-sans group-hover:text-text-main transition-colors">
+        <div className="justify-start text-foreground-secondary-default text-xs sm:text-sm font-semibold font-sans group-hover:text-foreground-primary-default transition-colors">
           {post.commentsCount}
         </div>
       </div>
