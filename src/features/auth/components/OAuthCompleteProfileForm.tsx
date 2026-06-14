@@ -86,9 +86,9 @@ export default function OAuthCompleteProfileForm() {
 
         <div className="inline-flex flex-col justify-start items-start overflow-hidden h-8 min-w-1">
           {errors.root && (
-            <div className="min-w-48 px-3 h-full bg-red-600 rounded-lg shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] inline-flex justify-center items-center gap-2 overflow-hidden">
+            <div className="inline-flex h-full min-w-48 items-center justify-center gap-2 overflow-hidden rounded-lg bg-validation-error-background px-3">
               <Image src={warningIconUrl} alt="warning!" />
-              <div className="justify-start text-white text-xs font-semibold font-sans">
+              <div className="justify-start font-sans text-xs font-semibold text-button-text-default">
                 {parseRegisterErrorMessages(errors.root?.message, lang)[0]?.text}
               </div>
             </div>

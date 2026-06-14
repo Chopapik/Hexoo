@@ -1,10 +1,4 @@
 import React, { ChangeEvent, FocusEvent } from "react";
-import Image from "next/image";
-import { Message, Status } from "./TextInput"; // Import types from TextInput if exported, or redefine
-
-// Redefine Status since it is not exported from TextInput in a way we can easily use if not careful
-// (It is exported in TextInput.tsx based on the view_file, but to be safe I will redefine or just use string literals if it complains, but it is exported)
-// Actually, let's just assume we can import it. If not, I'll copy the type.
 
 interface SelectOption {
   value: string;
@@ -23,7 +17,7 @@ interface SelectProps {
 }
 
 const baseBorderClasses =
-  "bg-surface-chrome-background-default/50 backdrop-blur-sm rounded-lg focus-within:border-white";
+  "rounded-lg border-b-4 border-input-border-default bg-input-background-default backdrop-blur-sm focus-within:border-input-border-hover";
 
 export default function Select({
   label = "",
@@ -38,17 +32,17 @@ export default function Select({
   return (
     <div className="w-full min-w-64 inline-flex flex-col justify-start items-start gap-1.5">
       {label && (
-        <div className="text-foreground-secondary-default text-sm font-semibold font-sans ml-1">
+        <div className="ml-1 font-sans text-sm font-semibold text-input-text-label">
           {label}
         </div>
       )}
 
       <div
-        className={`self-stretch h-11 min-w-48 px-4 inline-flex justify-start items-center gap-2 overflow-hidden transition-all duration-200 ${baseBorderClasses} border-b-4 border-divider-default`}
+        className={`self-stretch h-11 min-w-48 px-4 inline-flex justify-start items-center gap-2 overflow-hidden transition-all duration-200 ${baseBorderClasses}`}
       >
         <select
           name={name}
-          className="flex-1 h-full w-full border-none outline-none text-foreground-primary-default placeholder:text-foreground-secondary-default/50 text-base font-medium font-sans bg-transparent appearance-none cursor-pointer"
+          className="h-full w-full flex-1 cursor-pointer appearance-none border-none bg-transparent font-sans text-base font-medium text-input-text-value outline-none placeholder:text-input-text-placeholder disabled:cursor-not-allowed disabled:text-input-button-disabled"
           value={value}
           onChange={onChange}
           onBlur={onBlur}
@@ -57,7 +51,7 @@ export default function Select({
           <option
             value=""
             disabled
-            className="bg-surface-card-background-default"
+            className="bg-input-background-default text-input-text-placeholder"
           >
             {placeholder}
           </option>
@@ -65,7 +59,7 @@ export default function Select({
             <option
               key={option.value}
               value={option.value}
-              className="bg-surface-card-background-default text-foreground-primary-default"
+              className="bg-input-background-default text-input-text-value"
             >
               {option.label}
             </option>
@@ -73,7 +67,7 @@ export default function Select({
         </select>
 
         {/* Custom Arrow Icon */}
-        <div className="pointer-events-none absolute right-4 text-foreground-secondary-default">
+        <div className="pointer-events-none absolute right-4 text-input-button-default">
           <svg width="10" height="6" viewBox="0 0 10 6" fill="none">
             <path
               d="M1 1L5 5L9 1"
