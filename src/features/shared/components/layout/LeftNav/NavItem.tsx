@@ -33,8 +33,8 @@ export function NavItem({
   const iconClasses =
     "size-10 left-0 top-0 absolute transition-colors duration-200 " +
     (isActive
-      ? "text-text-main"
-      : "text-text-neutral group-hover/item:text-text-main");
+      ? "text-foreground-primary-default"
+      : "text-foreground-secondary-default group-hover/item:text-foreground-primary-default");
 
   const isSidebar = variant === "sidebar";
 
@@ -56,8 +56,8 @@ export function NavItem({
           className={
             "hidden xl:block w-0.5 h-12 transition-colors duration-200 " +
             (isActive
-              ? "bg-text-main"
-              : "bg-text-neutral group-hover/item:bg-text-main")
+              ? "bg-foreground-primary-default"
+              : "bg-foreground-secondary-default group-hover/item:bg-foreground-primary-default")
           }
         />
       ) : null}
@@ -90,7 +90,7 @@ export function NavItem({
                   "size-4 left-[4px] top-[3px] absolute " +
                   (isActive
                     ? "bg-white"
-                    : "bg-text-neutral group-hover/item:bg-text-main")
+                    : "bg-foreground-secondary-default group-hover/item:bg-foreground-primary-default")
                 }
               />
             )}
@@ -98,7 +98,7 @@ export function NavItem({
 
           <div className="size-2 left-[16px] top-0 absolute">
             {hasNotification && (
-              <div className="size-2 left-0 top-0 absolute bg-yellow-500 rounded-full ring-2 ring-primary-neutral-background-default" />
+              <div className="size-2 left-0 top-0 absolute bg-yellow-500 rounded-full ring-2 ring-surface-card-background-default" />
             )}
           </div>
         </div>
@@ -110,7 +110,7 @@ export function NavItem({
                 "hidden xl:block text-lg font-semibold font-sans transition-colors duration-200 " +
                 (isActive
                   ? "text-white drop-shadow-sm"
-                  : "text-text-neutral group-hover/item:text-text-main")
+                  : "text-foreground-secondary-default group-hover/item:text-foreground-primary-default")
               }
             >
               {label}

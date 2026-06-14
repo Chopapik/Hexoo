@@ -31,7 +31,7 @@ export function LeftNav({ onOpenRight, user }: LeftNavProps) {
   const isStaff = isAdmin || isModerator;
 
   return (
-    <div className="hidden md:flex md:sticky md:top-[88px] justify-end-safe self-start bg-primary-neutral-background-default border-t-2 border-primary-neutral-stroke-default  rounded-xl overflow-hidden md:w-20 xl:w-72 px-3 py-3 lg:px-4 lg:py-4 flex-col items-center h-full">
+    <div className="hidden md:flex md:sticky md:top-[88px] justify-end-safe self-start bg-surface-card-background-default border-t-2 border-surface-card-border-default  rounded-xl overflow-hidden md:w-20 xl:w-72 px-3 py-3 lg:px-4 lg:py-4 flex-col items-center h-full">
       {user ? (
         <div className="h-full py-5 gap-16 flex flex-col w-full items-center">
           <div className="flex flex-col md:justify-start items-center xl:items-start w-full xl:w-fit font-sans">
@@ -92,12 +92,12 @@ export function LeftNav({ onOpenRight, user }: LeftNavProps) {
         </div>
       ) : null}
       <footer className="flex flex-col w-full">
-        <div className="border-t border-primary-neutral-stroke-default w-full mb-3" />
+        <div className="border-t border-surface-card-border-default w-full mb-3" />
         <ul className="flex flex-col items-start justify-start gap-0.5 text-left w-full font-sans">
           <li>
             <Link
               href="mailto:contact@hexoo.eu"
-              className="hover:text-text-neutral transition-colors text-xs font-medium text-text-neutral/45"
+              className="hover:text-foreground-secondary-default transition-colors text-xs font-medium text-foreground-secondary-default/45"
             >
               {t("nav.contact")}
             </Link>
@@ -105,7 +105,7 @@ export function LeftNav({ onOpenRight, user }: LeftNavProps) {
           <li>
             <Link
               href="/privacy"
-              className="hover:text-text-neutral transition-colors text-xs font-medium text-text-neutral/45"
+              className="hover:text-foreground-secondary-default transition-colors text-xs font-medium text-foreground-secondary-default/45"
             >
               {t("nav.privacy")}
             </Link>
@@ -113,7 +113,7 @@ export function LeftNav({ onOpenRight, user }: LeftNavProps) {
           <li>
             <Link
               href="/terms"
-              className="hover:text-text-neutral transition-colors text-xs font-medium text-text-neutral/45"
+              className="hover:text-foreground-secondary-default transition-colors text-xs font-medium text-foreground-secondary-default/45"
             >
               {t("nav.terms")}
             </Link>

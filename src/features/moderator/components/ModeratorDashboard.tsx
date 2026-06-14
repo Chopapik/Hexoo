@@ -70,13 +70,13 @@ export default function ModeratorDashboard() {
   return (
     <div className="w-full flex flex-col p-10 gap-10">
       <div className="w-full flex items-center justify-between gap-4">
-        <span className="text-text-main text-xl font-semibold">
+        <span className="text-foreground-primary-default text-xl font-semibold">
           {t("moderation.dashboard.title")}
         </span>
       </div>
 
       <div className="w-full flex justify-center">
-        <div className="w-full p-6 glass-card rounded-2xl border border-primary-neutral-stroke-default max-w-[1300px]">
+        <div className="w-full p-6 glass-card rounded-2xl border border-surface-card-border-default max-w-[1300px]">
           <div className="flex flex-col gap-4 mb-4 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex flex-col gap-3 min-w-0 flex-1">
               <div className="inline-flex rounded-xl border border-white/10 bg-black/20 p-1 self-start">
@@ -97,7 +97,7 @@ export default function ModeratorDashboard() {
                 <h2 className="text-lg font-sans font-semibold">
                   {t("moderation.dashboard.queue")}
                 </h2>
-                <div className="text-sm text-text-neutral">
+                <div className="text-sm text-foreground-secondary-default">
                   {queueSubtitle} {t("moderation.dashboard.loaded")}:{" "}
                   <span className="text-fuchsia-400 font-bold">
                     {loadedCount}
@@ -117,7 +117,7 @@ export default function ModeratorDashboard() {
           </div>
 
           {isLoading ? (
-            <div className="py-12 text-center text-text-neutral animate-pulse">
+            <div className="py-12 text-center text-foreground-secondary-default animate-pulse">
               {t("moderation.dashboard.loading")}
             </div>
           ) : isError ? (
@@ -127,7 +127,7 @@ export default function ModeratorDashboard() {
           ) : (
             <div className="flex flex-col gap-4 mt-6">
               {data?.pages[0]?.length === 0 && (
-                <div className="text-center text-text-neutral py-20 bg-white/5 rounded-xl border border-dashed border-secondary-neutral-background-default">
+                <div className="text-center text-foreground-secondary-default py-20 bg-white/5 rounded-xl border border-dashed border-surface-chrome-background-default">
                   <p className="text-sm mt-2 opacity-60">{emptyMessage}</p>
                 </div>
               )}
@@ -163,7 +163,7 @@ export default function ModeratorDashboard() {
                 className="h-4 w-full flex justify-center py-4"
               >
                 {isFetchingNextPage && (
-                  <AppLoader size="lg" className="text-text-neutral" />
+                  <AppLoader size="lg" className="text-foreground-secondary-default" />
                 )}
               </div>
 
@@ -171,7 +171,7 @@ export default function ModeratorDashboard() {
                 data &&
                 data.pages.length > 0 &&
                 data.pages[0].length > 0 && (
-                  <div className="text-center text-text-neutral text-sm py-8 font-sans opacity-50">
+                  <div className="text-center text-foreground-secondary-default text-sm py-8 font-sans opacity-50">
                     {t("common.end")}
                   </div>
                 )}

@@ -116,10 +116,10 @@ function ButtonMatrix() {
       {buttonVariants.map((variant) => (
         <div key={variant} className="space-y-3">
           <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
-            <h3 className="text-lg font-semibold capitalize text-text-main">
+            <h3 className="text-lg font-semibold capitalize text-foreground-primary-default">
               {variant.replace(/-/g, " ")}
             </h3>
-            <p className="text-xs text-text-neutral">
+            <p className="text-xs text-foreground-secondary-default">
               {buttonSizes.length} sizes x {buttonModes.length} content states
             </p>
           </div>
@@ -127,18 +127,18 @@ function ButtonMatrix() {
             {buttonModes.map((mode) => (
               <div
                 key={`${variant}-${mode}`}
-                className="rounded-lg border border-primary-neutral-stroke-default bg-secondary-neutral-background-default/25 p-3"
+                className="rounded-lg border border-surface-card-border-default bg-surface-chrome-background-default/25 p-3"
               >
-                <h4 className="mb-3 text-sm font-semibold text-text-neutral">
+                <h4 className="mb-3 text-sm font-semibold text-foreground-secondary-default">
                   {mode}
                 </h4>
                 <div className="grid grid-cols-2 gap-2 min-[520px]:grid-cols-3">
                   {buttonSizes.map((size) => (
                     <div
                       key={`${variant}-${mode}-${size}`}
-                      className="flex min-h-20 flex-col items-center justify-center gap-2 rounded-md border border-primary-neutral-stroke-default/60 bg-black/10 p-2"
+                      className="flex min-h-20 flex-col items-center justify-center gap-2 rounded-md border border-surface-card-border-default/60 bg-black/10 p-2"
                     >
-                      <span className="font-mono text-[10px] uppercase text-text-neutral">
+                      <span className="font-mono text-[10px] uppercase text-foreground-secondary-default">
                         {size}
                       </span>
                       {renderButtonForMode(mode, variant, size)}
@@ -159,14 +159,14 @@ export function ButtonsSection() {
     <article
       id="buttons"
       data-section="buttons"
-      className="overflow-hidden rounded-lg border border-primary-neutral-stroke-default bg-black/30"
+      className="overflow-hidden rounded-lg border border-surface-card-border-default bg-black/30"
       style={{
         width: BUTTONS_SECTION_WIDTH,
         minWidth: BUTTONS_SECTION_WIDTH,
         maxWidth: BUTTONS_SECTION_WIDTH,
       }}
     >
-      <div className="bg-page-background p-3 sm:p-6">
+      <div className="bg-page-background-default p-3 sm:p-6">
         <DemoSection
           id="button-matrix"
           title="Buttons"

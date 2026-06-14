@@ -85,13 +85,13 @@ export default function ActivityLogTable() {
   }, [hasNextPage, isFetchingNextPage, fetchNextPage, data?.pages.length]);
 
   return (
-    <div className="w-full p-6 glass-card rounded-2xl border border-primary-neutral-stroke-default max-w-[1300px]">
+    <div className="w-full p-6 glass-card rounded-2xl border border-surface-card-border-default max-w-[1300px]">
       <div className="flex items-center justify-between mb-4">
         <div className="flex flex-col">
           <h2 className="text-lg font-sans font-semibold">
             {t("admin.activityLog")}
           </h2>
-          <div className="text-sm text-text-neutral">
+          <div className="text-sm text-foreground-secondary-default">
             {t("admin.latestEvents")}
           </div>
         </div>
@@ -105,7 +105,7 @@ export default function ActivityLogTable() {
       </div>
 
       {isLoading ? (
-        <div className="py-12 text-center text-text-neutral">
+        <div className="py-12 text-center text-foreground-secondary-default">
           {t("admin.loadingLogs")}
         </div>
       ) : isError ? (
@@ -114,18 +114,18 @@ export default function ActivityLogTable() {
         </div>
       ) : (
         <>
-          <div className="mb-3 text-sm text-text-neutral flex gap-1">
+          <div className="mb-3 text-sm text-foreground-secondary-default flex gap-1">
             {t("admin.loaded")}
-            <span className="font-medium text-text-main">{logs.length}</span>
+            <span className="font-medium text-foreground-primary-default">{logs.length}</span>
           </div>
 
           <div
             ref={scrollRootRef}
-            className="overflow-x-auto overflow-y-auto rounded-md max-h-[600px] border border-primary-neutral-stroke-default/60"
+            className="overflow-x-auto overflow-y-auto rounded-md max-h-[600px] border border-surface-card-border-default/60"
           >
             <table className="min-w-full bg-transparent text-sm">
-              <thead className="bg-primary-neutral-background-default/60 sticky top-0 z-10">
-                <tr className="text-left text-xs text-text-neutral uppercase tracking-wide">
+              <thead className="bg-surface-card-background-default/60 sticky top-0 z-10">
+                <tr className="text-left text-xs text-foreground-secondary-default uppercase tracking-wide">
                   <th className="px-3 py-2 w-[190px]">{t("admin.time")}</th>
                   <th className="px-3 py-2 w-[220px]">{t("admin.user")}</th>
                   <th className="px-3 py-2 w-[220px]">Email</th>
@@ -140,9 +140,9 @@ export default function ActivityLogTable() {
                   logs.map((log: ActivityLog) => (
                     <tr
                       key={log.id}
-                      className="hover:bg-primary-neutral-background-default/60 border-t border-primary-neutral-stroke-default/40 align-top"
+                      className="hover:bg-surface-card-background-default/60 border-t border-surface-card-border-default/40 align-top"
                     >
-                      <td className="px-3 py-2 text-xs text-text-neutral whitespace-nowrap">
+                      <td className="px-3 py-2 text-xs text-foreground-secondary-default whitespace-nowrap">
                         {new Date(log.createdAt).toLocaleString(lang === "pl" ? "pl-PL" : "en-US", {
                           year: "2-digit",
                           month: "2-digit",
@@ -151,32 +151,32 @@ export default function ActivityLogTable() {
                           minute: "2-digit",
                         })}
                       </td>
-                      <td className="px-3 py-2 text-xs text-text-main">
+                      <td className="px-3 py-2 text-xs text-foreground-primary-default">
                         <div className="flex flex-col gap-0.5">
                           <span>{log.userName ?? "—"}</span>
-                          <span className="font-mono text-[10px] text-text-neutral">
+                          <span className="font-mono text-[10px] text-foreground-secondary-default">
                             {log.userId}
                           </span>
                         </div>
                       </td>
-                      <td className="px-3 py-2 text-xs text-text-neutral truncate max-w-[220px]">
+                      <td className="px-3 py-2 text-xs text-foreground-secondary-default truncate max-w-[220px]">
                         {log.userEmail ?? "—"}
                       </td>
                       <td className="px-3 py-2 text-xs">
                         {log.userRole ? (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-primary-neutral-background-default text-[11px] uppercase tracking-wide text-text-main border border-primary-neutral-stroke-default">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-surface-card-background-default text-[11px] uppercase tracking-wide text-foreground-primary-default border border-surface-card-border-default">
                             {log.userRole}
                           </span>
                         ) : (
-                          <span className="text-text-neutral text-xs">—</span>
+                          <span className="text-foreground-secondary-default text-xs">—</span>
                         )}
                       </td>
                       <td className="px-3 py-2 text-xs">
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-primary-neutral-background-default text-[11px] uppercase tracking-wide text-text-main border border-primary-neutral-stroke-default">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-surface-card-background-default text-[11px] uppercase tracking-wide text-foreground-primary-default border border-surface-card-border-default">
                           {log.action}
                         </span>
                       </td>
-                      <td className="px-3 py-2 text-xs text-text-main whitespace-pre-wrap max-w-[520px]">
+                      <td className="px-3 py-2 text-xs text-foreground-primary-default whitespace-pre-wrap max-w-[520px]">
                         {log.details || "—"}
                       </td>
                     </tr>
@@ -185,7 +185,7 @@ export default function ActivityLogTable() {
                   <tr>
                     <td
                       colSpan={6}
-                      className="px-3 py-6 text-center text-text-neutral"
+                      className="px-3 py-6 text-center text-foreground-secondary-default"
                     >
                       {t("admin.noEvents")}
                     </td>
@@ -200,14 +200,14 @@ export default function ActivityLogTable() {
                 className="h-4 w-full flex justify-center py-4 shrink-0"
               >
                 {isFetchingNextPage && (
-                  <AppLoader size="lg" className="text-text-neutral" />
+                  <AppLoader size="lg" className="text-foreground-secondary-default" />
                 )}
               </div>
             )}
           </div>
 
           {!hasNextPage && logs.length > 0 && (
-            <div className="text-center text-text-neutral text-sm py-6 font-sans opacity-50">
+            <div className="text-center text-foreground-secondary-default text-sm py-6 font-sans opacity-50">
               {t("admin.allLoaded")}
             </div>
           )}

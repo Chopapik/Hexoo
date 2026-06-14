@@ -10,7 +10,7 @@ export const Header = ({ user }: { user: SessionData | null }) => {
   const { t } = useI18n();
 
   return (
-    <div className="h-12 md:h-14 w-full bg-primary-neutral-background-default rounded-xl border-t-2 border-primary-neutral-stroke-default inline-flex justify-between items-center shadow-lg">
+    <div className="h-12 md:h-14 w-full bg-surface-card-background-default rounded-xl border-t-2 border-surface-card-border-default inline-flex justify-between items-center shadow-lg">
       <Link
         href="/"
         className="h-full flex items-center transition-transform duration-200 pl-3 md:pl-4"
@@ -28,10 +28,10 @@ export const Header = ({ user }: { user: SessionData | null }) => {
               </div>
 
               <div className="hidden xs:flex flex-col justify-center items-start">
-                <span className="text-[10px] leading-none text-text-neutral font-sans font-medium tracking-wide uppercase mb-0.5">
+                <span className="text-[10px] leading-none text-foreground-secondary-default font-sans font-medium tracking-wide uppercase mb-0.5">
                   {t("header.loggedAs")}
                 </span>
-                <span className="text-sm leading-none font-bold text-text-main font-sans  transition-colors">
+                <span className="text-sm leading-none font-bold text-foreground-primary-default font-sans  transition-colors">
                   {user.name}
                 </span>
               </div>

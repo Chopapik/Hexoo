@@ -1,78 +1,229 @@
 @import "tailwindcss";
+
 @plugin "@tailwindcss/typography";
-
-
-html,
-body {
-  font-family: var(--font-sans);
-}
-
-body {
-  background-color: var(--color-page-background);
-  padding: 0;
-  margin: 0;
-}
-
-button,
-input,
-textarea,
-select,
-option {
-  font-family: inherit;
-}
-
-.grecaptcha-badge {
-  visibility: hidden !important;
-}
 
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
-
-
 /* Default theme = dark mode */
 @theme {
-  --font-sans: "Rubik", Arial, sans-serif;
-  --font-serif: "Newsreader", Georgia, "Times New Roman", serif;
-  --font-mono: "Roboto Mono", "Courier New", monospace;
-
-
   /* Custom breakpoint for Tailwind `xs:` utilities */
   --breakpoint-xs: 30rem;
 
-  --color-text-main: #ffffff;
-  --color-text-neutral: #737373;
-  --color-text-neutral-secondary: #262626;
-  --color-text-neutral-tertiary: #171717;
+  /* Fonts */
+  --font-mono: "Roboto Mono", "Courier New", monospace;
+  --font-sans: "Rubik", Arial, sans-serif;
+  --font-serif: "Newsreader", Georgia, "Times New Roman", serif;
 
-  --color-primary-neutral-background-default: #171717;
-  --color-primary-neutral-background-hover: #262626;
-  --color-primary-neutral-stroke-default: #262626;
-  --color-primary-neutral-stroke-hover: #404040;
+  /* Validation */
+  --color-validation-error-background: #DC2626;
+  --color-validation-error-border: #DC2626;
+  --color-validation-error-icon: #DC2626;
+  --color-validation-error-text: #DC2626;
+  --color-validation-success-background: #22C55E;
+  --color-validation-success-border: #22C55E;
+  --color-validation-success-icon: #22C55E;
+  --color-validation-success-text: #22C55E;
+  --color-validation-warning-background: #EAB308;
+  --color-validation-warning-border: #EAB308;
+  --color-validation-warning-icon: #EAB308;
+  --color-validation-warning-text: #EAB308;
 
-  --color-primary-fuchsia-background-default: #a21caf;
-  --color-primary-fuchsia-background-hover: #bf26d3;
-  --color-primary-fuchsia-stroke-default: #bf26d3;
-  --color-primary-fuchsia-stroke-hover: #d94dff;
+  /* Inputs */
+  --color-input-background-default: rgb(38 38 38 / 0.5);
+  --color-input-background-hover: rgb(64 64 64 / 0.5);
+  --color-input-border-default: #404040;
+  --color-input-border-hover: #FFFFFF;
+  --color-input-button-default: #737373;
+  --color-input-button-disabled: rgb(115 115 115 / 0.35);
+  --color-input-button-hover: #FFFFFF;
+  --color-input-text-helper: #737373;
+  --color-input-text-label: #737373;
+  --color-input-text-placeholder: rgb(115 115 115 / 0.5);
+  --color-input-text-value: #FFFFFF;
 
-  --color-secondary-neutral-background-default: #262626;
-  --color-secondary-neutral-background-hover: #404040;
-  --color-secondary-neutral-stroke-default: #404040;
-  --color-secondary-neutral-stroke-hover: #525252;
+  /* Modal */
+  --color-modal-chrome-background-default: rgb(11 11 13 / 0.66);
+  --color-modal-chrome-border-default: rgb(255 255 255 / 0.045);
+  --color-modal-overlay-background-default: rgb(0 0 0 / 0.7);
+  --color-modal-surface-background-default: rgb(11 11 13 / 0.82);
+  --color-modal-surface-border-default: rgb(255 255 255 / 0.065);
 
-  --color-secondary-fuchsia-background-default: #bf26d3;
-  --color-secondary-fuchsia-background-hover: #d94dff;
-  --color-secondary-fuchsia-stroke-default: #d94dff;
-  --color-secondary-fuchsia-stroke-hover: #e87aff;
+  /* Button */
+  --color-button-danger-background-default-from: #DC2626;
+  --color-button-danger-background-default-to: #991B1B;
+  --color-button-danger-background-disabled-from: rgb(220 38 38 / 0.25);
+  --color-button-danger-background-disabled-to: rgb(153 27 27 / 0.25);
+  --color-button-danger-background-hover-from: #C22121;
+  --color-button-danger-background-hover-to: #871818;
+  --color-button-danger-border-default-from: #FF7B7B;
+  --color-button-danger-border-default-to: #7A0000;
+  --color-button-danger-border-disabled-from: #DB9696;
+  --color-button-danger-border-disabled-to: #9C3030;
+  --color-button-danger-border-hover-from: #E06C6C;
+  --color-button-danger-border-hover-to: #6B0000;
+  --color-button-default-background-default-from: #C026D3;
+  --color-button-default-background-default-to: #86198F;
+  --color-button-default-background-disabled-from: rgb(192 38 211 / 0.25);
+  --color-button-default-background-disabled-to: rgb(134 25 143 / 0.25);
+  --color-button-default-background-hover-from: #A921BA;
+  --color-button-default-background-hover-to: #76167E;
+  --color-button-default-border-default-from: #EF72FF;
+  --color-button-default-border-default-to: #61006E;
+  --color-button-default-border-disabled-from: rgb(239 114 255 / 0.25);
+  --color-button-default-border-disabled-to: rgb(97 0 110 / 0.25);
+  --color-button-default-border-hover-from: #D264E0;
+  --color-button-default-border-hover-to: #550061;
+  --color-button-ghost-background-default: rgb(255 255 255 / 0);
+  --color-button-ghost-background-disabled: rgb(255 255 255 / 0);
+  --color-button-ghost-background-hover: rgb(255 255 255 / 0.1);
+  --color-button-glass-card-background-default: rgb(255 255 255 / 0.05);
+  --color-button-glass-card-background-disabled: rgb(255 255 255 / 0.05);
+  --color-button-glass-card-background-hover: rgb(255 255 255 / 0.1);
+  --color-button-glass-card-border-default: rgb(255 255 255 / 0.1);
+  --color-button-glass-card-border-disabled: rgb(255 255 255 / 0.1);
+  --color-button-glass-card-border-hover: rgb(255 255 255 / 0.14);
+  --color-button-info-background-default-from: #0EA5E9;
+  --color-button-info-background-default-to: #0369A1;
+  --color-button-info-background-disabled-from: rgb(14 165 233 / 0.25);
+  --color-button-info-background-disabled-to: rgb(3 105 161 / 0.25);
+  --color-button-info-background-hover-from: #0C91CD;
+  --color-button-info-background-hover-to: #035C8E;
+  --color-button-info-border-default-from: #70D3FF;
+  --color-button-info-border-default-to: #00446A;
+  --color-button-info-border-disabled-from: #89CBE6;
+  --color-button-info-border-disabled-to: #157BAE;
+  --color-button-info-border-hover-from: #63B9E0;
+  --color-button-info-border-hover-to: #003C5D;
+  --color-button-outline-fuchsia-background-default: rgb(217 70 239 / 0);
+  --color-button-outline-fuchsia-background-disabled: rgb(217 70 239 / 0);
+  --color-button-outline-fuchsia-background-hover: rgb(217 70 239 / 0.1);
+  --color-button-outline-fuchsia-border-default: rgb(217 70 239 / 0.6);
+  --color-button-outline-fuchsia-border-disabled: rgb(217 70 239 / 0.2);
+  --color-button-outline-fuchsia-border-hover: rgb(200 64 220 / 0.6);
+  --color-button-outline-background-default: rgb(255 255 255 / 0.03);
+  --color-button-outline-background-disabled: rgb(255 255 255 / 0);
+  --color-button-outline-background-hover: rgb(255 255 255 / 0.1);
+  --color-button-outline-border-default: rgb(255 255 255 / 0.2);
+  --color-button-outline-border-disabled: rgb(255 255 255 / 0.1);
+  --color-button-outline-border-hover: rgb(235 235 235 / 0.2);
+  --color-button-secondary-background-default-from: #404040;
+  --color-button-secondary-background-default-to: #262626;
+  --color-button-secondary-background-disabled-from: #3A3A3A;
+  --color-button-secondary-background-disabled-to: #242424;
+  --color-button-secondary-background-hover-from: #383838;
+  --color-button-secondary-background-hover-to: #212121;
+  --color-button-secondary-border-default-from: #626262;
+  --color-button-secondary-border-default-to: #171717;
+  --color-button-secondary-border-disabled-from: #646464;
+  --color-button-secondary-border-disabled-to: #242424;
+  --color-button-secondary-border-hover-from: #565656;
+  --color-button-secondary-border-hover-to: #141414;
+  --color-button-success-background-default-from: #059669;
+  --color-button-success-background-default-to: #065F46;
+  --color-button-success-background-disabled-from: rgb(5 150 105 / 0.25);
+  --color-button-success-background-disabled-to: rgb(6 95 70 / 0.25);
+  --color-button-success-background-hover-from: #04845C;
+  --color-button-success-background-hover-to: #05543E;
+  --color-button-success-border-default-from: #14FFB6;
+  --color-button-success-border-default-to: #002B1F;
+  --color-button-success-border-disabled-from: #3CD1A2;
+  --color-button-success-border-disabled-to: #087050;
+  --color-button-success-border-hover-from: #12E0A0;
+  --color-button-success-border-hover-to: #00261B;
+  --color-button-text-default: #FFFFFF;
+  --color-button-text-disabled: rgb(255 255 255 / 0.8);
+  --color-button-transparent-background-default: rgb(255 255 255 / 0);
+  --color-button-transparent-background-disabled: rgb(255 255 255 / 0);
+  --color-button-transparent-background-hover: rgb(255 255 255 / 0.1);
+  --color-button-warning-background-default-from: #F59E0B;
+  --color-button-warning-background-default-to: #B45309;
+  --color-button-warning-background-disabled-from: rgb(245 158 11 / 0.25);
+  --color-button-warning-background-disabled-to: rgb(180 83 9 / 0.25);
+  --color-button-warning-background-hover-from: #D88B0A;
+  --color-button-warning-background-hover-to: #9E4908;
+  --color-button-warning-border-default-from: #FFCD79;
+  --color-button-warning-border-default-to: #833900;
+  --color-button-warning-border-disabled-from: #ECC98B;
+  --color-button-warning-border-disabled-to: #C36A18;
+  --color-button-warning-border-hover-from: #E0B56A;
+  --color-button-warning-border-hover-to: #733200;
 
-  --color-tertiary-neutral-background-default: #404040;
-  --color-tertiary-neutral-background-hover: #525252;
+  /* SwitchButton */
+  --color-switch-label-checked: #FFFFFF;
+  --color-switch-label-default: #737373;
+  --color-switch-label-disabled: rgb(115 115 115 / 0.45);
+  --color-switch-thumb-background-default: #FFFFFF;
+  --color-switch-thumb-background-disabled: rgb(255 255 255 / 0.55);
+  --color-switch-thumb-border-default: #E5E5E5;
+  --color-switch-thumb-border-disabled: rgb(229 229 229 / 0.35);
+  --color-switch-track-checked-background-default-from: #C026D3;
+  --color-switch-track-checked-background-default-to: #86198F;
+  --color-switch-track-checked-background-disabled-from: #C400DD;
+  --color-switch-track-checked-background-disabled-to: #93009C;
+  --color-switch-track-checked-background-hover-from: #A921BA;
+  --color-switch-track-checked-background-hover-to: #76167E;
+  --color-switch-track-checked-border-default-from: #EF72FF;
+  --color-switch-track-checked-border-default-to: #61006E;
+  --color-switch-track-checked-border-disabled-from: #D847EA;
+  --color-switch-track-checked-border-disabled-to: #93009C;
+  --color-switch-track-checked-border-hover-from: #D264E0;
+  --color-switch-track-checked-border-hover-to: #550061;
+  --color-switch-track-unchecked-background-default-from: #404040;
+  --color-switch-track-unchecked-background-default-to: #262626;
+  --color-switch-track-unchecked-background-disabled-from: #3A3A3A;
+  --color-switch-track-unchecked-background-disabled-to: #242424;
+  --color-switch-track-unchecked-background-hover-from: #4A4A4A;
+  --color-switch-track-unchecked-background-hover-to: #2E2E2E;
+  --color-switch-track-unchecked-border-default-from: #626262;
+  --color-switch-track-unchecked-border-default-to: #171717;
+  --color-switch-track-unchecked-border-disabled-from: #555555;
+  --color-switch-track-unchecked-border-disabled-to: #242424;
+  --color-switch-track-unchecked-border-hover-from: #747474;
+  --color-switch-track-unchecked-border-hover-to: #202020;
 
-  --color-page-background: #000000;
+  /* Checkbox */
+  --color-checkbox-background-checked-default: #FFFFFF;
+  --color-checkbox-background-checked-disabled: rgb(255 255 255 / 0.35);
+  --color-checkbox-background-unchecked-default: #000000;
+  --color-checkbox-background-unchecked-disabled: rgb(0 0 0 / 0.35);
+  --color-checkbox-border-checked-default: #FFFFFF;
+  --color-checkbox-border-checked-disabled: #FFFFFF;
+  --color-checkbox-border-unchecked-default: #FFFFFF;
+  --color-checkbox-border-unchecked-disabled: rgb(255 255 255 / 0.35);
+  --color-checkbox-icon-default: #000000;
+  --color-checkbox-icon-disabled: rgb(0 0 0 / 0.45);
+  --color-checkbox-label-default: #FFFFFF;
+  --color-checkbox-label-disabled: rgb(255 255 255 / 0.35);
 
-  /* Scrollbar colors (dark mode default) */
-  --color-scrollbar-thumb: #404040;
-  /* dark */
-  --color-scrollbar-thumb-hover: #525252;
+  /* Page */
+  --color-page-background-default: #000000;
+
+  /* Surface */
+  --color-surface-card-background-default: #0B0B0D;
+  --color-surface-card-border-default: #1B1B1B;
+  --color-surface-chrome-background-default: rgb(11 11 13 / 0.75);
+  --color-surface-chrome-border-default: rgb(38 38 38 / 0.75);
+
+  /* Foreground */
+  --color-foreground-inverse-default: #000000;
+  --color-foreground-muted-default: rgb(115 115 115 / 0.5);
+  --color-foreground-primary-default: #FFFFFF;
+  --color-foreground-secondary-default: #737373;
+
+  /* Divider */
+  --color-divider-default: #262626;
+  --color-divider-subtle: #1B1B1B;
+
+  /* Accent */
+  --color-accent-fuchsia-background-default: #C026D3;
+  --color-accent-fuchsia-background-hover: #D946EF;
+  --color-accent-fuchsia-border-default: #D946EF;
+  --color-accent-fuchsia-border-hover: #E879F9;
+  --color-accent-fuchsia-foreground-default: #FFFFFF;
+
+  /* TW Colors used directly by Figma bindings */
+  --color-green-500: #22C55E;
+  --color-red-500: #EF4444;
 }
 
 @layer theme {
@@ -83,49 +234,45 @@ option {
 
   [data-theme="light"] {
     color-scheme: light;
-    --color-text-main: #000000;
-    --color-text-neutral: #737373;
-    --color-text-neutral-secondary: #d4d4d4;
-    --color-text-neutral-tertiary: #e5e5e5;
 
-    --color-primary-neutral-background-default: #f5f5f5;
-    --color-primary-neutral-background-hover: #e5e5e5;
-    --color-primary-neutral-stroke-default: #ffffff;
-    --color-primary-neutral-stroke-hover: #d4d4d4;
+    /* Validation */
+    --color-validation-success-background: #16A34A;
+    --color-validation-success-border: #16A34A;
+    --color-validation-success-icon: #16A34A;
+    --color-validation-success-text: #16A34A;
+    --color-validation-warning-background: #CA8A04;
+    --color-validation-warning-border: #CA8A04;
+    --color-validation-warning-icon: #CA8A04;
+    --color-validation-warning-text: #CA8A04;
 
-    --color-primary-fuchsia-background-default: #bf26d3;
-    --color-primary-fuchsia-background-hover: #d94dff;
-    --color-primary-fuchsia-stroke-default: #d94dff;
-    --color-primary-fuchsia-stroke-hover: #e87aff;
+    /* Inputs */
+    --color-input-background-default: rgb(255 255 255 / 0.5);
+    --color-input-background-hover: rgb(212 212 212 / 0.5);
+    --color-input-border-default: #D4D4D4;
+    --color-input-text-value: #000000;
 
-    --color-secondary-neutral-background-default: #e5e5e5;
-    --color-secondary-neutral-background-hover: #d4d4d4;
-    --color-secondary-neutral-stroke-default: #d4d4d4;
-    --color-secondary-neutral-stroke-hover: #a3a3a3;
+    /* Modal */
+    --color-modal-chrome-background-default: rgb(255 255 255 / 0.72);
+    --color-modal-chrome-border-default: rgb(0 0 0 / 0.06);
+    --color-modal-overlay-background-default: rgb(0 0 0 / 0.36);
+    --color-modal-surface-background-default: rgb(255 255 255 / 0.84);
+    --color-modal-surface-border-default: rgb(0 0 0 / 0.075);
 
-    --color-secondary-fuchsia-background-default: #d94dff;
-    --color-secondary-fuchsia-background-hover: #e87aff;
-    --color-secondary-fuchsia-stroke-default: #e87aff;
-    --color-secondary-fuchsia-stroke-hover: #f19aff;
+    /* Page */
+    --color-page-background-default: #E5E5E5;
 
-    --color-tertiary-neutral-background-default: #d4d4d4;
-    --color-tertiary-neutral-background-hover: #a3a3a3;
+    /* Surface */
+    --color-surface-card-background-default: #FFFFFF;
+    --color-surface-card-border-default: #D4D4D4;
+    --color-surface-chrome-background-default: rgb(255 255 255 / 0.75);
+    --color-surface-chrome-border-default: rgb(212 212 212 / 0.75);
 
-    --color-page-background: #E5E5E5;
+    /* Foreground */
+    --color-foreground-inverse-default: #FFFFFF;
+    --color-foreground-primary-default: #000000;
 
-    /* Scrollbar colors (light mode) */
-    --color-scrollbar-thumb: #ffffff;
-    /* white */
-    --color-scrollbar-thumb-hover: #d4d4d4;
+    /* Divider */
+    --color-divider-default: #D4D4D4;
+    --color-divider-subtle: #E5E5E5;
   }
-}
-
-.ascii-art {
-  font-family: var(--font-mono);
-  white-space: pre;
-  overflow-x: auto;
-  padding: 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  max-width: 100%;
 }

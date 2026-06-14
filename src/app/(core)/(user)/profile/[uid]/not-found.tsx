@@ -10,7 +10,7 @@ export default function ProfileNotFound() {
   return (
     <div className="w-full flex flex-col items-center justify-center p-4">
       <div className="max-w-md w-full p-8 flex flex-col items-center    animate-in fade-in zoom-in duration-300">
-        <h1 className="text-3xl font-serif font-bold text-text-main text-center mb-3">
+        <h1 className="text-3xl font-serif font-bold text-foreground-primary-default text-center mb-3">
           {t("profile.notFoundTitle")}
         </h1>
 

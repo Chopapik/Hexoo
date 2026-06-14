@@ -11,8 +11,8 @@ const meta = {
     children: (
       <div className="flex items-center justify-between gap-4">
         <div>
-          <p className="font-semibold text-text-main">Email address</p>
-          <p className="text-sm text-text-neutral">ada@example.com</p>
+          <p className="font-semibold text-foreground-primary-default">Email address</p>
+          <p className="text-sm text-foreground-secondary-default">ada@example.com</p>
         </div>
         <Button text="Edit" size="sm" variant="secondary" />
       </div>

@@ -15,12 +15,12 @@ export default function AdminPanel() {
   return (
     <div className="w-full flex flex-col p-10 gap-10">
       <div className="w-full flex items-center justify-between gap-4">
-        <span className="text-text-main text-xl font-semibold">
+        <span className="text-foreground-primary-default text-xl font-semibold">
           {t("admin.title")}
         </span>
 
         <div className="flex items-center gap-2">
-          <div className="inline-flex items-center rounded-full bg-primary-neutral-background-default/60 border border-primary-neutral-stroke-default p-1">
+          <div className="inline-flex items-center rounded-full bg-surface-card-background-default/60 border border-surface-card-border-default p-1">
             <Button
               type="button"
               onClick={() => setActiveView("users")}
@@ -28,7 +28,7 @@ export default function AdminPanel() {
               variant={activeView === "users" ? "default" : "transparent"}
               className={`px-4 ${
                 activeView !== "users"
-                  ? "text-text-neutral hover:text-text-main"
+                  ? "text-foreground-secondary-default hover:text-foreground-primary-default"
                   : ""
               }`}
               text={t("admin.users")}
@@ -40,7 +40,7 @@ export default function AdminPanel() {
               variant={activeView === "activity" ? "default" : "transparent"}
               className={`px-4 ${
                 activeView !== "activity"
-                  ? "text-text-neutral hover:text-text-main"
+                  ? "text-foreground-secondary-default hover:text-foreground-primary-default"
                   : ""
               }`}
               text={t("admin.activity")}

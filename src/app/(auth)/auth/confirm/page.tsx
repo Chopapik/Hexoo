@@ -96,10 +96,10 @@ export default function AuthConfirmPage() {
   return (
     <div className="flex-1 flex items-center justify-center">
       <div className="flex w-full max-w-md flex-col items-center gap-4 px-4 py-8 text-center max-sm:bg-transparent sm:gap-6 sm:rounded-[20px] sm:px-10 sm:py-8 sm:glass-card">
-        <div className="text-text-main text-2xl font-bold font-serif">
+        <div className="text-foreground-primary-default text-2xl font-bold font-serif">
           {t("auth.confirm.title")}
         </div>
-        <div className="text-text-neutral text-base font-semibold font-serif">
+        <div className="text-foreground-secondary-default text-base font-semibold font-serif">
           {message}
         </div>
       </div>

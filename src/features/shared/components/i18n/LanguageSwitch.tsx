@@ -16,7 +16,7 @@ export default function LanguageSwitch({
 
   return (
     <div
-      className={`inline-flex items-center rounded-lg border border-primary-neutral-stroke-default bg-secondary-neutral-background-default/60 p-0.5 font-sans ${className}`}
+      className={`inline-flex items-center rounded-lg border border-surface-card-border-default bg-surface-chrome-background-default/60 p-0.5 font-sans ${className}`}
       aria-label={t("common.language")}
     >
       {LANGUAGES.map((language: Lang) => {
@@ -30,8 +30,8 @@ export default function LanguageSwitch({
               "rounded-md px-2 py-1 text-[11px] font-bold uppercase tracking-wide transition-colors",
               compact ? "min-w-8" : "min-w-10",
               isActive
-                ? "bg-primary-fuchsia-stroke-default text-white"
-                : "text-text-neutral hover:text-text-main",
+                ? "bg-accent-fuchsia-border-default text-white"
+                : "text-foreground-secondary-default hover:text-foreground-primary-default",
             ].join(" ")}
             aria-pressed={isActive}
             title={t(language === "pl" ? "lang.pl" : "lang.en")}

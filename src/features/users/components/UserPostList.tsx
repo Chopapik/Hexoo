@@ -52,7 +52,7 @@ export function UserPostList({ userId }: { userId: string }) {
         {[1, 2].map((i) => (
           <div
             key={i}
-            className="w-full p-4 bg-primary-neutral-background-default rounded-xl border-t-2 border-primary-neutral-stroke-default animate-pulse"
+            className="w-full p-4 bg-surface-card-background-default rounded-xl border-t-2 border-surface-card-border-default animate-pulse"
           >
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-xl bg-white/10" />
@@ -81,18 +81,18 @@ export function UserPostList({ userId }: { userId: string }) {
         className="h-10 flex justify-center items-center"
       >
         {isFetchingNextPage && (
-          <AppLoader size="lg" className="text-text-neutral" />
+          <AppLoader size="lg" className="text-foreground-secondary-default" />
         )}
       </div>
 
       {!hasNextPage && data?.pages[0]?.length !== 0 && (
-        <p className="text-center text-text-neutral opacity-50 text-sm py-4">
+        <p className="text-center text-foreground-secondary-default opacity-50 text-sm py-4">
           {t("profile.allPosts")}
         </p>
       )}
 
       {data?.pages[0]?.length === 0 && (
-        <div className="text-center py-10 text-text-neutral font-sans">
+        <div className="text-center py-10 text-foreground-secondary-default font-sans">
           {t("profile.noPosts")}
         </div>
       )}

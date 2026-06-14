@@ -34,7 +34,7 @@ export default async function ModeratorLayout({
   }
 
   return (
-    <div className="w-full min-h-screen bg-page-background flex flex-col">
+    <div className="w-full min-h-screen bg-page-background-default flex flex-col">
       {children}
     </div>
   );

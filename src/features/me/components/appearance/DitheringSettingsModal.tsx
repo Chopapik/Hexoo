@@ -101,7 +101,7 @@ export default function DitheringSettingsModal({
   };
 
   const controlBlockClass =
-    "rounded-lg border border-primary-neutral-stroke-default/70 bg-secondary-neutral-background-default/40 p-3";
+    "rounded-lg border border-surface-card-border-default/70 bg-surface-chrome-background-default/40 p-3";
 
   const renderNumericControl = ({
     id,
@@ -123,11 +123,11 @@ export default function DitheringSettingsModal({
     <div className={controlBlockClass}>
       <label
         htmlFor={id}
-        className="block text-sm font-semibold font-sans text-text-main"
+        className="block text-sm font-semibold font-sans text-foreground-primary-default"
       >
         {label}
       </label>
-      <p className="mt-1 text-xs font-sans text-text-neutral">{description}</p>
+      <p className="mt-1 text-xs font-sans text-foreground-secondary-default">{description}</p>
       <div className="mt-3 flex items-center gap-3">
         <input
           id={id}
@@ -136,7 +136,7 @@ export default function DitheringSettingsModal({
           max={max}
           value={value}
           onChange={(e) => handleNumberChange(e.target.value, min, max, setter)}
-          className="w-full accent-primary-fuchsia-stroke-default"
+          className="w-full accent-accent-fuchsia-border-default"
         />
         <input
           type="number"
@@ -144,7 +144,7 @@ export default function DitheringSettingsModal({
           max={max}
           value={value}
           onChange={(e) => handleNumberChange(e.target.value, min, max, setter)}
-          className="w-24 rounded-md border border-primary-neutral-stroke-default/70 bg-primary-neutral-background-default px-2 py-1 text-sm font-sans text-text-main"
+          className="w-24 rounded-md border border-surface-card-border-default/70 bg-surface-card-background-default px-2 py-1 text-sm font-sans text-foreground-primary-default"
         />
       </div>
     </div>
@@ -172,17 +172,17 @@ export default function DitheringSettingsModal({
     <div className={controlBlockClass}>
       <label
         htmlFor={id}
-        className="block text-sm font-semibold font-sans text-text-main"
+        className="block text-sm font-semibold font-sans text-foreground-primary-default"
       >
         {label}
       </label>
-      <p className="mt-1 text-xs font-sans text-text-neutral">{description}</p>
+      <p className="mt-1 text-xs font-sans text-foreground-secondary-default">{description}</p>
       <select
         id={id}
         value={value}
         disabled={disabled}
         onChange={(e) => setter(e.target.value as T)}
-        className="mt-3 w-full rounded-md border border-primary-neutral-stroke-default/70 bg-primary-neutral-background-default px-3 py-2 text-sm font-sans text-text-main disabled:cursor-not-allowed disabled:opacity-60"
+        className="mt-3 w-full rounded-md border border-surface-card-border-default/70 bg-surface-card-background-default px-3 py-2 text-sm font-sans text-foreground-primary-default disabled:cursor-not-allowed disabled:opacity-60"
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>
@@ -191,7 +191,7 @@ export default function DitheringSettingsModal({
         ))}
       </select>
       {disabledHint ? (
-        <p className="mt-2 text-xs font-sans text-text-neutral">
+        <p className="mt-2 text-xs font-sans text-foreground-secondary-default">
           {disabledHint}
         </p>
       ) : null}
@@ -223,7 +223,7 @@ export default function DitheringSettingsModal({
     >
       <div className="grid max-h-[75vh] grid-cols-1 gap-4 overflow-y-auto p-4 font-sans md:grid-cols-2 md:p-6">
         <div className="flex flex-col gap-3">
-          <p className="text-sm font-sans text-text-neutral">
+          <p className="text-sm font-sans text-foreground-secondary-default">
             {t("settings.dithering.instantSave")}
           </p>
 
@@ -232,11 +232,11 @@ export default function DitheringSettingsModal({
               <div>
                 <h4
                   id="dithering-enabled-label"
-                  className="text-sm font-semibold font-sans text-text-main"
+                  className="text-sm font-semibold font-sans text-foreground-primary-default"
                 >
                   {t("settings.dithering.enable")}
                 </h4>
-                <p className="text-xs font-sans text-text-neutral">
+                <p className="text-xs font-sans text-foreground-secondary-default">
                   {t("settings.dithering.disableCopy")}
                 </p>
               </div>
@@ -326,21 +326,21 @@ export default function DitheringSettingsModal({
         </div>
 
         <div className="flex flex-col gap-3">
-          <h4 className="text-sm font-semibold font-sans text-text-main">
+          <h4 className="text-sm font-semibold font-sans text-foreground-primary-default">
             Live preview
           </h4>
 
           {!previewAssetAvailable ? (
-            <div className="rounded-lg border border-dashed border-primary-neutral-stroke-default/70 bg-secondary-neutral-background-default/40 p-4 text-sm font-sans text-text-neutral">
+            <div className="rounded-lg border border-dashed border-surface-card-border-default/70 bg-surface-chrome-background-default/40 p-4 text-sm font-sans text-foreground-secondary-default">
               {t("settings.dithering.previewMissing")}
-              <span className="mt-1 block font-mono text-text-main">
+              <span className="mt-1 block font-mono text-foreground-primary-default">
                 public/images/settings/dithering-preview.png
               </span>
             </div>
           ) : (
             <div className="flex flex-col gap-3">
-              <div className="rounded-lg border border-primary-neutral-stroke-default/70 bg-secondary-neutral-background-default/40 p-2">
-                <p className="mb-2 text-xs font-semibold font-sans text-text-neutral">
+              <div className="rounded-lg border border-surface-card-border-default/70 bg-surface-chrome-background-default/40 p-2">
+                <p className="mb-2 text-xs font-semibold font-sans text-foreground-secondary-default">
                   {t("settings.dithering.original")}
                 </p>
                 <img
@@ -349,8 +349,8 @@ export default function DitheringSettingsModal({
                   className="h-auto w-full rounded-md"
                 />
               </div>
-              <div className="rounded-lg border border-primary-neutral-stroke-default/70 bg-secondary-neutral-background-default/40 p-2">
-                <p className="mb-2 text-xs font-semibold font-sans text-text-neutral">
+              <div className="rounded-lg border border-surface-card-border-default/70 bg-surface-chrome-background-default/40 p-2">
+                <p className="mb-2 text-xs font-semibold font-sans text-foreground-secondary-default">
                   {t("settings.dithering.after")}
                 </p>
                 <DitheredImage
@@ -368,7 +368,7 @@ export default function DitheringSettingsModal({
           )}
 
           {!isPreviewReady && previewAssetAvailable ? (
-            <p className="text-xs font-sans text-text-neutral">
+            <p className="text-xs font-sans text-foreground-secondary-default">
               {t("settings.dithering.processing")}
             </p>
           ) : null}
@@ -378,7 +378,7 @@ export default function DitheringSettingsModal({
             </p>
           ) : null}
 
-          <div className="rounded-lg border border-primary-neutral-stroke-default/70 bg-secondary-neutral-background-default/40 p-3 text-xs font-sans text-text-neutral">
+          <div className="rounded-lg border border-surface-card-border-default/70 bg-surface-chrome-background-default/40 p-3 text-xs font-sans text-foreground-secondary-default">
             <p className="font-sans">
               {t("settings.dithering.preset", {
                 enabled: settings.enabled

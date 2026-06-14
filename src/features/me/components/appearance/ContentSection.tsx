@@ -41,11 +41,11 @@ export default function ContentSection() {
           <div className="min-w-0 flex-1 text-left">
             <h4
               id="nsfw-posts-label"
-              className="font-semibold font-sans text-text-main"
+              className="font-semibold font-sans text-foreground-primary-default"
             >
               {t("settings.content.nsfwPosts")}
             </h4>
-            <p className="text-xs sm:text-sm font-sans text-text-neutral">
+            <p className="text-xs sm:text-sm font-sans text-foreground-secondary-default">
               {t("settings.content.nsfwPostsCopy")}
             </p>
           </div>
@@ -62,11 +62,11 @@ export default function ContentSection() {
           <div className="min-w-0 flex-1 text-left">
             <h4
               id="nsfw-comments-label"
-              className="font-semibold font-sans text-text-main"
+              className="font-semibold font-sans text-foreground-primary-default"
             >
               {t("settings.content.nsfwComments")}
             </h4>
-            <p className="text-xs sm:text-sm font-sans text-text-neutral">
+            <p className="text-xs sm:text-sm font-sans text-foreground-secondary-default">
               {t("settings.content.nsfwCommentsCopy")}
             </p>
           </div>

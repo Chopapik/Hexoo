@@ -3,8 +3,8 @@
   className?: string;
 };
 
-const COLOR_ACTIVE = "#DB2777";
-const COLOR_INACTIVE = "var(--text-neutral, #737373)";
+const COLOR_ACTIVE = "var(--color-accent-fuchsia-background-default)";
+const COLOR_INACTIVE = "var(--color-foreground-secondary-default)";
 
 export const LikeIcon = ({ isLikedByMe = false, className }: LikeIconProps) => {
   return (

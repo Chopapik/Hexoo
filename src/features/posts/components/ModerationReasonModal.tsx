@@ -170,12 +170,12 @@ export default function ModerationReasonModal({
           {title}
         </div>
 
-        <p className="text-sm text-text-neutral leading-relaxed">
+        <p className="text-sm text-foreground-secondary-default leading-relaxed">
           {description}
         </p>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs uppercase tracking-widest text-text-neutral/60 font-bold">
+          <label className="text-xs uppercase tracking-widest text-foreground-secondary-default/60 font-bold">
             {t("moderation.reasonLabel")} <span className="text-red-400">*</span>
           </label>
           <div className="flex flex-wrap gap-2 mb-2">
@@ -189,7 +189,7 @@ export default function ModerationReasonModal({
                 className={`text-xs px-2.5 py-1.5 rounded-md border transition-colors ${
                   justification === preset
                     ? "bg-fuchsia-500/20 border-fuchsia-500/50 text-fuchsia-100"
-                    : "bg-white/5 border-white/10 text-text-neutral hover:bg-white/10"
+                    : "bg-white/5 border-white/10 text-foreground-secondary-default hover:bg-white/10"
                 }`}
               >
                 {preset}
@@ -205,7 +205,7 @@ export default function ModerationReasonModal({
             rows={4}
             className={`
               w-full bg-black/30 rounded-lg border border-white/10 p-3
-              text-sm text-text-main placeholder:text-text-neutral/40
+              text-sm text-foreground-primary-default placeholder:text-foreground-secondary-default/40
               resize-none outline-none transition-all
               focus:ring-1 ${colors.focusRing}
             `}

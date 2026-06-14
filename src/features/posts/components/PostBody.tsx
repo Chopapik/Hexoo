@@ -45,7 +45,7 @@ export const PostBody = ({
               </span>
             )}
             {post.isEdited && (
-              <span className="text-[10px] font-medium text-text-neutral/60 italic">
+              <span className="text-[10px] font-medium text-foreground-secondary-default/60 italic">
                 {t("post.edited")}
               </span>
             )}
@@ -53,9 +53,9 @@ export const PostBody = ({
         )}
         {hasText && (
           <div
-            className={`self-stretch text-text-main text-sm sm:text-base font-normal w-full ${
+            className={`self-stretch text-foreground-primary-default text-sm sm:text-base font-normal w-full ${
               isAscii
-                ? "ascii-art"
+                ? "max-w-full overflow-x-auto whitespace-pre rounded p-2 font-mono text-xs"
                 : "font-sans whitespace-pre-wrap wrap-break-word"
             }`}
           >

@@ -37,7 +37,7 @@ export default function ConfirmDeletePostModal({
       className="max-w-md"
     >
       <div className="flex flex-col gap-3 pt-1">
-        <p className="text-sm text-text-neutral leading-relaxed">
+        <p className="text-sm text-foreground-secondary-default leading-relaxed">
           {t("post.delete.body")}
         </p>
       </div>

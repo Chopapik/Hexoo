@@ -6,7 +6,7 @@
         scrollbar-gutter: stable;
         /* Firefox scrollbar styling */
         scrollbar-width: thin;
-        scrollbar-color: var(--color-scrollbar-thumb) transparent;
+        scrollbar-color: var(--color-divider-default) transparent;
     }
 
     /* Ensure body does not create a second scroller */
@@ -25,14 +25,14 @@
     }
 
     html::-webkit-scrollbar-thumb {
-        background-color: var(--color-scrollbar-thumb);
+        background-color: var(--color-divider-default);
         border-radius: 9999px;
         border: 2px solid transparent;
         background-clip: content-box;
     }
 
     html:hover::-webkit-scrollbar-thumb {
-        background-color: var(--color-scrollbar-thumb-hover);
+        background-color: var(--color-foreground-secondary-default);
     }
 }
 
@@ -41,7 +41,7 @@
     .pretty-scrollbar {
         /* Firefox */
         scrollbar-width: thin;
-        scrollbar-color: var(--color-scrollbar-thumb) transparent;
+        scrollbar-color: var(--color-divider-default) transparent;
     }
 
     /* Chromium/WebKit */
@@ -55,7 +55,7 @@
     }
 
     .pretty-scrollbar::-webkit-scrollbar-thumb {
-        background-color: var(--color-scrollbar-thumb);
+        background-color: var(--color-divider-default);
         border-radius: 9999px;
         border: 2px solid transparent;
         /* adds inner padding for a thinner look */
@@ -63,6 +63,6 @@
     }
 
     .pretty-scrollbar:hover::-webkit-scrollbar-thumb {
-        background-color: var(--color-scrollbar-thumb-hover);
+        background-color: var(--color-foreground-secondary-default);
     }
 }

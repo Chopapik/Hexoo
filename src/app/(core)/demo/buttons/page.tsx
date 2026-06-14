@@ -147,24 +147,24 @@ export default function ButtonsDemoPage() {
   };
 
   return (
-    <div className="min-h-screen bg-page-background p-3 sm:p-6">
+    <div className="min-h-screen bg-page-background-default p-3 sm:p-6">
       <div className="mx-auto max-w-7xl space-y-8">
-        <header className="rounded-lg border border-primary-neutral-stroke-default bg-primary-neutral-background-default p-4 sm:p-6">
-          <h1 className="text-3xl font-bold text-text-main font-sans sm:text-4xl">
+        <header className="rounded-lg border border-surface-card-border-default bg-surface-card-background-default p-4 sm:p-6">
+          <h1 className="text-3xl font-bold text-foreground-primary-default font-sans sm:text-4xl">
             Button Component Demo
           </h1>
-          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-text-neutral font-sans sm:text-base">
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-foreground-secondary-default font-sans sm:text-base">
             All button variants, sizes and states, plus one 1:1 board with real
             mobile, tablet and desktop iframe previews from the full UI demo.
           </p>
         </header>
 
-        <section className="space-y-4 rounded-lg border border-primary-neutral-stroke-default bg-primary-neutral-background-default p-4 sm:p-6">
+        <section className="space-y-4 rounded-lg border border-surface-card-border-default bg-surface-card-background-default p-4 sm:p-6">
           <div>
-            <h2 className="text-2xl font-semibold text-text-main font-sans">
+            <h2 className="text-2xl font-semibold text-foreground-primary-default font-sans">
               Responsive previews
             </h2>
-            <p className="mt-1 text-sm text-text-neutral">
+            <p className="mt-1 text-sm text-foreground-secondary-default">
               All three viewports are rendered 1:1 in one horizontal board. The
               page owns the vertical scroll; the board only scrolls sideways
               when it needs more width.
@@ -178,21 +178,21 @@ export default function ButtonsDemoPage() {
               return (
                 <article
                   key={frame.id}
-                  className="overflow-hidden rounded-lg border border-primary-neutral-stroke-default bg-black/40"
+                  className="overflow-hidden rounded-lg border border-surface-card-border-default bg-black/40"
                   style={{ width: frame.width + 24 }}
                 >
-                  <div className="flex items-center justify-between gap-3 border-b border-primary-neutral-stroke-default bg-secondary-neutral-background-default/50 px-3 py-3">
+                  <div className="flex items-center justify-between gap-3 border-b border-surface-card-border-default bg-surface-chrome-background-default/50 px-3 py-3">
                     <div className="flex items-center gap-3">
                       <Icon className="size-4 text-fuchsia-200" />
-                      <h3 className="font-semibold text-text-main">
+                      <h3 className="font-semibold text-foreground-primary-default">
                         {frame.label}
                       </h3>
                     </div>
-                    <span className="rounded-md border border-white/10 bg-white/5 px-2 py-1 font-mono text-xs text-text-neutral">
+                    <span className="rounded-md border border-white/10 bg-white/5 px-2 py-1 font-mono text-xs text-foreground-secondary-default">
                       {frame.viewport}
                     </span>
                   </div>
-                  <div className="bg-page-background p-2">
+                  <div className="bg-page-background-default p-2">
                     <iframe
                       title={`${frame.label} UI preview`}
                       src={`/demo/ui#${frame.id}`}
@@ -203,7 +203,7 @@ export default function ButtonsDemoPage() {
                       onLoad={(event) =>
                         connectAutoHeightFrame(frame.id, event.currentTarget)
                       }
-                      className="block max-w-none rounded-md border border-primary-neutral-stroke-default bg-page-background"
+                      className="block max-w-none rounded-md border border-surface-card-border-default bg-page-background-default"
                       style={{
                         width: frame.width,
                         height: frameHeight,
@@ -222,8 +222,8 @@ export default function ButtonsDemoPage() {
         <div className="space-y-12">
           {variants.map((variant) => (
             <div key={variant} className="space-y-6">
-              <div className="border-b border-primary-neutral-stroke-default pb-2">
-                <h2 className="text-2xl font-semibold text-text-main font-sans capitalize">
+              <div className="border-b border-surface-card-border-default pb-2">
+                <h2 className="text-2xl font-semibold text-foreground-primary-default font-sans capitalize">
                   {variant.replace(/-/g, " ")}
                 </h2>
               </div>
@@ -232,7 +232,7 @@ export default function ButtonsDemoPage() {
               <div className="space-y-8">
                 {/* Text buttons with different sizes */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-medium text-text-neutral font-sans">
+                  <h3 className="text-lg font-medium text-foreground-secondary-default font-sans">
                     With text
                   </h3>
                   <div className="flex flex-wrap items-center gap-4">
@@ -248,7 +248,7 @@ export default function ButtonsDemoPage() {
                             size={size}
                             text={`Button ${size.toUpperCase()}`}
                           />
-                          <span className="text-xs text-text-neutral font-sans">
+                          <span className="text-xs text-foreground-secondary-default font-sans">
                             {size}
                           </span>
                         </div>
@@ -258,7 +258,7 @@ export default function ButtonsDemoPage() {
 
                 {/* Icon-only buttons */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-medium text-text-neutral font-sans">
+                  <h3 className="text-lg font-medium text-foreground-secondary-default font-sans">
                     Icon only
                   </h3>
                   <div className="flex flex-wrap items-center gap-4">
@@ -272,7 +272,7 @@ export default function ButtonsDemoPage() {
                           size={size as "icon" | "iconSm"}
                           icon={<Plus className="size-4" />}
                         />
-                        <span className="text-xs text-text-neutral font-sans">
+                        <span className="text-xs text-foreground-secondary-default font-sans">
                           {size}
                         </span>
                       </div>
@@ -282,7 +282,7 @@ export default function ButtonsDemoPage() {
 
                 {/* Buttons with left icon */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-medium text-text-neutral font-sans">
+                  <h3 className="text-lg font-medium text-foreground-secondary-default font-sans">
                     With left icon
                   </h3>
                   <div className="flex flex-wrap items-center gap-4">
@@ -299,7 +299,7 @@ export default function ButtonsDemoPage() {
                             text="Send"
                             leftIcon={<Send className="size-4" />}
                           />
-                          <span className="text-xs text-text-neutral font-sans">
+                          <span className="text-xs text-foreground-secondary-default font-sans">
                             {size}
                           </span>
                         </div>
@@ -309,7 +309,7 @@ export default function ButtonsDemoPage() {
 
                 {/* Buttons with right icon */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-medium text-text-neutral font-sans">
+                  <h3 className="text-lg font-medium text-foreground-secondary-default font-sans">
                     With right icon
                   </h3>
                   <div className="flex flex-wrap items-center gap-4">
@@ -326,7 +326,7 @@ export default function ButtonsDemoPage() {
                             text="Like"
                             rightIcon={<Heart className="size-4" />}
                           />
-                          <span className="text-xs text-text-neutral font-sans">
+                          <span className="text-xs text-foreground-secondary-default font-sans">
                             {size}
                           </span>
                         </div>
@@ -336,7 +336,7 @@ export default function ButtonsDemoPage() {
 
                 {/* Buttons with both icons */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-medium text-text-neutral font-sans">
+                  <h3 className="text-lg font-medium text-foreground-secondary-default font-sans">
                     With icons on both sides
                   </h3>
                   <div className="flex flex-wrap items-center gap-4">
@@ -354,7 +354,7 @@ export default function ButtonsDemoPage() {
                             leftIcon={<Search className="size-4" />}
                             rightIcon={<Settings className="size-4" />}
                           />
-                          <span className="text-xs text-text-neutral font-sans">
+                          <span className="text-xs text-foreground-secondary-default font-sans">
                             {size}
                           </span>
                         </div>
@@ -364,7 +364,7 @@ export default function ButtonsDemoPage() {
 
                 {/* Loading state */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-medium text-text-neutral font-sans">
+                  <h3 className="text-lg font-medium text-foreground-secondary-default font-sans">
                     Loading state
                   </h3>
                   <div className="flex flex-wrap items-center gap-4">
@@ -381,7 +381,7 @@ export default function ButtonsDemoPage() {
                             text="Loading..."
                             isLoading={true}
                           />
-                          <span className="text-xs text-text-neutral font-sans">
+                          <span className="text-xs text-foreground-secondary-default font-sans">
                             {size}
                           </span>
                         </div>
@@ -391,7 +391,7 @@ export default function ButtonsDemoPage() {
 
                 {/* Disabled state */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-medium text-text-neutral font-sans">
+                  <h3 className="text-lg font-medium text-foreground-secondary-default font-sans">
                     Disabled
                   </h3>
                   <div className="flex flex-wrap items-center gap-4">
@@ -408,7 +408,7 @@ export default function ButtonsDemoPage() {
                             text="Disabled"
                             disabled={true}
                           />
-                          <span className="text-xs text-text-neutral font-sans">
+                          <span className="text-xs text-foreground-secondary-default font-sans">
                             {size}
                           </span>
                         </div>
@@ -421,8 +421,8 @@ export default function ButtonsDemoPage() {
         </div>
 
         {/* Interactive Examples */}
-        <div className="mt-16 space-y-6 border-t border-primary-neutral-stroke-default pt-8">
-          <h2 className="text-2xl font-semibold text-text-main font-sans">
+        <div className="mt-16 space-y-6 border-t border-surface-card-border-default pt-8">
+          <h2 className="text-2xl font-semibold text-foreground-primary-default font-sans">
             Interactive examples
           </h2>
           <div className="flex flex-wrap gap-4">

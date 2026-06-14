@@ -39,7 +39,7 @@ export default function AdminUserCreateModal({
       confirmSize="sm"
       cancelSize="sm"
       disabled={!email || !password || !name}
-      className="[&_button:first-child]:text-text-neutral [&_button:first-child]:hover:text-white [&_button:first-child]:border-transparent"
+      className="[&_button:first-child]:text-foreground-secondary-default [&_button:first-child]:hover:text-white [&_button:first-child]:border-transparent"
     />
   );
 
@@ -51,7 +51,7 @@ export default function AdminUserCreateModal({
       footer={footer}
     >
       <div className="flex flex-col gap-5 py-2">
-        <p className="text-sm text-text-neutral mb-2">
+        <p className="text-sm text-foreground-secondary-default mb-2">
           {t("admin.createCopy")}
         </p>
 

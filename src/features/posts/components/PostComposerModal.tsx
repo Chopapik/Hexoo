@@ -110,7 +110,7 @@ export default function PostComposerModal({
           icon={<PaperclipIcon className="w-5 h-5" />}
           variant="transparent"
           size="icon"
-          className="text-text-neutral hover:text-white"
+          className="text-foreground-secondary-default hover:text-white"
           type="button"
         />
 
@@ -131,7 +131,7 @@ export default function PostComposerModal({
           }
           variant="transparent"
           size="icon"
-          className="text-text-neutral hover:text-red-500"
+          className="text-foreground-secondary-default hover:text-red-500"
           type="button"
         />
       </div>
@@ -171,7 +171,7 @@ export default function PostComposerModal({
                 alt="Preview"
                 width={200}
                 height={200}
-                className={`rounded-xl border border-primary-neutral-stroke-default object-cover w-auto transition-all duration-300 ${
+                className={`rounded-xl border border-surface-card-border-default object-cover w-auto transition-all duration-300 ${
                   hasText ? "max-h-20 sm:max-h-24" : "max-h-[min(28dvh,12rem)] sm:max-h-[min(32dvh,16rem)]"
                 }`}
               />
@@ -187,9 +187,9 @@ export default function PostComposerModal({
           )}
 
           {youtubeUrl ? (
-            <div className="relative group flex items-center gap-2 px-3 py-2 rounded-lg bg-secondary-neutral-background-default/60 w-full animate-in fade-in zoom-in-95 duration-200">
+            <div className="relative group flex items-center gap-2 px-3 py-2 rounded-lg bg-surface-chrome-background-default/60 w-full animate-in fade-in zoom-in-95 duration-200">
               <YouTubeIcon className="w-4 h-4 text-red-500 shrink-0" />
-              <span className="text-sm text-text-main truncate flex-1 font-sans pr-4">
+              <span className="text-sm text-foreground-primary-default truncate flex-1 font-sans pr-4">
                 {youtubeUrl}
               </span>
               <RemoveImageButton
@@ -201,7 +201,7 @@ export default function PostComposerModal({
             </div>
           ) : showYouTubeInput ? (
             <div className="flex flex-col gap-1 w-full animate-in fade-in zoom-in-95 duration-200">
-              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-secondary-neutral-background-default/60 w-full">
+              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-surface-chrome-background-default/60 w-full">
                 <YouTubeIcon className="w-4 h-4 text-red-500 shrink-0" />
                 <input
                   ref={youtubeInputRef}
@@ -214,7 +214,7 @@ export default function PostComposerModal({
                   onKeyDown={handleYouTubeKeyDown}
                   placeholder={t("post.youtubePlaceholder")}
                   autoFocus
-                  className="flex-1 bg-transparent text-text-main placeholder:text-text-neutral/50 text-sm outline-none"
+                  className="flex-1 bg-transparent text-foreground-primary-default placeholder:text-foreground-secondary-default/50 text-sm outline-none"
                 />
                 <Button
                   type="button"
@@ -246,7 +246,7 @@ export default function PostComposerModal({
               {...textRegistration}
               onKeyDown={onTextKeyDown}
               placeholder={placeholder}
-              className={`w-full bg-transparent text-text-main placeholder:text-text-neutral/50 text-base resize-none outline-none leading-relaxed pb-6 transition-all duration-300 ${
+              className={`w-full bg-transparent text-foreground-primary-default placeholder:text-foreground-secondary-default/50 text-base resize-none outline-none leading-relaxed pb-6 transition-all duration-300 ${
                 imagePreview ? "min-h-[120px] sm:min-h-[140px]" : "min-h-[min(320px,48dvh)] sm:min-h-[min(425px,55dvh)]"
               }`}
               autoFocus
@@ -258,7 +258,7 @@ export default function PostComposerModal({
                 ${
                   isOverLimit
                     ? "text-red-500"
-                    : "text-text-neutral/40 group-focus-within:text-text-neutral/70"
+                    : "text-foreground-secondary-default/40 group-focus-within:text-foreground-secondary-default/70"
                 }
               `}
             >

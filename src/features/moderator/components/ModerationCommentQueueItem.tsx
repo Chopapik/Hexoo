@@ -106,7 +106,7 @@ export default function ModerationCommentQueueItem({
         />
       )}
 
-      <div className="border-2 border-primary-neutral-background-default rounded-xl overflow-hidden relative ">
+      <div className="border-2 border-surface-card-background-default rounded-xl overflow-hidden relative ">
         <p className="border-b border-fuchsia-500/10 bg-fuchsia-950/20 px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-fuchsia-300/90 font-sans">
           {t("moderation.queue.thread")}
         </p>
@@ -114,7 +114,7 @@ export default function ModerationCommentQueueItem({
         <div className="grid grid-cols-[28px_1fr] border-b border-white/10 bg-black/15">
           <TreePostGutter />
           <div className="min-w-0 px-2 py-2 sm:px-3">
-            <p className="text-[9px] uppercase tracking-widest text-text-neutral/55 mb-1.5 font-semibold font-sans">
+            <p className="text-[9px] uppercase tracking-widest text-foreground-secondary-default/55 mb-1.5 font-semibold font-sans">
               {t("moderation.queue.parentPost")}
             </p>
             {parent ? (
@@ -131,7 +131,7 @@ export default function ModerationCommentQueueItem({
                   </div>
                   <div className="min-w-0 flex-1 opacity-90">
                     <div className="flex flex-wrap items-center gap-1.5 mb-0.5">
-                      <span className="text-xs font-medium font-sans text-text-main/90">
+                      <span className="text-xs font-medium font-sans text-foreground-primary-default/90">
                         {parent.userName}
                       </span>
                       {parent.isNSFW && (
@@ -139,11 +139,11 @@ export default function ModerationCommentQueueItem({
                           NSFW
                         </span>
                       )}
-                      <span className="text-[9px] font-mono text-text-neutral/45">
+                      <span className="text-[9px] font-mono text-foreground-secondary-default/45">
                         {parent.id.slice(0, 8)}…
                       </span>
                     </div>
-                    <p className="text-xs leading-snug text-text-neutral/75 font-sans whitespace-pre-wrap line-clamp-2 wrap-break-word">
+                    <p className="text-xs leading-snug text-foreground-secondary-default/75 font-sans whitespace-pre-wrap line-clamp-2 wrap-break-word">
                       {parent.text?.trim()
                         ? parent.text
                         : t("moderation.queue.noPostText")}
@@ -161,7 +161,7 @@ export default function ModerationCommentQueueItem({
                 ) : null}
               </div>
             ) : (
-              <p className="text-[11px] text-text-neutral/70 italic">
+              <p className="text-[11px] text-foreground-secondary-default/70 italic">
                 {t("moderation.queue.parentMissing")}{" "}
                 <span className="font-mono not-italic opacity-80">
                   post_id: {comment.postId.slice(0, 8)}…
@@ -207,7 +207,7 @@ export default function ModerationCommentQueueItem({
               </div>
 
               {comment.moderationInfo && (
-                <div className="mt-2 text-xs text-text-neutral space-y-1">
+                <div className="mt-2 text-xs text-foreground-secondary-default space-y-1">
                   {comment.moderationInfo.reasonSummary && (
                     <p className="font-semibold">
                       {t("common.reason")}:{" "}
@@ -229,7 +229,7 @@ export default function ModerationCommentQueueItem({
 
               {comment.reportsMeta && comment.reportsMeta.length > 0 ? (
                 <div className="mt-3 pt-3">
-                  <p className="text-[10px] uppercase tracking-widest text-text-neutral mb-2 font-bold opacity-70">
+                  <p className="text-[10px] uppercase tracking-widest text-foreground-secondary-default mb-2 font-bold opacity-70">
                     {t("moderation.queue.userReports", { count: comment.reportsMeta.length })}
                   </p>
                   <div className="flex flex-col gap-2">
@@ -269,7 +269,7 @@ export default function ModerationCommentQueueItem({
                   </div>
                 </div>
               ) : (
-                <div className="text-xs text-text-neutral opacity-50 mt-1 italic">
+                <div className="text-xs text-foreground-secondary-default opacity-50 mt-1 italic">
                   {t("moderation.queue.noReports")}
                 </div>
               )}
@@ -283,7 +283,7 @@ export default function ModerationCommentQueueItem({
               />
             </div>
 
-            <div className="bg-secondary-neutral-background-default p-3 flex flex-wrap justify-end gap-3 border-t border-white/10 shadow-[0_-5px_15px_rgba(0,0,0,0.5)]">
+            <div className="bg-surface-chrome-background-default p-3 flex flex-wrap justify-end gap-3 border-t border-white/10 shadow-[0_-5px_15px_rgba(0,0,0,0.5)]">
               <Button
                 text={t("moderation.queue.banAuthorDelete")}
                 variant="danger"

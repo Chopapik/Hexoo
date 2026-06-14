@@ -57,9 +57,9 @@ import { DemoSection } from "./DemoSection";
 
 function DemoRightNavStatic() {
   return (
-    <div className="flex min-h-72 w-full flex-col justify-between rounded-xl border-t-2 border-primary-neutral-stroke-default bg-primary-neutral-background-default p-3 md:w-20 lg:w-[244px] xl:w-72">
+    <div className="flex min-h-72 w-full flex-col justify-between rounded-xl border-t-2 border-surface-card-border-default bg-surface-card-background-default p-3 md:w-20 lg:w-[244px] xl:w-72">
       <section className="flex min-h-[200px] w-full flex-col items-center justify-start rounded-xl bg-white/[0.03] px-2 py-3">
-        <div className="mb-3 text-[10px] font-bold tracking-wider text-text-neutral">
+        <div className="mb-3 text-[10px] font-bold tracking-wider text-foreground-secondary-default">
           ACTIVE USERS
         </div>
         <div className="flex flex-wrap items-center justify-center gap-2.5">
@@ -68,7 +68,7 @@ function DemoRightNavStatic() {
           <Avatar alt="Active user 3" width={52} height={52} />
         </div>
       </section>
-      <div className="w-full p-4 text-center font-sans text-xs text-text-neutral/35">
+      <div className="w-full p-4 text-center font-sans text-xs text-foreground-secondary-default/35">
         <p>© 2025-2026 Hexoo Project.</p>
         <p>Created by CHOPAPIK.</p>
       </div>
@@ -89,21 +89,21 @@ function DemoModalShell({
 }) {
   return (
     <div
-      className={`relative w-full max-w-2xl rounded-2xl bg-secondary-neutral-background-default/60 backdrop-blur-xl text-text-main border border-primary-neutral-stroke-default shadow-2xl overflow-hidden flex flex-col ${className}`}
+      className={`relative w-full max-w-2xl rounded-2xl bg-surface-chrome-background-default/60 backdrop-blur-xl text-foreground-primary-default border border-surface-card-border-default shadow-2xl overflow-hidden flex flex-col ${className}`}
     >
       {title && (
-        <div className="flex items-center justify-between px-4 py-3 border-b border-primary-neutral-stroke-default bg-secondary-neutral-background-default/60">
-          <span className="text-sm font-semibold text-text-main font-sans">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-surface-card-border-default bg-surface-chrome-background-default/60">
+          <span className="text-sm font-semibold text-foreground-primary-default font-sans">
             {title}
           </span>
-          <button className="text-text-neutral hover:text-text-main transition-colors p-1">
+          <button className="text-foreground-secondary-default hover:text-foreground-primary-default transition-colors p-1">
             ✕
           </button>
         </div>
       )}
       <div className="p-4">{children}</div>
       {footer && (
-        <div className="px-4 py-3 border-t border-primary-neutral-stroke-default/60 bg-secondary-neutral-background-default/60">
+        <div className="px-4 py-3 border-t border-surface-card-border-default/60 bg-surface-chrome-background-default/60">
           {footer}
         </div>
       )}
@@ -113,7 +113,7 @@ function DemoModalShell({
 
 export function UiDemoCatalog() {
   return (
-      <div className="bg-page-background p-3 space-y-6 sm:p-6 sm:space-y-8">
+      <div className="bg-page-background-default p-3 space-y-6 sm:p-6 sm:space-y-8">
         <DemoSection title="Logo & Avatar">
           <div className="flex flex-wrap items-center gap-6">
             <Logo />
@@ -191,8 +191,8 @@ export function UiDemoCatalog() {
 
         <DemoSection title="RemoveImageButton">
           <div className="grid gap-6 md:grid-cols-2">
-            <div className="relative group rounded-xl border border-primary-neutral-stroke-default p-8 bg-black/30 h-40">
-              <span className="text-xs text-text-neutral">showOnHover</span>
+            <div className="relative group rounded-xl border border-surface-card-border-default p-8 bg-black/30 h-40">
+              <span className="text-xs text-foreground-secondary-default">showOnHover</span>
               <RemoveImageButton
                 onClick={() => {}}
                 variant="dark"
@@ -206,8 +206,8 @@ export function UiDemoCatalog() {
                 showOnHover
               />
             </div>
-            <div className="relative rounded-xl border border-primary-neutral-stroke-default p-8 bg-black/30 h-40">
-              <span className="text-xs text-text-neutral">alwaysVisible</span>
+            <div className="relative rounded-xl border border-surface-card-border-default p-8 bg-black/30 h-40">
+              <span className="text-xs text-foreground-secondary-default">alwaysVisible</span>
               <RemoveImageButton
                 onClick={() => {}}
                 variant="dark"
@@ -319,8 +319,8 @@ export function UiDemoCatalog() {
             <PostCard post={demoPost} />
             <PostCard post={demoPostNsfw} />
             <PostCard post={demoPostNsfw} revealNSFW />
-            <div className="pt-4 border-t border-primary-neutral-stroke-default">
-              <h3 className="text-lg font-semibold text-text-main mb-2">
+            <div className="pt-4 border-t border-surface-card-border-default">
+              <h3 className="text-lg font-semibold text-foreground-primary-default mb-2">
                 PostList (offline)
               </h3>
               <PostList />
@@ -340,8 +340,8 @@ export function UiDemoCatalog() {
               enableEditProfile={false}
               initialUser={demoUserProfile}
             />
-            <div className="pt-4 border-t border-primary-neutral-stroke-default">
-              <h3 className="text-lg font-semibold text-text-main mb-2">
+            <div className="pt-4 border-t border-surface-card-border-default">
+              <h3 className="text-lg font-semibold text-foreground-primary-default mb-2">
                 UserPostList (offline)
               </h3>
               <UserPostList userId="user-2" />
@@ -352,7 +352,7 @@ export function UiDemoCatalog() {
         <DemoSection title="Settings components">
           <div className="space-y-6">
             <SettingsSection title="Settings section (demo)">
-              <div className="text-sm text-text-neutral">
+              <div className="text-sm text-foreground-secondary-default">
                 Example settings section content.
               </div>
             </SettingsSection>
@@ -389,10 +389,10 @@ export function UiDemoCatalog() {
               }
             >
               <div className="space-y-2">
-                <p className="text-text-neutral text-sm">
+                <p className="text-foreground-secondary-default text-sm">
                   Example modal content with footer actions.
                 </p>
-                <div className="flex items-center gap-2 text-xs text-text-neutral">
+                <div className="flex items-center gap-2 text-xs text-foreground-secondary-default">
                   <img src={warningIconUrl} alt="warning" className="w-4 h-4" />
                   <span>Helper text</span>
                 </div>
@@ -407,7 +407,7 @@ export function UiDemoCatalog() {
                 </div>
               }
             >
-              <div className="py-2 text-text-main text-base leading-relaxed">
+              <div className="py-2 text-foreground-primary-default text-base leading-relaxed">
                 This is an example alert modal.
               </div>
             </DemoModalShell>
@@ -420,7 +420,7 @@ export function UiDemoCatalog() {
                     icon={<PaperclipIcon className="w-5 h-5" />}
                     variant="transparent"
                     size="icon"
-                    className="text-text-neutral hover:text-white"
+                    className="text-foreground-secondary-default hover:text-white"
                     type="button"
                   />
                   <span className="text-red-500 text-sm font-medium">
@@ -439,7 +439,7 @@ export function UiDemoCatalog() {
                 <div className="relative w-fit group">
                   <div
                     aria-label="Image preview placeholder"
-                    className="h-[200px] w-[200px] rounded-xl border border-primary-neutral-stroke-default bg-[linear-gradient(135deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))]"
+                    className="h-[200px] w-[200px] rounded-xl border border-surface-card-border-default bg-[linear-gradient(135deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))]"
                   />
                   <RemoveImageButton
                     onClick={() => {}}
@@ -451,9 +451,9 @@ export function UiDemoCatalog() {
                 <div className="relative w-full">
                   <textarea
                     placeholder="Write something..."
-                    className="w-full bg-transparent text-text-main placeholder:text-text-neutral/50 text-base resize-none outline-none min-h-[100px] scrollbar-hide leading-relaxed pb-6"
+                    className="w-full bg-transparent text-foreground-primary-default placeholder:text-foreground-secondary-default/50 text-base resize-none outline-none min-h-[100px] scrollbar-hide leading-relaxed pb-6"
                   />
-                  <div className="absolute bottom-0 right-0 text-xs font-medium text-text-neutral/70">
+                  <div className="absolute bottom-0 right-0 text-xs font-medium text-foreground-secondary-default/70">
                     24 / 1000
                   </div>
                 </div>
@@ -462,7 +462,7 @@ export function UiDemoCatalog() {
 
             <DemoModalShell title="Post" className="max-w-5xl">
               <div className="flex gap-4">
-                <div className="w-2/3 border-r border-primary-neutral-stroke-default/60 pr-4">
+                <div className="w-2/3 border-r border-surface-card-border-default/60 pr-4">
                   <PostMeta post={demoPost} />
                   <div className="pt-4">
                     <PostBody post={demoPost} />
@@ -483,7 +483,7 @@ export function UiDemoCatalog() {
                 />
               }
             >
-              <p className="text-sm text-text-neutral leading-relaxed">
+              <p className="text-sm text-foreground-secondary-default leading-relaxed">
                 Are you sure you want to permanently delete this post? This
                 action cannot be undone.
               </p>
@@ -500,7 +500,7 @@ export function UiDemoCatalog() {
               }
             >
               <div className="flex flex-col gap-4">
-                <p className="text-sm text-text-neutral">
+                <p className="text-sm text-foreground-secondary-default">
                   Help us understand what is wrong with this post.
                 </p>
                 <div className="flex flex-col gap-2">
@@ -513,14 +513,14 @@ export function UiDemoCatalog() {
                           className={`flex items-center gap-3 p-3 rounded-lg border transition-all ${
                             isSelected
                               ? "bg-fuchsia-500/10 border-fuchsia-500 text-white"
-                              : "bg-white/5 border-transparent hover:bg-white/10 text-text-neutral"
+                              : "bg-white/5 border-transparent hover:bg-white/10 text-foreground-secondary-default"
                           }`}
                         >
                           <div
                             className={`w-4 h-4 rounded-full border flex items-center justify-center ${
                               isSelected
                                 ? "border-fuchsia-500"
-                                : "border-text-neutral"
+                                : "border-foreground-secondary-default"
                             }`}
                           >
                             {isSelected && (
@@ -546,12 +546,12 @@ export function UiDemoCatalog() {
 
             <DemoModalShell title="Comment on Ola's post">
               <div className="space-y-4">
-                <div className="bg-secondary-neutral-background-default p-3 rounded-lg text-text-neutral text-sm italic border border-primary-neutral-stroke-default">
+                <div className="bg-surface-chrome-background-default p-3 rounded-lg text-foreground-secondary-default text-sm italic border border-surface-card-border-default">
                   Replying to: "Example post..."
                 </div>
                 <textarea
                   placeholder="Enter your comment..."
-                  className="w-full p-3 bg-transparent border rounded-lg text-text-main placeholder:text-text-neutral focus:outline-none resize-none h-32 transition-all border-primary-neutral-stroke-default"
+                  className="w-full p-3 bg-transparent border rounded-lg text-foreground-primary-default placeholder:text-foreground-secondary-default focus:outline-none resize-none h-32 transition-all border-surface-card-border-default"
                 />
                 <div className="flex justify-end">
                   <Button text="Add comment" size="md" />
@@ -614,15 +614,15 @@ export function UiDemoCatalog() {
                     />
                   </div>
                   <div className="flex flex-col items-center gap-1">
-                    <p className="text-sm text-text-neutral font-medium">
+                    <p className="text-sm text-foreground-secondary-default font-medium">
                       Click to change profile photo
                     </p>
-                    <p className="text-xs text-text-neutral/60">
+                    <p className="text-xs text-foreground-secondary-default/60">
                       PNG, JPG lub WEBP (max 5MB)
                     </p>
                   </div>
                 </div>
-                <div className="flex flex-col gap-4 p-4 rounded-xl bg-secondary-neutral-background-default/30 border border-primary-neutral-stroke-default/50">
+                <div className="flex flex-col gap-4 p-4 rounded-xl bg-surface-chrome-background-default/30 border border-surface-card-border-default/50">
                   <TextInput
                     label="Username"
                     placeholder="Your public name"
@@ -631,11 +631,11 @@ export function UiDemoCatalog() {
                     showButton={false}
                   />
                   <div className="flex flex-col gap-1">
-                    <p className="text-sm text-text-neutral ml-1">
+                    <p className="text-sm text-foreground-secondary-default ml-1">
                       This name will be visible publicly. You can use a
                       nickname or your first name.
                     </p>
-                    <p className="text-xs text-text-neutral/60 ml-1">
+                    <p className="text-xs text-foreground-secondary-default/60 ml-1">
                       9 / 30 characters
                     </p>
                   </div>
@@ -689,7 +689,7 @@ export function UiDemoCatalog() {
                 />
               }
             >
-              <p className="text-sm text-text-neutral">
+              <p className="text-sm text-foreground-secondary-default">
                 This operation is irreversible. All your data will be
                 permanently deleted.
               </p>
@@ -709,7 +709,7 @@ export function UiDemoCatalog() {
               }
             >
               <div className="flex flex-col gap-5 py-2">
-                <p className="text-sm text-text-neutral mb-2">
+                <p className="text-sm text-foreground-secondary-default mb-2">
                   Create an account and configure access for the new user.
                 </p>
                 <div className="space-y-4">
@@ -747,7 +747,7 @@ export function UiDemoCatalog() {
 
             <DemoModalShell title="Edit user" className="max-w-4xl">
               <div className="flex flex-col gap-6 p-1">
-                <div className="mb-8 p-5 rounded-xl border border-primary-neutral-stroke-default bg-[radial-gradient(ellipse_at_top_right,var(--tw-gradient-stops))] from-white/5 via-transparent to-transparent">
+                <div className="mb-8 p-5 rounded-xl border border-surface-card-border-default bg-[radial-gradient(ellipse_at_top_right,var(--tw-gradient-stops))] from-white/5 via-transparent to-transparent">
                   <div className="flex flex-col sm:flex-row items-center gap-6">
                     <div className="relative shrink-0">
                       <Avatar
@@ -763,22 +763,22 @@ export function UiDemoCatalog() {
                     </div>
                     <div className="flex-1 text-center sm:text-left w-full overflow-hidden">
                       <div className="flex flex-col sm:flex-row sm:items-end gap-2 mb-1">
-                        <h3 className="text-2xl sm:text-3xl font-bold text-text-main font-sans truncate">
+                        <h3 className="text-2xl sm:text-3xl font-bold text-foreground-primary-default font-sans truncate">
                           {demoAdminUser.name}
                         </h3>
-                        <span className="px-2 py-1 rounded text-xs font-medium bg-primary-neutral-stroke-default text-text-neutral mb-1.5">
+                        <span className="px-2 py-1 rounded text-xs font-medium bg-surface-card-border-default text-foreground-secondary-default mb-1.5">
                           {demoAdminUser.role}
                         </span>
                       </div>
-                      <p className="text-text-neutral text-sm mb-3 font-mono">
+                      <p className="text-foreground-secondary-default text-sm mb-3 font-mono">
                         {demoAdminUser.email}
                       </p>
-                      <div className="flex flex-wrap justify-center sm:justify-start gap-4 text-xs text-text-neutral/70 border-t border-white/5 pt-3">
+                      <div className="flex flex-wrap justify-center sm:justify-start gap-4 text-xs text-foreground-secondary-default/70 border-t border-white/5 pt-3">
                         <div className="flex flex-col">
                           <span className="uppercase text-[10px] font-semibold tracking-wider opacity-50">
                             User ID
                           </span>
-                          <span className="font-mono text-text-neutral select-all">
+                          <span className="font-mono text-foreground-secondary-default select-all">
                             {demoAdminUser.uid}
                           </span>
                         </div>
@@ -794,8 +794,8 @@ export function UiDemoCatalog() {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="flex flex-col gap-4">
-                    <div className="bg-white/5 p-5 rounded-xl border border-primary-neutral-background-default/30 h-full flex flex-col">
-                      <h3 className="text-lg font-medium mb-4 text-text-main">
+                    <div className="bg-white/5 p-5 rounded-xl border border-surface-card-background-default/30 h-full flex flex-col">
+                      <h3 className="text-lg font-medium mb-4 text-foreground-primary-default">
                         Profile data
                       </h3>
                       <div className="flex flex-col gap-4 flex-1">
@@ -825,8 +825,8 @@ export function UiDemoCatalog() {
                     </div>
                   </div>
                   <div className="flex flex-col gap-4">
-                    <div className="bg-white/5 p-5 rounded-xl border border-primary-neutral-background-default/30 h-full flex flex-col">
-                      <h3 className="text-lg font-medium mb-4 text-text-main">
+                    <div className="bg-white/5 p-5 rounded-xl border border-surface-card-background-default/30 h-full flex flex-col">
+                      <h3 className="text-lg font-medium mb-4 text-foreground-primary-default">
                         Security
                       </h3>
                       <div className="flex flex-col gap-4 flex-1">
@@ -838,7 +838,7 @@ export function UiDemoCatalog() {
                           type="password"
                           showButton={true}
                         />
-                        <p className="text-xs text-text-neutral/60">
+                        <p className="text-xs text-foreground-secondary-default/60">
                           Leave empty if you do not want to change the password.
                         </p>
                       </div>
@@ -857,7 +857,7 @@ export function UiDemoCatalog() {
                   <Button
                     text="Cancel and close"
                     disabled={false}
-                    className="text-text-neutral hover:text-white order-2 md:order-1 border-transparent"
+                    className="text-foreground-secondary-default hover:text-white order-2 md:order-1 border-transparent"
                     variant="secondary"
                     size="sm"
                   />

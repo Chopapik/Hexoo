@@ -71,7 +71,7 @@ export default function ReportCommentModal({
       className="max-w-md"
     >
       <div className="flex flex-col gap-4 p-2">
-        <p className="text-sm text-text-neutral">
+        <p className="text-sm text-foreground-secondary-default">
           {t("report.commentDescription")}
         </p>
         <div className="flex flex-col gap-2">
@@ -83,7 +83,7 @@ export default function ReportCommentModal({
                 ${
                   reason === item.id
                     ? "bg-fuchsia-500/10 border-fuchsia-500 text-white"
-                    : "bg-white/5 border-transparent hover:bg-white/10 text-text-neutral"
+                    : "bg-white/5 border-transparent hover:bg-white/10 text-foreground-secondary-default"
                 }
               `}
             >
@@ -101,7 +101,7 @@ export default function ReportCommentModal({
                 className={`w-4 h-4 rounded-full border flex items-center justify-center ${
                   reason === item.id
                     ? "border-fuchsia-500"
-                    : "border-text-neutral"
+                    : "border-foreground-secondary-default"
                 }`}
               >
                 {reason === item.id && (
@@ -114,7 +114,7 @@ export default function ReportCommentModal({
         </div>
         {reason === "other" && (
           <div className="mt-2 animate-in fade-in slide-in-from-top-2 flex flex-col gap-1.5">
-            <label className="text-xs uppercase tracking-widest text-text-neutral/60 font-bold">
+            <label className="text-xs uppercase tracking-widest text-foreground-secondary-default/60 font-bold">
               {t("report.detailsLabel")} <span className="text-red-400">*</span>
             </label>
             <textarea
@@ -126,7 +126,7 @@ export default function ReportCommentModal({
               }
               placeholder={t("report.detailsPlaceholder")}
               rows={3}
-              className="w-full bg-black/30 rounded-lg border border-white/10 p-3 text-sm text-text-main placeholder:text-text-neutral/40 resize-none outline-none transition-all focus:ring-1 focus:ring-fuchsia-500/30 focus:border-fuchsia-500/50"
+              className="w-full bg-black/30 rounded-lg border border-white/10 p-3 text-sm text-foreground-primary-default placeholder:text-foreground-secondary-default/40 resize-none outline-none transition-all focus:ring-1 focus:ring-fuchsia-500/30 focus:border-fuchsia-500/50"
             />
             <div className="flex items-center justify-between">
               {isSubmitted && errors.details && (

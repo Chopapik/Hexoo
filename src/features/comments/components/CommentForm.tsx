@@ -72,7 +72,7 @@ export const CommentForm = ({ postId }: CommentFormProps) => {
             alt={t("comment.previewAlt")}
             width={200}
             height={200}
-            className="rounded-xl border border-primary-neutral-stroke-default object-cover max-h-48 w-auto"
+            className="rounded-xl border border-surface-card-border-default object-cover max-h-48 w-auto"
           />
           <RemoveImageButton
             onClick={removeImage}
@@ -88,7 +88,7 @@ export const CommentForm = ({ postId }: CommentFormProps) => {
           {...register("text")}
           onKeyDown={handleKeyDown}
           placeholder={t("comment.placeholder")}
-          className="w-full bg-transparent text-text-main placeholder:text-text-neutral/50 text-base resize-none outline-none min-h-[90px] scrollbar-hide leading-relaxed pb-6"
+          className="w-full bg-transparent text-foreground-primary-default placeholder:text-foreground-secondary-default/50 text-base resize-none outline-none min-h-[90px] scrollbar-hide leading-relaxed pb-6"
         />
         <div
           className={`
@@ -96,7 +96,7 @@ export const CommentForm = ({ postId }: CommentFormProps) => {
             ${
               isOverLimit
                 ? "text-red-500"
-                : "text-text-neutral/40 group-focus-within:text-text-neutral/70"
+                : "text-foreground-secondary-default/40 group-focus-within:text-foreground-secondary-default/70"
             }
           `}
         >
@@ -118,7 +118,7 @@ export const CommentForm = ({ postId }: CommentFormProps) => {
             icon={<PaperclipIcon className="w-5 h-5" />}
             variant="transparent"
             size="icon"
-            className="text-text-neutral hover:text-white"
+            className="text-foreground-secondary-default hover:text-white"
             type="button"
           />
         </div>

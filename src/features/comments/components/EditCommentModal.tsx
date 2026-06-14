@@ -102,7 +102,7 @@ export default function EditCommentModal({
             {...register("text")}
             onKeyDown={handleKeyDown}
             placeholder={t("comment.editPlaceholder")}
-            className="w-full bg-transparent text-text-main placeholder:text-text-neutral/50 text-base resize-none outline-none min-h-[120px] leading-relaxed pb-6"
+            className="w-full bg-transparent text-foreground-primary-default placeholder:text-foreground-secondary-default/50 text-base resize-none outline-none min-h-[120px] leading-relaxed pb-6"
             autoFocus
           />
 
@@ -112,7 +112,7 @@ export default function EditCommentModal({
               ${
                 isOverLimit
                   ? "text-red-500"
-                  : "text-text-neutral/40 group-focus-within:text-text-neutral/70"
+                  : "text-foreground-secondary-default/40 group-focus-within:text-foreground-secondary-default/70"
               }
             `}
           >

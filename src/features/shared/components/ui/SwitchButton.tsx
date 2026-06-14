@@ -41,7 +41,7 @@ export default function SwitchButton({
     <div className={clsx("flex items-center gap-3 shrink-0", className)}>
       {showOnOffLabels && (
         <span
-          className="text-sm font-medium font-sans tabular-nums text-text-neutral min-w-9 text-right"
+          className="text-sm font-medium font-sans tabular-nums text-foreground-secondary-default min-w-9 text-right"
           aria-hidden
         >
           {checked ? resolvedOnLabel : resolvedOffLabel}
@@ -52,7 +52,7 @@ export default function SwitchButton({
         onChange={onChange}
         aria-labelledby={labelledBy}
         className={clsx(
-          "group relative inline-flex h-8 w-14 shrink-0 cursor-pointer items-center rounded-full p-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-fuchsia-400/60 focus-visible:ring-offset-2 focus-visible:ring-offset-primary-neutral-background-default",
+          "group relative inline-flex h-8 w-14 shrink-0 cursor-pointer items-center rounded-full p-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-fuchsia-400/60 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-card-background-default",
           checked ? buttonDefaultSurfaceClass : buttonSecondarySurfaceClass,
         )}
       >

@@ -7,7 +7,7 @@ type PostYouTubeEmbedProps = {
 export function PostYouTubeEmbed({ videoId }: PostYouTubeEmbedProps) {
   return (
     <div
-      className="w-full overflow-hidden rounded-xl border border-primary-neutral-stroke-default/60"
+      className="w-full overflow-hidden rounded-xl border border-surface-card-border-default/60"
       style={{ aspectRatio: "16 / 9" }}
       onClick={(e) => e.stopPropagation()}
     >

@@ -199,7 +199,7 @@ export default function RegisterForm() {
               <input
                 type="checkbox"
                 {...register("terms")}
-                className="peer appearance-none w-5 h-5 border-2 border-secondary-neutral-stroke-default rounded bg-secondary-neutral-background-default/50 checked:bg-white checked:border-white transition-all duration-200"
+                className="peer appearance-none w-5 h-5 border-2 border-divider-default rounded bg-surface-chrome-background-default/50 checked:bg-white checked:border-white transition-all duration-200"
               />
               <svg
                 className="absolute w-3.5 h-3.5 text-black opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none"
@@ -214,7 +214,7 @@ export default function RegisterForm() {
                 <polyline points="20 6 9 17 4 12"></polyline>
               </svg>
             </div>
-            <span className="inline-flex items-center gap-1 text-text-main text-xs sm:text-sm font-medium font-sans">
+            <span className="inline-flex items-center gap-1 text-foreground-primary-default text-xs sm:text-sm font-medium font-sans">
               <span>{t("auth.register.accept")}</span>
               <span>
                 <Link

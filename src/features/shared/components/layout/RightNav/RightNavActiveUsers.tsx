@@ -42,15 +42,15 @@ export function RightNavActiveUsers() {
   const isEmpty = activeUsers.length === 0;
 
   return (
-    <section className="flex min-h-[200px] w-full flex-col items-center justify-start rounded-xl bg-[radial-gradient(ellipse_113.20%_442.25%_at_26.12%_10.28%,var(--text-main,rgba(255,255,255,0.04))_0%,var(--text-neutral,rgba(115,115,115,0.04))_100%)] px-2 py-3">
+    <section className="flex min-h-[200px] w-full flex-col items-center justify-start rounded-xl bg-[radial-gradient(ellipse_113.20%_442.25%_at_26.12%_10.28%,rgb(from var(--color-foreground-primary-default) r g b / 0.04)_0%,rgb(from var(--color-foreground-secondary-default) r g b / 0.04)_100%)] px-2 py-3">
       <div className="mb-2 flex items-center gap-1.5 px-0.5 transition-all duration-300 ease-soft">
-        <h3 className="text-text-neutral text-[10px] font-bold tracking-wider transition-all duration-300 ease-soft">
+        <h3 className="text-foreground-secondary-default text-[10px] font-bold tracking-wider transition-all duration-300 ease-soft">
           {t("right.activeUsers")}
         </h3>
       </div>
 
       <div
-        className={`flex h-full w-full text-text-neutral/50 ${
+        className={`flex h-full w-full text-foreground-secondary-default/50 ${
           !isReady || isEmpty
             ? "flex-col items-center justify-center gap-1.5"
             : "flex-row flex-wrap content-center items-center justify-center gap-2.5 overflow-y-auto pb-1 [scrollbar-width:thin]"

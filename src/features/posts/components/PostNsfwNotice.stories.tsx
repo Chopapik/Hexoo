@@ -6,7 +6,7 @@ const meta = {
   component: PostNsfwNotice,
   tags: ["ai-generated"],
   args: {
-    className: "min-h-48 rounded-xl bg-primary-neutral-background-default p-6",
+    className: "min-h-48 rounded-xl bg-surface-card-background-default p-6",
   },
 } satisfies Meta<typeof PostNsfwNotice>;
 
