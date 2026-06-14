@@ -24,7 +24,7 @@ export const LegalPageWrapper = ({ children }: LegalPageWrapperProps) => {
       <div className="pt-8">
         <Link
           href="/"
-          className="text-fuchsia-400 hover:text-fuchsia-300 transition-colors font-medium flex items-center gap-2"
+          className="text-accent-fuchsia-background-default hover:text-accent-fuchsia-background-hover transition-colors font-medium flex items-center gap-2"
         >
           <span>&larr;</span> {t("legal.backHome")}
         </Link>

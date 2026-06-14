@@ -58,7 +58,7 @@ import { DemoSection } from "./DemoSection";
 function DemoRightNavStatic() {
   return (
     <div className="flex min-h-72 w-full flex-col justify-between rounded-xl border-t-2 border-surface-card-border-default bg-surface-card-background-default p-3 md:w-20 lg:w-[244px] xl:w-72">
-      <section className="flex min-h-[200px] w-full flex-col items-center justify-start rounded-xl bg-white/[0.03] px-2 py-3">
+      <section className="flex min-h-[200px] w-full flex-col items-center justify-start rounded-xl bg-button-outline-background-default px-2 py-3">
         <div className="mb-3 text-[10px] font-bold tracking-wider text-foreground-secondary-default">
           ACTIVE USERS
         </div>
@@ -191,7 +191,7 @@ export function UiDemoCatalog() {
 
         <DemoSection title="RemoveImageButton">
           <div className="grid gap-6 md:grid-cols-2">
-            <div className="relative group rounded-xl border border-surface-card-border-default p-8 bg-black/30 h-40">
+            <div className="relative group rounded-xl border border-surface-card-border-default p-8 bg-surface-card-background-default h-40">
               <span className="text-xs text-foreground-secondary-default">showOnHover</span>
               <RemoveImageButton
                 onClick={() => {}}
@@ -206,7 +206,7 @@ export function UiDemoCatalog() {
                 showOnHover
               />
             </div>
-            <div className="relative rounded-xl border border-surface-card-border-default p-8 bg-black/30 h-40">
+            <div className="relative rounded-xl border border-surface-card-border-default p-8 bg-surface-card-background-default h-40">
               <span className="text-xs text-foreground-secondary-default">alwaysVisible</span>
               <RemoveImageButton
                 onClick={() => {}}
@@ -420,10 +420,10 @@ export function UiDemoCatalog() {
                     icon={<PaperclipIcon className="w-5 h-5" />}
                     variant="transparent"
                     size="icon"
-                    className="text-foreground-secondary-default hover:text-white"
+                    className="text-foreground-secondary-default hover:text-foreground-primary-default"
                     type="button"
                   />
-                  <span className="text-red-500 text-sm font-medium">
+                  <span className="text-validation-error-text text-sm font-medium">
                     Example error
                   </span>
                   <Button
@@ -512,19 +512,19 @@ export function UiDemoCatalog() {
                           key={item.id}
                           className={`flex items-center gap-3 p-3 rounded-lg border transition-all ${
                             isSelected
-                              ? "bg-fuchsia-500/10 border-fuchsia-500 text-white"
-                              : "bg-white/5 border-transparent hover:bg-white/10 text-foreground-secondary-default"
+                              ? "bg-accent-fuchsia-background-default/10 border-accent-fuchsia-border-default text-foreground-primary-default"
+                              : "bg-button-glass-card-background-default border-transparent hover:bg-button-glass-card-background-hover text-foreground-secondary-default"
                           }`}
                         >
                           <div
                             className={`w-4 h-4 rounded-full border flex items-center justify-center ${
                               isSelected
-                                ? "border-fuchsia-500"
+                                ? "border-accent-fuchsia-border-default"
                                 : "border-foreground-secondary-default"
                             }`}
                           >
                             {isSelected && (
-                              <div className="w-2 h-2 bg-fuchsia-500 rounded-full" />
+                              <div className="w-2 h-2 bg-accent-fuchsia-background-default rounded-full" />
                             )}
                           </div>
                           <span className="text-sm font-medium">
@@ -591,7 +591,7 @@ export function UiDemoCatalog() {
                           className="w-full h-full rounded-xl border-none"
                         />
                       </div>
-                      <div className="absolute inset-0 bg-black/60 rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm">
+                      <div className="absolute inset-0 bg-modal-overlay-background-default rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm">
                         <div className="flex flex-col items-center gap-1">
                           <img
                             src={cameraIconUrl}
@@ -600,7 +600,7 @@ export function UiDemoCatalog() {
                             height={24}
                             className="opacity-90"
                           />
-                          <span className="text-white text-xs font-medium">
+                          <span className="text-foreground-primary-default text-xs font-medium">
                             Change
                           </span>
                         </div>
@@ -672,7 +672,7 @@ export function UiDemoCatalog() {
                   placeholder="Confirm new password"
                   messages={demoInputMessages.Success}
                 />
-                <p className="text-sm text-red-400 mt-1">
+                <p className="text-sm text-validation-error-text mt-1">
                   Example validation error.
                 </p>
               </div>
@@ -755,9 +755,9 @@ export function UiDemoCatalog() {
                         alt={demoAdminUser.name}
                         width={80}
                         height={80}
-                        className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl border border-white/10 shadow-lg object-cover"
+                        className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl border border-divider-default shadow-lg object-cover"
                       />
-                      <div className="absolute -bottom-2 -right-2 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider shadow-sm border border-black/20 bg-green-600 text-white">
+                      <div className="absolute -bottom-2 -right-2 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider shadow-sm border border-divider-default bg-button-success-background-default-from text-foreground-primary-default">
                         Active
                       </div>
                     </div>
@@ -773,7 +773,7 @@ export function UiDemoCatalog() {
                       <p className="text-foreground-secondary-default text-sm mb-3 font-mono">
                         {demoAdminUser.email}
                       </p>
-                      <div className="flex flex-wrap justify-center sm:justify-start gap-4 text-xs text-foreground-secondary-default/70 border-t border-white/5 pt-3">
+                      <div className="flex flex-wrap justify-center sm:justify-start gap-4 text-xs text-foreground-secondary-default/70 border-t border-divider-subtle pt-3">
                         <div className="flex flex-col">
                           <span className="uppercase text-[10px] font-semibold tracking-wider opacity-50">
                             User ID
@@ -794,7 +794,7 @@ export function UiDemoCatalog() {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="flex flex-col gap-4">
-                    <div className="bg-white/5 p-5 rounded-xl border border-surface-card-background-default/30 h-full flex flex-col">
+                    <div className="bg-button-glass-card-background-default p-5 rounded-xl border border-surface-card-background-default/30 h-full flex flex-col">
                       <h3 className="text-lg font-medium mb-4 text-foreground-primary-default">
                         Profile data
                       </h3>
@@ -825,7 +825,7 @@ export function UiDemoCatalog() {
                     </div>
                   </div>
                   <div className="flex flex-col gap-4">
-                    <div className="bg-white/5 p-5 rounded-xl border border-surface-card-background-default/30 h-full flex flex-col">
+                    <div className="bg-button-glass-card-background-default p-5 rounded-xl border border-surface-card-background-default/30 h-full flex flex-col">
                       <h3 className="text-lg font-medium mb-4 text-foreground-primary-default">
                         Security
                       </h3>
@@ -857,7 +857,7 @@ export function UiDemoCatalog() {
                   <Button
                     text="Cancel and close"
                     disabled={false}
-                    className="text-foreground-secondary-default hover:text-white order-2 md:order-1 border-transparent"
+                    className="text-foreground-secondary-default hover:text-foreground-primary-default order-2 md:order-1 border-transparent"
                     variant="secondary"
                     size="sm"
                   />
@@ -866,7 +866,7 @@ export function UiDemoCatalog() {
                       text="Block account"
                       size="sm"
                       variant="secondary"
-                      className="text-yellow-400 border-yellow-500/30 hover:bg-yellow-500/10"
+                      className="text-validation-warning-text border-validation-warning-border/30 hover:bg-validation-warning-background/10"
                     />
                     <Button
                       text="Delete user"

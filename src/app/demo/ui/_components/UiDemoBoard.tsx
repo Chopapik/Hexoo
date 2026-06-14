@@ -14,7 +14,7 @@ export function UiDemoBoard() {
     <QueryClientProvider client={demoQueryClient}>
       <div className="min-h-screen bg-page-background-default px-4 py-8 sm:px-8">
         <header className="mx-auto mb-10 max-w-[1500px] space-y-2">
-          <p className="text-xs font-semibold uppercase tracking-wide text-fuchsia-200">
+          <p className="text-xs font-semibold uppercase tracking-wide text-accent-fuchsia-foreground-default">
             Hexoo UI lab
           </p>
           <h1 className="text-2xl font-bold text-foreground-primary-default font-sans sm:text-3xl">

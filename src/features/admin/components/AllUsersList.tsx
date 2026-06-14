@@ -21,8 +21,10 @@ enum AdminModal {
 }
 
 const ROLE_STYLES: Record<string, string> = {
-  admin: "bg-red-600 text-white",
-  moderator: "bg-yellow-500 text-white",
+  admin:
+    "bg-button-danger-background-default-from text-foreground-primary-default",
+  moderator:
+    "bg-button-warning-background-default-from text-foreground-primary-default",
 };
 
 export default function AllUsersList() {
@@ -116,7 +118,7 @@ export default function AllUsersList() {
             {t("admin.loadingUsers")}
           </div>
         ) : isError ? (
-          <div className="py-6 text-center text-red-500">
+          <div className="py-6 text-center text-validation-error-text">
             {t("admin.fetchError", { message: error?.message ?? "unknown" })}
           </div>
         ) : (
@@ -178,11 +180,11 @@ export default function AllUsersList() {
 
                         <td className="px-3 py-2">
                           {u.isBanned ? (
-                            <span className="inline-block px-2 py-0.5 rounded-md text-xs bg-red-600 text-white">
+                            <span className="inline-block px-2 py-0.5 rounded-md text-xs bg-button-danger-background-default-from text-foreground-primary-default">
                               {t("admin.banned")}
                             </span>
                           ) : (
-                            <span className="inline-block px-2 py-0.5 rounded-md text-xs bg-green-600 text-white">
+                            <span className="inline-block px-2 py-0.5 rounded-md text-xs bg-button-success-background-default-from text-foreground-primary-default">
                               OK
                             </span>
                           )}

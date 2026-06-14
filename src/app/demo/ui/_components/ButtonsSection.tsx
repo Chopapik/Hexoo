@@ -136,7 +136,7 @@ function ButtonMatrix() {
                   {buttonSizes.map((size) => (
                     <div
                       key={`${variant}-${mode}-${size}`}
-                      className="flex min-h-20 flex-col items-center justify-center gap-2 rounded-md border border-surface-card-border-default/60 bg-black/10 p-2"
+                      className="flex min-h-20 flex-col items-center justify-center gap-2 rounded-md border border-surface-card-border-default/60 bg-surface-card-background-default p-2"
                     >
                       <span className="font-mono text-[10px] uppercase text-foreground-secondary-default">
                         {size}
@@ -159,7 +159,7 @@ export function ButtonsSection() {
     <article
       id="buttons"
       data-section="buttons"
-      className="overflow-hidden rounded-lg border border-surface-card-border-default bg-black/30"
+      className="overflow-hidden rounded-lg border border-surface-card-border-default bg-surface-card-background-default"
       style={{
         width: BUTTONS_SECTION_WIDTH,
         minWidth: BUTTONS_SECTION_WIDTH,

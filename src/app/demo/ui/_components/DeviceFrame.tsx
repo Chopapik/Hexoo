@@ -13,11 +13,11 @@ export function DeviceFrame({ frame, children }: DeviceFrameProps) {
     <article
       id={frame.id}
       data-viewport={frame.id}
-      className="overflow-hidden rounded-lg border border-surface-card-border-default bg-black/30"
+      className="overflow-hidden rounded-lg border border-surface-card-border-default bg-surface-card-background-default"
       style={{ width: frame.width }}
     >
       <header className="flex items-center gap-3 border-b border-surface-card-border-default bg-surface-chrome-background-default/50 px-4 py-3">
-        <div className="flex size-9 items-center justify-center rounded-md border border-fuchsia-400/20 bg-fuchsia-500/10 text-fuchsia-100">
+        <div className="flex size-9 items-center justify-center rounded-md border border-accent-fuchsia-border-default/20 bg-accent-fuchsia-background-default/10 text-accent-fuchsia-foreground-default">
           <Icon className="size-4" />
         </div>
         <div>

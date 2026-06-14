@@ -135,10 +135,10 @@ export default function AdminUserEditModal({
                 className="rounded-2xl border border-modal-surface-border-default shadow-lg object-cover w-20 h-20 sm:w-24 sm:h-24"
               />
               <div
-                className={`absolute -bottom-2 -right-2 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider shadow-sm border border-black/20 ${
+                className={`absolute -bottom-2 -right-2 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider shadow-sm border border-divider-default ${
                   user.isBanned
-                    ? "bg-red-600 text-foreground-primary-default"
-                    : "bg-green-600 text-foreground-primary-default"
+                    ? "bg-button-danger-background-default-from text-foreground-primary-default"
+                    : "bg-button-success-background-default-from text-foreground-primary-default"
                 }`}
               >
                 {user.isBanned ? t("admin.bannedLabel") : t("admin.activeLabel")}

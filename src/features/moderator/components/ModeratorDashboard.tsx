@@ -79,7 +79,7 @@ export default function ModeratorDashboard() {
         <div className="w-full p-6 border border-surface-card-border-default bg-surface-card-background-default rounded-2xl max-w-[1300px]">
           <div className="flex flex-col gap-4 mb-4 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex flex-col gap-3 min-w-0 flex-1">
-              <div className="inline-flex rounded-xl border border-white/10 bg-black/20 p-1 self-start">
+              <div className="inline-flex rounded-xl border border-divider-default bg-surface-card-background-default p-1 self-start">
                 <SelectionTabButton
                   isSelected={queueTab === "posts"}
                   onClick={() => setQueueTab("posts")}
@@ -99,7 +99,7 @@ export default function ModeratorDashboard() {
                 </h2>
                 <div className="text-sm text-foreground-secondary-default">
                   {queueSubtitle} {t("moderation.dashboard.loaded")}:{" "}
-                  <span className="text-fuchsia-400 font-bold">
+                  <span className="text-accent-fuchsia-background-default font-bold">
                     {loadedCount}
                   </span>
                 </div>
@@ -121,13 +121,13 @@ export default function ModeratorDashboard() {
               {t("moderation.dashboard.loading")}
             </div>
           ) : isError ? (
-            <div className="py-6 text-center text-red-500">
+            <div className="py-6 text-center text-validation-error-text">
               {t("moderation.dashboard.error")}
             </div>
           ) : (
             <div className="flex flex-col gap-4 mt-6">
               {data?.pages[0]?.length === 0 && (
-                <div className="text-center text-foreground-secondary-default py-20 bg-white/5 rounded-xl border border-dashed border-surface-chrome-background-default">
+                <div className="text-center text-foreground-secondary-default py-20 bg-button-glass-card-background-default rounded-xl border border-dashed border-surface-chrome-background-default">
                   <p className="text-sm mt-2 opacity-60">{emptyMessage}</p>
                 </div>
               )}

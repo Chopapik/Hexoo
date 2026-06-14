@@ -21,7 +21,7 @@ export default async function ModeratorLayout({
       error instanceof ApiError &&
       (error.code === "AUTH_REQUIRED" || error.code === "INVALID_SESSION")
     ) {
-      return <div className="text-white">:/</div>;
+      return <div className="text-foreground-primary-default">:/</div>;
     }
     throw error;
   }
