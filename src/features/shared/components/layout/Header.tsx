@@ -10,7 +10,7 @@ export const Header = ({ user }: { user: SessionData | null }) => {
   const { t } = useI18n();
 
   return (
-    <div className="h-12 md:h-14 w-full bg-surface-card-background-default rounded-xl border-t-2 border-surface-card-border-default inline-flex justify-between items-center shadow-lg">
+    <div className="h-12 md:h-14 w-full bg-surface-chrome-background-default rounded-xl border-t-2 border-surface-chrome-border-default inline-flex justify-between items-center shadow-lg">
       <Link
         href="/"
         className="h-full flex items-center transition-transform duration-200 pl-3 md:pl-4"
@@ -22,7 +22,7 @@ export const Header = ({ user }: { user: SessionData | null }) => {
       <div className="flex items-center gap-2">
         {user ? (
           <Link href={`/profile/${user.uid}`}>
-            <div className="flex items-center gap-2 md:gap-3 pl-1 pr-3 md:pl-1.5 md:pr-4 py-1 rounded-2xl border border-transparent hover:bg-white/5 transition-all duration-200 cursor-pointer group">
+            <div className="flex items-center gap-2 md:gap-3 pl-1 pr-3 md:pl-1.5 md:pr-4 py-1 rounded-2xl border border-transparent hover:bg-button-transparent-background-hover transition-all duration-200 cursor-pointer group">
               <div className="transform transition-transform duration-200">
                 <Avatar src={user.avatarUrl || undefined} alt={user.name} />
               </div>

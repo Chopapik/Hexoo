@@ -15,8 +15,8 @@ export const LegalPageWrapper = ({ children }: LegalPageWrapperProps) => {
       <div className="flex w-full justify-end pb-4">
         <LanguageSwitch />
       </div>
-      <div className="rounded-2xl w-full py-2 sm:p-8 md:p-12 sm:glass-card">
-        <article className="prose prose-invert prose-headings:font-serif prose-headings:text-foreground-primary-default prose-p:text-foreground-secondary-default prose-li:text-foreground-secondary-default prose-a:text-fuchsia-400 hover:prose-a:text-fuchsia-300 max-w-none">
+      <div className="rounded-2xl w-full py-2 sm:p-8 md:p-12 sm:border sm:border-surface-card-border-default sm:bg-surface-card-background-default">
+        <article className="prose prose-invert prose-headings:font-serif prose-headings:text-foreground-primary-default prose-p:text-foreground-secondary-default prose-li:text-foreground-secondary-default prose-a:text-accent-fuchsia-background-default hover:prose-a:text-accent-fuchsia-background-hover max-w-none">
           {children}
         </article>
       </div>

@@ -103,7 +103,7 @@ export default function CreatePostButton({
   }, []);
 
   const buttonClassName = [
-    "relative self-stretch h-14 sm:h-20 glass-card px-4 sm:px-8 py-3 sm:py-4 w-full rounded-xl inline-flex justify-between items-center overflow-hidden cursor-pointer group hover:border-white/10 transition-all duration-300",
+    "relative self-stretch h-14 sm:h-20 border border-button-outline-border-default bg-button-outline-background-default px-4 sm:px-8 py-3 sm:py-4 w-full rounded-xl inline-flex justify-between items-center overflow-hidden cursor-pointer group hover:border-button-outline-border-hover hover:bg-button-outline-background-hover transition-all duration-300",
     className,
   ]
     .filter(Boolean)

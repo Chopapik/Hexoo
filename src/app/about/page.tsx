@@ -243,7 +243,7 @@ function NoteCard({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.55, delay }}
-      className="glass-card relative overflow-hidden rounded-2xl p-5"
+      className="border border-surface-card-border-default bg-surface-card-background-default relative overflow-hidden rounded-2xl p-5"
     >
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.04]"
@@ -525,7 +525,7 @@ function Column({
   const tint = tone === "yes" ? "text-fuchsia-300" : "text-white/40";
   const symbol = tone === "yes" ? "+" : "×";
   return (
-    <div className="glass-card relative overflow-hidden rounded-2xl p-6">
+    <div className="border border-surface-card-border-default bg-surface-card-background-default relative overflow-hidden rounded-2xl p-6">
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.05]"
         style={{
@@ -578,7 +578,7 @@ function Outro({
 
   return (
     <section className="relative z-10 mx-auto max-w-5xl px-5 pb-20 sm:px-8">
-      <div className="glass-card relative overflow-hidden rounded-3xl p-10 sm:p-14">
+      <div className="border border-surface-card-border-default bg-surface-card-background-default relative overflow-hidden rounded-3xl p-10 sm:p-14">
         <div
           className="pointer-events-none absolute inset-0 opacity-[0.07]"
           style={{

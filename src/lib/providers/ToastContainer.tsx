@@ -12,22 +12,22 @@ export default function ToastContainer() {
       }}
       toastOptions={{
         style: {
-          background: "#171717",
-          color: "#fff",
-          border: "1px solid #404040",
+          background: "var(--color-surface-card-background-default)",
+          color: "var(--color-foreground-primary-default)",
+          border: "1px solid var(--color-surface-card-border-default)",
           fontSize: "14px",
           zIndex: 999999,
         },
         success: {
           iconTheme: {
-            primary: "#C026D3",
-            secondary: "white",
+            primary: "var(--color-accent-fuchsia-background-default)",
+            secondary: "var(--color-foreground-primary-default)",
           },
         },
         error: {
           iconTheme: {
-            primary: "#EF4444",
-            secondary: "white",
+            primary: "var(--color-validation-error-icon)",
+            secondary: "var(--color-foreground-primary-default)",
           },
         },
       }}

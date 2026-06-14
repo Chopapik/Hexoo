@@ -84,7 +84,7 @@ export default function AllUsersList() {
         />
       )}
 
-      <div className="w-full p-6 glass-card rounded-2xl border border-surface-card-border-default max-w-[1300px]">
+      <div className="w-full p-6 border border-surface-card-border-default bg-surface-card-background-default rounded-2xl max-w-[1300px]">
         <div className="flex items-center justify-between mb-4">
           <div className="flex flex-col">
             <h2 className="text-lg font-sans font-semibold">
