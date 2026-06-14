@@ -89,16 +89,16 @@ export const PostModal = ({
         )}
 
         <div
-          className={`flex h-full min-h-0 flex-col border-surface-card-border-default/60 ${sidebarClassName}`}
+          className={`flex h-full min-h-0 flex-col border-divider-default ${sidebarClassName}`}
         >
-          <div className="shrink-0 border-b border-surface-card-border-default/60 p-3 sm:p-4">
+          <div className="shrink-0 border-b border-divider-default p-3 sm:p-4">
             <PostMeta post={post} />
           </div>
 
           {!showCommentsMobile && (
             <div className="flex min-h-0 flex-1 flex-col lg:hidden">
               {isContentVisible && post.text && (
-                <div className="shrink-0 border-b border-surface-card-border-default/60 p-3 sm:p-4">
+                <div className="shrink-0 border-b border-divider-default p-3 sm:p-4">
                   <p className={textClassName}>{post.text}</p>
                 </div>
               )}
@@ -130,7 +130,7 @@ export const PostModal = ({
                   text={t("post.showComments")}
                   size="xl"
                   variant="secondary"
-                  className="border border-surface-card-border-default/60 text-sm font-medium"
+                  className="text-sm font-medium"
                   onClick={() => setShowCommentsMobile(true)}
                 />
               </div>
@@ -139,12 +139,12 @@ export const PostModal = ({
 
           {showCommentsMobile && (
             <div className="flex min-h-0 flex-1 flex-col lg:hidden">
-              <div className="shrink-0 border-b border-surface-card-border-default/60 p-3 sm:p-4">
+              <div className="shrink-0 border-b border-divider-default p-3 sm:p-4">
                 <Button
                   text={t("post.backToPost")}
                   size="xl"
                   variant="secondary"
-                  className="border border-surface-card-border-default/60 text-sm font-medium"
+                  className="text-sm font-medium"
                   onClick={() => setShowCommentsMobile(false)}
                 />
               </div>
@@ -159,7 +159,7 @@ export const PostModal = ({
               </div>
 
               {user && (
-                <div className="shrink-0 border-t border-surface-card-border-default/60 bg-surface-chrome-background-default/60 p-3 sm:p-4">
+                <div className="shrink-0 border-t border-divider-default bg-modal-surface-background-default p-3 sm:p-4">
                   <CommentForm postId={post.id} />
                 </div>
               )}
@@ -168,7 +168,7 @@ export const PostModal = ({
 
           <div className="hidden min-h-0 flex-1 lg:flex lg:flex-col">
             {isContentVisible && post.text && (
-              <div className="shrink-0 border-b border-surface-card-border-default/60 p-4">
+              <div className="shrink-0 border-b border-divider-default p-4">
                 <p className={textClassName}>{post.text}</p>
               </div>
             )}
@@ -189,7 +189,7 @@ export const PostModal = ({
             </div>
 
             {user && (
-              <div className="shrink-0 border-t border-surface-card-border-default/60 bg-surface-chrome-background-default/60 p-4">
+              <div className="shrink-0 border-t border-divider-default bg-modal-surface-background-default p-4">
                 <CommentForm postId={post.id} />
               </div>
             )}

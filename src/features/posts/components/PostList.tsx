@@ -85,14 +85,14 @@ export default function PostList({ className = "" }: PostListProps) {
               className="w-full max-w-[920px] p-3 sm:p-4 bg-surface-card-background-default rounded-xl border-t-2 border-surface-card-border-default flex flex-col gap-3 sm:gap-4 animate-pulse"
             >
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-white/10" />
+                <div className="w-10 h-10 rounded-xl bg-button-glass-card-background-hover" />
                 <div className="flex flex-col gap-2">
-                  <div className="w-32 h-3 bg-white/10 rounded" />
-                  <div className="w-20 h-2 bg-white/5 rounded" />
+                  <div className="w-32 h-3 bg-button-glass-card-background-hover rounded" />
+                  <div className="w-20 h-2 bg-button-glass-card-background-default rounded" />
                 </div>
               </div>
-              <div className="w-full h-4 bg-white/5 rounded" />
-              <div className="w-2/3 h-4 bg-white/5 rounded" />
+              <div className="w-full h-4 bg-button-glass-card-background-default rounded" />
+              <div className="w-2/3 h-4 bg-button-glass-card-background-default rounded" />
             </div>
           ))}
         </div>
@@ -102,7 +102,7 @@ export default function PostList({ className = "" }: PostListProps) {
 
   if (isError) {
     return (
-      <div className="w-full text-center py-10 text-red-500 font-sans">
+      <div className="w-full text-center py-10 text-validation-error-text font-sans">
         {t("post.loadError")}
       </div>
     );

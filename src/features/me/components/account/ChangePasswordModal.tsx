@@ -69,7 +69,7 @@ export default function ChangePasswordModal({
           messages={parseErrorMessages(errors.reNewPassword?.message, lang)}
         />
         {errors.root?.message && (
-          <p className="text-sm text-red-400 mt-1">
+          <p className="text-sm text-validation-error-text mt-1">
             {parseErrorMessages(errors.root.message, lang)[0]?.text}
           </p>
         )}

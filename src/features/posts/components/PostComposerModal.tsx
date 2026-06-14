@@ -110,7 +110,7 @@ export default function PostComposerModal({
           icon={<PaperclipIcon className="w-5 h-5" />}
           variant="transparent"
           size="icon"
-          className="text-foreground-secondary-default hover:text-white"
+          className="text-foreground-secondary-default hover:text-foreground-primary-default"
           type="button"
         />
 
@@ -136,7 +136,7 @@ export default function PostComposerModal({
         />
       </div>
 
-      <span className="text-red-500 text-sm font-medium">{displayError}</span>
+      <span className="text-validation-error-text text-sm font-medium">{displayError}</span>
 
       <Button
         onClick={onSubmit}
@@ -187,7 +187,7 @@ export default function PostComposerModal({
           )}
 
           {youtubeUrl ? (
-            <div className="relative group flex items-center gap-2 px-3 py-2 rounded-lg bg-surface-chrome-background-default/60 w-full animate-in fade-in zoom-in-95 duration-200">
+            <div className="relative group flex items-center gap-2 px-3 py-2 rounded-lg border border-modal-surface-border-default bg-modal-surface-background-default w-full animate-in fade-in zoom-in-95 duration-200">
               <YouTubeIcon className="w-4 h-4 text-red-500 shrink-0" />
               <span className="text-sm text-foreground-primary-default truncate flex-1 font-sans pr-4">
                 {youtubeUrl}
@@ -201,7 +201,7 @@ export default function PostComposerModal({
             </div>
           ) : showYouTubeInput ? (
             <div className="flex flex-col gap-1 w-full animate-in fade-in zoom-in-95 duration-200">
-              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-surface-chrome-background-default/60 w-full">
+              <div className="flex items-center gap-2 px-3 py-2 rounded-lg border border-modal-surface-border-default bg-modal-surface-background-default w-full">
                 <YouTubeIcon className="w-4 h-4 text-red-500 shrink-0" />
                 <input
                   ref={youtubeInputRef}
@@ -236,7 +236,7 @@ export default function PostComposerModal({
                 />
               </div>
               {youtubeUrlError ? (
-                <p className="text-xs text-red-500 px-1">{youtubeUrlError}</p>
+                <p className="text-xs text-validation-error-text px-1">{youtubeUrlError}</p>
               ) : null}
             </div>
           ) : null}
@@ -257,7 +257,7 @@ export default function PostComposerModal({
                 absolute bottom-0 right-0 text-xs font-medium transition-colors duration-200 pointer-events-none select-none
                 ${
                   isOverLimit
-                    ? "text-red-500"
+                    ? "text-validation-error-text"
                     : "text-foreground-secondary-default/40 group-focus-within:text-foreground-secondary-default/70"
                 }
               `}

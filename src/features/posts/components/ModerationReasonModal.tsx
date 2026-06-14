@@ -130,14 +130,16 @@ export default function ModerationReasonModal({
 
   const colorMap = {
     yellow: {
-      badge: "bg-yellow-500/15 text-yellow-400 border border-yellow-500/30",
-      focusRing: "focus:ring-yellow-500/30 focus:border-yellow-500/50",
-      counter: "text-yellow-400",
+      badge:
+        "bg-validation-warning-background/15 text-validation-warning-text border border-validation-warning-border/30",
+      focusRing: "focus:border-validation-warning-border",
+      counter: "text-validation-warning-text",
     },
     red: {
-      badge: "bg-red-500/15 text-red-400 border border-red-500/30",
-      focusRing: "focus:ring-red-500/30 focus:border-red-500/50",
-      counter: "text-red-400",
+      badge:
+        "bg-validation-error-background/15 text-validation-error-text border border-validation-error-border/30",
+      focusRing: "focus:border-validation-error-border",
+      counter: "text-validation-error-text",
     },
   } as const;
 
@@ -176,7 +178,7 @@ export default function ModerationReasonModal({
 
         <div className="flex flex-col gap-1.5">
           <label className="text-xs uppercase tracking-widest text-foreground-secondary-default/60 font-bold">
-            {t("moderation.reasonLabel")} <span className="text-red-400">*</span>
+            {t("moderation.reasonLabel")} <span className="text-validation-error-text">*</span>
           </label>
           <div className="flex flex-wrap gap-2 mb-2">
             {PRESET_REASONS.map((presetKey, idx) => {
@@ -188,8 +190,8 @@ export default function ModerationReasonModal({
                 onClick={() => selectPreset(preset)}
                 className={`text-xs px-2.5 py-1.5 rounded-md border transition-colors ${
                   justification === preset
-                    ? "bg-fuchsia-500/20 border-fuchsia-500/50 text-fuchsia-100"
-                    : "bg-white/5 border-white/10 text-foreground-secondary-default hover:bg-white/10"
+                    ? "bg-accent-fuchsia-background-default/20 border-accent-fuchsia-border-default/50 text-foreground-primary-default"
+                    : "bg-button-transparent-background-default border-button-outline-border-disabled text-foreground-secondary-default hover:bg-button-transparent-background-hover"
                 }`}
               >
                 {preset}
@@ -204,19 +206,19 @@ export default function ModerationReasonModal({
             placeholder={t("moderation.reasonPlaceholder")}
             rows={4}
             className={`
-              w-full bg-black/30 rounded-lg border border-white/10 p-3
+              w-full bg-input-background-default rounded-lg border border-input-border-default p-3
               text-sm text-foreground-primary-default placeholder:text-foreground-secondary-default/40
               resize-none outline-none transition-all
-              focus:ring-1 ${colors.focusRing}
+              ${colors.focusRing}
             `}
             autoFocus
           />
           <div className="flex items-center justify-between">
             {showValidationError && errors.justification && (
-              <p className="text-xs text-red-500">{justificationError}</p>
+              <p className="text-xs text-validation-error-text">{justificationError}</p>
             )}
             <span
-              className={`text-xs ml-auto ${hasTooLongError ? "text-red-500 font-bold" : "text-white"}`}
+              className={`text-xs ml-auto ${hasTooLongError ? "text-validation-error-text font-bold" : colors.counter}`}
             >
               {currentLength} / {MODERATION_JUSTIFICATION_MAX}
             </span>

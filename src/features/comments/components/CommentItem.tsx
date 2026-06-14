@@ -142,7 +142,7 @@ export const CommentItem = ({
       )}
 
       <div
-        className={`flex gap-3 py-3 border-b border-surface-card-border-default/30 last:border-b-0 ${moderationProminent ? "gap-4" : ""}`}
+        className={`flex gap-3 py-3 border-b border-divider-subtle last:border-b-0 ${moderationProminent ? "gap-4" : ""}`}
       >
         <div className="shrink-0" onClick={handleLinkClick}>
           <Link href={`/profile/${comment.userId}`}>
@@ -218,8 +218,8 @@ export const CommentItem = ({
                               onClick={() => setIsDeleteModalOpen(true)}
                               className={`${
                                 active
-                                  ? "bg-red-500/10 text-red-400"
-                                  : "text-red-500"
+                                  ? "bg-button-danger-background-disabled-from text-button-danger-background-default-from"
+                                  : "text-button-danger-background-default-from"
                               } group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors`}
                             >
                               <BsTrash /> {t("comment.options.delete")}
@@ -249,7 +249,7 @@ export const CommentItem = ({
                     )}
 
                     {(isModerator || isAdmin) && (
-                      <div className="p-1 border-t border-white/10">
+                      <div className="p-1 border-t border-divider-default">
                         {!isAuthor && (
                           <div className="px-2 py-1.5 text-[10px] text-foreground-secondary-default/50 uppercase tracking-widest font-bold">
                             {t("post.options.moderatorPanel")}
@@ -263,8 +263,8 @@ export const CommentItem = ({
                               disabled={modAction.isPending}
                               className={`${
                                 active
-                                  ? "bg-yellow-500/10 text-yellow-400"
-                                  : "text-yellow-500"
+                                  ? "bg-button-warning-background-disabled-from text-button-warning-background-default-from"
+                                  : "text-button-warning-background-default-from"
                               } group flex w-full items-center gap-3 rounded-lg px-2 py-2 text-sm transition-colors`}
                             >
                               <BsShieldExclamation /> {t("post.options.quarantine")}
@@ -279,8 +279,8 @@ export const CommentItem = ({
                               disabled={modAction.isPending}
                               className={`${
                                 active
-                                  ? "bg-red-500/10 text-red-400"
-                                  : "text-red-500"
+                                  ? "bg-button-danger-background-disabled-from text-button-danger-background-default-from"
+                                  : "text-button-danger-background-default-from"
                               } group flex w-full items-center gap-3 rounded-lg px-2 py-2 text-sm transition-colors`}
                             >
                               <BsTrash /> {t("comment.options.deleteNow")}

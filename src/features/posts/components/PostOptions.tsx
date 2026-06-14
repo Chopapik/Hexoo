@@ -156,7 +156,9 @@ export default function PostOptions({
                     <button
                       onClick={() => setIsDeleteModalOpen(true)}
                       className={`${
-                        active ? "bg-red-500/10 text-red-400" : "text-red-500"
+                        active
+                          ? "bg-button-danger-background-disabled-from text-button-danger-background-default-from"
+                          : "text-button-danger-background-default-from"
                       } group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors`}
                     >
                       <BsTrash /> {t("post.options.delete")}
@@ -168,7 +170,7 @@ export default function PostOptions({
 
             {!isAuthor && (
               <div
-                className={`p-1 ${isAuthor ? "border-t border-white/10" : ""}`}
+                className={`p-1 ${isAuthor ? "border-t border-divider-default" : ""}`}
               >
                 <Menu.Item>
                   {({ active }) => (
@@ -188,7 +190,7 @@ export default function PostOptions({
             )}
 
             {(isModerator || isAdmin) && (
-              <div className="p-1 border-t border-white/10">
+              <div className="p-1 border-t border-divider-default">
                 {!isAuthor && (
                   <div className="px-2 py-1.5 text-[10px] text-foreground-secondary-default/50 uppercase tracking-widest font-bold">
                     {t("post.options.moderatorPanel")}
@@ -202,8 +204,8 @@ export default function PostOptions({
                       disabled={modAction.isPending}
                       className={`${
                         active
-                          ? "bg-yellow-500/10 text-yellow-400"
-                          : "text-yellow-500"
+                          ? "bg-button-warning-background-disabled-from text-button-warning-background-default-from"
+                          : "text-button-warning-background-default-from"
                       } group flex w-full items-center gap-3 rounded-lg px-2 py-2 text-sm transition-colors`}
                     >
                       <BsShieldExclamation /> {t("post.options.quarantine")}
@@ -217,7 +219,9 @@ export default function PostOptions({
                       onClick={() => setPendingAction("reject")}
                       disabled={modAction.isPending}
                       className={`${
-                        active ? "bg-red-500/10 text-red-400" : "text-red-500"
+                        active
+                          ? "bg-button-danger-background-disabled-from text-button-danger-background-default-from"
+                          : "text-button-danger-background-default-from"
                       } group flex w-full items-center gap-3 rounded-lg px-2 py-2 text-sm transition-colors`}
                     >
                       <BsTrash /> {t("post.options.deleteNow")}

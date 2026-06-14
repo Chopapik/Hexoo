@@ -39,7 +39,7 @@ export default function AdminUserCreateModal({
       confirmSize="sm"
       cancelSize="sm"
       disabled={!email || !password || !name}
-      className="[&_button:first-child]:text-foreground-secondary-default [&_button:first-child]:hover:text-white [&_button:first-child]:border-transparent"
+      className="[&_button:first-child]:text-foreground-secondary-default [&_button:first-child]:hover:text-foreground-primary-default [&_button:first-child]:border-transparent"
     />
   );
 
