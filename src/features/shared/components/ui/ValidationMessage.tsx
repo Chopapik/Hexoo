@@ -19,9 +19,9 @@ export default function ValidationMessage({
 
   switch (message.type) {
     case "Warning":
-      colorClass = "text-yellow-500";
+      colorClass = "text-validation-warning-text";
       icon = (
-        <div className="relative w-3.5 h-3.5">
+        <div className="relative h-3.5 w-3.5 text-validation-warning-icon">
           <Image
             src={warningIcoUrl}
             alt="warning"
@@ -33,9 +33,9 @@ export default function ValidationMessage({
       break;
 
     case "Dismiss":
-      colorClass = "text-red-500";
+      colorClass = "text-validation-error-text";
       icon = (
-        <div data-svg-wrapper className="text-red-500">
+        <div data-svg-wrapper className="text-validation-error-icon">
           <svg
             width="13"
             height="13"
@@ -53,9 +53,9 @@ export default function ValidationMessage({
       break;
 
     case "Success":
-      colorClass = "text-green-500";
+      colorClass = "text-validation-success-text";
       icon = (
-        <div data-svg-wrapper className="text-green-500">
+        <div data-svg-wrapper className="text-validation-success-icon">
           <svg
             width="18"
             height="14"

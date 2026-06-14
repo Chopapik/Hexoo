@@ -1,5 +1,8 @@
 import React from "react";
-import { fuchsiaGradientSurfaceClass } from "./buttonSurfaceClasses";
+import {
+  buttonDefaultStateClass,
+  buttonGradientSurfaceClass,
+} from "./buttonSurfaceClasses";
 
 type Props = {
   isSelected: boolean;
@@ -18,9 +21,10 @@ export default function SelectionTabButton({
     "rounded-lg px-4 py-2 text-sm font-sans font-medium transition-colors";
 
   const selected =
-    `text-fuchsia-100 ${fuchsiaGradientSurfaceClass} shadow-sm brightness-90 saturate-90 cursor-default`;
+    `text-button-text-default ${buttonGradientSurfaceClass} ${buttonDefaultStateClass} cursor-default`;
 
-  const unselected = "text-foreground-secondary-default hover:text-foreground-primary-default hover:bg-white/5";
+  const unselected =
+    "bg-button-transparent-background-default text-foreground-secondary-default hover:bg-button-transparent-background-hover hover:text-foreground-primary-default";
 
   return (
     <button
@@ -33,4 +37,3 @@ export default function SelectionTabButton({
     </button>
   );
 }
-

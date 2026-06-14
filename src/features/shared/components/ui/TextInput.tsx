@@ -28,14 +28,18 @@ interface TextInputProps {
 }
 
 const borderClasses: Record<Status, string> = {
-  Default: "border-b-4 border-divider-default",
-  Warning: "border-b-4 border-yellow-500",
-  Dismiss: "border-b-4 border-red-600",
-  Success: "border-b-4 border-green-500/50",
+  Default:
+    "border-b-4 border-input-border-default focus-within:border-input-border-hover",
+  Warning:
+    "border-b-4 border-validation-warning-border focus-within:border-validation-warning-border",
+  Dismiss:
+    "border-b-4 border-validation-error-border focus-within:border-validation-error-border",
+  Success:
+    "border-b-4 border-validation-success-border focus-within:border-validation-success-border",
 };
 
 const baseBorderClasses =
-  "bg-surface-chrome-background-default/50 backdrop-blur-sm rounded-lg focus-within:border-white";
+  "rounded-lg bg-input-background-default backdrop-blur-sm";
 
 export default function TextInput({
   ref,
@@ -44,6 +48,7 @@ export default function TextInput({
   type = "text",
   placeholder,
   messages = [],
+  status = "Default",
   defaultValue,
   value,
   onChange,
@@ -55,12 +60,12 @@ export default function TextInput({
   const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
 
   const lastMessageType: Status =
-    messages.length > 0 ? messages[messages.length - 1].type : "Default";
+    messages.length > 0 ? messages[messages.length - 1].type : status;
 
   return (
     <div className="w-full min-w-0 sm:min-w-64 inline-flex flex-col justify-start items-start gap-1 sm:gap-1.5 font-sans">
       {label && (
-        <div className="text-foreground-secondary-default text-xs sm:text-sm font-semibold font-sans ml-1">
+        <div className="ml-1 font-sans text-xs font-semibold text-input-text-label sm:text-sm">
           {label}
         </div>
       )}
@@ -74,7 +79,7 @@ export default function TextInput({
           type={type === "password" && showPassword ? "text" : type}
           name={name}
           placeholder={placeholder}
-          className="flex-1 h-full w-full border-none outline-none text-foreground-primary-default placeholder:text-foreground-secondary-default/50 text-base font-medium font-sans bg-transparent"
+          className="h-full w-full flex-1 border-none bg-transparent font-sans text-base font-medium text-input-text-value outline-none placeholder:text-input-text-placeholder"
           defaultValue={defaultValue}
           value={value}
           onChange={onChange}
@@ -86,7 +91,7 @@ export default function TextInput({
           <button
             type="button"
             onClick={togglePasswordVisibility}
-            className="w-5 h-5 relative flex justify-center items-center opacity-60 hover:opacity-100 transition-opacity dark:invert"
+            className="relative flex size-5 items-center justify-center text-input-button-default opacity-60 transition-colors hover:text-input-button-hover hover:opacity-100 dark:invert"
           >
             <Image
               src={showPassword ? eyeOffIconUrl : eyeIconUrl}

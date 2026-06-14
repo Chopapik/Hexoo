@@ -199,10 +199,10 @@ export default function RegisterForm() {
               <input
                 type="checkbox"
                 {...register("terms")}
-                className="peer appearance-none w-5 h-5 border-2 border-divider-default rounded bg-surface-chrome-background-default/50 checked:bg-white checked:border-white transition-all duration-200"
+                className="peer size-5 appearance-none rounded border-2 border-checkbox-border-unchecked-default bg-checkbox-background-unchecked-default transition-all duration-200 checked:border-checkbox-border-checked-default checked:bg-checkbox-background-checked-default disabled:border-checkbox-border-unchecked-disabled disabled:bg-checkbox-background-unchecked-disabled checked:disabled:border-checkbox-border-checked-disabled checked:disabled:bg-checkbox-background-checked-disabled"
               />
               <svg
-                className="absolute w-3.5 h-3.5 text-black opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none"
+                className="pointer-events-none absolute h-3.5 w-3.5 text-checkbox-icon-default opacity-0 transition-opacity peer-checked:opacity-100 peer-disabled:text-checkbox-icon-disabled"
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="none"
@@ -214,12 +214,12 @@ export default function RegisterForm() {
                 <polyline points="20 6 9 17 4 12"></polyline>
               </svg>
             </div>
-            <span className="inline-flex items-center gap-1 text-foreground-primary-default text-xs sm:text-sm font-medium font-sans">
+            <span className="inline-flex items-center gap-1 font-sans text-xs font-medium text-checkbox-label-default group-has-[:disabled]:text-checkbox-label-disabled sm:text-sm">
               <span>{t("auth.register.accept")}</span>
               <span>
                 <Link
                   href="/terms"
-                  className="underline hover:text-white transition-colors"
+                  className="underline transition-colors hover:text-foreground-primary-default"
                 >
                   {t("auth.register.terms")}
                 </Link>
@@ -230,7 +230,7 @@ export default function RegisterForm() {
 
           {errors.terms && (
             <div className="flex items-center gap-2 mt-1 animate-in fade-in slide-in-from-top-1">
-              <div className="text-red-500">
+              <div className="text-validation-error-icon">
                 <svg width="12" height="12" viewBox="0 0 13 13" fill="none">
                   <path
                     d="M13 1.30929L11.6907 0L6.5 5.19071L1.30929 0L0 1.30929L5.19071 6.5L0 11.6907L1.30929 13L6.5 7.80929L11.6907 13L13 11.6907L7.80929 6.5L13 1.30929Z"
@@ -238,7 +238,7 @@ export default function RegisterForm() {
                   />
                 </svg>
               </div>
-              <span className="text-red-500 text-xs font-normal font-sans">
+              <span className="font-sans text-xs font-normal text-validation-error-text">
                 {parseRegisterErrorMessages(errors.terms.message, lang)[0]?.text}
               </span>
             </div>
@@ -247,9 +247,9 @@ export default function RegisterForm() {
 
         <div className="h-8 min-w-1 inline-flex flex-col justify-start items-start overflow-hidden">
           {errors.root && (
-            <div className="min-w-48 px-4 py-2 bg-red-600 rounded-lg shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] inline-flex justify-center items-center gap-2 overflow-hidden">
+            <div className="inline-flex min-w-48 items-center justify-center gap-2 overflow-hidden rounded-lg bg-validation-error-background px-4 py-2">
               <Image src={warningIconUrl} alt="warning!" />
-              <div className="justify-start text-white text-xs font-semibold font-sans">
+              <div className="justify-start font-sans text-xs font-semibold text-button-text-default">
                 {parseRegisterErrorMessages(errors.root?.message, lang)[0]?.text}
               </div>
             </div>

@@ -1,10 +1,8 @@
-/** Fuchsia gradient fill + gradient border (no text color, no hover/shadow). */
-export const fuchsiaGradientSurfaceClass =
-  "border-[0.75px] border-transparent [--btn-fill:linear-gradient(180deg,#C026D3_0%,#86198F_100%)] [background:var(--btn-fill,linear-gradient(180deg,#C026D3_0%,#86198F_100%))_padding-box,linear-gradient(180deg,#EF72FF_3%,#61006E_100%)_border-box]";
+export const buttonGradientSurfaceClass =
+  "border-[0.75px] border-transparent [background:linear-gradient(180deg,var(--button-background-from)_0%,var(--button-background-to)_100%)_padding-box,linear-gradient(180deg,var(--button-border-from)_3%,var(--button-border-to)_100%)_border-box]";
 
-/** Default button surface (gradient + hover/shadow) — shared with toggles */
-export const buttonDefaultSurfaceClass = `${fuchsiaGradientSurfaceClass} shadow-md hover:brightness-90 hover:shadow-lg transition-all`;
+export const buttonDefaultStateClass =
+  "[--button-background-from:var(--color-button-default-background-default-from)] [--button-background-to:var(--color-button-default-background-default-to)] [--button-border-from:var(--color-button-default-border-default-from)] [--button-border-to:var(--color-button-default-border-default-to)] hover:[--button-background-from:var(--color-button-default-background-hover-from)] hover:[--button-background-to:var(--color-button-default-background-hover-to)] hover:[--button-border-from:var(--color-button-default-border-hover-from)] hover:[--button-border-to:var(--color-button-default-border-hover-to)]";
 
-/** Secondary button surface (no text color) — e.g. switch off state */
-export const buttonSecondarySurfaceClass =
-  "border border-white/10 bg-white/5 shadow-sm backdrop-blur-sm hover:bg-white/10 transition-all";
+export const buttonDefaultDisabledStateClass =
+  "[--button-background-from:var(--color-button-default-background-disabled-from)] [--button-background-to:var(--color-button-default-background-disabled-to)] [--button-border-from:var(--color-button-default-border-disabled-from)] [--button-border-to:var(--color-button-default-border-disabled-to)]";

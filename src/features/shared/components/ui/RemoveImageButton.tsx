@@ -42,8 +42,8 @@ export default function RemoveImageButton({
   };
 
   const variantClasses = {
-    dark: "bg-black/70 text-white hover:bg-black",
-    red: "bg-red-600 hover:bg-red-700 text-white shadow-lg",
+    dark: "bg-modal-overlay-background-default text-button-text-default hover:bg-button-transparent-background-hover",
+    red: "bg-button-danger-background-default-from text-button-text-default shadow-lg hover:bg-button-danger-background-hover-from",
   };
 
   const positionClass = position ? positionClasses[position] : "";
