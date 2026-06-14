@@ -19,7 +19,7 @@ export default function AuthFormCard({
   footerLinkText,
 }: AuthFormCardProps) {
   return (
-    <div className="mx-auto inline-flex w-full max-w-md flex-col items-center justify-center gap-6 overflow-hidden px-4 py-8 xs:px-6 sm:max-w-2xl sm:gap-10 sm:rounded-[20px] sm:px-12 sm:py-12 sm:glass-card md:px-32 md:py-20">
+    <div className="mx-auto inline-flex w-full max-w-md flex-col items-center justify-center gap-6 overflow-hidden px-4 py-8 xs:px-6 sm:max-w-2xl sm:gap-10 sm:rounded-[20px] sm:px-12 sm:py-12 sm:border sm:border-surface-card-border-default sm:bg-surface-card-background-default md:px-32 md:py-20">
       <div className="py-0.5 flex flex-col justify-start items-center overflow-hidden">
         <div className="justify-start text-foreground-primary-default text-4xl sm:text-6xl font-serif">
           {title}

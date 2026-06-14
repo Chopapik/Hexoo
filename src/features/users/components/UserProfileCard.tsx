@@ -89,7 +89,7 @@ export const UserProfileCard = ({
 
               {showLastOnline && (
                 <>
-                  <span className="w-px h-5 bg-surface-card-border-default inline-block" />
+                  <span className="w-px h-5 bg-divider-default inline-block" />
                   <div className="inline-flex flex-col justify-start items-start gap-0.5">
                     <div className="self-stretch h-3.5 justify-start text-foreground-secondary-default text-xs font-bold font-sans">
                       {t("profile.lastOnline")}

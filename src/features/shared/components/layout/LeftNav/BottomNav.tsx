@@ -31,7 +31,7 @@ export function BottomNav({ user }: BottomNavProps) {
   const isStaff = isAdmin || isModerator;
 
   return (
-    <div className="flex bg-surface-card-background-default border-t border-surface-card-border-default rounded-xl overflow-hidden h-11 px-1 w-full flex-row justify-between items-center gap-1.5">
+    <div className="flex bg-surface-chrome-background-default border-t border-surface-chrome-border-default rounded-xl overflow-hidden h-11 px-1 w-full flex-row justify-between items-center gap-1.5">
       <div className="flex flex-row items-center min-w-0 px-1">
         <NavItem
           label={t("nav.home")}

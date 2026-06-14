@@ -97,7 +97,7 @@ export const Layout: React.FC<{
 
   if (!isHydrated) {
     return (
-      <div className="w-full min-h-screen bg-black flex items-center justify-center">
+      <div className="w-full min-h-screen bg-page-background-default flex items-center justify-center">
         <Image src={LogoSvg} alt="Hexoo" priority className="w-44 h-auto" />
       </div>
     );

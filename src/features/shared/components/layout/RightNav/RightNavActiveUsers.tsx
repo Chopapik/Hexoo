@@ -42,7 +42,7 @@ export function RightNavActiveUsers() {
   const isEmpty = activeUsers.length === 0;
 
   return (
-    <section className="flex min-h-[200px] w-full flex-col items-center justify-start rounded-xl bg-[radial-gradient(ellipse_113.20%_442.25%_at_26.12%_10.28%,rgb(from var(--color-foreground-primary-default) r g b / 0.04)_0%,rgb(from var(--color-foreground-secondary-default) r g b / 0.04)_100%)] px-2 py-3">
+    <section className="flex min-h-[200px] w-full flex-col items-center justify-start rounded-xl border border-surface-card-border-default bg-surface-card-background-default px-2 py-3">
       <div className="mb-2 flex items-center gap-1.5 px-0.5 transition-all duration-300 ease-soft">
         <h3 className="text-foreground-secondary-default text-[10px] font-bold tracking-wider transition-all duration-300 ease-soft">
           {t("right.activeUsers")}

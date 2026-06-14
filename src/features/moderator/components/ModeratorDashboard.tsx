@@ -76,7 +76,7 @@ export default function ModeratorDashboard() {
       </div>
 
       <div className="w-full flex justify-center">
-        <div className="w-full p-6 glass-card rounded-2xl border border-surface-card-border-default max-w-[1300px]">
+        <div className="w-full p-6 border border-surface-card-border-default bg-surface-card-background-default rounded-2xl max-w-[1300px]">
           <div className="flex flex-col gap-4 mb-4 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex flex-col gap-3 min-w-0 flex-1">
               <div className="inline-flex rounded-xl border border-white/10 bg-black/20 p-1 self-start">
