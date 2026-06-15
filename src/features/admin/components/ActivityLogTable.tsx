@@ -85,7 +85,7 @@ export default function ActivityLogTable() {
   }, [hasNextPage, isFetchingNextPage, fetchNextPage, data?.pages.length]);
 
   return (
-    <div className="w-full p-6 border border-surface-card-border-default bg-surface-card-background-default rounded-2xl max-w-[1300px]">
+    <div className="glass-card w-full p-6 border border-surface-card-border-default rounded-2xl max-w-[1300px]">
       <div className="flex items-center justify-between mb-4">
         <div className="flex flex-col">
           <h2 className="text-lg font-sans font-semibold">

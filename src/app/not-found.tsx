@@ -9,7 +9,7 @@ export default function NotFound() {
 
   return (
     <div className="w-full min-h-[calc(100vh-100px)] flex flex-col items-center justify-center">
-      <div className="max-w-md p-10 border border-surface-card-border-default bg-surface-card-background-default rounded-2xl flex h-fit flex-col items-center shadow-2xl">
+      <div className="glass-card max-w-md p-10 border border-surface-card-border-default rounded-2xl flex h-fit flex-col items-center shadow-2xl">
         <h1 className="text-4xl font-serif font-bold text-foreground-primary-default text-center mb-4">
           {t("error.404.title")}
         </h1>

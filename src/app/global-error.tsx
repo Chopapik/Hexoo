@@ -15,7 +15,7 @@ export default function GlobalError({
   return (
     <html lang={lang}>
       <body className="bg-page-background-default text-foreground-primary-default flex items-center justify-center min-h-screen p-4">
-        <div className="max-w-md w-full border border-surface-card-border-default bg-surface-card-background-default p-8 text-center rounded-2xl shadow-2xl">
+        <div className="glass-card max-w-md w-full border border-surface-card-border-default p-8 text-center rounded-2xl shadow-2xl">
           <div className="mb-6">
             <div className="mx-auto size-14 mb-4 p-3 bg-validation-error-background/10 rounded-full border border-validation-error-border/30 text-validation-error-text flex items-center justify-center">
               <svg

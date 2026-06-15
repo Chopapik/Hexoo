@@ -51,7 +51,7 @@ export default function VerifyEmailPage() {
 
   return (
     <div className="flex-1 flex items-center justify-center">
-      <div className="flex w-full max-w-md flex-col items-center gap-4 px-4 py-8 text-center max-sm:bg-transparent sm:gap-6 sm:rounded-[20px] sm:p-10 sm:border sm:border-surface-card-border-default sm:bg-surface-card-background-default">
+      <div className="flex w-full max-w-md flex-col items-center gap-4 px-4 py-8 text-center max-sm:bg-transparent sm:gap-6 sm:rounded-[20px] sm:p-10 sm:glass-card">
         <div className="text-foreground-primary-default text-2xl font-bold font-serif">
           {t("auth.verify.title")}
         </div>

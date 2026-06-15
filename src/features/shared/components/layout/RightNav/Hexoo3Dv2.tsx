@@ -82,7 +82,7 @@ function GeometricCore() {
 
 export default function Hexoo3D() {
   return (
-    <div className="w-full h-64 rounded-2xl overflow-hidden border border-surface-card-border-default bg-surface-card-background-default  relative group cursor-grab active:cursor-grabbing">
+    <div className="glass-card w-full h-64 rounded-2xl overflow-hidden relative group cursor-grab active:cursor-grabbing">
       {/* Background and vignette */}
       <div className="absolute inset-0 bg-[#121212]" />
       <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_20%,#000_120%)] z-10" />
