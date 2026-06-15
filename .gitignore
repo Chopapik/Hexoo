@@ -52,3 +52,6 @@ dump_src.py
 
 *storybook.log
 storybook-static
+
+# Local AI workspace
+.ai
