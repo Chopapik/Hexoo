@@ -36,8 +36,8 @@ export default function DitheringSection() {
   return (
     <>
       <SettingsSection title={t("settings.dithering.title")}>
-        <div className="flex flex-col gap-4 sm:gap-5">
-          <div className="flex flex-row items-center justify-between gap-2 sm:gap-3">
+        <div className="flex flex-col gap-4 md:gap-5">
+          <div className="flex flex-row items-center justify-between gap-2 md:gap-3">
             <div className="min-w-0 flex-1 text-left">
               <h4
                 id="posts-dithering-label"
@@ -45,7 +45,7 @@ export default function DitheringSection() {
               >
                 {t("settings.dithering.enable")}
               </h4>
-              <p className="text-xs sm:text-sm font-sans text-foreground-secondary-default">
+              <p className="font-sans text-xs text-foreground-secondary-default md:text-sm">
                 {t("settings.dithering.copy")}
               </p>
             </div>
@@ -58,7 +58,7 @@ export default function DitheringSection() {
             </div>
           </div>
 
-          <div className="rounded-lg border border-surface-card-border-default/70 bg-surface-chrome-background-default/40 p-2.5 sm:p-3 text-xs sm:text-sm font-sans text-foreground-secondary-default">
+          <div className="rounded-lg border border-surface-card-border-default/70 bg-surface-chrome-background-default/40 p-2.5 font-sans text-xs text-foreground-secondary-default md:p-3 md:text-sm">
             <p className="font-medium font-sans text-foreground-primary-default">
               {t("settings.dithering.summaryTitle")}
             </p>
@@ -70,7 +70,7 @@ export default function DitheringSection() {
             </p>
           </div>
 
-          <div className="flex w-full flex-row items-center gap-2 sm:gap-3">
+          <div className="flex w-full flex-row items-center gap-2 md:gap-3">
             <div className="min-w-0 flex-1" />
             <div className="shrink-0">
               <Button

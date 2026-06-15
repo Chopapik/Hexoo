@@ -18,12 +18,12 @@ export default function DangerZoneSection() {
   return (
     <>
       <SettingsSection title={t("settings.danger.title")}>
-        <div className="flex flex-row items-center justify-between gap-2 sm:gap-3">
+        <div className="flex flex-row items-center justify-between gap-2 md:gap-3">
           <div className="min-w-0 flex-1 text-left">
             <h4 className="font-semibold font-sans text-foreground-primary-default">
               {t("settings.danger.logout")}
             </h4>
-            <p className="text-xs sm:text-sm font-sans text-foreground-secondary-default">
+            <p className="font-sans text-xs text-foreground-secondary-default md:text-sm">
               {t("settings.danger.logoutCopy")}
             </p>
           </div>
@@ -37,12 +37,12 @@ export default function DangerZoneSection() {
           </div>
         </div>
         <div className="w-full h-px bg-surface-card-border-default my-2" />
-        <div className="flex flex-row items-center justify-between gap-2 sm:gap-3">
+        <div className="flex flex-row items-center justify-between gap-2 md:gap-3">
           <div className="min-w-0 flex-1 text-left">
             <h4 className="font-semibold font-sans text-validation-error-text">
               {t("settings.danger.deleteAccount")}
             </h4>
-            <p className="text-xs sm:text-sm font-sans text-foreground-secondary-default">
+            <p className="font-sans text-xs text-foreground-secondary-default md:text-sm">
               {t("settings.danger.deleteCopy")}
             </p>
           </div>

@@ -36,8 +36,8 @@ export default function ContentSection() {
 
   return (
     <SettingsSection title={t("settings.content.title")}>
-      <div className="flex flex-col gap-4 sm:gap-6">
-        <div className="flex flex-row items-center justify-between gap-2 sm:gap-3">
+      <div className="flex flex-col gap-4 md:gap-6">
+        <div className="flex flex-row items-center justify-between gap-2 md:gap-3">
           <div className="min-w-0 flex-1 text-left">
             <h4
               id="nsfw-posts-label"
@@ -45,7 +45,7 @@ export default function ContentSection() {
             >
               {t("settings.content.nsfwPosts")}
             </h4>
-            <p className="text-xs sm:text-sm font-sans text-foreground-secondary-default">
+            <p className="font-sans text-xs text-foreground-secondary-default md:text-sm">
               {t("settings.content.nsfwPostsCopy")}
             </p>
           </div>
@@ -58,7 +58,7 @@ export default function ContentSection() {
           </div>
         </div>
 
-        <div className="flex flex-row items-center justify-between gap-2 sm:gap-3">
+        <div className="flex flex-row items-center justify-between gap-2 md:gap-3">
           <div className="min-w-0 flex-1 text-left">
             <h4
               id="nsfw-comments-label"
@@ -66,7 +66,7 @@ export default function ContentSection() {
             >
               {t("settings.content.nsfwComments")}
             </h4>
-            <p className="text-xs sm:text-sm font-sans text-foreground-secondary-default">
+            <p className="font-sans text-xs text-foreground-secondary-default md:text-sm">
               {t("settings.content.nsfwCommentsCopy")}
             </p>
           </div>
