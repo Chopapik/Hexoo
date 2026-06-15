@@ -59,7 +59,7 @@ export const PostCard = ({
       />
       <div
         onClick={handleCardClick}
-        className="w-full max-w-4xl p-3 sm:p-4 bg-surface-card-background-default rounded-xl border-t-2 border-surface-card-border-default inline-flex flex-col justify-start items-start gap-3 sm:gap-4 cursor-pointer"
+        className="inline-flex w-full max-w-4xl cursor-pointer flex-col items-start justify-start gap-4 rounded-xl border-t-2 border-surface-card-border-default bg-surface-card-background-default p-3"
       >
         <PostMeta post={post} />
 

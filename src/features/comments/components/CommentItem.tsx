@@ -90,17 +90,19 @@ export const CommentItem = ({
     e.stopPropagation();
   };
 
-  const avatarClass = moderationProminent ? "size-10" : "size-8";
-  const avatarPx = moderationProminent ? 40 : 32;
+  const avatarClass = moderationProminent
+    ? "size-10 rounded-xl"
+    : "size-9 rounded-xl md:size-10";
+  const avatarPx = 40;
   const nameClass = moderationProminent
-    ? "text-foreground-primary-default text-base font-semibold font-sans hover:underline"
-    : "text-foreground-primary-default text-sm font-medium font-sans hover:underline";
+    ? "rounded-sm font-sans text-base font-semibold leading-[1.2] text-foreground-primary-default hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fuchsia-border-default/60"
+    : "rounded-sm font-sans text-sm font-medium leading-[1.2] text-foreground-primary-default hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fuchsia-border-default/60";
   const bodyClass = moderationProminent
     ? "text-foreground-primary-default text-base leading-relaxed font-sans whitespace-pre-wrap wrap-break-word"
-    : "text-foreground-primary-default text-sm font-sans whitespace-pre-wrap wrap-break-word";
+    : "text-foreground-primary-default text-sm leading-[1.45] font-sans whitespace-pre-wrap wrap-break-word";
   const dateClass = moderationProminent
     ? "text-foreground-secondary-default text-sm font-sans"
-    : "text-foreground-secondary-default text-xs font-sans";
+    : "font-sans text-xs leading-[1.2] text-foreground-secondary-default";
 
   const showMenu = !!currentUser;
 
@@ -142,10 +144,13 @@ export const CommentItem = ({
       )}
 
       <div
-        className={`flex gap-3 py-3 border-b border-divider-subtle last:border-b-0 ${moderationProminent ? "gap-4" : ""}`}
+        className="grid grid-cols-[36px_minmax(0,1fr)] gap-x-2 gap-y-3 border-b border-divider-subtle py-3 last:border-b-0 md:grid-cols-[40px_minmax(0,1fr)]"
       >
         <div className="shrink-0" onClick={handleLinkClick}>
-          <Link href={`/profile/${comment.userId}`}>
+          <Link
+            href={`/profile/${comment.userId}`}
+            className="block rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fuchsia-border-default/60"
+          >
             <Avatar
               src={comment.userAvatarUrl ?? undefined}
               alt={comment.userName}
@@ -156,9 +161,9 @@ export const CommentItem = ({
           </Link>
         </div>
 
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between mb-1">
-            <div className="flex items-center gap-2">
+        <div className="contents">
+          <div className="col-start-2 row-start-1 flex min-w-0 items-start justify-between">
+            <div className="flex min-w-0 flex-col justify-center gap-0.5">
               <Link
                 href={`/profile/${comment.userId}`}
                 className={nameClass}
@@ -166,19 +171,21 @@ export const CommentItem = ({
               >
                 {comment.userName}
               </Link>
-              <span className={dateClass}>
-                {formatSmartDate(comment.createdAt, lang)}
-              </span>
-              {comment.isEdited && (
-                <span className="text-[10px] font-medium text-foreground-secondary-default/60 italic">
-                  {t("post.edited")}
+              <div className="flex items-center gap-2">
+                <span className={dateClass}>
+                  {formatSmartDate(comment.createdAt, lang)}
                 </span>
-              )}
+                {comment.isEdited && (
+                  <span className="text-[10px] font-medium italic text-foreground-secondary-default/60">
+                    {t("post.edited")}
+                  </span>
+                )}
+              </div>
             </div>
 
             {showMenu && (
               <Menu as="div" className="relative inline-block text-left">
-                <Menu.Button className="p-1 text-foreground-secondary-default hover:text-foreground-primary-default transition-colors rounded-lg hover:bg-button-transparent-background-hover">
+                <Menu.Button className="flex size-7 items-center justify-center rounded-xl text-foreground-secondary-default transition-colors hover:bg-button-transparent-background-hover hover:text-foreground-primary-default focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fuchsia-border-default/60">
                   <BsThreeDots size={14} />
                 </Menu.Button>
 
@@ -295,10 +302,12 @@ export const CommentItem = ({
             )}
           </div>
 
-          <p className={bodyClass}>{comment.text}</p>
+          <p className={`${bodyClass} col-span-2 row-start-2`}>
+            {comment.text}
+          </p>
           {comment.imageUrl &&
             (moderationCompactImage ? (
-              <div className="mt-2">
+              <div className="col-span-2">
                 <ExpandableImageThumbnail
                   src={comment.imageUrl}
                   alt={t("comment.imageAlt")}
@@ -308,7 +317,7 @@ export const CommentItem = ({
               <img
                 src={comment.imageUrl}
                 alt={t("comment.imageAlt")}
-                className="mt-2 w-full max-w-xs rounded-xl border border-surface-card-border-default object-cover"
+                className="col-span-2 max-h-[279px] w-full rounded-xl border border-surface-card-border-default object-cover"
               />
             ))}
         </div>

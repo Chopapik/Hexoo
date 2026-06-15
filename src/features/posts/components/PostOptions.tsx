@@ -116,8 +116,8 @@ export default function PostOptions({
 
       <Menu as="div" className="relative inline-block text-left">
         <div>
-          <Menu.Button className="p-2 text-foreground-secondary-default hover:text-foreground-primary-default transition-colors rounded-xl hover:bg-button-transparent-background-hover">
-            <BsThreeDots size={20} />
+          <Menu.Button className="flex size-7 items-center justify-center rounded-xl text-foreground-secondary-default transition-colors hover:bg-button-transparent-background-hover hover:text-foreground-primary-default focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fuchsia-border-default/60">
+            <BsThreeDots size={16} />
           </Menu.Button>
         </div>
 

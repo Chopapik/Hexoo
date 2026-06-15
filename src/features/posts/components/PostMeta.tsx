@@ -20,38 +20,41 @@ export const PostMeta = ({ post }: PostMetaProps) => {
   };
 
   return (
-    <div className="w-full flex justify-between items-start">
-      <div className="inline-flex justify-start items-center gap-2">
-        <div className="size-9 sm:size-10" onClick={handleLinkClick}>
-          <Link href={`/profile/${post.userId}`}>
+    <div className="flex h-11 w-full items-start justify-between">
+      <div className="inline-flex items-center justify-start gap-2">
+        <div className="size-9 md:size-10" onClick={handleLinkClick}>
+          <Link
+            href={`/profile/${post.userId}`}
+            className="block rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fuchsia-border-default/60"
+          >
             <Avatar
               src={post.userAvatarUrl ?? undefined}
               alt={post.userName ?? undefined}
-              className="size-9 sm:size-10"
+              className="size-9 rounded-xl md:size-10"
             />
           </Link>
         </div>
-        <div className="self-stretch inline-flex flex-col justify-center items-start">
+        <div className="inline-flex self-stretch flex-col items-start justify-center gap-0.5">
           <div
-            className="justify-start text-foreground-primary-default text-xs sm:text-sm font-medium font-sans"
+            className="justify-start font-sans text-sm font-medium leading-[1.2] text-foreground-primary-default"
             onClick={handleLinkClick}
           >
             <Link
               href={`/profile/${post.userId}`}
-              className="hover:underline"
+              className="rounded-sm hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fuchsia-border-default/60"
             >
               {post.userName}
             </Link>
           </div>
-          <div className="inline-flex justify-center items-center gap-1">
-            <div className="justify-start text-foreground-secondary-default text-[11px] sm:text-xs font-normal font-sans">
+          <div className="inline-flex items-center justify-center gap-1">
+            <div className="justify-start font-sans text-xs font-normal leading-[1.2] text-foreground-secondary-default">
               {formatSmartDate(post.createdAt, lang)}
             </div>
           </div>
         </div>
       </div>
 
-      <div className="pt-1" onClick={handleLinkClick}>
+      <div onClick={handleLinkClick}>
         <PostOptions postId={post.id} authorId={post.userId} post={post} />
       </div>
     </div>

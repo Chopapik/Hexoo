@@ -78,11 +78,11 @@ export default function PostList({ className = "" }: PostListProps) {
   if (isLoading) {
     return (
       <main className={joinClassNames(className)}>
-        <div className="space-y-3 sm:space-y-4">
+        <div className="space-y-2 md:space-y-3">
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="w-full max-w-[920px] p-3 sm:p-4 bg-surface-card-background-default rounded-xl border-t-2 border-surface-card-border-default flex flex-col gap-3 sm:gap-4 animate-pulse"
+              className="flex w-full max-w-[920px] animate-pulse flex-col gap-4 rounded-xl border-t-2 border-surface-card-border-default bg-surface-card-background-default p-3"
             >
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-button-glass-card-background-hover" />
@@ -110,7 +110,7 @@ export default function PostList({ className = "" }: PostListProps) {
 
   return (
     <main className={joinClassNames(className)}>
-      <div className="space-y-3 sm:space-y-4">
+      <div className="space-y-2 md:space-y-3">
         {data?.pages.map((group, i) => (
           <React.Fragment key={i}>
             {group.map((post: PublicPostResponseDto) => (

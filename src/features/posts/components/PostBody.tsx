@@ -36,7 +36,7 @@ export const PostBody = ({
 
   return (
     <>
-      <div className="self-stretch inline-flex flex-col justify-center items-center gap-3 sm:gap-4 overflow-hidden w-full">
+      <div className="inline-flex w-full self-stretch flex-col items-center justify-center gap-3 overflow-hidden">
         {hasBadges && (
           <div className="self-start flex items-center gap-2">
             {isNSFW && (
@@ -53,7 +53,7 @@ export const PostBody = ({
         )}
         {hasText && (
           <div
-            className={`self-stretch text-foreground-primary-default text-sm sm:text-base font-normal w-full ${
+            className={`w-full self-stretch text-lg font-normal leading-[1.45] text-foreground-primary-default md:text-base ${
               isAscii
                 ? "max-w-full overflow-x-auto whitespace-pre rounded p-2 font-mono text-xs"
                 : "font-sans whitespace-pre-wrap wrap-break-word"

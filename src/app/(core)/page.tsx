@@ -9,9 +9,9 @@ export default function HomePage() {
   const openCreatePostModal = useAppStore((s) => s.openCreatePostModal);
 
   return (
-    <div className="relative">
+    <div className="relative pb-[83px] pt-2 md:pt-[7px]">
       {user ? (
-        <div className="w-full max-w-4xl mb-2 sm:mb-4 flex justify-end">
+        <div className="mb-2 flex w-full max-w-4xl justify-end md:mb-3">
           <CreatePostButton onClick={openCreatePostModal} />
         </div>
       ) : null}

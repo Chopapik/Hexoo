@@ -73,7 +73,7 @@ export const PostModal = ({
     >
       <div className="flex h-full min-h-0 flex-col overflow-hidden lg:flex-row">
         {hasImage && (
-          <div className="hidden lg:flex lg:h-full lg:max-h-full lg:min-w-0 lg:flex-1 lg:items-center lg:justify-center lg:overflow-hidden lg:bg-black/20">
+          <div className="hidden lg:flex lg:h-full lg:max-h-full lg:min-w-0 lg:flex-1 lg:items-center lg:justify-center lg:overflow-hidden lg:bg-modal-overlay-background-default/30">
             {isContentVisible ? (
               <img
                 src={post.imageUrl ?? ""}
@@ -104,7 +104,7 @@ export const PostModal = ({
               )}
 
               {hasImage && (
-                <div className="flex max-h-[60vh] w-full items-center justify-center overflow-hidden bg-black/20">
+                <div className="flex max-h-[60vh] w-full items-center justify-center overflow-hidden bg-modal-overlay-background-default/30">
                   {isContentVisible ? (
                     <img
                       src={post.imageUrl ?? ""}

@@ -64,7 +64,7 @@ export const CommentForm = ({ postId }: CommentFormProps) => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex w-full flex-col gap-4">
       {imagePreview && (
         <div className="relative w-fit group animate-in fade-in zoom-in-95 duration-200">
           <img
@@ -83,12 +83,12 @@ export const CommentForm = ({ postId }: CommentFormProps) => {
         </div>
       )}
 
-      <div className="relative w-full group">
+      <div className="group relative min-h-[100px] w-full">
         <textarea
           {...register("text")}
           onKeyDown={handleKeyDown}
           placeholder={t("comment.placeholder")}
-          className="w-full bg-transparent text-foreground-primary-default placeholder:text-foreground-secondary-default/50 text-base resize-none outline-none min-h-[90px] scrollbar-hide leading-relaxed pb-6"
+          className="min-h-[100px] w-full resize-none bg-transparent pb-6 text-base leading-6 text-foreground-primary-default outline-none placeholder:text-foreground-secondary-default/50 scrollbar-hide"
         />
         <div
           className={`
@@ -117,7 +117,7 @@ export const CommentForm = ({ postId }: CommentFormProps) => {
             onClick={triggerPicker}
             icon={<PaperclipIcon className="w-5 h-5" />}
             variant="transparent"
-            size="icon"
+            size="md"
             className="text-foreground-secondary-default hover:text-foreground-primary-default"
             type="button"
           />

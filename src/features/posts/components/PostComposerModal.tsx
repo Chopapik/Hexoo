@@ -159,7 +159,7 @@ export default function PostComposerModal({
         footer={footerContent}
         className="w-full h-dvh max-h-dvh lg:h-auto lg:max-h-[calc(100dvh-2rem)] lg:w-full lg:max-w-3xl"
       >
-        <div className="flex h-full w-full flex-col gap-3 sm:gap-4 overflow-y-auto p-3 sm:p-4">
+        <div className="flex h-full w-full flex-col gap-4 overflow-y-auto p-4">
           {imagePreview && (
             <div
               className={`relative w-fit group animate-in fade-in zoom-in-95 duration-200 transition-all ${

@@ -117,7 +117,7 @@ export const Layout: React.FC<{
           <Header user={user} />
         </header>
         <div className="mx-auto w-full flex-1 md:pt-4">
-          <div className="flex items-start md:gap-4">
+          <div className="flex items-start md:gap-3">
             <aside className={leftRailAsideClass}>
               {user ? (
                 <LeftNav onOpenRight={openRight} user={user} />
