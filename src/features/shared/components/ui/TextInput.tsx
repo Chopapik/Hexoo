@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, FocusEvent } from "react";
+import React, { useId, useState, ChangeEvent, FocusEvent } from "react";
 import eyeIconUrl from "../../assets/icons/eye.svg?url";
 import eyeOffIconUrl from "../../assets/icons/eye-off.svg?url";
 import Image from "next/image";
@@ -13,6 +13,7 @@ export interface Message {
 }
 
 interface TextInputProps {
+  id?: string;
   label?: string;
   name?: string;
   type?: "text" | "password" | "email";
@@ -39,10 +40,11 @@ const borderClasses: Record<Status, string> = {
 };
 
 const baseBorderClasses =
-  "rounded-lg bg-input-background-default backdrop-blur-sm";
+  "rounded-lg bg-input-background-default backdrop-blur-sm hover:bg-input-background-hover";
 
 export default function TextInput({
   ref,
+  id,
   label = "",
   name,
   type = "text",
@@ -56,6 +58,8 @@ export default function TextInput({
   showButton = true,
 }: TextInputProps) {
   const { t } = useI18n();
+  const generatedId = useId();
+  const inputId = id ?? generatedId;
   const [showPassword, setShowPassword] = useState(false);
   const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
 
@@ -63,19 +67,23 @@ export default function TextInput({
     messages.length > 0 ? messages[messages.length - 1].type : status;
 
   return (
-    <div className="w-full min-w-0 sm:min-w-64 inline-flex flex-col justify-start items-start gap-1 sm:gap-1.5 font-sans">
+    <div className="inline-flex w-full min-w-0 flex-col items-start justify-start gap-1.5 font-sans sm:min-w-64">
       {label && (
-        <div className="ml-1 font-sans text-xs font-semibold text-input-text-label sm:text-sm">
+        <label
+          htmlFor={inputId}
+          className="font-sans text-sm font-semibold text-input-text-label"
+        >
           {label}
-        </div>
+        </label>
       )}
 
       <div
         data-show-button={showButton}
         data-status={lastMessageType}
-        className={`self-stretch h-10 sm:h-11 min-w-0 sm:min-w-48 px-3 sm:px-4 inline-flex justify-start items-center gap-2 overflow-hidden font-sans transition-all duration-200 ${baseBorderClasses} ${borderClasses[lastMessageType]}`}
+        className={`inline-flex h-11 min-w-0 self-stretch items-center justify-start gap-2 overflow-hidden px-4 font-sans transition-colors duration-200 sm:min-w-48 ${baseBorderClasses} ${borderClasses[lastMessageType]}`}
       >
         <input
+          id={inputId}
           type={type === "password" && showPassword ? "text" : type}
           name={name}
           placeholder={placeholder}
@@ -91,7 +99,7 @@ export default function TextInput({
           <button
             type="button"
             onClick={togglePasswordVisibility}
-            className="relative flex size-5 items-center justify-center text-input-button-default opacity-60 transition-colors hover:text-input-button-hover hover:opacity-100 dark:invert"
+            className="relative flex size-5 items-center justify-center rounded-sm text-input-button-default opacity-60 transition-colors hover:text-input-button-hover hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fuchsia-border-default/60 dark:invert"
           >
             <Image
               src={showPassword ? eyeOffIconUrl : eyeIconUrl}
@@ -102,7 +110,7 @@ export default function TextInput({
         )}
       </div>
 
-      <div className="min-h-6 sm:min-h-8">
+      <div className="min-h-6">
         {messages.length > 0 &&
           messages.map((msg, index) => (
             <ValidationMessage key={index} message={msg} />

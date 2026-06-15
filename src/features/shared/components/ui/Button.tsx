@@ -16,12 +16,12 @@ import {
  * @type {Record<ButtonSize, string>}
  */
 const sizeClasses: Record<ButtonSize, string> = {
-  sm: "h-7 min-w-7 px-3 text-xs rounded-xl",
-  md: "h-10 min-w-10 px-3 text-sm rounded-3xl sm:h-9 sm:min-w-9 sm:px-4 sm:text-base",
+  sm: "h-7 min-w-7 px-4 text-base rounded-xl",
+  md: "h-10 min-w-10 px-4 text-base rounded-3xl",
   lg: "h-11 min-w-11 px-4 text-sm rounded-xl sm:px-5 sm:text-base",
-  xl: "h-11 w-full px-3 text-sm rounded-xl sm:h-13 sm:text-base",
+  xl: "h-13 w-full px-4 text-base rounded-xl",
   // Icon-only sizes
-  icon: "h-10 min-w-10 rounded-xl sm:h-9 sm:min-w-9",
+  icon: "size-10 rounded-3xl",
   iconSm: "size-7 rounded-xl",
 };
 
@@ -117,17 +117,14 @@ export default function Button({
   onClick,
   isLoading = false,
 }: ButtonProps) {
-  // Keep base layout/interaction minimal so variants can fully style background/borders.
   const baseClasses =
-    "relative inline-flex justify-center items-center gap-2 font-bold font-sans leading-tight shrink-0 cursor-pointer overflow-hidden transition-colors duration-300 ease-out";
+    "relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 overflow-hidden font-sans font-bold leading-tight transition-colors duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fuchsia-border-default/60 focus-visible:ring-offset-2 focus-visible:ring-offset-page-background-default";
 
-  // When disabled or loading, use the per-variant blocked look.
   const visualClasses =
     disabled || isLoading
       ? disabledVariantClasses[variant]
       : variantClasses[variant];
 
-  // Ensure className from props overrides default styles
   const combinedClasses = `${baseClasses} ${
     sizeClasses[size]
   } ${visualClasses} ${
@@ -149,9 +146,9 @@ export default function Button({
         </div>
       )}
       <div
-        className={`flex items-center gap-2 ${isLoading ? "invisible" : ""}`}
+        className={`flex min-w-0 items-center gap-2 ${isLoading ? "invisible" : ""}`}
       >
-        {icon ? ( // Handle central icon prop
+        {icon ? (
           icon
         ) : (
           <>

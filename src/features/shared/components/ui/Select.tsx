@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FocusEvent } from "react";
+import React, { ChangeEvent, FocusEvent, useId } from "react";
 
 interface SelectOption {
   value: string;
@@ -6,6 +6,7 @@ interface SelectOption {
 }
 
 interface SelectProps {
+  id?: string;
   label?: string;
   name?: string;
   options: SelectOption[];
@@ -17,9 +18,10 @@ interface SelectProps {
 }
 
 const baseBorderClasses =
-  "rounded-lg border-b-4 border-input-border-default bg-input-background-default backdrop-blur-sm focus-within:border-input-border-hover";
+  "rounded-lg border-b-4 border-input-border-default bg-input-background-default backdrop-blur-sm transition-colors hover:bg-input-background-hover focus-within:border-input-border-hover focus-within:bg-input-background-hover";
 
 export default function Select({
+  id,
   label = "",
   name,
   options,
@@ -29,20 +31,27 @@ export default function Select({
   onBlur,
   disabled,
 }: SelectProps) {
+  const generatedId = useId();
+  const selectId = id ?? generatedId;
+
   return (
-    <div className="w-full min-w-64 inline-flex flex-col justify-start items-start gap-1.5">
+    <div className="inline-flex w-full min-w-64 flex-col items-start justify-start gap-1.5 font-sans">
       {label && (
-        <div className="ml-1 font-sans text-sm font-semibold text-input-text-label">
+        <label
+          htmlFor={selectId}
+          className="font-sans text-sm font-semibold text-input-text-label"
+        >
           {label}
-        </div>
+        </label>
       )}
 
       <div
-        className={`self-stretch h-11 min-w-48 px-4 inline-flex justify-start items-center gap-2 overflow-hidden transition-all duration-200 ${baseBorderClasses}`}
+        className={`relative inline-flex h-11 min-w-48 self-stretch items-center justify-start gap-2 overflow-hidden px-4 ${baseBorderClasses}`}
       >
         <select
+          id={selectId}
           name={name}
-          className="h-full w-full flex-1 cursor-pointer appearance-none border-none bg-transparent font-sans text-base font-medium text-input-text-value outline-none placeholder:text-input-text-placeholder disabled:cursor-not-allowed disabled:text-input-button-disabled"
+          className="h-full w-full flex-1 cursor-pointer appearance-none border-none bg-transparent pr-6 font-sans text-base font-medium text-input-text-value outline-none disabled:cursor-not-allowed disabled:text-input-button-disabled"
           value={value}
           onChange={onChange}
           onBlur={onBlur}
@@ -66,7 +75,6 @@ export default function Select({
           ))}
         </select>
 
-        {/* Custom Arrow Icon */}
         <div className="pointer-events-none absolute right-4 text-input-button-default">
           <svg width="10" height="6" viewBox="0 0 10 6" fill="none">
             <path
