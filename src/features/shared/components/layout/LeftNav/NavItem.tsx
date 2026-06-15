@@ -31,7 +31,7 @@ export function NavItem({
       : pathname === to || pathname?.startsWith(`${to}/`);
 
   const iconClasses =
-    "size-10 left-0 top-0 absolute transition-colors duration-200 " +
+    "absolute left-0 top-0 size-[30px] transition-colors duration-200 " +
     (isActive
       ? "text-foreground-primary-default"
       : "text-foreground-secondary-default group-hover/item:text-foreground-primary-default");
@@ -39,10 +39,10 @@ export function NavItem({
   const isSidebar = variant === "sidebar";
 
   const linkClasses =
-    "rounded-xl inline-flex items-center group/item cursor-pointer transition-colors duration-200 " +
+    "group/item relative inline-flex items-center rounded-xl transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fuchsia-border-default/60 " +
     (isSidebar
-      ? "h-12 w-full justify-center xl:justify-start xl:gap-5"
-      : "h-10 w-10 xs:w-11 sm:w-12 justify-center");
+      ? "h-12 w-full justify-center xl:justify-start"
+      : "size-[30px] justify-center");
 
   return (
     <Link
@@ -54,7 +54,7 @@ export function NavItem({
       {isSidebar ? (
         <div
           className={
-            "hidden xl:block w-0.5 h-12 transition-colors duration-200 " +
+            "absolute left-0 top-0 h-12 w-0.5 transition-colors duration-200 " +
             (isActive
               ? "bg-foreground-primary-default"
               : "bg-foreground-secondary-default group-hover/item:bg-foreground-primary-default")
@@ -62,9 +62,9 @@ export function NavItem({
         />
       ) : null}
 
-      <div className="flex justify-start items-center gap-1 overflow-hidden">
+      <div className="flex items-center justify-start gap-2 overflow-hidden xl:ml-[34px]">
         <div className="relative inline-flex flex-col justify-start items-start overflow-hidden">
-          <div className="size-10 relative overflow-hidden flex items-center justify-center">
+          <div className="relative flex size-[30px] items-center justify-center overflow-hidden">
             {Icon ? (
               (() => {
                 const I = Icon as LucideIcon;
@@ -96,7 +96,7 @@ export function NavItem({
             )}
           </div>
 
-          <div className="size-2 left-[16px] top-0 absolute">
+          <div className="absolute left-[11px] top-0 size-2">
             {hasNotification && (
               <div className="size-2 left-0 top-0 absolute bg-yellow-500 rounded-full ring-2 ring-surface-chrome-background-default" />
             )}
@@ -107,7 +107,7 @@ export function NavItem({
           <div className="flex justify-start items-start overflow-hidden">
             <div
               className={
-                "hidden xl:block text-lg font-semibold font-sans transition-colors duration-200 " +
+                "hidden font-sans text-base font-semibold transition-colors duration-200 xl:block " +
                 (isActive
                   ? "text-foreground-primary-default drop-shadow-sm"
                   : "text-foreground-secondary-default group-hover/item:text-foreground-primary-default")

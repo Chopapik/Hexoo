@@ -18,14 +18,14 @@ import { PresenceSubscription } from "@/features/presence/components/PresenceSub
 import type { SessionData } from "@/features/me/me.type";
 
 const leftRailAsideClass =
-  "hidden md:block sticky top-[calc(56.6px+16px+16px)] h-[calc(100vh-56.6px-16px-16px-16px)] shrink-0";
+  "hidden md:flex sticky top-[76px] h-[calc(100vh-92px)] w-20 xl:w-[250px] shrink-0 justify-end";
 const rightRailAsideClass =
-  "hidden lg:block sticky top-[calc(56.6px+16px+16px)] h-[calc(100vh-56.6px-16px-16px-16px)] shrink-0";
+  "hidden lg:flex sticky top-[76px] h-[calc(100vh-92px)] lg:w-[244px] xl:w-[250px] shrink-0 justify-start";
 
 function LeftRailWidthSpacer() {
   return (
     <div
-      className="invisible pointer-events-none md:w-20 xl:w-72 shrink-0"
+      className="invisible pointer-events-none h-full w-full shrink-0"
       aria-hidden
     />
   );
@@ -107,19 +107,17 @@ export const Layout: React.FC<{
     <div className="flex justify-center bg-page-background-default w-full min-h-screen">
       <PresenceSubscription />
       <SessionWatcher />
-      <div className="flex flex-col w-full max-w-[1440px]">
+      <div className="flex w-full max-w-[1310px] flex-col md:w-[calc(100%_-_32px)]">
         <header
           className={
-            "sticky top-0 z-50 bg-page-background-default px-1.5 py-1.5 md:px-4 md:py-4 transition-transform duration-300 ease-out will-change-transform " +
+            "sticky top-0 z-50 transition-transform duration-300 ease-out will-change-transform " +
             (isHeaderVisible ? "" : "max-md:-translate-y-full")
           }
         >
-          <div className="mx-auto w-full">
-            <Header user={user} />
-          </div>
+          <Header user={user} />
         </header>
-        <div className="mx-auto w-full px-1.5 md:px-4 flex-1">
-          <div className="flex gap-3 md:gap-4 items-start">
+        <div className="mx-auto w-full flex-1 md:pt-4">
+          <div className="flex items-start md:gap-4">
             <aside className={leftRailAsideClass}>
               {user ? (
                 <LeftNav onOpenRight={openRight} user={user} />
@@ -134,10 +132,8 @@ export const Layout: React.FC<{
           </div>
         </div>
         {user ? (
-          <div className="md:hidden sticky bottom-0 px-1.5 pb-1.5 bg-page-background-default">
-            <div className="mx-auto w-full pt-1.5">
-              <BottomNav onOpenRight={openRight} user={user} />
-            </div>
+          <div className="sticky bottom-0 z-40 flex justify-center bg-page-background-default/90 py-2 backdrop-blur-xl md:hidden">
+            <BottomNav onOpenRight={openRight} user={user} />
           </div>
         ) : null}
         {user ? (

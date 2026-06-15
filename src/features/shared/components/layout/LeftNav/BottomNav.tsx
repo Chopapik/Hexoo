@@ -31,8 +31,8 @@ export function BottomNav({ user }: BottomNavProps) {
   const isStaff = isAdmin || isModerator;
 
   return (
-    <div className="flex bg-surface-chrome-background-default border-t border-surface-chrome-border-default rounded-xl overflow-hidden h-11 px-1 w-full flex-row justify-between items-center gap-1.5">
-      <div className="flex flex-row items-center min-w-0 px-1">
+    <nav className="flex h-[58px] w-[290px] max-w-[calc(100%_-_32px)] flex-row items-center justify-between overflow-hidden rounded-[32px] bg-surface-chrome-background-default p-2 shadow-lg backdrop-blur-sm">
+      <div className="flex h-[42px] min-w-0 flex-row items-center gap-4 rounded-3xl px-1.5">
         <NavItem
           label={t("nav.home")}
           to="/"
@@ -88,6 +88,6 @@ export function BottomNav({ user }: BottomNavProps) {
         className="shrink-0"
         onClick={openCreatePostModal}
       />
-    </div>
+    </nav>
   );
 }

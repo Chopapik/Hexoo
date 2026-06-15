@@ -31,67 +31,57 @@ export function LeftNav({ onOpenRight, user }: LeftNavProps) {
   const isStaff = isAdmin || isModerator;
 
   return (
-    <div className="hidden md:flex md:sticky md:top-[88px] justify-end-safe self-start bg-surface-chrome-background-default border-t-2 border-surface-chrome-border-default rounded-xl overflow-hidden md:w-20 xl:w-72 px-3 py-3 lg:px-4 lg:py-4 flex-col items-center h-full">
+    <div className="hidden h-full w-full flex-col items-center justify-between md:flex xl:w-[235px]">
       {user ? (
-        <div className="h-full py-5 gap-16 flex flex-col w-full items-center">
-          <div className="flex flex-col md:justify-start items-center xl:items-start w-full xl:w-fit font-sans">
-            <NavItem label={t("nav.home")} to="/" icon={HexHomeIcon} />
-            <NavItem
-              label={t("nav.profile")}
-              to={`/profile/${user.uid}`}
-              icon={HexProfileIcon}
-            />
-            <NavItem
-              label={t("nav.settings")}
-              to="/settings"
-              icon={HexSettingsIcon}
-            />
-            {isStaff ? (
-              isAdmin ? (
-                <>
+        <div className="flex w-full flex-col items-center gap-4">
+          <nav className="flex w-full flex-col items-center rounded-3xl bg-surface-chrome-background-default py-8 shadow-lg backdrop-blur-sm">
+            <div className="flex w-full flex-col items-center font-sans xl:w-44 xl:items-start">
+              <NavItem label={t("nav.home")} to="/" icon={HexHomeIcon} />
+              <NavItem
+                label={t("nav.profile")}
+                to={`/profile/${user.uid}`}
+                icon={HexProfileIcon}
+              />
+              <NavItem
+                label={t("nav.settings")}
+                to="/settings"
+                icon={HexSettingsIcon}
+              />
+              {isStaff ? (
+                isAdmin ? (
+                  <>
+                    <NavItem
+                      label={t("nav.admin")}
+                      to="/admin"
+                      icon={HexActivityIcon}
+                    />
+                    <NavItem
+                      label={t("nav.moderation")}
+                      to="/moderator"
+                      icon={HexActivityIcon}
+                    />
+                  </>
+                ) : (
                   <NavItem
                     label={t("nav.admin")}
-                    to="/admin"
-                    icon={HexActivityIcon}
-                  />
-                  <NavItem
-                    label={t("nav.moderation")}
                     to="/moderator"
                     icon={HexActivityIcon}
                   />
-                </>
-              ) : (
-                <NavItem
-                  label={t("nav.admin")}
-                  to="/moderator"
-                  icon={HexActivityIcon}
-                />
-              )
-            ) : null}
-          </div>
-
-          <div className="flex w-full justify-center">
-            <div className="xl:hidden">
-              <Button
-                size="icon"
-                icon={<Plus className="size-5" />}
-                onClick={openCreatePostModal}
-              />
+                )
+              ) : null}
             </div>
+          </nav>
 
-            <div className="hidden xl:block w-full">
-              <Button
-                text={t("nav.addPost")}
-                size="xl"
-                rightIcon={<Plus className="size-5" />}
-                className="w-full justify-center font-semibold"
-                onClick={openCreatePostModal}
-              />
-            </div>
+          <div className="lg:hidden">
+            <Button
+              size="icon"
+              icon={<Plus className="size-5" />}
+              onClick={openCreatePostModal}
+            />
           </div>
         </div>
       ) : null}
-      <footer className="flex flex-col w-full">
+      <footer className="hidden w-44 flex-col xl:flex">
         <div className="border-t border-surface-chrome-border-default w-full mb-3" />
         <ul className="flex flex-col items-start justify-start gap-0.5 text-left w-full font-sans">
           <li>

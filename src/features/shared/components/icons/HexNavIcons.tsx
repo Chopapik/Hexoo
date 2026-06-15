@@ -39,7 +39,11 @@ function HexLucideIcon({
       >
         <path
           d="M12 2.75 19.85 7.35v9.3L12 21.25 4.15 16.65v-9.3L12 2.75Z"
-          fill={isActive ? "rgba(163, 163, 163, 0.22)" : "none"}
+          fill={
+            isActive
+              ? "rgb(from var(--color-foreground-secondary-default) r g b / 0.22)"
+              : "none"
+          }
           stroke="none"
         />
         <path d="M12 2.75 19.85 7.35v9.3L12 21.25 4.15 16.65v-9.3L12 2.75Z" opacity="0.42" />

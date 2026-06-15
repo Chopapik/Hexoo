@@ -1,13 +1,26 @@
 import { RightNavActiveUsers } from "./RightNavActiveUsers";
+import Button from "@/features/shared/components/ui/Button";
+import { useAppStore } from "@/lib/store/store";
+import { PenLine } from "lucide-react";
 import { useI18n } from "@/i18n/useI18n";
 
 function RightNavContent() {
+  const { t } = useI18n();
+  const openCreatePostModal = useAppStore((s) => s.openCreatePostModal);
+
   return (
-    <div className="flex flex-col h-full w-full  justify-between">
-      <div className="p-3 w-full h-full flex flex-col gap-4">
+    <div className="flex h-full w-full flex-col justify-between">
+      <div className="flex h-[403px] w-full flex-col justify-between rounded-3xl bg-surface-chrome-background-default px-[17px] py-[22px] shadow-lg backdrop-blur-sm">
         <RightNavActiveUsers />
+        <Button
+          text={t("nav.addPost")}
+          size="xl"
+          rightIcon={<PenLine className="size-4" />}
+          className="w-full justify-center font-semibold"
+          onClick={openCreatePostModal}
+        />
       </div>
-      <div className="text-xs text-foreground-muted-default font-sans w-full text-center p-6">
+      <div className="w-full p-6 text-center font-sans text-xs text-foreground-muted-default">
         <p>© 2025-2026 Hexoo Project.</p>
         <p>Created by CHOPAPIK.</p>
       </div>
@@ -17,7 +30,7 @@ function RightNavContent() {
 
 export function RightNavSidebar() {
   return (
-    <div className="hidden md:flex md:sticky md:top-4 self-start bg-surface-chrome-background-default border-t-2 border-surface-chrome-border-default rounded-xl overflow-hidden md:w-20 lg:w-[244px] xl:w-72 h-full">
+    <div className="hidden h-full w-[235px] self-start overflow-hidden rounded-xl shadow-lg md:flex">
       <RightNavContent />
     </div>
   );
@@ -37,7 +50,7 @@ export function RightNavOverlay({
   return (
     <>
       <div
-        className={`md:hidden fixed inset-y-0 right-0 z-50 w-72 max-w-[85vw] bg-surface-chrome-background-default border-t border-surface-chrome-border-default rounded-l-xl shadow-xl transform transition-transform duration-300 ease-out ${
+        className={`fixed inset-y-0 right-0 z-50 w-72 max-w-[85vw] transform rounded-l-xl bg-page-background-default p-4 shadow-xl transition-transform duration-300 ease-out md:hidden ${
           open ? "translate-x-0" : "translate-x-full"
         }`}
       >

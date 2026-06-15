@@ -103,7 +103,7 @@ export default function CreatePostButton({
   }, []);
 
   const buttonClassName = [
-    "relative self-stretch h-14 sm:h-20 border border-button-outline-border-default bg-button-outline-background-default px-4 sm:px-8 py-3 sm:py-4 w-full rounded-xl inline-flex justify-between items-center overflow-hidden cursor-pointer group hover:border-button-outline-border-hover hover:bg-button-outline-background-hover transition-all duration-300",
+    "group relative inline-flex h-16 w-full self-stretch cursor-pointer items-center justify-between overflow-hidden rounded-xl border border-button-outline-border-default bg-[linear-gradient(to_bottom_right,rgb(from_var(--color-accent-fuchsia-background-default)_r_g_b_/_0.07)_0%,rgb(from_var(--color-foreground-primary-default)_r_g_b_/_0.01)_100%)] px-4 py-3 transition-all duration-300 hover:border-button-outline-border-hover hover:bg-button-outline-background-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fuchsia-border-default/60 focus-visible:ring-offset-2 focus-visible:ring-offset-page-background-default sm:h-20 sm:px-6 sm:py-4",
     className,
   ]
     .filter(Boolean)
@@ -124,10 +124,7 @@ export default function CreatePostButton({
   return (
     <button
       onClick={onClick}
-      style={{
-        background:
-          "linear-gradient(to bottom right, rgba(255, 12, 255, 0.07) 0%, rgba(255, 255, 255, 0.01) 100%)",
-      }}
+      type="button"
       className={buttonClassName}
     >
       <canvas

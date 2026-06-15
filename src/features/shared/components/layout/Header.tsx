@@ -10,39 +10,55 @@ export const Header = ({ user }: { user: SessionData | null }) => {
   const { t } = useI18n();
 
   return (
-    <div className="h-12 md:h-14 w-full bg-surface-chrome-background-default rounded-xl border-t-2 border-surface-chrome-border-default inline-flex justify-between items-center shadow-lg">
+    <div className="inline-flex h-[75px] w-full items-center justify-between border border-surface-chrome-border-default bg-surface-chrome-background-default px-8 backdrop-blur-2xl md:h-[60px] md:px-4">
       <Link
         href="/"
-        className="h-full flex items-center transition-transform duration-200 pl-3 md:pl-4"
-        style={{ paddingTop: 0, paddingBottom: 0 }}
+        aria-label="Hexoo"
+        className="flex h-full items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fuchsia-border-default/60"
       >
-        <Logo className="h-full w-auto flex items-center p-2.5 md:p-3 " />
+        <Logo
+          compactOnMobile={false}
+          className="flex h-[25px] w-[118px] items-center"
+        />
       </Link>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center">
         {user ? (
-          <Link href={`/profile/${user.uid}`}>
-            <div className="flex items-center gap-2 md:gap-3 pl-1 pr-3 md:pl-1.5 md:pr-4 py-1 rounded-2xl border border-transparent hover:bg-button-transparent-background-hover transition-all duration-200 cursor-pointer group">
-              <div className="transform transition-transform duration-200">
-                <Avatar src={user.avatarUrl || undefined} alt={user.name} />
-              </div>
+          <Link
+            href={`/profile/${user.uid}`}
+            className="group flex h-11 items-center gap-3 rounded-2xl px-1.5 py-1 transition-colors duration-200 hover:bg-button-transparent-background-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fuchsia-border-default/60 md:h-12"
+          >
+            <Avatar
+              src={user.avatarUrl || undefined}
+              alt={user.name}
+              className="size-9 rounded-xl md:size-10"
+            />
 
-              <div className="hidden xs:flex flex-col justify-center items-start">
-                <span className="text-[10px] leading-none text-foreground-secondary-default font-sans font-medium tracking-wide uppercase mb-0.5">
-                  {t("header.loggedAs")}
-                </span>
-                <span className="text-sm leading-none font-bold text-foreground-primary-default font-sans  transition-colors">
-                  {user.name}
-                </span>
-              </div>
+            <div className="hidden flex-col items-start justify-center gap-0.5 md:flex">
+              <span className="font-sans text-[10px] font-medium uppercase leading-none tracking-wide text-foreground-secondary-default">
+                {t("header.loggedAs")}
+              </span>
+              <span className="font-sans text-sm font-bold leading-none text-foreground-primary-default">
+                {user.name}
+              </span>
             </div>
           </Link>
         ) : (
-          <div className="mr-4">
-            <Link href="/login" prefetch={false}>
-              <Button text={t("header.login")} rightIconUrl={chevronRightUrl} />
-            </Link>
-          </div>
+          <Link href="/login" prefetch={false}>
+            <span className="md:hidden">
+              <Button
+                text={t("header.login")}
+                rightIconUrl={chevronRightUrl}
+                size="sm"
+              />
+            </span>
+            <span className="hidden md:block">
+              <Button
+                text={t("header.login")}
+                rightIconUrl={chevronRightUrl}
+              />
+            </span>
+          </Link>
         )}
       </div>
     </div>
