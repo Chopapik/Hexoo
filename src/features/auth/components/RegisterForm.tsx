@@ -169,7 +169,7 @@ export default function RegisterForm() {
     >
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="self-stretch flex flex-col justify-center items-center gap-2 sm:gap-3 overflow-hidden"
+        className="flex self-stretch flex-col items-center justify-center gap-[18px] overflow-hidden"
       >
         <TextInput
           label={t("auth.register.username")}
@@ -199,7 +199,7 @@ export default function RegisterForm() {
               <input
                 type="checkbox"
                 {...register("terms")}
-                className="peer size-5 appearance-none rounded border-2 border-checkbox-border-unchecked-default bg-checkbox-background-unchecked-default transition-all duration-200 checked:border-checkbox-border-checked-default checked:bg-checkbox-background-checked-default disabled:border-checkbox-border-unchecked-disabled disabled:bg-checkbox-background-unchecked-disabled checked:disabled:border-checkbox-border-checked-disabled checked:disabled:bg-checkbox-background-checked-disabled"
+                className="peer size-5 appearance-none rounded border-2 border-checkbox-border-unchecked-default bg-checkbox-background-unchecked-default transition-all duration-200 checked:border-checkbox-border-checked-default checked:bg-checkbox-background-checked-default focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fuchsia-border-default focus-visible:ring-offset-2 focus-visible:ring-offset-page-background-default disabled:border-checkbox-border-unchecked-disabled disabled:bg-checkbox-background-unchecked-disabled checked:disabled:border-checkbox-border-checked-disabled checked:disabled:bg-checkbox-background-checked-disabled"
               />
               <svg
                 className="pointer-events-none absolute h-3.5 w-3.5 text-checkbox-icon-default opacity-0 transition-opacity peer-checked:opacity-100 peer-disabled:text-checkbox-icon-disabled"
@@ -214,7 +214,7 @@ export default function RegisterForm() {
                 <polyline points="20 6 9 17 4 12"></polyline>
               </svg>
             </div>
-            <span className="inline-flex items-center gap-1 font-sans text-xs font-medium text-checkbox-label-default group-has-[:disabled]:text-checkbox-label-disabled sm:text-sm">
+            <span className="inline-flex items-center gap-1 font-sans text-xs font-medium text-checkbox-label-default group-has-[:disabled]:text-checkbox-label-disabled md:text-sm">
               <span>{t("auth.register.accept")}</span>
               <span>
                 <Link
@@ -256,7 +256,7 @@ export default function RegisterForm() {
           )}
         </div>
 
-        <div className="self-stretch flex flex-col justify-center items-end gap-1 mt-3 sm:mt-4">
+        <div className="flex self-stretch flex-col items-end justify-center">
           <Button
             text={t("auth.register.submit")}
             size="xl"
@@ -266,7 +266,6 @@ export default function RegisterForm() {
           />
         </div>
       </form>
-
     </AuthFormCard>
   );
 }

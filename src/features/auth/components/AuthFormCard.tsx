@@ -19,13 +19,13 @@ export default function AuthFormCard({
   footerLinkText,
 }: AuthFormCardProps) {
   return (
-    <div className="mx-auto inline-flex w-full max-w-md flex-col items-center justify-center gap-6 overflow-hidden px-4 py-8 xs:px-6 sm:max-w-2xl sm:gap-10 sm:rounded-[20px] sm:px-12 sm:py-12 sm:border sm:border-surface-card-border-default sm:bg-surface-card-background-default md:px-32 md:py-20">
-      <div className="py-0.5 flex flex-col justify-start items-center overflow-hidden">
-        <div className="justify-start text-foreground-primary-default text-4xl sm:text-6xl font-serif">
+    <div className="mx-auto inline-flex min-h-[800px] w-full max-w-md flex-col items-center justify-center gap-6 overflow-hidden px-4 py-12 md:max-w-2xl md:gap-10 md:rounded-[20px] md:border md:border-surface-card-border-default md:bg-surface-card-background-default md:px-32 md:py-20">
+      <div className="flex flex-col items-center justify-start overflow-hidden py-0.5">
+        <div className="justify-start font-serif text-4xl text-foreground-primary-default md:text-6xl">
           {title}
         </div>
         {subtitle && (
-          <div className="justify-start text-foreground-secondary-default text-lg sm:text-2xl font-bold font-serif">
+          <div className="justify-start font-serif text-xl font-bold text-foreground-secondary-default md:text-2xl">
             {subtitle}
           </div>
         )}
@@ -33,12 +33,17 @@ export default function AuthFormCard({
 
       {children}
 
-      <div className="self-stretch text-center justify-start mt-2 sm:mt-4">
-        <span className="text-foreground-primary-default text-sm sm:text-base font-semibold font-sans">
+      <div className="mt-2 self-stretch justify-start text-center md:mt-4">
+        <span className="font-sans text-sm font-semibold text-foreground-primary-default">
           {footerText}
         </span>
-        <span className="text-foreground-primary-default text-sm sm:text-base font-semibold font-sans underline ml-1">
-          <Link href={footerLinkHref}>{footerLinkText}</Link>
+        <span className="ml-1 font-sans text-sm font-semibold text-foreground-primary-default underline">
+          <Link
+            href={footerLinkHref}
+            className="rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fuchsia-border-default"
+          >
+            {footerLinkText}
+          </Link>
         </span>
       </div>
     </div>

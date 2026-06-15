@@ -16,8 +16,8 @@ export default function SettingsCard() {
   if (!user) return null;
 
   return (
-    <div className="w-full text-foreground-primary-default flex flex-col gap-4 sm:gap-6 mt-3 sm:mt-4">
-      <h2 className="text-3xl sm:text-4xl font-bold font-serif text-foreground-primary-default ml-1 sm:ml-2">
+    <div className="mt-3 flex w-full flex-col gap-4 text-foreground-primary-default md:mt-4 md:gap-6">
+      <h2 className="ml-1 font-serif text-3xl font-bold text-foreground-primary-default md:ml-2 md:text-4xl">
         {t("settings.title")}
       </h2>
       {/* <AppearanceSection /> */}

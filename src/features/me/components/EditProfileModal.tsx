@@ -298,7 +298,7 @@ export default function EditProfileModal({
                   className="relative group cursor-pointer animate-in fade-in zoom-in-95 duration-200"
                   onClick={triggerPicker}
                 >
-                  <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-xl p-px bg-[radial-gradient(circle_at_center,#262626_0%,#171717_100%)] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] transition-transform group-hover:scale-105">
+                  <div className="h-24 w-24 rounded-xl bg-surface-card-border-default p-px shadow-lg transition-transform group-hover:scale-105 sm:h-32 sm:w-32">
                     <Avatar
                       src={imagePreview || undefined}
                       alt={user.name}

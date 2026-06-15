@@ -33,7 +33,7 @@ export default function LoginForm() {
     >
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="self-stretch flex flex-col justify-center items-center gap-1.5 sm:gap-2 overflow-hidden"
+        className="flex self-stretch flex-col items-center justify-center gap-[18px] overflow-hidden"
       >
         <TextInput
           label="Email"
@@ -61,7 +61,7 @@ export default function LoginForm() {
           )}
         </div>
 
-        <div className="self-stretch flex flex-col justify-center items-end gap-1 mt-3 sm:mt-4 space-y-3 sm:space-y-4">
+        <div className="flex self-stretch flex-col items-end justify-center gap-4">
           <Button
             text={t("auth.login.submit")}
             size="xl"
@@ -96,7 +96,6 @@ export default function LoginForm() {
           />
         </div>
       </form>
-
     </AuthFormCard>
   );
 }
