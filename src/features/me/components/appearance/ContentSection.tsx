@@ -36,16 +36,16 @@ export default function ContentSection() {
 
   return (
     <SettingsSection title={t("settings.content.title")}>
-      <div className="flex flex-col gap-4 md:gap-6">
-        <div className="flex flex-row items-center justify-between gap-2 md:gap-3">
+      <div className="flex flex-col gap-3 md:gap-4">
+        <div className="flex w-full flex-row items-center justify-between gap-2 md:gap-3">
           <div className="min-w-0 flex-1 text-left">
             <h4
               id="nsfw-posts-label"
-              className="font-semibold font-sans text-foreground-primary-default"
+              className="font-sans text-base font-semibold leading-6 text-foreground-primary-default"
             >
               {t("settings.content.nsfwPosts")}
             </h4>
-            <p className="font-sans text-xs text-foreground-secondary-default md:text-sm">
+            <p className="font-sans text-xs leading-4 text-foreground-secondary-default md:text-sm md:leading-5">
               {t("settings.content.nsfwPostsCopy")}
             </p>
           </div>
@@ -58,15 +58,15 @@ export default function ContentSection() {
           </div>
         </div>
 
-        <div className="flex flex-row items-center justify-between gap-2 md:gap-3">
+        <div className="flex w-full flex-row items-center justify-between gap-2 md:gap-3">
           <div className="min-w-0 flex-1 text-left">
             <h4
               id="nsfw-comments-label"
-              className="font-semibold font-sans text-foreground-primary-default"
+              className="font-sans text-base font-semibold leading-6 text-foreground-primary-default"
             >
               {t("settings.content.nsfwComments")}
             </h4>
-            <p className="font-sans text-xs text-foreground-secondary-default md:text-sm">
+            <p className="font-sans text-xs leading-4 text-foreground-secondary-default md:text-sm md:leading-5">
               {t("settings.content.nsfwCommentsCopy")}
             </p>
           </div>

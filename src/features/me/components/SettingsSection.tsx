@@ -8,11 +8,11 @@ export default function SettingsSection({
   children: ReactNode;
 }) {
   return (
-    <section className="w-full rounded-xl border border-surface-card-border-default bg-surface-card-background-default p-3 font-sans md:p-4">
-      <h3 className="mb-3 font-serif text-xl font-bold text-foreground-primary-default md:mb-4 md:text-2xl">
+    <section className="flex min-h-[120px] w-full flex-col items-start gap-3 overflow-hidden rounded-xl border-t-2 border-surface-card-border-default bg-surface-card-background-default p-3 font-sans md:gap-4 md:p-4">
+      <h3 className="w-full font-serif text-xl font-bold leading-7 text-foreground-primary-default md:text-2xl md:leading-8">
         {title}
       </h3>
-      <div className="flex flex-col gap-3 md:gap-4">{children}</div>
+      <div className="flex w-full flex-col gap-3 md:gap-4">{children}</div>
     </section>
   );
 }

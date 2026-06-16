@@ -13,12 +13,12 @@ export default function AccountSection() {
   return (
     <>
       <SettingsSection title={t("settings.account.title")}>
-        <div className="flex flex-row items-center justify-between gap-2 md:gap-3">
+        <div className="flex w-full flex-row items-center justify-between gap-2 md:gap-3">
           <div className="min-w-0 flex-1 text-left">
-            <h4 className="font-semibold font-sans text-foreground-primary-default">
+            <h4 className="font-sans text-base font-semibold leading-6 text-foreground-primary-default">
               {t("settings.account.passwordTitle")}
             </h4>
-            <p className="font-sans text-xs text-foreground-secondary-default md:text-sm">
+            <p className="font-sans text-xs leading-4 text-foreground-secondary-default md:text-sm md:leading-5">
               {t("settings.account.passwordCopy")}
             </p>
           </div>
