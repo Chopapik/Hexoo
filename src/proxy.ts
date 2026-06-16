@@ -54,15 +54,6 @@ export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   const isApiRoute = pathname.startsWith("/api");
   const isAuthApiRoute = pathname.startsWith("/api/auth");
-  const isDemoRoute = pathname.startsWith("/demo");
-
-  const appEnv = process.env.APP_ENV;
-  const isDevApp = appEnv === "development";
-  const isProduction = process.env.NODE_ENV === "production";
-
-  if (isDemoRoute && isProduction && !isDevApp) {
-    return NextResponse.redirect(new URL("/", request.url));
-  }
 
   const response = NextResponse.next();
   const isLoggedIn = await isUserAuthenticated(request, response);
