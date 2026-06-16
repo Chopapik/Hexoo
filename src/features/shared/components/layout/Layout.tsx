@@ -46,8 +46,6 @@ export const Layout: React.FC<{
   const setUser = useAppStore((s) => s.setUser);
   const language = useAppStore((s) => s.settings.language);
   const initializeLanguage = useAppStore((s) => s.initializeLanguage);
-  const isCreatePostModalOpen = useAppStore((s) => s.createPostModal.isOpen);
-  const closeCreatePostModal = useAppStore((s) => s.closeCreatePostModal);
 
   useEffect(() => {
     setUser(initialUser);
@@ -139,10 +137,7 @@ export const Layout: React.FC<{
         {user ? (
           <RightNavOverlay open={isRightNavOpen} onClose={closeRight} />
         ) : null}
-        <CreatePostModal
-          isOpen={!!user && isCreatePostModalOpen}
-          onClose={closeCreatePostModal}
-        />
+        <CreatePostModal />
       </div>
     </div>
   );

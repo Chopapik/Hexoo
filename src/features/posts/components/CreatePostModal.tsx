@@ -12,16 +12,16 @@ import { ApiError } from "@/lib/AppError";
 import PostComposerModal from "./PostComposerModal";
 import { useI18n } from "@/i18n/useI18n";
 
-interface CreatePostModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
-
-export default function CreatePostModal({
-  isOpen,
-  onClose,
-}: CreatePostModalProps) {
+export default function CreatePostModal() {
   const { lang, t } = useI18n();
+  const isCreatePostModalOpen = useAppStore(
+    (state) => state.createPostModal.isOpen,
+  );
+  const closeCreatePostModal = useAppStore(
+    (state) => state.closeCreatePostModal,
+  );
+  const user = useAppStore((state) => state.auth.user);
+  const isOpen = Boolean(user) && isCreatePostModalOpen;
   const {
     register,
     handleSubmit,
@@ -66,7 +66,7 @@ export default function CreatePostModal({
       resetForm();
       setRootError(null);
       setModerationBlockReason(null);
-      onClose();
+      closeCreatePostModal();
     },
     (error) => {
       const code = error instanceof ApiError ? error.code : "INTERNAL_ERROR";
@@ -113,8 +113,6 @@ export default function CreatePostModal({
     clearErrors("youtubeUrl");
   };
 
-  const user = useAppStore((s) => s.auth.user);
-
   const displayError = clientError || rootError;
 
   return (
@@ -124,7 +122,7 @@ export default function CreatePostModal({
       placeholder={
         user ? t("post.placeholder", { name: user.name }) : t("post.placeholderGuest")
       }
-      onClose={onClose}
+      onClose={closeCreatePostModal}
       onSubmit={submit}
       onImageSelect={triggerPicker}
       onImageRemove={removeImage}

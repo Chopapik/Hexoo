@@ -1,14 +1,26 @@
+import { useEffect, type ComponentType } from "react";
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { expect } from "storybook/test";
 
+import { useAppStore } from "@/lib/store/store";
 import CreatePostButton from "./CreatePostButton";
+
+function ResetCreatePostModalDecorator(Story: ComponentType) {
+  useEffect(() => {
+    useAppStore.getState().closeCreatePostModal();
+
+    return () => {
+      useAppStore.getState().closeCreatePostModal();
+    };
+  }, []);
+
+  return <Story />;
+}
 
 const meta = {
   component: CreatePostButton,
   tags: ["ai-generated"],
-  args: {
-    onClick: () => {},
-  },
+  decorators: [ResetCreatePostModalDecorator],
 } satisfies Meta<typeof CreatePostButton>;
 
 export default meta;
@@ -29,7 +41,15 @@ export const Clickable: Story = {
     text: "Start a post",
   },
   play: async ({ canvas, userEvent }) => {
-    await userEvent.click(canvas.getByRole("button", { name: /start a post/i }));
-    await expect(canvas.getByRole("button", { name: /start a post/i })).toBeEnabled();
+    useAppStore.getState().closeCreatePostModal();
+
+    try {
+      await userEvent.click(canvas.getByRole("button"));
+      await expect(
+        useAppStore.getState().createPostModal.isOpen,
+      ).toBe(true);
+    } finally {
+      useAppStore.getState().closeCreatePostModal();
+    }
   },
 };

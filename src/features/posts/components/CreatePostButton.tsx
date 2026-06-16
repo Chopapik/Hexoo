@@ -2,11 +2,11 @@
 
 import React, { useEffect, useRef } from "react";
 import { useI18n } from "@/i18n/useI18n";
+import { useAppStore } from "@/lib/store/store";
 
 const GEOMETRY_OPACITIES = [0.04, 0.09, 0.14, 0.19];
 
 type CreatePostButtonProps = {
-  onClick: () => void;
   text?: string;
   showIcon?: boolean;
   className?: string;
@@ -14,13 +14,15 @@ type CreatePostButtonProps = {
 };
 
 export default function CreatePostButton({
-  onClick,
   text,
   showIcon = true,
   className,
   textClassName,
 }: CreatePostButtonProps) {
   const { t } = useI18n();
+  const openCreatePostModal = useAppStore(
+    (state) => state.openCreatePostModal,
+  );
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -123,7 +125,7 @@ export default function CreatePostButton({
 
   return (
     <button
-      onClick={onClick}
+      onClick={openCreatePostModal}
       type="button"
       className={buttonClassName}
     >

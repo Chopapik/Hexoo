@@ -299,7 +299,7 @@ export function UiDemoCatalog() {
 
         <DemoSection title="Post components">
           <div className="space-y-6">
-            <CreatePostButton onClick={() => {}} />
+            <CreatePostButton />
             <PostMeta post={demoPost} />
             <PostBody post={demoPost} />
             <PostBody

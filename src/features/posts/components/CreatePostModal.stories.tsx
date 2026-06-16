@@ -14,38 +14,47 @@ const user = {
   role: UserRole.User,
 } satisfies SessionData;
 
-const withUser =
-  (value: SessionData | null) =>
-  (Story: ComponentType) => {
-    const setUser = useAppStore((state) => state.setUser);
+function CreatePostModalStorySetup({
+  Story,
+  user,
+}: {
+  Story: ComponentType;
+  user: SessionData | null;
+}) {
+  useEffect(() => {
+    const store = useAppStore.getState();
+    store.setUser(user);
+    store.openCreatePostModal();
 
-    useEffect(() => {
-      setUser(value);
+    return () => {
+      useAppStore.getState().closeCreatePostModal();
+      useAppStore.getState().setUser(null);
+    };
+  }, [user]);
 
-      return () => setUser(null);
-    }, [setUser, value]);
+  return <Story />;
+}
 
-    return <Story />;
+const withCreatePostModalState =
+  (storyUser: SessionData | null) =>
+  function CreatePostModalDecorator(Story: ComponentType) {
+    return <CreatePostModalStorySetup Story={Story} user={storyUser} />;
   };
 
 const meta = {
   component: CreatePostModal,
   tags: ["ai-generated"],
-  args: {
-    isOpen: true,
-    onClose: () => {},
-  },
 } satisfies Meta<typeof CreatePostModal>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const LoggedIn: Story = {
-  decorators: [withUser(user)],
+  decorators: [withCreatePostModalState(user)],
 };
 
 export const LoggedInMobile: Story = {
-  decorators: [withUser(user)],
+  decorators: [withCreatePostModalState(user)],
   globals: {
     viewport: {
       value: "mobile1",
@@ -55,11 +64,11 @@ export const LoggedInMobile: Story = {
 };
 
 export const Guest: Story = {
-  decorators: [withUser(null)],
+  decorators: [withCreatePostModalState(null)],
 };
 
 export const ValidationError: Story = {
-  decorators: [withUser(user)],
+  decorators: [withCreatePostModalState(user)],
   play: async ({ canvasElement, userEvent }) => {
     const body = within(canvasElement.ownerDocument.body);
     const buttons = await body.findAllByRole("button");
