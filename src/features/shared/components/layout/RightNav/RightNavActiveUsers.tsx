@@ -42,17 +42,17 @@ export function RightNavActiveUsers() {
   const isEmpty = activeUsers.length === 0;
 
   return (
-    <section className="flex min-h-[215px] w-full flex-col items-center justify-start">
-      <div className="mb-2 flex items-center gap-1.5 px-0.5 transition-all duration-300 ease-soft">
-        <h3 className="text-foreground-secondary-default text-[10px] font-bold tracking-wider transition-all duration-300 ease-soft">
+    <section className="flex w-full shrink-0 flex-col items-center">
+      <div className="flex w-full flex-col items-center transition-all duration-300 ease-soft">
+        <h3 className="min-w-full text-center text-[10px] font-bold leading-[15px] tracking-[0.5px] text-[#262626] transition-all duration-300 ease-soft">
           {t("right.activeUsers")}
         </h3>
       </div>
 
       <div
-        className={`flex h-full w-full text-foreground-secondary-default/50 ${
+        className={`flex w-full text-foreground-secondary-default ${
           !isReady || isEmpty
-            ? "flex-col items-center justify-center gap-1.5"
+            ? "flex-col items-center"
             : "flex-row flex-wrap content-center items-center justify-center gap-2.5 overflow-y-auto pb-1 [scrollbar-width:thin]"
         }`}
       >
@@ -61,12 +61,12 @@ export function RightNavActiveUsers() {
             <Image
               src="/images/face01.png"
               alt=""
-              width={180}
-              height={320}
-              className="h-auto w-[75px]"
-              sizes="75px"
+              width={89}
+              height={160}
+              className="h-[160px] w-[89px] object-cover"
+              sizes="89px"
             />
-            <span className="font-serif text-center text-sm">
+            <span className="min-w-full text-center font-serif text-[11px] font-medium leading-5 tracking-[-0.11px] text-foreground-secondary-default">
               {t("right.noActiveUsers")}
             </span>
           </>

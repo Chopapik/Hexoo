@@ -23,8 +23,16 @@ export function Logo({
       aria-hidden="true"
     >
       <path d={MARK_PATH} fill="#DB38F0" transform="translate(0.472 0.06)" />
-      <path d={MARK_INNER_PATH} fill="#00FFFF" transform="translate(11.02 3.265)" />
-      <path d={WORDMARK_PATH} fill="#E600F4" transform="translate(35.13 2.855)" />
+      <path
+        d={MARK_INNER_PATH}
+        fill="#00FFFF"
+        transform="translate(11.02 3.265)"
+      />
+      <path
+        d={WORDMARK_PATH}
+        fill="#E600F4"
+        transform="translate(35.13 2.855)"
+      />
     </svg>
   );
 
@@ -37,7 +45,11 @@ export function Logo({
       aria-hidden="true"
     >
       <path d={MARK_PATH} fill="#DB38F0" transform="translate(0.467 0.06)" />
-      <path d={MARK_INNER_PATH} fill="#00FFFF" transform="translate(11.024 3.265)" />
+      <path
+        d={MARK_INNER_PATH}
+        fill="#00FFFF"
+        transform="translate(11.024 3.265)"
+      />
     </svg>
   );
 
@@ -50,7 +62,9 @@ export function Logo({
           <div className={compactOnMobile ? "hidden sm:block" : "block"}>
             {defaultLogo}
           </div>
-          {compactOnMobile ? <div className="sm:hidden">{compactLogo}</div> : null}
+          {compactOnMobile ? (
+            <div className="sm:hidden">{compactLogo}</div>
+          ) : null}
         </>
       ) : null}
     </div>

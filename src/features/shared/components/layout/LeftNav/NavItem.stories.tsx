@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { expect } from "storybook/test";
 
-import { HexHomeIcon, HexSettingsIcon } from "../../icons/HexNavIcons";
+import { HomeIcon, SettingsIcon } from "../../icons/NavIcons";
 import { NavItem } from "./NavItem";
 
 const meta = {
@@ -10,7 +10,7 @@ const meta = {
   args: {
     label: "Settings",
     to: "/settings",
-    icon: HexSettingsIcon,
+    icon: SettingsIcon,
   },
   parameters: {
     nextjs: {
@@ -38,7 +38,7 @@ export const InactiveWithNotification: Story = {
   args: {
     label: "Home",
     to: "/",
-    icon: HexHomeIcon,
+    icon: HomeIcon,
     hasNotification: true,
   },
 };

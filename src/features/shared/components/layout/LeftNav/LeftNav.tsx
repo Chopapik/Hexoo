@@ -5,11 +5,12 @@ import { UserRole } from "@/features/users/types/user.type";
 import Button from "@/features/shared/components/ui/Button";
 import { useAppStore } from "@/lib/store/store";
 import {
-  HexActivityIcon,
-  HexHomeIcon,
-  HexProfileIcon,
-  HexSettingsIcon,
-} from "@/features/shared/components/icons/HexNavIcons";
+  ActivityIcon,
+  HomeIcon,
+  MessagesIcon,
+  ProfileIcon,
+  SettingsIcon,
+} from "@/features/shared/components/icons/NavIcons";
 import { Plus } from "lucide-react";
 import { useI18n } from "@/i18n/useI18n";
 
@@ -31,21 +32,26 @@ export function LeftNav({ onOpenRight, user }: LeftNavProps) {
   const isStaff = isAdmin || isModerator;
 
   return (
-    <div className="hidden h-full w-full flex-col items-center justify-between md:flex xl:w-[235px]">
+    <div className="hidden h-full min-h-[720px] w-[235px] flex-col items-center justify-between pb-4 md:flex">
       {user ? (
-        <div className="flex w-full flex-col items-center gap-4">
-          <nav className="flex w-full flex-col items-center rounded-3xl bg-surface-chrome-background-default py-8 shadow-lg backdrop-blur-sm">
-            <div className="flex w-full flex-col items-center font-sans xl:w-44 xl:items-start">
-              <NavItem label={t("nav.home")} to="/" icon={HexHomeIcon} />
+        <div className="flex w-full flex-col items-center">
+          <nav className="flex w-full flex-col items-center overflow-hidden rounded-3xl bg-surface-chrome-background-default py-8 shadow-lg backdrop-blur-sm">
+            <div className="flex w-[173px] flex-col items-start justify-center font-sans">
+              <NavItem label={t("nav.home")} to="/" icon={HomeIcon} />
               <NavItem
                 label={t("nav.profile")}
                 to={`/profile/${user.uid}`}
-                icon={HexProfileIcon}
+                icon={ProfileIcon}
               />
+              {/* <NavItem
+                label={t("nav.messages")}
+                to="/messages"
+                icon={MessagesIcon}
+              /> */}
               <NavItem
                 label={t("nav.settings")}
                 to="/settings"
-                icon={HexSettingsIcon}
+                icon={SettingsIcon}
               />
               {isStaff ? (
                 isAdmin ? (
@@ -53,19 +59,19 @@ export function LeftNav({ onOpenRight, user }: LeftNavProps) {
                     <NavItem
                       label={t("nav.admin")}
                       to="/admin"
-                      icon={HexActivityIcon}
+                      icon={ActivityIcon}
                     />
                     <NavItem
                       label={t("nav.moderation")}
                       to="/moderator"
-                      icon={HexActivityIcon}
+                      icon={ActivityIcon}
                     />
                   </>
                 ) : (
                   <NavItem
                     label={t("nav.admin")}
                     to="/moderator"
-                    icon={HexActivityIcon}
+                    icon={ActivityIcon}
                   />
                 )
               ) : null}
@@ -81,9 +87,8 @@ export function LeftNav({ onOpenRight, user }: LeftNavProps) {
           </div>
         </div>
       ) : null}
-      <footer className="hidden w-44 flex-col xl:flex">
-        <div className="border-t border-surface-chrome-border-default w-full mb-3" />
-        <ul className="flex flex-col items-start justify-start gap-0.5 text-left w-full font-sans">
+      <footer className="flex w-44 flex-col border-t border-foreground-muted-default py-2">
+        <ul className="flex w-full flex-col items-start justify-start gap-0.5 text-left font-sans">
           <li>
             <Link
               href="mailto:contact@hexoo.eu"

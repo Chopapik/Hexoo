@@ -2,14 +2,13 @@ import Button from "@/features/shared/components/ui/Button";
 import { NavItem } from "./NavItem";
 import { useAppStore } from "@/lib/store/store";
 import type { SessionData } from "@/features/me/me.type";
-import { UserRole } from "@/features/users/types/user.type";
+import { Plus } from "lucide-react";
 import {
-  HexActivityIcon,
-  HexCreateIcon,
-  HexHomeIcon,
-  HexProfileIcon,
-  HexSettingsIcon,
-} from "@/features/shared/components/icons/HexNavIcons";
+  HomeIcon,
+  MessagesIcon,
+  ProfileIcon,
+  SettingsIcon,
+} from "@/features/shared/components/icons/NavIcons";
 import { useI18n } from "@/i18n/useI18n";
 
 type BottomNavProps = {
@@ -17,77 +16,58 @@ type BottomNavProps = {
   user: SessionData;
 };
 
-function roleKey(role: SessionData["role"] | undefined): string {
-  return String(role ?? "").toLowerCase();
-}
-
 export function BottomNav({ user }: BottomNavProps) {
   const { t } = useI18n();
   const openCreatePostModal = useAppStore((s) => s.openCreatePostModal);
 
-  const r = roleKey(user?.role);
-  const isAdmin = r === UserRole.Admin;
-  const isModerator = r === UserRole.Moderator;
-  const isStaff = isAdmin || isModerator;
-
   return (
-    <nav className="flex h-[58px] w-[290px] max-w-[calc(100%_-_32px)] flex-row items-center justify-between overflow-hidden rounded-[32px] bg-surface-chrome-background-default p-2 shadow-lg backdrop-blur-sm">
-      <div className="flex h-[42px] min-w-0 flex-row items-center gap-4 rounded-3xl px-1.5">
-        <NavItem
-          label={t("nav.home")}
-          to="/"
-          icon={HexHomeIcon}
-          variant="bottom"
-        />
+    <nav className="pointer-events-auto flex w-full flex-col items-center rounded-[32px] bg-surface-chrome-background-default p-2 shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] backdrop-blur-sm">
+      <div className="flex w-full min-w-[256px] items-center justify-between overflow-hidden">
+        <div className="flex shrink-0 flex-row items-start gap-4 overflow-hidden rounded-3xl border border-surface-chrome-border-default bg-surface-chrome-background-default p-1.5">
+          <NavItem
+            label={t("nav.home")}
+            to="/"
+            icon={HomeIcon}
+            variant="bottom"
+          />
 
-        <NavItem
-          label={t("nav.profile")}
-          to={`/profile/${user.uid}`}
-          icon={HexProfileIcon}
-          variant="bottom"
-        />
+          <NavItem
+            label={t("nav.profile")}
+            to={`/profile/${user.uid}`}
+            icon={ProfileIcon}
+            variant="bottom"
+          />
 
-        <NavItem
-          label={t("nav.settings")}
-          to="/settings"
-          icon={HexSettingsIcon}
-          variant="bottom"
-        />
+          <NavItem
+            label={t("nav.messages")}
+            to="/messages"
+            icon={MessagesIcon}
+            variant="bottom"
+          />
 
-        {isStaff ? (
-          isAdmin ? (
-            <>
-              <NavItem
-                label={t("nav.admin")}
-                to="/admin"
-                icon={HexActivityIcon}
-                variant="bottom"
+          <NavItem
+            label={t("nav.settings")}
+            to="/settings"
+            icon={SettingsIcon}
+            variant="bottom"
+          />
+        </div>
+
+        <Button
+          size="icon"
+          icon={
+            <span className="relative shrink-0 size-5">
+              <Plus
+                className="absolute inset-0 size-6 max-w-none"
+                strokeWidth={2}
+                aria-hidden
               />
-
-              <NavItem
-                label={t("nav.moderation")}
-                to="/moderator"
-                icon={HexActivityIcon}
-                variant="bottom"
-              />
-            </>
-          ) : (
-            <NavItem
-              label={t("nav.admin")}
-              to="/moderator"
-              icon={HexActivityIcon}
-              variant="bottom"
-            />
-          )
-        ) : null}
+            </span>
+          }
+          className="max-h-10 min-w-10 shrink-0 px-[16.75px] py-[0.75px]"
+          onClick={openCreatePostModal}
+        />
       </div>
-
-      <Button
-        size="icon"
-        icon={<HexCreateIcon className="size-10" />}
-        className="shrink-0"
-        onClick={openCreatePostModal}
-      />
     </nav>
   );
 }

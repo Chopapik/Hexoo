@@ -31,7 +31,7 @@ export function NavItem({
       : pathname === to || pathname?.startsWith(`${to}/`);
 
   const iconClasses =
-    "absolute left-0 top-0 size-[30px] transition-colors duration-200 " +
+    "size-6 shrink-0 transition-colors duration-200 " +
     (isActive
       ? "text-foreground-primary-default"
       : "text-foreground-secondary-default group-hover/item:text-foreground-primary-default");
@@ -41,7 +41,7 @@ export function NavItem({
   const linkClasses =
     "group/item relative inline-flex items-center rounded-xl transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fuchsia-border-default/60 " +
     (isSidebar
-      ? "h-12 w-full justify-center xl:justify-start"
+      ? "h-12 w-full justify-start"
       : "size-[30px] justify-center");
 
   return (
@@ -62,7 +62,13 @@ export function NavItem({
         />
       ) : null}
 
-      <div className="flex items-center justify-start gap-2 overflow-hidden xl:ml-[34px]">
+      <div
+        className={
+          isSidebar
+            ? "ml-[34px] flex items-center justify-start gap-2 overflow-hidden"
+            : "flex items-center justify-start gap-2 overflow-hidden"
+        }
+      >
         <div className="relative inline-flex flex-col justify-start items-start overflow-hidden">
           <div className="relative flex size-[30px] items-center justify-center overflow-hidden">
             {Icon ? (
@@ -71,8 +77,8 @@ export function NavItem({
                 return (
                   <I
                     className={iconClasses}
-                    strokeWidth={isActive ? 0.9 : 0.75}
-                    fill={isActive ? "currentColor" : "none"}
+                    strokeWidth={2}
+                    fill="none"
                   />
                 );
               })()
@@ -107,7 +113,7 @@ export function NavItem({
           <div className="flex justify-start items-start overflow-hidden">
             <div
               className={
-                "hidden font-sans text-base font-semibold transition-colors duration-200 xl:block " +
+                "block font-sans text-lg font-semibold leading-[1.2] transition-colors duration-200 " +
                 (isActive
                   ? "text-foreground-primary-default drop-shadow-sm"
                   : "text-foreground-secondary-default group-hover/item:text-foreground-primary-default")

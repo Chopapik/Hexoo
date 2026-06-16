@@ -35,13 +35,14 @@ const PL = {
 
   "nav.home": "Strona główna",
   "nav.profile": "Twój profil",
+  "nav.messages": "Wiadomości",
   "nav.settings": "Ustawienia",
   "nav.admin": "Panel admina",
   "nav.moderation": "Moderacja",
   "nav.contact": "Kontakt",
   "nav.privacy": "Prywatność i Cookies",
   "nav.terms": "Regulamin",
-  "nav.addPost": "Dodaj post",
+  "nav.addPost": "Dodaj nowy post",
   "nav.openRightSidebar": "Otwórz panel boczny",
   "nav.closeRightSidebar": "Zamknij panel boczny",
 
@@ -491,13 +492,14 @@ export const TRANSLATIONS = {
 
     "nav.home": "Home",
     "nav.profile": "Your profile",
+    "nav.messages": "Messages",
     "nav.settings": "Settings",
     "nav.admin": "Admin panel",
     "nav.moderation": "Moderation",
     "nav.contact": "Contact",
     "nav.privacy": "Privacy and Cookies",
     "nav.terms": "Terms",
-    "nav.addPost": "Add post",
+    "nav.addPost": "Add new post",
     "nav.openRightSidebar": "Open sidebar",
     "nav.closeRightSidebar": "Close sidebar",
 
