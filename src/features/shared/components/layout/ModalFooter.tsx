@@ -1,5 +1,6 @@
 import Button from "../ui/Button";
 import { useI18n } from "@/i18n/useI18n";
+import { cn } from "../../utils/utils";
 
 interface ModalFooterProps {
   cancelText?: string;
@@ -32,12 +33,12 @@ export default function ModalFooter({
   const resolvedCancelText = cancelText ?? t("common.cancel");
 
   return (
-    <div className={`flex w-full items-center justify-end gap-2 ${className}`}>
+    <div className={cn("flex w-full items-center justify-end gap-2", className)}>
       <Button
         onClick={onCancel}
         text={resolvedCancelText}
         size={cancelSize}
-        variant="secondary"
+        variant="outline"
         disabled={isPending || disabled}
       />
       <Button

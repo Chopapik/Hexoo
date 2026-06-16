@@ -9,9 +9,10 @@ import { CommentForm } from "@/features/comments/components/CommentForm";
 import useComments from "@/features/comments/hooks/useComments";
 import { useAppStore } from "@/lib/store/store";
 import { isAsciiArt } from "../utils/asciiDetector";
-import { PublicPostResponseDto } from "../types/post.dto";
+import type { PublicPostResponseDto } from "../types/post.dto";
 import { PostNsfwNotice } from "./PostNsfwNotice";
 import { useI18n } from "@/i18n/useI18n";
+import { cn } from "@/features/shared/utils/utils";
 
 interface PostModalProps {
   post: PublicPostResponseDto;
@@ -19,6 +20,42 @@ interface PostModalProps {
   onClose: () => void;
   revealNSFW?: boolean;
 }
+
+interface PostMediaFrameProps {
+  imageUrl: string;
+  isContentVisible: boolean;
+  frameClassName: string;
+  imageClassName: string;
+  noticeClassName?: string;
+}
+
+function PostMediaFrame({
+  imageUrl,
+  isContentVisible,
+  frameClassName,
+  imageClassName,
+  noticeClassName,
+}: PostMediaFrameProps) {
+  return (
+    <div className={frameClassName}>
+      {isContentVisible ? (
+        <img src={imageUrl} alt="Post content" className={imageClassName} />
+      ) : (
+        <div
+          className={cn(
+            "flex h-full w-full items-center justify-center",
+            noticeClassName,
+          )}
+        >
+          <PostNsfwNotice />
+        </div>
+      )}
+    </div>
+  );
+}
+
+const commentFormWrapperClassName =
+  "flex h-[220px] min-h-[220px] shrink-0 items-center justify-center border-t border-modal-chrome-border-default bg-modal-chrome-background-default p-4 backdrop-blur-[16px] lg:absolute lg:inset-x-0 lg:bottom-0 lg:z-10";
 
 export const PostModal = ({
   post,
@@ -32,37 +69,42 @@ export const PostModal = ({
   const showNSFWComments = useAppStore((s) => s.settings.showNSFWComments);
 
   const { comments, isLoading } = useComments(post.id, isOpen);
-  const visibleComments = showNSFWComments
-    ? comments
-    : comments.filter((comment) => !comment.isNSFW);
-  const hasHiddenNSFWComments =
-    !showNSFWComments && comments.some((comment) => comment.isNSFW);
+  const visibleComments = useMemo(
+    () =>
+      showNSFWComments
+        ? comments
+        : comments.filter((comment) => !comment.isNSFW),
+    [comments, showNSFWComments],
+  );
+  const hasHiddenNSFWComments = useMemo(
+    () => !showNSFWComments && comments.some((comment) => comment.isNSFW),
+    [comments, showNSFWComments],
+  );
 
   const [showCommentsMobile, setShowCommentsMobile] = useState(false);
 
   const isAscii = useMemo(() => isAsciiArt(post.text), [post.text]);
 
   const hasImage = !!post.imageUrl;
-  const isContentVisible = !post.isNSFW || showNSFWPosts || revealNSFW;
+  const isContentVisible = !post.isNSFW || showNSFWPosts || Boolean(revealNSFW);
 
-  const textClassName = `text-foreground-primary-default text-base ${
+  const textClassName = cn(
+    "text-foreground-primary-default text-base",
     isAscii
       ? "max-w-full overflow-x-auto whitespace-pre rounded p-2 font-mono text-xs"
-      : "font-sans whitespace-pre-wrap wrap-break-word"
-  }`;
+      : "font-sans whitespace-pre-wrap wrap-break-word",
+  );
 
-  const sidebarClassName = hasImage
-    ? "w-full max-w-full border-l-0 lg:w-[420px] lg:min-w-[420px] lg:shrink-0 lg:border-l"
-    : "w-full max-w-full";
+  const sidebarClassName = cn(
+    "w-full max-w-full",
+    hasImage &&
+      "border-l-0 lg:w-[420px] lg:min-w-[420px] lg:shrink-0 lg:border-l",
+  );
 
-  const modalClassName = `
-    h-dvh
-    max-h-dvh
-    lg:h-[calc(100dvh-2rem)]
-    lg:max-h-[calc(100dvh-2rem)]
-    overflow-hidden
-    ${hasImage ? "lg:!max-w-[calc(100vw-2rem)]" : ""}
-  `;
+  const modalClassName = cn(
+    "h-dvh max-h-dvh overflow-hidden lg:h-[calc(100dvh-2rem)] lg:max-h-[calc(100dvh-2rem)]",
+    hasImage && "lg:!max-w-[calc(100vw-2rem)]",
+  );
 
   return (
     <Modal
@@ -72,51 +114,41 @@ export const PostModal = ({
       className={modalClassName}
     >
       <div className="flex h-full min-h-0 flex-col overflow-hidden lg:flex-row">
-        {hasImage && (
-          <div className="hidden lg:flex lg:h-full lg:max-h-full lg:min-w-0 lg:flex-1 lg:items-center lg:justify-center lg:overflow-hidden lg:bg-modal-overlay-background-default/30">
-            {isContentVisible ? (
-              <img
-                src={post.imageUrl ?? ""}
-                alt="Post content"
-                className="block h-full w-full object-contain object-center"
-              />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center">
-                <PostNsfwNotice />
-              </div>
-            )}
-          </div>
+        {hasImage && post.imageUrl && (
+          <PostMediaFrame
+            imageUrl={post.imageUrl}
+            isContentVisible={isContentVisible}
+            frameClassName="hidden lg:flex lg:h-full lg:max-h-full lg:min-w-0 lg:flex-1 lg:items-center lg:justify-center lg:overflow-hidden lg:bg-modal-overlay-background-default/30"
+            imageClassName="block h-full w-full object-contain object-center"
+          />
         )}
 
         <div
-          className={`flex h-full min-h-0 flex-col border-divider-default ${sidebarClassName}`}
+          className={cn(
+            "flex h-full min-h-0 flex-col border-modal-chrome-border-default",
+            sidebarClassName,
+          )}
         >
-          <div className="shrink-0 border-b border-divider-default p-3 sm:p-4">
+          <div className="shrink-0 border-b border-modal-chrome-border-default p-3 sm:p-4">
             <PostMeta post={post} />
           </div>
 
           {!showCommentsMobile && (
             <div className="flex min-h-0 flex-1 flex-col lg:hidden">
               {isContentVisible && post.text && (
-                <div className="shrink-0 border-b border-divider-default p-3 sm:p-4">
+                <div className="shrink-0 border-b border-modal-chrome-border-default p-3 sm:p-4">
                   <p className={textClassName}>{post.text}</p>
                 </div>
               )}
 
-              {hasImage && (
-                <div className="flex max-h-[60vh] w-full items-center justify-center overflow-hidden bg-modal-overlay-background-default/30">
-                  {isContentVisible ? (
-                    <img
-                      src={post.imageUrl ?? ""}
-                      alt="Post content"
-                      className="block max-h-[60vh] w-auto max-w-full object-contain"
-                    />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center p-4">
-                      <PostNsfwNotice />
-                    </div>
-                  )}
-                </div>
+              {hasImage && post.imageUrl && (
+                <PostMediaFrame
+                  imageUrl={post.imageUrl}
+                  isContentVisible={isContentVisible}
+                  frameClassName="flex max-h-[60vh] w-full items-center justify-center overflow-hidden bg-modal-overlay-background-default/30"
+                  imageClassName="block max-h-[60vh] w-auto max-w-full object-contain"
+                  noticeClassName="p-4"
+                />
               )}
 
               {!isContentVisible && !hasImage && (
@@ -139,7 +171,7 @@ export const PostModal = ({
 
           {showCommentsMobile && (
             <div className="flex min-h-0 flex-1 flex-col lg:hidden">
-              <div className="shrink-0 border-b border-divider-default p-3 sm:p-4">
+              <div className="shrink-0 border-b border-modal-chrome-border-default p-3 sm:p-4">
                 <Button
                   text={t("post.backToPost")}
                   size="xl"
@@ -159,16 +191,16 @@ export const PostModal = ({
               </div>
 
               {user && (
-                <div className="shrink-0 border-t border-divider-default bg-modal-surface-background-default p-3 sm:p-4">
+                <div className={commentFormWrapperClassName}>
                   <CommentForm postId={post.id} />
                 </div>
               )}
             </div>
           )}
 
-          <div className="hidden min-h-0 flex-1 lg:flex lg:flex-col">
+          <div className="relative hidden min-h-0 flex-1 lg:flex lg:flex-col">
             {isContentVisible && post.text && (
-              <div className="shrink-0 border-b border-divider-default p-4">
+              <div className="shrink-0 border-b border-modal-chrome-border-default p-4">
                 <p className={textClassName}>{post.text}</p>
               </div>
             )}
@@ -179,7 +211,7 @@ export const PostModal = ({
               </div>
             )}
 
-            <div className="min-h-0 flex-1 flex flex-col overflow-y-auto p-4 scrollbar-hide justify-between">
+            <div className="flex min-h-0 flex-1 flex-col justify-between overflow-y-auto p-4 pb-[236px] scrollbar-hide">
               <CommentList comments={visibleComments} isLoading={isLoading} />
               {hasHiddenNSFWComments && (
                 <p className="mb-3 text-center text-xs text-foreground-muted-default">
@@ -189,7 +221,7 @@ export const PostModal = ({
             </div>
 
             {user && (
-              <div className="shrink-0 border-t border-divider-default bg-modal-surface-background-default p-4">
+              <div className={commentFormWrapperClassName}>
                 <CommentForm postId={post.id} />
               </div>
             )}

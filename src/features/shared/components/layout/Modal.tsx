@@ -1,6 +1,7 @@
 import React, { useEffect, useId } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "../../utils/utils";
 
 interface ModalProps {
   isOpen?: boolean;
@@ -56,25 +57,23 @@ export default function Modal({
             role="dialog"
             aria-modal="true"
             aria-labelledby={title ? titleId : undefined}
-            className={`
-              relative flex h-dvh max-h-dvh w-full flex-col overflow-hidden rounded-none
-              sm:h-auto sm:max-h-[calc(100dvh-2rem)] sm:max-w-3xl sm:rounded-2xl
-              bg-modal-chrome-background-default backdrop-blur-xl
-              text-foreground-primary-default
-              border border-modal-chrome-border-default
-              shadow-xl
-              ${className}
-            `}
+            className={cn(
+              "relative flex h-[min(648px,calc(100dvh-2rem))] w-[calc(100vw-2rem)] min-w-80 max-w-[337px] flex-col overflow-hidden",
+              "border border-modal-chrome-border-default bg-modal-chrome-background-default text-foreground-primary-default backdrop-blur-xl",
+              "shadow-[0px_4px_6px_0px_rgba(0,0,0,0.25)]",
+              "sm:h-[344px] sm:max-h-[calc(100dvh-2rem)] sm:w-[768px] sm:max-w-[calc(100vw-2rem)] sm:rounded-2xl sm:shadow-[0px_4px_12px_0px_rgba(0,0,0,0.25)]",
+              className,
+            )}
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.2 }}
           >
             {title && (
-              <div className="flex h-11 shrink-0 items-center justify-between gap-3 border-b border-modal-chrome-border-default bg-modal-chrome-background-default px-3 sm:px-4">
+              <div className="flex min-h-11 w-full shrink-0 items-center gap-3 overflow-hidden border-b border-modal-chrome-border-default bg-modal-chrome-background-default px-3 py-2.5 sm:px-4 sm:py-3">
                 <span
                   id={titleId}
-                  className="font-sans text-sm font-semibold text-foreground-primary-default"
+                  className="min-w-0 truncate font-sans text-sm font-normal leading-tight text-foreground-primary-default"
                 >
                   {title}
                 </span>
@@ -82,19 +81,19 @@ export default function Modal({
                   type="button"
                   onClick={onClose}
                   aria-label="Close dialog"
-                  className="flex size-7 items-center justify-center rounded-lg bg-button-transparent-background-default text-foreground-secondary-default transition-colors hover:bg-button-transparent-background-hover hover:text-foreground-primary-default focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fuchsia-border-default/60"
+                  className="ml-auto flex size-7 shrink-0 items-center justify-center rounded-lg bg-button-transparent-background-default font-sans text-base font-bold leading-none text-foreground-secondary-default transition-colors hover:bg-button-transparent-background-hover hover:text-foreground-primary-default focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fuchsia-border-default/60"
                 >
                   ✕
                 </button>
               </div>
             )}
 
-            <div className="min-h-0 flex-1 overflow-hidden bg-modal-surface-background-default">
+            <div className="min-h-0 flex-1 overflow-hidden bg-modal-overlay-background-default sm:min-h-[240px]">
               {children}
             </div>
 
             {footer && (
-              <div className="shrink-0 border-t border-modal-chrome-border-default bg-modal-chrome-background-default px-3 py-2.5">
+              <div className="flex h-[60px] min-h-[60px] shrink-0 items-center justify-end overflow-hidden border-t border-modal-chrome-border-default bg-modal-chrome-background-default px-3 py-2.5">
                 {footer}
               </div>
             )}

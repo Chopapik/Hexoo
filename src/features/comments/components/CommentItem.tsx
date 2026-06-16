@@ -23,8 +23,10 @@ import DeleteCommentModal from "./DeleteCommentModal";
 import ReportCommentModal from "./ReportCommentModal";
 import ModerationReasonModal from "@/features/posts/components/ModerationReasonModal";
 import { useI18n } from "@/i18n/useI18n";
+import { cn } from "@/features/shared/utils/utils";
 
 type ModActionType = "quarantine" | "reject" | null;
+type MenuTone = "neutral" | "danger" | "warning";
 
 interface CommentItemProps {
   comment: PublicCommentResponseDto;
@@ -32,6 +34,35 @@ interface CommentItemProps {
   moderationCompactImage?: boolean;
   /** Moderation queue: larger body text than the parent-post context block */
   moderationProminent?: boolean;
+}
+
+const menuToneClasses: Record<MenuTone, { active: string; idle: string }> = {
+  neutral: {
+    active: "bg-button-transparent-background-hover text-foreground-primary-default",
+    idle: "text-foreground-secondary-default",
+  },
+  danger: {
+    active:
+      "bg-button-danger-background-disabled-from text-button-danger-background-default-from",
+    idle: "text-button-danger-background-default-from",
+  },
+  warning: {
+    active:
+      "bg-button-warning-background-disabled-from text-button-warning-background-default-from",
+    idle: "text-button-warning-background-default-from",
+  },
+};
+
+function getMenuItemClassName(
+  active: boolean,
+  tone: MenuTone,
+  density: "default" | "compact" = "default",
+) {
+  return cn(
+    "group flex w-full items-center gap-3 rounded-lg py-2 text-sm transition-colors",
+    density === "compact" ? "px-2" : "px-3",
+    active ? menuToneClasses[tone].active : menuToneClasses[tone].idle,
+  );
 }
 
 export const CommentItem = ({
@@ -105,6 +136,8 @@ export const CommentItem = ({
     : "font-sans text-xs leading-[1.2] text-foreground-secondary-default";
 
   const showMenu = !!currentUser;
+  const canModerate = isModerator || isAdmin;
+  const showModeratorLabel = canModerate && !isAuthor;
 
   return (
     <>
@@ -144,7 +177,7 @@ export const CommentItem = ({
       )}
 
       <div
-        className="grid grid-cols-[36px_minmax(0,1fr)] gap-x-2 gap-y-3 border-b border-divider-subtle py-3 last:border-b-0 md:grid-cols-[40px_minmax(0,1fr)]"
+        className="grid grid-cols-[36px_minmax(0,1fr)] gap-x-2 gap-y-3 border-b border-modal-chrome-border-default py-3 last:border-b-0 md:grid-cols-[40px_minmax(0,1fr)]"
       >
         <div className="shrink-0" onClick={handleLinkClick}>
           <Link
@@ -208,11 +241,7 @@ export const CommentItem = ({
                           {({ active }) => (
                             <button
                               onClick={() => setIsEditModalOpen(true)}
-                              className={`${
-                                active
-                                  ? "bg-button-transparent-background-hover text-foreground-primary-default"
-                                  : "text-foreground-secondary-default"
-                              } group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors`}
+                              className={getMenuItemClassName(active, "neutral")}
                             >
                               <BsPencil /> {t("comment.options.edit")}
                             </button>
@@ -223,11 +252,7 @@ export const CommentItem = ({
                           {({ active }) => (
                             <button
                               onClick={() => setIsDeleteModalOpen(true)}
-                              className={`${
-                                active
-                                  ? "bg-button-danger-background-disabled-from text-button-danger-background-default-from"
-                                  : "text-button-danger-background-default-from"
-                              } group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors`}
+                              className={getMenuItemClassName(active, "danger")}
                             >
                               <BsTrash /> {t("comment.options.delete")}
                             </button>
@@ -242,11 +267,7 @@ export const CommentItem = ({
                           {({ active }) => (
                             <button
                               onClick={() => setIsReportModalOpen(true)}
-                              className={`${
-                                active
-                                  ? "bg-button-transparent-background-hover text-foreground-primary-default"
-                                  : "text-foreground-secondary-default"
-                              } group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors`}
+                              className={getMenuItemClassName(active, "neutral")}
                             >
                               <BsFlag /> {t("comment.options.report")}
                             </button>
@@ -255,9 +276,9 @@ export const CommentItem = ({
                       </div>
                     )}
 
-                    {(isModerator || isAdmin) && (
+                    {canModerate && (
                       <div className="p-1 border-t border-divider-default">
-                        {!isAuthor && (
+                        {showModeratorLabel && (
                           <div className="px-2 py-1.5 text-[10px] text-foreground-secondary-default/50 uppercase tracking-widest font-bold">
                             {t("post.options.moderatorPanel")}
                           </div>
@@ -268,11 +289,11 @@ export const CommentItem = ({
                             <button
                               onClick={() => setPendingModAction("quarantine")}
                               disabled={modAction.isPending}
-                              className={`${
-                                active
-                                  ? "bg-button-warning-background-disabled-from text-button-warning-background-default-from"
-                                  : "text-button-warning-background-default-from"
-                              } group flex w-full items-center gap-3 rounded-lg px-2 py-2 text-sm transition-colors`}
+                              className={getMenuItemClassName(
+                                active,
+                                "warning",
+                                "compact",
+                              )}
                             >
                               <BsShieldExclamation /> {t("post.options.quarantine")}
                             </button>
@@ -284,11 +305,11 @@ export const CommentItem = ({
                             <button
                               onClick={() => setPendingModAction("reject")}
                               disabled={modAction.isPending}
-                              className={`${
-                                active
-                                  ? "bg-button-danger-background-disabled-from text-button-danger-background-default-from"
-                                  : "text-button-danger-background-default-from"
-                              } group flex w-full items-center gap-3 rounded-lg px-2 py-2 text-sm transition-colors`}
+                              className={getMenuItemClassName(
+                                active,
+                                "danger",
+                                "compact",
+                              )}
                             >
                               <BsTrash /> {t("comment.options.deleteNow")}
                             </button>
