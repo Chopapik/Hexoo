@@ -16,7 +16,7 @@ function RightNavContent() {
           text={t("nav.addPost")}
           size="xl"
           rightIcon={<PenLine className="size-3.5" strokeWidth={2} />}
-          className="h-[52px] min-h-[52px] w-[153px]"
+          className="h-[52px] min-h-[52px] w-full"
           onClick={openCreatePostModal}
         />
       </div>

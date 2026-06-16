@@ -43,11 +43,11 @@ export function LeftNav({ onOpenRight, user }: LeftNavProps) {
                 to={`/profile/${user.uid}`}
                 icon={ProfileIcon}
               />
-              {/* <NavItem
+              <NavItem
                 label={t("nav.messages")}
                 to="/messages"
                 icon={MessagesIcon}
-              /> */}
+              />
               <NavItem
                 label={t("nav.settings")}
                 to="/settings"

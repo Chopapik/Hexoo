@@ -78,7 +78,7 @@ export default function PostList({ className = "" }: PostListProps) {
   if (isLoading) {
     return (
       <main className={joinClassNames(className)}>
-        <div className="space-y-2 md:space-y-3">
+        <div className="space-y-2">
           {[1, 2, 3].map((i) => (
             <div
               key={i}
@@ -110,7 +110,7 @@ export default function PostList({ className = "" }: PostListProps) {
 
   return (
     <main className={joinClassNames(className)}>
-      <div className="space-y-2 md:space-y-3">
+      <div className="space-y-2">
         {data?.pages.map((group, i) => (
           <React.Fragment key={i}>
             {group.map((post: PublicPostResponseDto) => (

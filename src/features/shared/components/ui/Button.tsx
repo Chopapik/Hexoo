@@ -79,7 +79,7 @@ export default function Button({
   ...buttonProps
 }: ButtonProps) {
   const baseClasses =
-    "relative inline-flex shrink-0 cursor-pointer items-center justify-center overflow-hidden font-sans text-sm font-medium leading-5 tracking-normal transition-colors duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fuchsia-border-default/60 focus-visible:ring-offset-2 focus-visible:ring-offset-page-background-default";
+    "relative inline-flex shrink-0 cursor-pointer items-center justify-center overflow-hidden font-sans text-sm font-medium leading-5 tracking-[-0.14px] transition-colors duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fuchsia-border-default/60 focus-visible:ring-offset-2 focus-visible:ring-offset-page-background-default";
 
   const isBlocked = Boolean(disabled || isLoading);
   const hasOnlyIcon = isIconOnlySize(size) || iconOnly;

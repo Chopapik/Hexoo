@@ -117,7 +117,7 @@ export default function CreatePostButton({
   ].join(" ");
 
   const labelClassName = [
-    "min-w-0 shrink truncate whitespace-nowrap font-serif text-sm font-normal leading-normal text-foreground-primary-default md:overflow-visible md:text-clip md:text-2xl",
+    "min-w-0 shrink whitespace-nowrap font-serif text-base font-normal leading-normal text-foreground-primary-default md:overflow-visible md:text-lg",
     textClassName,
   ]
     .filter(Boolean)

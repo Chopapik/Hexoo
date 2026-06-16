@@ -17,9 +17,9 @@ import type { SessionData } from "@/features/me/me.type";
 import { Logo } from "@/features/shared/components/ui/Logo";
 
 const leftRailAsideClass =
-  "hidden md:flex sticky top-[76px] h-[calc(100dvh-76px)] w-[250px] shrink-0 justify-center";
+  "hidden md:flex sticky top-[76px] h-[calc(100dvh-76px)] w-[235px] shrink-0 justify-center";
 const rightRailAsideClass =
-  "hidden lg:flex sticky top-[76px] h-[calc(100dvh-76px)] w-[250px] shrink-0 justify-center";
+  "hidden lg:flex sticky top-[76px] h-[calc(100dvh-76px)] w-[235px] shrink-0 justify-center";
 
 function LeftRailWidthSpacer() {
   return (
@@ -83,7 +83,7 @@ export const Layout: React.FC<{
         <Header user={user} />
       </header>
       <div className="mx-auto w-full max-w-[1440px] md:pt-[76px]">
-        <div className="flex w-full items-start md:gap-3">
+        <div className="flex w-full items-start md:gap-4">
           <aside className={leftRailAsideClass}>
             {user ? (
               <LeftNav onOpenRight={openRight} user={user} />
@@ -91,7 +91,7 @@ export const Layout: React.FC<{
               <LeftRailWidthSpacer />
             )}
           </aside>
-          <main className="min-w-0 flex-1 px-2 pb-[84px] md:w-[916px] md:px-0 md:pb-0">
+          <main className="min-w-0 flex-1 px-2 pb-[84px] md:px-0 md:pb-0">
             {children}
           </main>
           <aside className={rightRailAsideClass}>
