@@ -1,4 +1,4 @@
-import type { MouseEventHandler, ReactNode } from "react";
+import type { ButtonHTMLAttributes, MouseEventHandler, ReactNode } from "react";
 
 export type ButtonVariant =
   | "default"
@@ -14,13 +14,18 @@ export type ButtonVariant =
   | "info";
 export type ButtonSize = "sm" | "md" | "lg" | "xl" | "icon" | "iconSm";
 
-export interface ButtonProps {
+export interface ButtonProps
+  extends Omit<
+    ButtonHTMLAttributes<HTMLButtonElement>,
+    "children" | "disabled" | "onClick" | "type"
+  > {
   text?: string;
   leftIconUrl?: string;
   rightIconUrl?: string;
   leftIcon?: ReactNode;
   rightIcon?: ReactNode;
   icon?: ReactNode;
+  iconOnly?: boolean;
   size?: ButtonSize;
   variant?: ButtonVariant;
   className?: string;

@@ -75,6 +75,7 @@ function renderButtonForMode(
           variant={variant}
           size={size}
           icon={<Plus className="size-4" />}
+          iconOnly
         />
       );
     case "Loading":
