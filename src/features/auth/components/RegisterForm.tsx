@@ -239,7 +239,10 @@ export default function RegisterForm() {
                 </svg>
               </div>
               <span className="font-sans text-xs font-normal text-validation-error-text">
-                {parseRegisterErrorMessages(errors.terms.message, lang)[0]?.text}
+                {
+                  parseRegisterErrorMessages(errors.terms.message, lang)[0]
+                    ?.text
+                }
               </span>
             </div>
           )}
@@ -250,7 +253,10 @@ export default function RegisterForm() {
             <div className="inline-flex min-w-48 items-center justify-center gap-2 overflow-hidden rounded-lg bg-validation-error-background px-4 py-2">
               <Image src={warningIconUrl} alt="warning!" />
               <div className="justify-start font-sans text-xs font-semibold text-button-text-default">
-                {parseRegisterErrorMessages(errors.root?.message, lang)[0]?.text}
+                {
+                  parseRegisterErrorMessages(errors.root?.message, lang)[0]
+                    ?.text
+                }
               </div>
             </div>
           )}
@@ -263,6 +269,7 @@ export default function RegisterForm() {
             rightIconUrl={keyIconUrl}
             type="submit"
             isLoading={isLoading}
+            className="w-full"
           />
         </div>
       </form>

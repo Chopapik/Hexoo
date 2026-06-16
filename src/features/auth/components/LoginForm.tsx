@@ -61,18 +61,20 @@ export default function LoginForm() {
           )}
         </div>
 
-        <div className="flex self-stretch flex-col items-end justify-center gap-4">
+        <div className="flex self-stretch flex-col items-end justify-center gap-4 w-full">
           <Button
             text={t("auth.login.submit")}
             size="xl"
             rightIconUrl={keyIconUrl}
             type="submit"
             isLoading={isLoading}
+            className="w-full"
           />
           <Button
             text={t("auth.login.google")}
             size="xl"
             variant="outline"
+            className="w-full"
             leftIcon={[
               <svg
                 viewBox="0 0 512 512"
