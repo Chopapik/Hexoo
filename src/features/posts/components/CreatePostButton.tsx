@@ -1,8 +1,10 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
+import { ImageIcon, PenLine } from "lucide-react";
 import { useI18n } from "@/i18n/useI18n";
 import { useAppStore } from "@/lib/store/store";
+import Button from "@/features/shared/components/ui/Button";
 
 const GEOMETRY_OPACITIES = [0.04, 0.09, 0.14, 0.19];
 
@@ -105,30 +107,26 @@ export default function CreatePostButton({
   }, []);
 
   const buttonClassName = [
-    "glass-card group relative inline-flex h-16 w-full self-stretch cursor-pointer items-center justify-between overflow-hidden rounded-xl px-4 py-3 transition-all duration-300 hover:border-button-glass-card-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fuchsia-border-default/60 focus-visible:ring-offset-2 focus-visible:ring-offset-page-background-default sm:h-20 sm:px-6 sm:py-4",
+    "glass-card group relative flex h-16 w-full self-stretch items-center overflow-hidden rounded-xl px-4 py-3 transition-all duration-300 hover:border-button-glass-card-border-hover sm:h-20 sm:px-6 sm:py-4",
     className,
   ]
     .filter(Boolean)
     .join(" ");
 
   const rowClassName = [
-    "relative z-10 w-full inline-flex items-center pointer-events-none",
+    "relative z-10 flex w-full min-w-0 items-center gap-4",
     showIcon ? "justify-between" : "justify-center",
   ].join(" ");
 
   const labelClassName = [
-    "text-center justify-center text-foreground-primary-default text-xl sm:text-2xl font-semibold font-serif",
+    "min-w-0 truncate text-foreground-primary-default text-sm sm:text-2xl font-semibold font-serif leading-none sm:leading-6",
     textClassName,
   ]
     .filter(Boolean)
     .join(" ");
 
   return (
-    <button
-      onClick={openCreatePostModal}
-      type="button"
-      className={buttonClassName}
-    >
+    <div className={buttonClassName}>
       <canvas
         ref={canvasRef}
         className="absolute inset-0 w-full h-full pointer-events-none opacity-40 group-hover:opacity-100 transition-opacity duration-700"
@@ -136,25 +134,49 @@ export default function CreatePostButton({
 
       <div className={rowClassName}>
         <div className={labelClassName}>
-          {text !== undefined ? text : <b>{t("post.createButton")}</b>}
+          {text !== undefined ? text : t("post.createButton")}
         </div>
         {showIcon ? (
-          <div data-svg-wrapper>
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 20 20"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M9.40066 16.1601L16.7964 8.76441C15.5522 8.24465 14.4222 7.48565 13.4705 6.53049C12.5149 5.57857 11.7555 4.44821 11.2356 3.20361L3.83986 10.5993C3.26288 11.1763 2.97389 11.4653 2.7259 11.7833C2.4333 12.1588 2.18218 12.5648 1.97692 12.9943C1.80393 13.3582 1.67494 13.7462 1.41694 14.5202L0.0549935 18.6031C-0.00769048 18.79 -0.0169906 18.9907 0.0281383 19.1826C0.0732672 19.3746 0.171036 19.5501 0.310456 19.6895C0.449875 19.829 0.625418 19.9267 0.817353 19.9719C1.00929 20.017 1.21001 20.0077 1.39695 19.945L5.4798 18.5831C6.25477 18.3251 6.64176 18.1961 7.00574 18.0231C7.43706 17.8177 7.84071 17.5681 8.2167 17.2741C8.53469 17.0261 8.82368 16.7371 9.40066 16.1601ZM18.8483 6.71248C19.5857 5.97507 20 4.97493 20 3.93208C20 2.88923 19.5857 1.88909 18.8483 1.15168C18.1109 0.414271 17.1108 7.76985e-09 16.0679 0C15.0251 -7.76985e-09 14.0249 0.414271 13.2875 1.15168L12.4005 2.03865L12.4385 2.14964C12.8755 3.40038 13.5908 4.53555 14.5305 5.46952C15.4924 6.43731 16.6673 7.16671 17.9614 7.59945L18.8483 6.71248Z"
-                fill="var(--color-foreground-primary-default)"
-              />
-            </svg>
+          <div className="flex shrink-0 items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="md"
+              onClick={openCreatePostModal}
+              className="!px-0 sm:!px-4"
+              icon={
+                <>
+                  <ImageIcon className="size-[18px]" aria-hidden />
+                  <span className="sr-only sm:hidden">
+                    {t("post.createImageAction")}
+                  </span>
+                  <span className="hidden sm:inline">
+                    {t("post.createImageAction")}
+                  </span>
+                </>
+              }
+            />
+            <Button
+              type="button"
+              variant="outline"
+              size="md"
+              onClick={openCreatePostModal}
+              className="!px-0 sm:!px-4"
+              icon={
+                <>
+                  <PenLine className="size-3.5" aria-hidden />
+                  <span className="sr-only sm:hidden">
+                    {t("post.createTextAction")}
+                  </span>
+                  <span className="hidden sm:inline">
+                    {t("post.createTextAction")}
+                  </span>
+                </>
+              }
+            />
           </div>
         ) : null}
       </div>
-    </button>
+    </div>
   );
 }

@@ -28,7 +28,29 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
-export const Compact: Story = {
+export const DesktopWidth: Story = {
+  render: (args) => (
+    <div className="w-[786px]">
+      <CreatePostButton {...args} />
+    </div>
+  ),
+};
+
+export const NarrowMobileWidth: Story = {
+  render: (args) => (
+    <div className="w-[357px]">
+      <CreatePostButton {...args} />
+    </div>
+  ),
+  globals: {
+    viewport: {
+      value: "mobile1",
+      isRotated: false,
+    },
+  },
+};
+
+export const CustomText: Story = {
   args: {
     text: "Create",
     showIcon: false,
@@ -36,19 +58,16 @@ export const Compact: Story = {
   },
 };
 
-export const Clickable: Story = {
-  args: {
-    text: "Start a post",
-  },
+export const ActionsOpenModal: Story = {
   play: async ({ canvas, userEvent }) => {
-    useAppStore.getState().closeCreatePostModal();
+    const buttons = canvas.getAllByRole("button");
 
-    try {
-      await userEvent.click(canvas.getByRole("button"));
+    for (const button of buttons) {
+      useAppStore.getState().closeCreatePostModal();
+      await userEvent.click(button);
       await expect(
         useAppStore.getState().createPostModal.isOpen,
       ).toBe(true);
-    } finally {
       useAppStore.getState().closeCreatePostModal();
     }
   },
