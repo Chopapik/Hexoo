@@ -82,7 +82,7 @@ export default function PostList({ className = "" }: PostListProps) {
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="flex w-full max-w-[920px] animate-pulse flex-col gap-4 rounded-xl border-t-2 border-surface-card-border-default bg-surface-card-background-default p-3"
+              className="flex w-full animate-pulse flex-col gap-4 rounded-xl border-t-2 border-surface-card-border-default bg-surface-card-background-default p-3"
             >
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-button-glass-card-background-hover" />

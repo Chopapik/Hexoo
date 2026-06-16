@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { ImageIcon, PenLine } from "lucide-react";
 import { useI18n } from "@/i18n/useI18n";
 import { useAppStore } from "@/lib/store/store";
@@ -22,9 +22,7 @@ export default function CreatePostButton({
   textClassName,
 }: CreatePostButtonProps) {
   const { t } = useI18n();
-  const openCreatePostModal = useAppStore(
-    (state) => state.openCreatePostModal,
-  );
+  const openCreatePostModal = useAppStore((state) => state.openCreatePostModal);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -107,19 +105,19 @@ export default function CreatePostButton({
   }, []);
 
   const buttonClassName = [
-    "glass-card group relative flex h-16 w-full self-stretch items-center overflow-hidden rounded-xl px-4 py-3 transition-all duration-300 hover:border-button-glass-card-border-hover sm:h-20 sm:px-6 sm:py-4",
+    "glass-card group relative flex h-16 w-full self-stretch items-center justify-center overflow-hidden rounded-xl px-4 py-3 transition-all duration-300 hover:border-button-glass-card-border-hover md:h-20 md:px-6 md:py-4",
     className,
   ]
     .filter(Boolean)
     .join(" ");
 
   const rowClassName = [
-    "relative z-10 flex w-full min-w-0 items-center gap-4",
+    "relative z-10 flex min-w-0 flex-1 items-center overflow-hidden",
     showIcon ? "justify-between" : "justify-center",
   ].join(" ");
 
   const labelClassName = [
-    "min-w-0 truncate text-foreground-primary-default text-sm sm:text-2xl font-semibold font-serif leading-none sm:leading-6",
+    "min-w-0 shrink truncate whitespace-nowrap font-serif text-sm font-normal leading-normal text-foreground-primary-default md:overflow-visible md:text-clip md:text-2xl",
     textClassName,
   ]
     .filter(Boolean)
@@ -143,14 +141,19 @@ export default function CreatePostButton({
               variant="outline"
               size="md"
               onClick={openCreatePostModal}
-              className="!px-0 sm:!px-4"
+              className="h-10 max-h-10 min-w-10 rounded-3xl border-[0.75px] px-0 py-[0.75px] md:px-[16.75px]"
               icon={
                 <>
-                  <ImageIcon className="size-[18px]" aria-hidden />
-                  <span className="sr-only sm:hidden">
+                  <span className="relative shrink-0 size-5" aria-hidden>
+                    <ImageIcon
+                      className="absolute inset-0 m-auto size-[18px]"
+                      strokeWidth={2}
+                    />
+                  </span>
+                  <span className="sr-only md:hidden">
                     {t("post.createImageAction")}
                   </span>
-                  <span className="hidden sm:inline">
+                  <span className="hidden whitespace-nowrap text-sm font-medium leading-5 tracking-[-0.14px] md:inline">
                     {t("post.createImageAction")}
                   </span>
                 </>
@@ -161,14 +164,19 @@ export default function CreatePostButton({
               variant="outline"
               size="md"
               onClick={openCreatePostModal}
-              className="!px-0 sm:!px-4"
+              className="h-10 max-h-10 min-w-10 px-0 py-[0.75px] md:px-[16.75px]"
               icon={
                 <>
-                  <PenLine className="size-3.5" aria-hidden />
-                  <span className="sr-only sm:hidden">
+                  <span className="relative shrink-0 size-5" aria-hidden>
+                    <PenLine
+                      className="absolute inset-0 m-auto size-[14px]"
+                      strokeWidth={2}
+                    />
+                  </span>
+                  <span className="sr-only md:hidden">
                     {t("post.createTextAction")}
                   </span>
-                  <span className="hidden sm:inline">
+                  <span className="hidden whitespace-nowrap text-sm font-medium leading-5 tracking-[-0.14px] md:inline">
                     {t("post.createTextAction")}
                   </span>
                 </>

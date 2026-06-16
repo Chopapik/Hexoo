@@ -20,8 +20,8 @@ export const PostMeta = ({ post }: PostMetaProps) => {
   };
 
   return (
-    <div className="flex h-11 w-full items-start justify-between">
-      <div className="inline-flex items-center justify-start gap-2">
+    <div className="flex min-h-11 w-full items-start justify-between">
+      <div className="inline-flex min-h-10 items-center justify-start gap-2">
         <div className="size-9 md:size-10" onClick={handleLinkClick}>
           <Link
             href={`/profile/${post.userId}`}
