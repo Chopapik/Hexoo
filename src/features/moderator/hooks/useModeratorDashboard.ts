@@ -6,6 +6,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import fetchClient from "@/lib/fetchClient";
+import { queryKeys } from "@/lib/queryKeys";
 import toast from "react-hot-toast";
 import type { ModerationPostResponseDto } from "@/features/posts/types/post.dto";
 import type { ModerationCommentResponseDto } from "@/features/comments/types/comment.dto";
@@ -27,7 +28,7 @@ export function useModeratorDashboard(queueTab: ModeratorQueueTab) {
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: ["moderator", "queue", queueTab],
+    queryKey: queryKeys.moderator.queue.byTab(queueTab),
     queryFn: async ({ pageParam }) => {
       const params = new URLSearchParams({
         limit: "20",
@@ -77,8 +78,8 @@ export function useModeratorDashboard(queueTab: ModeratorQueueTab) {
       };
       toast.success(messages[variables.action]);
 
-      queryClient.invalidateQueries({ queryKey: ["moderator", "queue"] });
-      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.moderator.queue.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.posts.all });
     },
     onError: () => toast.error(t("moderation.toast.error")),
   });
@@ -101,9 +102,9 @@ export function useModeratorDashboard(queueTab: ModeratorQueueTab) {
       };
       toast.success(messages[variables.action]);
 
-      queryClient.invalidateQueries({ queryKey: ["moderator", "queue"] });
-      queryClient.invalidateQueries({ queryKey: ["posts"] });
-      queryClient.invalidateQueries({ queryKey: ["comments"] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.moderator.queue.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.posts.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.comments.all });
     },
     onError: () => toast.error(t("moderation.toast.error")),
   });

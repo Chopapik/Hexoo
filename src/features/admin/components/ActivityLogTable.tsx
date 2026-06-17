@@ -3,6 +3,7 @@
 import React, { useEffect, useRef } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import fetchClient from "@/lib/fetchClient";
+import { queryKeys } from "@/lib/queryKeys";
 import Button from "@/features/shared/components/ui/Button";
 import { AppLoader } from "@/features/shared/components/ui/AppLoader";
 import { useI18n } from "@/i18n/useI18n";
@@ -37,7 +38,7 @@ export default function ActivityLogTable() {
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery<ActivityLog[], Error>({
-    queryKey: ["admin", "activityLogs"],
+    queryKey: queryKeys.admin.activityLogs,
     queryFn: async ({ pageParam }) => {
       const params = new URLSearchParams({
         limit: PAGE_SIZE.toString(),

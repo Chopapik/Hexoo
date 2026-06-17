@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import fetchClient from "@/lib/fetchClient";
+import { queryKeys } from "@/lib/queryKeys";
 import { toast } from "react-hot-toast";
 import { useI18n } from "@/i18n/useI18n";
 
@@ -12,7 +13,7 @@ export default function useAdminDeleteUser() {
       return await fetchClient.delete(`/admin/user/${uid}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin", "allUsers"] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.allUsers });
       toast.success(t("admin.userDeleted"));
     },
     onError: () => {

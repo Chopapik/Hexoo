@@ -1,4 +1,5 @@
 import fetchClient from "@/lib/fetchClient";
+import { queryKeys } from "@/lib/queryKeys";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { useI18n } from "@/i18n/useI18n";
@@ -20,7 +21,7 @@ export default function useDeletePost(
       toast.success(t("post.toast.deleted"));
 
       await queryClient.invalidateQueries({
-        queryKey: ["posts"],
+        queryKey: queryKeys.posts.all,
       });
       successCallBack?.();
     },

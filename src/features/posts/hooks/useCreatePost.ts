@@ -1,4 +1,5 @@
 import fetchClient from "@/lib/fetchClient";
+import { queryKeys } from "@/lib/queryKeys";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   CreatePostRequestDto,
@@ -41,7 +42,7 @@ export default function useCreatePost(
       }
 
       await queryClient.invalidateQueries({
-        queryKey: ["posts"],
+        queryKey: queryKeys.posts.all,
       });
       successCallBack?.(data);
     },

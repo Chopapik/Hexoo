@@ -1,10 +1,11 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import fetchClient from "@/lib/fetchClient";
+import { queryKeys } from "@/lib/queryKeys";
 import { PublicPostResponseDto } from "../types/post.dto";
 
 export default function usePosts() {
   return useInfiniteQuery<PublicPostResponseDto[]>({
-    queryKey: ["posts"],
+    queryKey: queryKeys.posts.all,
     queryFn: async ({ pageParam }) => {
       const params = new URLSearchParams({
         limit: "20",

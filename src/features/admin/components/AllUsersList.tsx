@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import fetchClient from "@/lib/fetchClient";
+import { queryKeys } from "@/lib/queryKeys";
 import Button from "@/features/shared/components/ui/Button";
 import type { PrivateUserResponseDto } from "@/features/users/types/user.dto";
 import AdminUserEditModal from "./AdminUserEditModal";
@@ -56,7 +57,7 @@ export default function AllUsersList() {
     refetch,
     isFetching,
   } = useQuery<PrivateUserResponseDto[], Error>({
-    queryKey: ["admin", "allUsers"],
+    queryKey: queryKeys.admin.allUsers,
     queryFn: async () => {
       const res = await fetchClient.get<GetUsersResponse>("/admin/users");
       return res.users;

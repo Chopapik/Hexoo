@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import fetchClient from "@/lib/fetchClient";
+import { queryKeys } from "@/lib/queryKeys";
 import {
   AddCommentRequestDto,
   AddCommentResponseDto,
@@ -53,9 +54,9 @@ export default function useAddComment(
       }
 
       queryClient.invalidateQueries({
-        queryKey: ["comments", postId],
+        queryKey: queryKeys.comments.byPost(postId),
       });
-      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.posts.all });
 
       onSuccessCallback?.();
     },

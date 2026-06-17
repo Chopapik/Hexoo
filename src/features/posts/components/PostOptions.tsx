@@ -16,6 +16,7 @@ import EditPostModal from "./EditPostModal";
 import DeletePostModal from "./DeletePostModal";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import fetchClient from "@/lib/fetchClient";
+import { queryKeys } from "@/lib/queryKeys";
 import toast from "react-hot-toast";
 import type { PublicPostResponseDto } from "../types/post.dto";
 import { useI18n } from "@/i18n/useI18n";
@@ -64,7 +65,7 @@ export default function PostOptions({
           ? t("post.toast.deleted")
           : t("post.toast.quarantined");
       toast.success(msg);
-      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.posts.all });
       setPendingAction(null);
     },
     onError: () => {

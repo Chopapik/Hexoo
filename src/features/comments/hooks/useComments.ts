@@ -1,10 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import fetchClient from "@/lib/fetchClient";
+import { queryKeys } from "@/lib/queryKeys";
 import type { PublicCommentResponseDto } from "../types/comment.dto";
 
 export default function useComments(postId: string, enabled = true) {
   const query = useQuery({
-    queryKey: ["comments", postId],
+    queryKey: queryKeys.comments.byPost(postId),
     enabled: Boolean(postId) && enabled,
     queryFn: async ({ signal }) => {
       return fetchClient.get<PublicCommentResponseDto[]>(

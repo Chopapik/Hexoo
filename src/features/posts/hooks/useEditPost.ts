@@ -1,4 +1,5 @@
 import fetchClient from "@/lib/fetchClient";
+import { queryKeys } from "@/lib/queryKeys";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { PublicPostResponseDto, UpdatePostRequestDto } from "../types/post.dto";
 import toast from "react-hot-toast";
@@ -24,7 +25,7 @@ export default function useEditPost(
       toast.success(t("post.toast.updated"));
 
       await queryClient.invalidateQueries({
-        queryKey: ["posts"],
+        queryKey: queryKeys.posts.all,
       });
       successCallBack?.();
     },

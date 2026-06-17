@@ -1,4 +1,5 @@
 import fetchClient from "@/lib/fetchClient";
+import { queryKeys } from "@/lib/queryKeys";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   PublicCommentResponseDto,
@@ -28,7 +29,7 @@ export default function useEditComment(
       toast.success(t("comment.toast.updated"));
 
       await queryClient.invalidateQueries({
-        queryKey: ["comments", postId],
+        queryKey: queryKeys.comments.byPost(postId),
       });
       successCallBack?.();
     },

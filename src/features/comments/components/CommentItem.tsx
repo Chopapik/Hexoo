@@ -17,6 +17,7 @@ import { ExpandableImageThumbnail } from "@/features/shared/components/media/Exp
 import { useAppStore } from "@/lib/store/store";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import fetchClient from "@/lib/fetchClient";
+import { queryKeys } from "@/lib/queryKeys";
 import toast from "react-hot-toast";
 import EditCommentModal from "./EditCommentModal";
 import DeleteCommentModal from "./DeleteCommentModal";
@@ -103,8 +104,10 @@ export const CommentItem = ({
           ? t("comment.toast.deleted")
           : t("comment.toast.quarantined");
       toast.success(msg);
-      queryClient.invalidateQueries({ queryKey: ["comments", comment.postId] });
-      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.comments.byPost(comment.postId),
+      });
+      queryClient.invalidateQueries({ queryKey: queryKeys.posts.all });
       setPendingModAction(null);
     },
     onError: () => {

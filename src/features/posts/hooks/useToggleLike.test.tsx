@@ -9,6 +9,7 @@ import {
 } from "@tanstack/react-query";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import type { PublicPostResponseDto } from "@/features/posts/types/post.dto";
+import { queryKeys } from "@/lib/queryKeys";
 import { useToggleLike } from "./useToggleLike";
 
 vi.mock("@/lib/fetchClient", () => ({
@@ -49,10 +50,13 @@ function createWrapper(
 }
 
 function seedPostsCache(client: QueryClient, posts: PublicPostResponseDto[]) {
-  client.setQueryData<InfiniteData<PublicPostResponseDto[]>>(["posts"], {
-    pages: [posts],
-    pageParams: [undefined],
-  });
+  client.setQueryData<InfiniteData<PublicPostResponseDto[]>>(
+    queryKeys.posts.all,
+    {
+      pages: [posts],
+      pageParams: [undefined],
+    },
+  );
 }
 
 describe("useToggleLike", () => {
@@ -85,7 +89,7 @@ describe("useToggleLike", () => {
     await waitFor(() => {
       const cached = queryClient.getQueryData<
         InfiniteData<PublicPostResponseDto[]>
-      >(["posts"]);
+      >(queryKeys.posts.all);
       expect(cached?.pages[0][0]).toMatchObject({
         id: "p1",
         isLikedByMe: true,
@@ -121,9 +125,9 @@ describe("useToggleLike", () => {
       expect(toast.error).toHaveBeenCalledWith("Nie udało się polubić posta"),
     );
 
-    const cached = queryClient.getQueryData<InfiniteData<PublicPostResponseDto[]>>(
-      ["posts"],
-    );
+    const cached = queryClient.getQueryData<
+      InfiniteData<PublicPostResponseDto[]>
+    >(queryKeys.posts.all);
     expect(cached?.pages[0][0]).toMatchObject({
       id: "p1",
       isLikedByMe: true,

@@ -1,13 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import type { UserProfileResponseDto } from "@/features/users/types/user.dto";
 import fetchClient from "@/lib/fetchClient";
+import { queryKeys } from "@/lib/queryKeys";
 
 export default function useProfile(
   uid: string,
   initialData?: UserProfileResponseDto,
 ) {
   const query = useQuery({
-    queryKey: ["profile", uid],
+    queryKey: queryKeys.profile.byUid(uid),
     retry: false,
     initialData: initialData,
     staleTime: 1000 * 60 * 5,

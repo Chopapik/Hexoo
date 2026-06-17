@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import fetchClient from "@/lib/fetchClient";
+import { queryKeys } from "@/lib/queryKeys";
 import { useAppStore } from "@/lib/store/store";
 import { useRouter } from "next/navigation";
 import { ApiError } from "@/lib/AppError";
@@ -50,13 +51,13 @@ export default function useUpdateProfile(onError?: ErrorCallback) {
         if (uid) {
           router.push(`/profile/${uid}`);
           await queryClient.invalidateQueries({
-            queryKey: ["profile", uid],
+            queryKey: queryKeys.profile.byUid(uid),
           });
         }
 
         if (uid) {
           await queryClient.invalidateQueries({
-            queryKey: ["posts", "user", uid],
+            queryKey: queryKeys.posts.byUser(uid),
           });
         }
 
