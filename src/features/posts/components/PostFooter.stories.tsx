@@ -1,8 +1,7 @@
-import { useEffect, type ComponentType } from "react";
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 
 import type { SessionData } from "@/features/me/me.type";
-import { useAppStore } from "@/lib/store/store";
+import { createUserDecorator } from "@/test/storybookStoreDecorators";
 import { UserRole } from "@/features/users/types/user.type";
 import type { PublicPostResponseDto } from "../types/post.dto";
 import { PostFooter } from "./PostFooter";
@@ -34,20 +33,6 @@ const post = {
   isLikedByMe: false,
 } satisfies PublicPostResponseDto;
 
-const withUser =
-  (value: SessionData | null) =>
-  (Story: ComponentType) => {
-    const setUser = useAppStore((state) => state.setUser);
-
-    useEffect(() => {
-      setUser(value);
-
-      return () => setUser(null);
-    }, [setUser, value]);
-
-    return <Story />;
-  };
-
 const meta = {
   component: PostFooter,
   tags: ["ai-generated"],
@@ -55,7 +40,7 @@ const meta = {
     post,
     onCommentClick: () => {},
   },
-  decorators: [withUser(null)],
+  decorators: [createUserDecorator(null)],
 } satisfies Meta<typeof PostFooter>;
 
 export default meta;
@@ -64,7 +49,7 @@ type Story = StoryObj<typeof meta>;
 export const LoggedOut: Story = {};
 
 export const LikedByMe: Story = {
-  decorators: [withUser(user)],
+  decorators: [createUserDecorator(user)],
   args: {
     post: {
       ...post,

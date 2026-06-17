@@ -1,9 +1,8 @@
-import { useEffect, type ComponentType } from "react";
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { expect } from "storybook/test";
 
 import type { SessionData } from "@/features/me/me.type";
-import { useAppStore } from "@/lib/store/store";
+import { createUserDecorator } from "@/test/storybookStoreDecorators";
 import { UserRole } from "@/features/users/types/user.type";
 import type { PublicCommentResponseDto } from "../types/comment.dto";
 import { CommentItem } from "./CommentItem";
@@ -41,20 +40,6 @@ const comment = {
   isLikedByMe: false,
 } satisfies PublicCommentResponseDto;
 
-const withUser =
-  (user: SessionData | null) =>
-  (Story: ComponentType) => {
-    const setUser = useAppStore((state) => state.setUser);
-
-    useEffect(() => {
-      setUser(user);
-
-      return () => setUser(null);
-    }, [setUser, user]);
-
-    return <Story />;
-  };
-
 const meta = {
   component: CommentItem,
   tags: ["ai-generated"],
@@ -67,11 +52,11 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Guest: Story = {
-  decorators: [withUser(null)],
+  decorators: [createUserDecorator(null)],
 };
 
 export const AuthorMenu: Story = {
-  decorators: [withUser(author)],
+  decorators: [createUserDecorator(author)],
   play: async ({ canvas, userEvent }) => {
     await userEvent.click(await canvas.findByRole("button"));
     await expect(await canvas.findByText("Edit")).toBeInTheDocument();
@@ -79,7 +64,7 @@ export const AuthorMenu: Story = {
 };
 
 export const ModeratorProminent: Story = {
-  decorators: [withUser(moderator)],
+  decorators: [createUserDecorator(moderator)],
   args: {
     comment: {
       ...comment,
