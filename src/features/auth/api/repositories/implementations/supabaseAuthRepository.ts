@@ -107,7 +107,7 @@ export class SupabaseAuthRepository implements AuthRepository {
     return this.verifyIdToken(data.access_token);
   }
 
-  async createSessionCookie(idToken: string, _expiresIn: number): Promise<string> {
+  async createSessionCookie(idToken: string): Promise<string> {
     return idToken;
   }
 

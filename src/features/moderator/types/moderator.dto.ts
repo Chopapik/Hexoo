@@ -14,7 +14,9 @@ const ModerationReasonBaseSchema = z.object({
   categories: z.array(z.string()).optional().default([]),
 });
 
-function withJustificationValidation<T extends z.ZodObject<any>>(schema: T) {
+function withJustificationValidation<T extends z.ZodObject<z.ZodRawShape>>(
+  schema: T,
+) {
   return schema.superRefine((data, ctx) => {
     const typedData = data as z.infer<T> & {
       action: (typeof MODERATION_ACTIONS)[number];

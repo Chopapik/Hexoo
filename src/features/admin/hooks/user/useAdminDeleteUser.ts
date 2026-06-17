@@ -15,7 +15,7 @@ export default function useAdminDeleteUser() {
       queryClient.invalidateQueries({ queryKey: ["admin", "allUsers"] });
       toast.success(t("admin.userDeleted"));
     },
-    onError: (error) => {
+    onError: () => {
       toast.error(t("admin.userDeleteError"));
     },
   });

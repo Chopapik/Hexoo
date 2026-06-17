@@ -35,7 +35,7 @@ export const uploadImage = async (
   try {
     const arrayBuffer = await file.arrayBuffer();
     inputBuffer = Buffer.from(arrayBuffer);
-  } catch (e) {
+  } catch {
     throw createAppError({
       code: "INVALID_INPUT",
       message: "[imageService.uploadImage] Failed to read file",
@@ -103,6 +103,7 @@ export const uploadImage = async (
     throw createAppError({
       code: "EXTERNAL_SERVICE",
       message: "[imageService.uploadImage] Failed to upload image to storage",
+      details: error,
     });
   }
 };
@@ -120,6 +121,7 @@ export const deleteImage = async (
     throw createAppError({
       code: "EXTERNAL_SERVICE",
       message: "[imageService.deleteImage] Failed to delete image from storage",
+      details: error,
     });
   }
 };

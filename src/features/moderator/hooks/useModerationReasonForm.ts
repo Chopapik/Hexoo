@@ -1,10 +1,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import {
-  ModerationReasonSchema,
-  ModerationReasonFormData,
-} from "../types/moderator.dto";
+import { ModerationReasonSchema } from "../types/moderator.dto";
 
 type ModerationAction = "quarantine" | "reject" | "reject-ban";
 

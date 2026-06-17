@@ -1,5 +1,3 @@
-import type { SessionData } from "@/features/me/me.type";
-
 import type { CommentService as ICommentService } from "./comment.service.interface";
 import type {
   AddCommentRequestDto as AddCommentRequest,

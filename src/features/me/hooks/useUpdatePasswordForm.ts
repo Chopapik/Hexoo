@@ -8,7 +8,6 @@ export default function useUpdatePasswordForm() {
     handleSubmit,
     formState: { errors, isSubmitting },
     setError,
-    setValue,
     reset,
   } = useForm<UpdatePasswordData>({
     resolver: zodResolver(UpdatePasswordSchema),

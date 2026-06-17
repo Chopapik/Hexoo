@@ -22,7 +22,7 @@ function sendError(code: string, status = 500, data?: Record<string, unknown>) {
   return NextResponse.json(payload, { status });
 }
 
-export function handleError<T>(
+export function handleError(
   code: string,
   message: string,
   data?: Record<string, unknown>,
