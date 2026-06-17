@@ -26,14 +26,20 @@ interface EditProfileModalProps {
   onClose: () => void;
 }
 
+const CLOSED_MODAL_USER: PublicUserResponseDto = {
+  uid: "",
+  name: "",
+  createdAt: new Date(0),
+  lastOnline: new Date(0),
+  avatarUrl: null,
+};
+
 export default function EditProfileModal({
   user,
   onClose,
 }: EditProfileModalProps) {
   const { lang, t } = useI18n();
-  if (!user) {
-    return null;
-  }
+  const activeUser = user ?? CLOSED_MODAL_USER;
 
   const {
     register,
@@ -60,7 +66,7 @@ export default function EditProfileModal({
   const nameErrorCode = errors.name?.message as string | undefined;
   const nameLength = nameValue.trim().length;
   const normalizedNameValue = nameValue.trim().toLowerCase().replace(/\s+/g, "");
-  const normalizedCurrentName = user.name
+  const normalizedCurrentName = activeUser.name
     .trim()
     .toLowerCase()
     .replace(/\s+/g, "");
@@ -69,7 +75,7 @@ export default function EditProfileModal({
     isChecking: isCheckingUsername,
     isAvailable: isUsernameAvailable,
     error: usernameError,
-  } = useCheckUsername(nameValue, { currentUsername: user.name });
+  } = useCheckUsername(nameValue, { currentUsername: activeUser.name });
 
   const { updateProfile, isPending } = useUpdateProfile(handleServerErrors);
 
@@ -208,6 +214,10 @@ export default function EditProfileModal({
     handleSubmit(onSubmit)();
   };
 
+  if (!user) {
+    return null;
+  }
+
   const footerContent = (
     <div className="flex gap-3 justify-end w-full">
       <Button
@@ -235,7 +245,7 @@ export default function EditProfileModal({
       <Modal
         isOpen={!!user}
         onClose={onClose}
-        title={t("profile.editTitle", { name: user.name })}
+        title={t("profile.editTitle", { name: activeUser.name })}
         footer={footerContent}
       >
         <form
