@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { Header } from "./Header";
 import { LeftNav } from "./LeftNav/LeftNav";
 import { BottomNav } from "./LeftNav/BottomNav";
@@ -30,11 +30,23 @@ function LeftRailWidthSpacer() {
   );
 }
 
+const subscribeToHydration = (onStoreChange: () => void) => {
+  queueMicrotask(onStoreChange);
+  return () => {};
+};
+
+const getHydratedSnapshot = () => true;
+const getServerHydrationSnapshot = () => false;
+
 export const Layout: React.FC<{
   children: React.ReactNode;
   initialUser: SessionData | null;
 }> = ({ children, initialUser }) => {
-  const [isHydrated, setIsHydrated] = useState(false);
+  const isHydrated = useSyncExternalStore(
+    subscribeToHydration,
+    getHydratedSnapshot,
+    getServerHydrationSnapshot,
+  );
   const [isRightNavOpen, setIsRightNavOpen] = useState(false);
   const openRight = () => setIsRightNavOpen(true);
   const closeRight = () => setIsRightNavOpen(false);
@@ -49,7 +61,6 @@ export const Layout: React.FC<{
   }, [initialUser, setUser]);
 
   useEffect(() => {
-    setIsHydrated(true);
     initializeLanguage();
   }, [initializeLanguage]);
 

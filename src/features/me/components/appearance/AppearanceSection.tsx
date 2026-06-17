@@ -1,8 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useSyncExternalStore } from "react";
 import Button from "@/features/shared/components/ui/Button";
-import { toggleTheme } from "@/features/shared/utils/theme";
+import {
+  getTheme,
+  subscribeToTheme,
+  toggleTheme,
+  type ThemeName,
+} from "@/features/shared/utils/theme";
 import { LuSun, LuMoon } from "react-icons/lu";
 import SettingsSection from "../SettingsSection";
 import { useI18n } from "@/i18n/useI18n";
@@ -28,22 +33,19 @@ const ThemeToggleIcon = ({ isDark }: { isDark: boolean }) => {
   );
 };
 
+const getServerThemeSnapshot = (): ThemeName | null => null;
+
 export default function AppearanceSection() {
   const { t } = useI18n();
-  const [isDark, setIsDark] = useState(false);
-  const [isMounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    const isDarkMode =
-      document.documentElement.classList.contains("dark") ||
-      localStorage.getItem("theme") === "dark";
-    setIsDark(isDarkMode);
-    setMounted(true);
-  }, []);
+  const theme = useSyncExternalStore(
+    subscribeToTheme,
+    getTheme,
+    getServerThemeSnapshot,
+  );
+  const isDark = theme === "dark";
 
   const handleThemeToggle = () => {
     toggleTheme();
-    setIsDark((prev) => !prev);
   };
 
   return (
@@ -60,7 +62,7 @@ export default function AppearanceSection() {
         <div className="shrink-0">
           <Button
             leftIcon={
-              isMounted ? (
+              theme ? (
                 <ThemeToggleIcon isDark={isDark} />
               ) : (
                 <div className="w-5 h-5" />
