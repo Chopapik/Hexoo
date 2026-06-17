@@ -4,7 +4,7 @@ import { UpdateProfileData, UpdateProfileSchema } from "../me.type";
 import { PublicUserResponseDto } from "@/features/users/types/user.dto";
 import { useEffect, useRef, useState } from "react";
 
-export function useUpdateProfileForm(user: PublicUserResponseDto | null) {
+export function useUpdateProfileForm(user: PublicUserResponseDto) {
   const {
     register,
     handleSubmit,
@@ -13,7 +13,6 @@ export function useUpdateProfileForm(user: PublicUserResponseDto | null) {
     clearErrors,
     watch,
     formState: { errors, isDirty },
-    reset,
   } = useForm<UpdateProfileData>({
     resolver: zodResolver(UpdateProfileSchema),
     // Validate on change so that the UI (counter, icon, messages)
@@ -21,13 +20,13 @@ export function useUpdateProfileForm(user: PublicUserResponseDto | null) {
     // or contains invalid characters.
     mode: "onChange",
     defaultValues: {
-      name: user?.name || "",
+      name: user.name,
       avatarFile: undefined,
     },
   });
 
   const [imagePreview, setImagePreview] = useState<string | null>(
-    user?.avatarUrl ?? null,
+    user.avatarUrl ?? null,
   );
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -36,16 +35,6 @@ export function useUpdateProfileForm(user: PublicUserResponseDto | null) {
       URL.revokeObjectURL(preview);
     }
   };
-
-  useEffect(() => {
-    if (user) {
-      setImagePreview((prev) => {
-        revokeBlobPreviewIfNeeded(prev);
-        return user.avatarUrl ?? null;
-      });
-      reset({ name: user.name, avatarFile: undefined });
-    }
-  }, [user, reset]);
 
   useEffect(() => {
     return () => {
@@ -113,7 +102,7 @@ export function useUpdateProfileForm(user: PublicUserResponseDto | null) {
     const formData = new FormData();
     let hasChanges = false;
 
-    if (data.name && data.name.trim() !== user?.name) {
+    if (data.name && data.name.trim() !== user.name) {
       formData.append("name", data.name.trim());
       hasChanges = true;
     }

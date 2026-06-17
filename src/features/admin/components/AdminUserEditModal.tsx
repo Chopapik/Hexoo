@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import Modal from "@/features/shared/components/layout/Modal";
 import TextInput from "@/features/shared/components/ui/TextInput";
 import Select from "@/features/shared/components/ui/Select";
@@ -27,11 +26,29 @@ export default function AdminUserEditModal({
   user: PrivateUserResponseDto | null;
   onClose: () => void;
 }) {
+  if (!user) return null;
+
+  return (
+    <AdminUserEditModalContent
+      key={`${user.uid}:${user.name}:${user.role}`}
+      user={user}
+      onClose={onClose}
+    />
+  );
+}
+
+function AdminUserEditModalContent({
+  user,
+  onClose,
+}: {
+  user: PrivateUserResponseDto;
+  onClose: () => void;
+}) {
   const { lang, t } = useI18n();
   const [newUserData, setNewUserData] = useState<Partial<UpdateUserRequestDto>>(
     {
-      name: "",
-      role: undefined,
+      name: user.name,
+      role: user.role as UserRole,
     },
   );
 
@@ -45,16 +62,6 @@ export default function AdminUserEditModal({
   const { unBlockUser, isPending: isUnblockingUser } = useUnblockUser();
   const { adminDeleteUser, isPending: isDeletingUser } = useAdminDeleteUser();
 
-  useEffect(() => {
-    if (user) {
-      setNewUserData({
-        name: user.name,
-        role: user.role as UserRole,
-      });
-      setNewPassword("");
-    }
-  }, [user]);
-
   const handleFieldChange = (
     field: keyof UpdateUserRequestDto,
     value: string | UserRole,
@@ -64,8 +71,6 @@ export default function AdminUserEditModal({
       [field]: value || undefined,
     }));
   };
-
-  if (!user) return null;
 
   const displayRole = newUserData.role || user.role || "user";
   const displayName = newUserData.name || user.name;

@@ -26,20 +26,31 @@ interface EditProfileModalProps {
   onClose: () => void;
 }
 
-const CLOSED_MODAL_USER: PublicUserResponseDto = {
-  uid: "",
-  name: "",
-  createdAt: new Date(0),
-  lastOnline: new Date(0),
-  avatarUrl: null,
-};
-
 export default function EditProfileModal({
   user,
   onClose,
 }: EditProfileModalProps) {
+  if (!user) {
+    return null;
+  }
+
+  return (
+    <EditProfileModalContent
+      key={`${user.uid}:${user.name}:${user.avatarUrl ?? ""}`}
+      user={user}
+      onClose={onClose}
+    />
+  );
+}
+
+function EditProfileModalContent({
+  user,
+  onClose,
+}: {
+  user: PublicUserResponseDto;
+  onClose: () => void;
+}) {
   const { lang, t } = useI18n();
-  const activeUser = user ?? CLOSED_MODAL_USER;
 
   const {
     register,
@@ -66,7 +77,7 @@ export default function EditProfileModal({
   const nameErrorCode = errors.name?.message as string | undefined;
   const nameLength = nameValue.trim().length;
   const normalizedNameValue = nameValue.trim().toLowerCase().replace(/\s+/g, "");
-  const normalizedCurrentName = activeUser.name
+  const normalizedCurrentName = user.name
     .trim()
     .toLowerCase()
     .replace(/\s+/g, "");
@@ -75,7 +86,7 @@ export default function EditProfileModal({
     isChecking: isCheckingUsername,
     isAvailable: isUsernameAvailable,
     error: usernameError,
-  } = useCheckUsername(nameValue, { currentUsername: activeUser.name });
+  } = useCheckUsername(nameValue, { currentUsername: user.name });
 
   const { updateProfile, isPending } = useUpdateProfile(handleServerErrors);
 
@@ -214,10 +225,6 @@ export default function EditProfileModal({
     handleSubmit(onSubmit)();
   };
 
-  if (!user) {
-    return null;
-  }
-
   const footerContent = (
     <div className="flex gap-3 justify-end w-full">
       <Button
@@ -243,9 +250,9 @@ export default function EditProfileModal({
   return (
     <>
       <Modal
-        isOpen={!!user}
+        isOpen={true}
         onClose={onClose}
-        title={t("profile.editTitle", { name: activeUser.name })}
+        title={t("profile.editTitle", { name: user.name })}
         footer={footerContent}
       >
         <form
