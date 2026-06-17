@@ -1,5 +1,6 @@
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
+import { readPaginationParams } from "@/lib/http/requestParsing";
 import { getUserFromSession } from "@/features/auth/api/utils/session-user.service";
 import type { NextRequest } from "next/server";
 import { getAdminActivityLogs } from "@/features/activity/api/services";
@@ -7,21 +8,12 @@ import { getAdminActivityLogs } from "@/features/activity/api/services";
 export const GET = withErrorHandling(async (req: NextRequest) => {
   const session = await getUserFromSession();
 
-  const searchParams = req.nextUrl.searchParams;
-  const limitParam = searchParams.get("limit");
-  const startAfter = searchParams.get("startAfter") ?? undefined;
-
-  let limit = 50;
-
-  if (limitParam) {
-    const parsed = Number(limitParam);
-    if (!Number.isNaN(parsed) && parsed > 0 && parsed <= 200) {
-      limit = parsed;
-    }
-  }
+  const { limit, startAfter } = readPaginationParams(req.nextUrl.searchParams, {
+    defaultLimit: 50,
+    maxLimit: 200,
+  });
 
   const logs = await getAdminActivityLogs(session, limit, startAfter);
 
   return handleSuccess({ logs });
 });
-
