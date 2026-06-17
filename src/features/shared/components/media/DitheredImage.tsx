@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { useDitheredImage } from "@/features/shared/hooks/useDitheredImage";
 import type { PostDitheringSettings } from "@/features/shared/types/dithering";
 

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import type { PublicPostResponseDto } from "../types/post.dto";
 import { PostCard } from "./PostCard";
 import usePosts from "../hooks/usePosts";
@@ -26,35 +26,9 @@ export default function PostList({ className = "" }: PostListProps) {
   } = usePosts();
 
   const observerTarget = useRef<HTMLDivElement>(null);
-  const [imageReadyByPostId, setImageReadyByPostId] = useState<
-    Record<string, boolean>
-  >({});
-
-  const visiblePosts = data?.pages.flat() ?? [];
 
   useEffect(() => {
-    const posts = data?.pages.flat() ?? [];
-
-    if (!posts.length) {
-      setImageReadyByPostId({});
-      return;
-    }
-
-    setImageReadyByPostId((previous) => {
-      const next: Record<string, boolean> = {};
-      for (const post of posts) {
-        next[post.id] = previous[post.id] ?? false;
-      }
-      return next;
-    });
-  }, [data?.pages]);
-
-  const areVisiblePostsVisuallyReady = visiblePosts.every((post) => {
-    if (!post.imageUrl) return true;
-    return imageReadyByPostId[post.id] === true;
-  });
-
-  useEffect(() => {
+    const target = observerTarget.current;
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
@@ -64,13 +38,13 @@ export default function PostList({ className = "" }: PostListProps) {
       { threshold: 1.0 },
     );
 
-    if (observerTarget.current) {
-      observer.observe(observerTarget.current);
+    if (target) {
+      observer.observe(target);
     }
 
     return () => {
-      if (observerTarget.current) {
-        observer.unobserve(observerTarget.current);
+      if (target) {
+        observer.unobserve(target);
       }
     };
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);

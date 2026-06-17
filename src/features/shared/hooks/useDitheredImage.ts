@@ -15,8 +15,40 @@ export type UseDitheredImageResult = {
   hasError: boolean;
 };
 
+type DitheredImageState = UseDitheredImageResult & {
+  cacheKey: string;
+};
+
 const resultCache = new Map<string, string>();
 const inFlightCache = new Map<string, Promise<string>>();
+
+function getDitheredImageSnapshot({
+  cacheKey,
+  isEnabled,
+  src,
+}: {
+  cacheKey: string;
+  isEnabled: boolean;
+  src: string;
+}): DitheredImageState {
+  if (!isEnabled) {
+    return {
+      cacheKey,
+      processedSrc: src,
+      isReady: true,
+      hasError: false,
+    };
+  }
+
+  const cached = resultCache.get(cacheKey);
+
+  return {
+    cacheKey,
+    processedSrc: cached ?? null,
+    isReady: Boolean(cached),
+    hasError: false,
+  };
+}
 
 async function renderDitheredToDataUrl({
   src,
@@ -210,32 +242,19 @@ export function useDitheredImage({
     ],
   );
 
-  const [processedSrc, setProcessedSrc] = useState<string | null>(
-    resultCache.get(cacheKey) ?? null,
+  const [state, setState] = useState<DitheredImageState>(() =>
+    getDitheredImageSnapshot({ cacheKey, isEnabled, src }),
   );
-  const [isReady, setIsReady] = useState<boolean>(
-    Boolean(resultCache.get(cacheKey)),
-  );
-  const [hasError, setHasError] = useState(false);
+
+  const snapshot =
+    state.cacheKey === cacheKey
+      ? state
+      : getDitheredImageSnapshot({ cacheKey, isEnabled, src });
 
   useEffect(() => {
     let cancelled = false;
 
-    setIsReady(false);
-    setHasError(false);
-
-    if (!isEnabled) {
-      setProcessedSrc(src);
-      setIsReady(true);
-      return () => {
-        cancelled = true;
-      };
-    }
-
-    const cached = resultCache.get(cacheKey);
-    if (cached) {
-      setProcessedSrc(cached);
-      setIsReady(true);
+    if (snapshot.isReady) {
       return () => {
         cancelled = true;
       };
@@ -248,23 +267,34 @@ export function useDitheredImage({
     })
       .then((output) => {
         if (cancelled) return;
-        setProcessedSrc(output);
-        setIsReady(true);
+        setState({
+          cacheKey,
+          processedSrc: output,
+          isReady: true,
+          hasError: false,
+        });
       })
       .catch((error) => {
         console.error("Dither preview failed:", error);
         if (cancelled) return;
-        setProcessedSrc(src);
-        setHasError(true);
-        setIsReady(true);
+        setState({
+          cacheKey,
+          processedSrc: src,
+          isReady: true,
+          hasError: true,
+        });
       });
 
     return () => {
       cancelled = true;
     };
-  }, [cacheKey, dithering, isEnabled, src]);
+  }, [cacheKey, dithering, snapshot.isReady, src]);
 
-  return { processedSrc, isReady, hasError };
+  return {
+    processedSrc: snapshot.processedSrc,
+    isReady: snapshot.isReady,
+    hasError: snapshot.hasError,
+  };
 }
 
 function createDistanceCalculator(

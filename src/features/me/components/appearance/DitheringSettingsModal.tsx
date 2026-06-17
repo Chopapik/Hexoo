@@ -26,7 +26,16 @@ type DitheringSettingsModalProps = {
   onClose: () => void;
 };
 
+type PreviewProcessingState = {
+  isReady: boolean;
+  hasError: boolean;
+};
+
 const PREVIEW_IMAGE_PATH = "/images/settings/dithering-preview.png";
+const DEFAULT_PREVIEW_PROCESSING_STATE: PreviewProcessingState = {
+  isReady: false,
+  hasError: false,
+};
 
 const clamp = (value: number, min: number, max: number) =>
   Math.max(min, Math.min(max, value));
@@ -59,8 +68,9 @@ export default function DitheringSettingsModal({
 
   const [debouncedPreviewSettings, setDebouncedPreviewSettings] =
     useState<PostDitheringSettings>(settings);
-  const [isPreviewReady, setIsPreviewReady] = useState(true);
-  const [previewProcessingError, setPreviewProcessingError] = useState(false);
+  const [previewStateByKey, setPreviewStateByKey] = useState<
+    Record<string, PreviewProcessingState>
+  >({});
   const [previewAssetAvailable, setPreviewAssetAvailable] = useState(true);
 
   useEffect(() => {
@@ -69,12 +79,6 @@ export default function DitheringSettingsModal({
     }, 160);
     return () => window.clearTimeout(timeout);
   }, [settings]);
-
-  useEffect(() => {
-    if (!isOpen) return;
-    setIsPreviewReady(false);
-    setPreviewProcessingError(false);
-  }, [debouncedPreviewSettings, isOpen]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -88,6 +92,46 @@ export default function DitheringSettingsModal({
     () => IMAGE_QUANTIZATION_WITH_PROPAGATION.has(settings.imageQuantization),
     [settings.imageQuantization],
   );
+
+  const previewStateKey = useMemo(
+    () =>
+      [
+        String(debouncedPreviewSettings.enabled),
+        debouncedPreviewSettings.paletteSize,
+        debouncedPreviewSettings.processingWidth,
+        debouncedPreviewSettings.ditherBaseWidth,
+        debouncedPreviewSettings.colorDistanceFormula,
+        debouncedPreviewSettings.paletteQuantization,
+        debouncedPreviewSettings.imageQuantization,
+        debouncedPreviewSettings.errorDiffusionPropagation,
+      ].join(":"),
+    [debouncedPreviewSettings],
+  );
+
+  const previewProcessingState =
+    previewStateByKey[previewStateKey] ?? DEFAULT_PREVIEW_PROCESSING_STATE;
+
+  const updatePreviewProcessingState = (
+    patch: Partial<PreviewProcessingState>,
+  ) => {
+    setPreviewStateByKey((currentByKey) => {
+      const current =
+        currentByKey[previewStateKey] ?? DEFAULT_PREVIEW_PROCESSING_STATE;
+      const next = { ...current, ...patch };
+
+      if (
+        next.isReady === current.isReady &&
+        next.hasError === current.hasError
+      ) {
+        return currentByKey;
+      }
+
+      return {
+        ...currentByKey,
+        [previewStateKey]: next,
+      };
+    });
+  };
 
   const handleNumberChange = (
     rawValue: string,
@@ -354,25 +398,30 @@ export default function DitheringSettingsModal({
                   {t("settings.dithering.after")}
                 </p>
                 <DitheredImage
+                  key={previewStateKey}
                   src={PREVIEW_IMAGE_PATH}
                   alt={t("settings.dithering.afterAlt")}
                   className="h-auto w-full rounded-md"
                   width={1200}
                   height={800}
                   dithering={debouncedPreviewSettings}
-                  onReadyChange={setIsPreviewReady}
-                  onErrorChange={setPreviewProcessingError}
+                  onReadyChange={(isReady) =>
+                    updatePreviewProcessingState({ isReady })
+                  }
+                  onErrorChange={(hasError) =>
+                    updatePreviewProcessingState({ hasError })
+                  }
                 />
               </div>
             </div>
           )}
 
-          {!isPreviewReady && previewAssetAvailable ? (
+          {!previewProcessingState.isReady && previewAssetAvailable ? (
             <p className="text-xs font-sans text-foreground-secondary-default">
               {t("settings.dithering.processing")}
             </p>
           ) : null}
-          {previewProcessingError && previewAssetAvailable ? (
+          {previewProcessingState.hasError && previewAssetAvailable ? (
             <p className="text-xs font-sans text-validation-error-text">
               {t("settings.dithering.processingError")}
             </p>

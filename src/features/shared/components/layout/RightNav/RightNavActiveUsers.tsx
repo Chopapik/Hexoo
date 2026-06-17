@@ -21,22 +21,13 @@ export function RightNavActiveUsers() {
   const { data: users = [], isLoading } = useActiveUsers(uids);
 
   const [minDelayElapsed, setMinDelayElapsed] = useState(false);
-  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     const id = window.setTimeout(() => setMinDelayElapsed(true), READY_MIN_MS);
     return () => window.clearTimeout(id);
   }, []);
 
-  useEffect(() => {
-    if (isReady) return;
-
-    if (!minDelayElapsed) return;
-
-    if (needsFetch && isLoading) return;
-
-    setIsReady(true);
-  }, [isReady, minDelayElapsed, needsFetch, isLoading]);
+  const isReady = minDelayElapsed && (!needsFetch || !isLoading);
 
   const activeUsers = users.filter((u) => u.uid !== selfUid);
   const isEmpty = activeUsers.length === 0;
