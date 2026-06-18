@@ -16,6 +16,7 @@ export default defineConfig({
     projects: [{
       extends: true,
       test: {
+        name: "node",
         environment: "node",
         include: ["src/**/*.{test,spec}.{ts,tsx}"],
         setupFiles: ["./src/test/setupVitest.ts"],
