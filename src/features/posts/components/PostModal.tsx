@@ -11,6 +11,7 @@ import { useAppStore } from "@/lib/store/store";
 import { isAsciiArt } from "../utils/asciiDetector";
 import type { PublicPostResponseDto } from "../types/post.dto";
 import { PostNsfwNotice } from "./PostNsfwNotice";
+import { PostMedia } from "./PostMedia";
 import { useI18n } from "@/i18n/useI18n";
 import { cn } from "@/features/shared/utils/utils";
 
@@ -19,39 +20,6 @@ interface PostModalProps {
   isOpen: boolean;
   onClose: () => void;
   revealNSFW?: boolean;
-}
-
-interface PostMediaFrameProps {
-  imageUrl: string;
-  isContentVisible: boolean;
-  frameClassName: string;
-  imageClassName: string;
-  noticeClassName?: string;
-}
-
-function PostMediaFrame({
-  imageUrl,
-  isContentVisible,
-  frameClassName,
-  imageClassName,
-  noticeClassName,
-}: PostMediaFrameProps) {
-  return (
-    <div className={frameClassName}>
-      {isContentVisible ? (
-        <img src={imageUrl} alt="Post content" className={imageClassName} />
-      ) : (
-        <div
-          className={cn(
-            "flex h-full w-full items-center justify-center",
-            noticeClassName,
-          )}
-        >
-          <PostNsfwNotice />
-        </div>
-      )}
-    </div>
-  );
 }
 
 const commentFormWrapperClassName =
@@ -114,13 +82,19 @@ export const PostModal = ({
       className={modalClassName}
     >
       <div className="flex h-full min-h-0 flex-col overflow-hidden lg:flex-row">
-        {hasImage && post.imageUrl && (
-          <PostMediaFrame
-            imageUrl={post.imageUrl}
-            isContentVisible={isContentVisible}
-            frameClassName="hidden lg:flex lg:h-full lg:max-h-full lg:min-w-0 lg:flex-1 lg:items-center lg:justify-center lg:overflow-hidden lg:bg-modal-overlay-background-default/30"
-            imageClassName="block h-full w-full object-contain object-center"
+        {hasImage && post.imageUrl && isContentVisible && (
+          <PostMedia
+            src={post.imageUrl}
+            alt={t("post.imageAlt")}
+            presentation="modal"
+            className="hidden lg:flex lg:h-full lg:max-h-full lg:min-w-0 lg:flex-1 lg:rounded-none lg:border-0"
           />
+        )}
+
+        {hasImage && post.imageUrl && !isContentVisible && (
+          <div className="hidden lg:flex lg:h-full lg:max-h-full lg:min-w-0 lg:flex-1 lg:items-center lg:justify-center lg:overflow-hidden lg:bg-modal-overlay-background-default/30">
+            <PostNsfwNotice />
+          </div>
         )}
 
         <div
@@ -142,13 +116,18 @@ export const PostModal = ({
               )}
 
               {hasImage && post.imageUrl && (
-                <PostMediaFrame
-                  imageUrl={post.imageUrl}
-                  isContentVisible={isContentVisible}
-                  frameClassName="flex max-h-[60vh] w-full items-center justify-center overflow-hidden bg-modal-overlay-background-default/30"
-                  imageClassName="block max-h-[60vh] w-auto max-w-full object-contain"
-                  noticeClassName="p-4"
-                />
+                isContentVisible ? (
+                  <PostMedia
+                    src={post.imageUrl}
+                    alt={t("post.imageAlt")}
+                    presentation="modal"
+                    className="max-h-[65dvh] w-full rounded-none border-0"
+                  />
+                ) : (
+                  <div className="flex min-h-[220px] w-full items-center justify-center overflow-hidden bg-modal-overlay-background-default/30 p-4">
+                    <PostNsfwNotice />
+                  </div>
+                )
               )}
 
               {!isContentVisible && !hasImage && (

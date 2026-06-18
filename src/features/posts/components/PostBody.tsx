@@ -77,7 +77,7 @@ export const PostBody = ({
           ) : (
             <PostMedia
               src={post.imageUrl}
-              alt="Post content"
+              alt={t("post.imageAlt")}
               onReadyChange={onImageReadyChange}
             />
           ))}
