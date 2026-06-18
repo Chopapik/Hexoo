@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
-import { getUserFromSession } from "@/features/auth/api/utils/session-user.service";
-import { notFound, redirect } from "next/navigation";
-import { ApiError } from "@/lib/AppError";
+import { getRoleLayoutSession } from "@/features/auth/api/utils/role-layout-access";
+import { UserRole } from "@/features/users/types/user.type";
 
 export const metadata: Metadata = {
   title: "Hexoo",
@@ -12,23 +11,10 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  let sessionUserData = null;
-
-  try {
-    sessionUserData = await getUserFromSession();
-  } catch (error: unknown) {
-    if (
-      error instanceof ApiError &&
-      (error.code === "AUTH_REQUIRED" || error.code === "INVALID_SESSION")
-    ) {
-      redirect("/login");
-    }
-    throw error;
-  }
-
-  if (sessionUserData?.role !== "admin") {
-    notFound();
-  }
+  await getRoleLayoutSession({
+    allowedRoles: [UserRole.Admin],
+    unauthenticated: "redirect-login",
+  });
 
   return (
     <div className="w-full min-h-screen bg-page-background-default flex flex-col">

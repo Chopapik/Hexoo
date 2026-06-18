@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
-import { getUserFromSession } from "@/features/auth/api/utils/session-user.service";
-import { ApiError } from "@/lib/AppError";
-import { notFound } from "next/navigation";
+import { getRoleLayoutSession } from "@/features/auth/api/utils/role-layout-access";
+import { UserRole } from "@/features/users/types/user.type";
 
 export const metadata: Metadata = {
   title: "Hexoo",
@@ -12,25 +11,13 @@ export default async function ModeratorLayout({
 }: {
   children: React.ReactNode;
 }) {
-  let sessionUserData = null;
+  const sessionUserData = await getRoleLayoutSession({
+    allowedRoles: [UserRole.Admin, UserRole.Moderator],
+    unauthenticated: "return-null",
+  });
 
-  try {
-    sessionUserData = await getUserFromSession();
-  } catch (error: unknown) {
-    if (
-      error instanceof ApiError &&
-      (error.code === "AUTH_REQUIRED" || error.code === "INVALID_SESSION")
-    ) {
-      return <div className="text-foreground-primary-default">:/</div>;
-    }
-    throw error;
-  }
-
-  if (
-    sessionUserData?.role !== "admin" &&
-    sessionUserData?.role !== "moderator"
-  ) {
-    notFound();
+  if (!sessionUserData) {
+    return <div className="text-foreground-primary-default">:/</div>;
   }
 
   return (
