@@ -33,7 +33,7 @@ export default function ModalFooter({
   const resolvedCancelText = cancelText ?? t("common.cancel");
 
   return (
-    <div className={cn("flex w-full items-center justify-end gap-2", className)}>
+    <div className={cn("flex w-full flex-wrap items-center justify-end gap-2 sm:flex-nowrap", className)}>
       <Button
         onClick={onCancel}
         text={resolvedCancelText}

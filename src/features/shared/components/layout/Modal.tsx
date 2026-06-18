@@ -58,10 +58,10 @@ export default function Modal({
             aria-modal="true"
             aria-labelledby={title ? titleId : undefined}
             className={cn(
-              "relative flex h-[min(648px,calc(100dvh-2rem))] w-[calc(100vw-2rem)] min-w-80 max-w-[337px] flex-col overflow-hidden",
+              "relative flex h-auto max-h-[calc(100dvh-2rem)] w-[calc(100vw-2rem)] min-w-80 max-w-[337px] flex-col overflow-hidden",
               "border border-modal-chrome-border-default bg-modal-chrome-background-default text-foreground-primary-default backdrop-blur-xl",
               "shadow-[0px_4px_6px_0px_rgba(0,0,0,0.25)]",
-              "sm:h-[344px] sm:max-h-[calc(100dvh-2rem)] sm:w-[768px] sm:max-w-[calc(100vw-2rem)] sm:rounded-2xl sm:shadow-[0px_4px_12px_0px_rgba(0,0,0,0.25)]",
+              "sm:max-h-[calc(100dvh-2rem)] sm:w-[768px] sm:max-w-[calc(100vw-2rem)] sm:rounded-2xl sm:shadow-[0px_4px_12px_0px_rgba(0,0,0,0.25)]",
               className,
             )}
             initial={{ opacity: 0, scale: 0.95 }}
@@ -88,12 +88,12 @@ export default function Modal({
               </div>
             )}
 
-            <div className="min-h-0 flex-1 overflow-hidden bg-modal-overlay-background-default sm:min-h-[240px]">
+            <div className="min-h-0 flex-1 overflow-y-auto bg-modal-overlay-background-default">
               {children}
             </div>
 
             {footer && (
-              <div className="flex h-[60px] min-h-[60px] shrink-0 items-center justify-end overflow-hidden border-t border-modal-chrome-border-default bg-modal-chrome-background-default px-3 py-2.5">
+              <div className="flex min-h-[60px] h-auto shrink-0 items-center justify-end border-t border-modal-chrome-border-default bg-modal-chrome-background-default px-3 py-2.5">
                 {footer}
               </div>
             )}
