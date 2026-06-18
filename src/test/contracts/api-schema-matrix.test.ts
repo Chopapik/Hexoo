@@ -35,12 +35,6 @@ vi.mock("@/features/posts/api/services", () => ({
   getPosts: vi.fn(),
 }));
 
-vi.mock("@/features/auth/api/repositories", () => ({
-  authRepository: {
-    verifyIdToken: vi.fn(),
-  },
-}));
-
 import {
   getUserProfile,
   getUsersByIds,
@@ -51,7 +45,6 @@ import {
   getUserFromSession,
 } from "@/features/auth/api/utils/session-user.service";
 import { createPost, getPosts } from "@/features/posts/api/services";
-import { authRepository } from "@/features/auth/api/repositories";
 import { POST as postUsersByIds } from "@/app/api/users/by-ids/route";
 import { GET as getUserProfileRoute } from "@/app/api/user/profile/[uid]/route";
 import {
@@ -207,10 +200,7 @@ describe("CLIENT-API-SCHEMA-MATRIX-001 api schema matrix", () => {
   });
 
   it("CLIENT-API-SCHEMA-MATRIX-001 preserves cookies and parses 204 as null", async () => {
-    vi.mocked(authRepository.verifyIdToken).mockResolvedValue({
-      uid: "user-001",
-      email: "user.001@example.test",
-    });
+    vi.mocked(getUserFromSession).mockResolvedValue(sessionFixtures.user);
     vi.mocked(touchLastOnline).mockResolvedValue(undefined);
 
     const response = await invokeRoute(postLastOnlineRoute, {
@@ -223,7 +213,7 @@ describe("CLIENT-API-SCHEMA-MATRIX-001 api schema matrix", () => {
     });
 
     expectStatus(response, 204);
-    expect(authRepository.verifyIdToken).toHaveBeenCalledWith("user-001");
+    expect(getUserFromSession).toHaveBeenCalled();
     expect(touchLastOnline).toHaveBeenCalledWith("user-001", 0);
     await expect(readRouteResponse(response)).resolves.toMatchObject({
       status: 204,

@@ -7,13 +7,15 @@ import {
   setRefreshCookieOnResponse,
   setSessionCookieOnResponse,
 } from "../utils/session.cookies";
+import { userRepository } from "@/features/users/api/repositories";
 
 const authRepository = new SupabaseAuthRepository();
 
 async function hasValidAccessToken(accessToken: string): Promise<boolean> {
   try {
-    await authRepository.verifyIdToken(accessToken);
-    return true;
+    const decoded = await authRepository.verifyIdToken(accessToken);
+    const user = await userRepository.getUserByUid(decoded.uid);
+    return Boolean(user && !user.isBanned);
   } catch {
     return false;
   }

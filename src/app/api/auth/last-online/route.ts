@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { authRepository } from "@/features/auth/api/repositories";
 import { SESSION_COOKIE_NAME } from "@/features/auth/api/utils/session.cookies";
+import { getUserFromSession } from "@/features/auth/api/utils/session-user.service";
 import { touchLastOnline } from "@/features/users/api/services";
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 
@@ -14,9 +14,9 @@ export const POST = withErrorHandling(async (request: NextRequest) => {
   }
 
   const force = request.nextUrl.searchParams.get("force") === "1";
-  const decoded = await authRepository.verifyIdToken(sessionToken);
+  const session = await getUserFromSession();
   await touchLastOnline(
-    decoded.uid,
+    session.uid,
     force ? 0 : MIN_LAST_ONLINE_INTERVAL_MS,
   );
 
