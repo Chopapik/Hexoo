@@ -51,3 +51,7 @@ export async function getUserFromSession(): Promise<SessionData | never> {
     isBanned: userData.isBanned,
   };
 }
+
+export async function getOptionalUserFromSession(): Promise<SessionData | null> {
+  return getUserFromSession().catch(() => null);
+}

@@ -7,13 +7,16 @@ import {
   getPostById,
   updatePost,
 } from "@/features/posts/api/services";
-import { getUserFromSession } from "@/features/auth/api/utils/session-user.service";
+import {
+  getOptionalUserFromSession,
+  getUserFromSession,
+} from "@/features/auth/api/utils/session-user.service";
 import { isFileLike } from "@/features/images/utils/isFileLike";
 
 export const GET = withErrorHandling(
   async (req: NextRequest, context: AnyRouteContext<{ id: string }>) => {
     const { id } = await context.params;
-    const session = await getUserFromSession().catch(() => null);
+    const session = await getOptionalUserFromSession();
     const post = await getPostById(session, id);
     return handleSuccess(post);
   },

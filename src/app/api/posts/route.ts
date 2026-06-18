@@ -1,7 +1,10 @@
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import { readPaginationParams } from "@/lib/http/requestParsing";
-import { getUserFromSession } from "@/features/auth/api/utils/session-user.service";
+import {
+  getOptionalUserFromSession,
+  getUserFromSession,
+} from "@/features/auth/api/utils/session-user.service";
 import { NextRequest } from "next/server";
 import { CreatePostRequestDto } from "@/features/posts/types/post.dto";
 import { createPost, getPosts } from "@/features/posts/api/services";
@@ -30,7 +33,7 @@ export const POST = withErrorHandling(async (req: NextRequest) => {
 });
 
 export const GET = withErrorHandling(async (req: NextRequest) => {
-  const session = await getUserFromSession().catch(() => null);
+  const session = await getOptionalUserFromSession();
   const { limit, startAfter } = readPaginationParams(req.nextUrl.searchParams);
 
   const result = await getPosts(session, limit, startAfter);

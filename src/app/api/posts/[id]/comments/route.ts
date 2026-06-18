@@ -5,7 +5,10 @@ import {
   getCommentsByPostId,
 } from "@/features/comments/api/services";
 import { NextRequest } from "next/server";
-import { getUserFromSession } from "@/features/auth/api/utils/session-user.service";
+import {
+  getOptionalUserFromSession,
+  getUserFromSession,
+} from "@/features/auth/api/utils/session-user.service";
 
 export const POST = withErrorHandling(
   async (req: NextRequest, context: AnyRouteContext<{ id: string }>) => {
@@ -35,7 +38,7 @@ export const POST = withErrorHandling(
 export const GET = withErrorHandling(
   async (_req: NextRequest, context: AnyRouteContext<{ id: string }>) => {
     const { id } = await context.params;
-    const session = await getUserFromSession().catch(() => null);
+    const session = await getOptionalUserFromSession();
     const comments = await getCommentsByPostId(session, id);
     return handleSuccess(comments);
   }
