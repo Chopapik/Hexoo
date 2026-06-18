@@ -53,6 +53,7 @@ function AdminUserEditModalContent({
   );
 
   const [newPassword, setNewPassword] = useState<string>("");
+  const [blockReason, setBlockReason] = useState<string>("");
   const { adminUpdateUserAccount, isPending: isUpdatingData } =
     useAdminUpdateUserAccount();
   const { adminUpdateUserPassword, isPending: isUpdatingPassword } =
@@ -74,6 +75,7 @@ function AdminUserEditModalContent({
 
   const displayRole = newUserData.role || user.role || "user";
   const displayName = newUserData.name || user.name;
+  const trimmedBlockReason = blockReason.trim();
 
   const footer = (
     <div className="flex flex-col md:flex-row justify-between items-center gap-4 w-full">
@@ -98,11 +100,13 @@ function AdminUserEditModalContent({
           />
         ) : (
           <Button
-            onClick={() => blockUser({ uid: user.uid })}
+            onClick={() =>
+              blockUser({ uid: user.uid, reason: trimmedBlockReason })
+            }
             text={t("admin.blockAccount")}
             size="sm"
             variant="warning"
-            disabled={isBlockingUser}
+            disabled={isBlockingUser || !trimmedBlockReason}
             isLoading={isBlockingUser}
           />
         )}
@@ -248,6 +252,15 @@ function AdminUserEditModalContent({
                 <p className="text-xs text-foreground-secondary-default/60">
                   {t("admin.passwordHelp")}
                 </p>
+                {!user.isBanned && (
+                  <TextInput
+                    label="Powód blokady"
+                    value={blockReason}
+                    placeholder="Wpisz powód blokady"
+                    onChange={(e) => setBlockReason(e.target.value)}
+                    showButton={false}
+                  />
+                )}
               </div>
 
               <div className="mt-6 flex justify-end">

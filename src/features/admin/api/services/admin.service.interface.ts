@@ -20,7 +20,9 @@ export interface AdminService {
   >;
   adminUpdateUserAccount(
     uid: string,
-    data: { name?: string; email?: string; role?: string },
+    data: { name?: string; email?: string; role?: string; isActive?: boolean },
   ): Promise<void>;
   adminUpdateUserPassword(uid: string, newPassword: string): Promise<void>;
+  adminBlockUser(uid: string, reason: string): Promise<void>;
+  adminUnblockUser(uid: string): Promise<void>;
 }

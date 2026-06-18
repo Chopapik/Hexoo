@@ -29,6 +29,53 @@ export class AdminService implements IAdminService {
     }
   }
 
+  private parseUserRole(value: unknown): UserRole {
+    if (
+      value === UserRole.User ||
+      value === UserRole.Moderator ||
+      value === UserRole.Admin
+    ) {
+      return value;
+    }
+
+    throw createAppError({
+      code: "VALIDATION_ERROR",
+      message: "[adminService.parseUserRole] Invalid user role",
+    });
+  }
+
+  private activeUnbannedAdmins(users: Awaited<ReturnType<typeof userRepository.getAllUsers>>) {
+    return users.filter(
+      (user) =>
+        user.role === UserRole.Admin &&
+        user.isActive !== false &&
+        !user.isBanned,
+    );
+  }
+
+  private async ensureAdminWillRemain(targetUid: string): Promise<void> {
+    const admins = this.activeUnbannedAdmins(await userRepository.getAllUsers());
+    const remainingAdmins = admins.filter((admin) => admin.uid !== targetUid);
+
+    if (remainingAdmins.length === 0) {
+      throw createAppError({
+        code: "FORBIDDEN",
+        message:
+          "[adminService.ensureAdminWillRemain] Cannot remove the last active admin",
+      });
+    }
+  }
+
+  private async ensureTargetAdminCanBeRemoved(targetUid: string): Promise<void> {
+    const target = (await userRepository.getAllUsers()).find(
+      (user) => user.uid === targetUid,
+    );
+
+    if (target?.role === UserRole.Admin) {
+      await this.ensureAdminWillRemain(targetUid);
+    }
+  }
+
   async adminDeleteUser(uid: string) {
     this.ensureAdmin();
 
@@ -39,6 +86,8 @@ export class AdminService implements IAdminService {
           "[adminService.adminDeleteUser] No 'uid' provided for deletion",
       });
     }
+
+    await this.ensureTargetAdminCanBeRemoved(uid);
 
     await logActivity(uid, "USER_DELETED", "User account deleted by admin");
     await logActivity(
@@ -63,6 +112,8 @@ export class AdminService implements IAdminService {
       });
     }
 
+    const role = this.parseUserRole(data.role);
+
     const userRecord = await authRepository.createUser({
       email: data.email,
       password: data.password,
@@ -75,7 +126,7 @@ export class AdminService implements IAdminService {
       uid,
       name: data.name,
       email: data.email,
-      role: data.role ?? "user",
+      role,
     });
 
     await userRepository.updateUser(uid, {});
@@ -91,7 +142,7 @@ export class AdminService implements IAdminService {
       uid,
       email: maskEmail(data.email) ?? "",
       displayName: data.name,
-      role: data.role ?? "user",
+      role,
     };
   }
 
@@ -115,7 +166,7 @@ export class AdminService implements IAdminService {
 
   async adminUpdateUserAccount(
     uid: string,
-    data: { name?: string; email?: string; role?: string },
+    data: { name?: string; email?: string; role?: string; isActive?: boolean },
   ) {
     this.ensureAdmin();
 
@@ -129,9 +180,23 @@ export class AdminService implements IAdminService {
     const updatePayload: UpdateUserPayload = {};
 
     if (data.name?.trim()) updatePayload.name = data.name.trim();
-    if (data.role?.trim()) updatePayload.role = data.role.trim() as UserRole;
+    if (Object.hasOwn(data, "role")) {
+      updatePayload.role = this.parseUserRole(data.role);
+    }
     if (data.email?.trim()) {
       updatePayload.email = data.email.trim();
+    }
+
+    if (
+      updatePayload.role !== undefined &&
+      updatePayload.role !== UserRole.Admin
+    ) {
+      await this.ensureTargetAdminCanBeRemoved(uid);
+    }
+
+    if (data.isActive === false) {
+      await this.ensureTargetAdminCanBeRemoved(uid);
+      updatePayload.isActive = false;
     }
 
     await userRepository.updateUser(uid, updatePayload);
@@ -190,5 +255,62 @@ export class AdminService implements IAdminService {
       "ADMIN_CHANGED_PASSWORD",
       `Changed password for user ${uid}`,
     );
+  }
+
+  async adminBlockUser(uid: string, reason: string) {
+    this.ensureAdmin();
+
+    if (!uid) {
+      throw createAppError({
+        code: "INVALID_INPUT",
+        message: "[adminService.adminBlockUser] No 'uid' provided",
+      });
+    }
+
+    if (!reason?.trim()) {
+      throw createAppError({
+        code: "VALIDATION_ERROR",
+        message: "[adminService.adminBlockUser] Ban reason is required",
+      });
+    }
+
+    await this.ensureTargetAdminCanBeRemoved(uid);
+
+    await userRepository.blockUser({
+      uidToBlock: uid,
+      bannedBy: this.session!.uid,
+      bannedReason: reason.trim(),
+    });
+
+    await logActivity(uid, "USER_BLOCKED", "User account banned by admin");
+    await logActivity(
+      this.session!.uid,
+      "USER_BLOCKED",
+      `Banned user ${uid}`,
+    );
+
+    await authRepository.updateUser(uid, { disabled: true });
+  }
+
+  async adminUnblockUser(uid: string) {
+    this.ensureAdmin();
+
+    if (!uid) {
+      throw createAppError({
+        code: "INVALID_INPUT",
+        message: "[adminService.adminUnblockUser] No 'uid' provided",
+      });
+    }
+
+    await userRepository.unblockUser(uid);
+
+    await logActivity(uid, "USER_UNBLOCKED", "User account unbanned by admin");
+    await logActivity(
+      this.session!.uid,
+      "USER_UNBLOCKED",
+      `Unbanned user ${uid}`,
+    );
+
+    await authRepository.updateUser(uid, { disabled: false });
   }
 }

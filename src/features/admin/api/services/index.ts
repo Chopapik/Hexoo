@@ -30,7 +30,7 @@ export async function adminGetAllUsers(session: SessionData | null) {
 export async function adminUpdateUserAccount(
   session: SessionData | null,
   uid: string,
-  data: { name?: string; email?: string; role?: string },
+  data: { name?: string; email?: string; role?: string; isActive?: boolean },
 ) {
   const service = getAdminService(session);
   return await service.adminUpdateUserAccount(uid, data);
@@ -43,6 +43,20 @@ export async function adminUpdateUserPassword(
 ) {
   const service = getAdminService(session);
   return await service.adminUpdateUserPassword(uid, newPassword);
+}
+
+export async function adminBlockUser(
+  session: SessionData | null,
+  uid: string,
+  reason: string,
+) {
+  const service = getAdminService(session);
+  return await service.adminBlockUser(uid, reason);
+}
+
+export async function adminUnblockUser(session: SessionData | null, uid: string) {
+  const service = getAdminService(session);
+  return await service.adminUnblockUser(uid);
 }
 
 export { AdminService };

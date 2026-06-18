@@ -1,12 +1,12 @@
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import { readPaginationParams } from "@/lib/http/requestParsing";
-import { getUserFromSession } from "@/features/auth/api/utils/session-user.service";
+import { getAdminFromSession } from "@/features/auth/api/utils/session-user.service";
 import type { NextRequest } from "next/server";
 import { getAdminActivityLogs } from "@/features/activity/api/services";
 
 export const GET = withErrorHandling(async (req: NextRequest) => {
-  const session = await getUserFromSession();
+  const session = await getAdminFromSession();
 
   const { limit, startAfter } = readPaginationParams(req.nextUrl.searchParams, {
     defaultLimit: 50,
