@@ -2,7 +2,7 @@ import type { SessionData } from "@/features/me/me.type";
 import { ModeratorService } from "./moderator.service";
 import { getModerationService } from "@/features/moderation/api/services";
 import { authRepository } from "@/features/auth/api/repositories";
-import type { BlockUserRequestDto as BlockUserRequest } from "@/features/users/types/user.dto";
+import type { ModeratorBanUserRequestDto as ModeratorBanUserRequest } from "@/features/moderator/types/moderator.dto";
 
 export const getModeratorService = (
   session: SessionData | null,
@@ -65,15 +65,10 @@ export async function reviewComment(
 
 export async function blockUser(
   session: SessionData | null,
-  data: BlockUserRequest,
+  data: ModeratorBanUserRequest,
 ) {
   const service = getModeratorService(session);
   return await service.blockUser(data);
-}
-
-export async function unblockUser(session: SessionData | null, uid: string) {
-  const service = getModeratorService(session);
-  return await service.unblockUser(uid);
 }
 
 export { ModeratorService };

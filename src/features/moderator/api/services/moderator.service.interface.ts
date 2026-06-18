@@ -1,6 +1,6 @@
 import type { ModerationCommentResponseDto as ModerationCommentResponse } from "@/features/comments/types/comment.dto";
 import type { ModerationPostResponseDto as ModerationPostResponse } from "@/features/posts/types/post.dto";
-import type { BlockUserRequestDto as BlockUserRequest } from "@/features/users/types/user.dto";
+import type { ModeratorBanUserRequestDto as ModeratorBanUserRequest } from "@/features/moderator/types/moderator.dto";
 
 export interface ModeratorService {
   getModerationQueueForPosts(
@@ -25,6 +25,5 @@ export interface ModeratorService {
     categories: string[],
     justification: string,
   ): Promise<void>;
-  blockUser(data: BlockUserRequest): Promise<void>;
-  unblockUser(uid: string): Promise<void>;
+  blockUser(data: ModeratorBanUserRequest): Promise<void>;
 }

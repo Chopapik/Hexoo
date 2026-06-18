@@ -5,7 +5,8 @@ import { supabaseAdmin } from "@/lib/supabaseServer";
 import { ModerationCommentResponseDto as ModerationCommentResponse } from "@/features/comments/types/comment.dto";
 import { ModerationPostResponseDto as ModerationPostResponse } from "@/features/posts/types/post.dto";
 import { UserRole } from "@/features/users/types/user.type";
-import type { BlockUserRequestDto as BlockUserRequest } from "@/features/users/types/user.dto";
+import { userRepository } from "@/features/users/api/repositories";
+import type { ModeratorBanUserRequestDto as ModeratorBanUserRequest } from "@/features/moderator/types/moderator.dto";
 import type { ModerationService as IModerationService } from "@/features/moderation/api/services/moderation.service.interface";
 import type { SessionData } from "@/features/me/me.type";
 import type { ModeratorService as IModeratorService } from "./moderator.service.interface";
@@ -17,17 +18,6 @@ export class ModeratorService implements IModeratorService {
     private readonly moderationService: IModerationService,
     private readonly authRepository: AuthRepository | null,
   ) {}
-
-  private async runRpc(name: string, payload: Record<string, unknown>) {
-    const { error } = await supabaseAdmin.rpc(name, payload);
-    if (error) {
-      throw createAppError({
-        code: "DB_ERROR",
-        message: `[moderatorService.${name}] Transaction failed`,
-        details: error,
-      });
-    }
-  }
 
   private ensureModeratorOrAdmin(): SessionData {
     const session = this.session;
@@ -48,6 +38,45 @@ export class ModeratorService implements IModeratorService {
       });
     }
     return session;
+  }
+
+  private ensureModerator(): SessionData {
+    const session = this.session;
+    if (!session) {
+      throw createAppError({
+        code: "AUTH_REQUIRED",
+        message: "[moderatorService.ensureModerator] No session found",
+      });
+    }
+
+    if (session.role !== UserRole.Moderator) {
+      throw createAppError({
+        code: "FORBIDDEN",
+        message: "[moderatorService.ensureModerator] Moderator role required",
+      });
+    }
+
+    return session;
+  }
+
+  private async blockUserWithAuditLog(data: {
+    uidToBlock: string;
+    bannedBy: string;
+    bannedReason: string;
+  }) {
+    const { error } = await supabaseAdmin.rpc("moderator_block_user_tx", {
+      p_uid_to_block: data.uidToBlock,
+      p_banned_by: data.bannedBy,
+      p_banned_reason: data.bannedReason,
+    });
+
+    if (error) {
+      throw createAppError({
+        code: "DB_ERROR",
+        message: "[moderatorService.blockUser] Transaction failed",
+        details: error,
+      });
+    }
   }
 
   async getModerationQueueForPosts(
@@ -106,8 +135,8 @@ export class ModeratorService implements IModeratorService {
     );
   }
 
-  async blockUser(data: BlockUserRequest): Promise<void> {
-    this.ensureModeratorOrAdmin();
+  async blockUser(data: ModeratorBanUserRequest): Promise<void> {
+    const moderator = this.ensureModerator();
 
     if (!data.uidToBlock) {
       throw createAppError({
@@ -116,38 +145,59 @@ export class ModeratorService implements IModeratorService {
       });
     }
 
-    await this.runRpc("moderator_block_user_tx", {
-      p_uid_to_block: data.uidToBlock,
-      p_banned_by: data.bannedBy,
-      p_banned_reason: data.bannedReason,
+    if (!data.reason?.trim()) {
+      throw createAppError({
+        code: "VALIDATION_ERROR",
+        message: "[moderatorService.blockUser] Ban reason is required",
+      });
+    }
+
+    if (
+      !data.moderationCaseId &&
+      !data.reportId &&
+      !data.postId &&
+      !data.commentId
+    ) {
+      throw createAppError({
+        code: "VALIDATION_ERROR",
+        message:
+          "[moderatorService.blockUser] Moderation case or resource link is required",
+      });
+    }
+
+    if (data.uidToBlock === moderator.uid) {
+      throw createAppError({
+        code: "FORBIDDEN",
+        message: "[moderatorService.blockUser] Moderator cannot ban self",
+      });
+    }
+
+    const target = await userRepository.getUserByUid(data.uidToBlock);
+    if (!target) {
+      throw createAppError({
+        code: "NOT_FOUND",
+        message: "[moderatorService.blockUser] Target user not found",
+      });
+    }
+
+    if (target.role !== UserRole.User) {
+      throw createAppError({
+        code: "FORBIDDEN",
+        message:
+          "[moderatorService.blockUser] Moderator can ban only ordinary users",
+      });
+    }
+
+    await this.blockUserWithAuditLog({
+      uidToBlock: data.uidToBlock,
+      bannedBy: moderator.uid,
+      bannedReason: data.reason.trim(),
     });
 
     try {
       await this.authRepository?.updateUser(data.uidToBlock, {
         disabled: true,
       });
-    } catch {
-      // Auth provider may not support disabled; ignore
-    }
-  }
-
-  async unblockUser(uid: string): Promise<void> {
-    const session = this.ensureModeratorOrAdmin();
-
-    if (!uid) {
-      throw createAppError({
-        code: "INVALID_INPUT",
-        message: "[moderatorService.unblockUser] No 'uid' provided",
-      });
-    }
-
-    await this.runRpc("moderator_unblock_user_tx", {
-      p_uid: uid,
-      p_moderator_uid: session.uid,
-    });
-
-    try {
-      await this.authRepository?.updateUser(uid, { disabled: false });
     } catch {
       // Auth provider may not support disabled; ignore
     }

@@ -61,6 +61,32 @@ export const ReviewCommentSchema = withJustificationValidation(
   }),
 );
 
+export const ModeratorBanUserSchema = z
+  .object({
+    reason: z.string().min(1, { message: "reason_required" }),
+    moderationCaseId: z.string().min(1).optional(),
+    reportId: z.string().min(1).optional(),
+    postId: z.string().min(1).optional(),
+    commentId: z.string().min(1).optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (
+      !data.moderationCaseId &&
+      !data.reportId &&
+      !data.postId &&
+      !data.commentId
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["moderationCaseId"],
+        message: "case_or_resource_link_required",
+      });
+    }
+  });
+
 export type ModerationReasonFormData = z.infer<typeof ModerationReasonSchema>;
 export type ReviewPostRequestDto = z.infer<typeof ReviewPostSchema>;
 export type ReviewCommentRequestDto = z.infer<typeof ReviewCommentSchema>;
+export type ModeratorBanUserRequestDto = z.infer<typeof ModeratorBanUserSchema> & {
+  uidToBlock: string;
+};
