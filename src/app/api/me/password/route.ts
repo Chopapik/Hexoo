@@ -19,7 +19,9 @@ export const PUT = withErrorHandling(async (req: NextRequest) => {
     });
   }
 
-  await verifyRecaptchaToken(recaptchaToken);
+  await verifyRecaptchaToken(recaptchaToken, {
+    expectedAction: "update_password",
+  });
 
   await updatePassword(session, newPasswordData);
 

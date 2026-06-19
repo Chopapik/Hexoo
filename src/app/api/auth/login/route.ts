@@ -32,7 +32,7 @@ export const POST = withErrorHandling(async (req: NextRequest) => {
     });
   }
 
-  await verifyRecaptchaToken(recaptchaToken);
+  await verifyRecaptchaToken(recaptchaToken, { expectedAction: "login" });
 
   const result = await createSession(idToken, refreshToken);
 
