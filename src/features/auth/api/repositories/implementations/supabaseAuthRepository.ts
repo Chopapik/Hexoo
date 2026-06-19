@@ -60,13 +60,32 @@ export class SupabaseAuthRepository implements AuthRepository {
     email: string,
     password: string,
   ): Promise<AuthDecodedToken> {
+    let tokens: RefreshTokens;
+
+    try {
+      tokens = await this.signInWithPassword(email, password);
+    } catch (error) {
+      throw createAppError({
+        code: "INVALID_CREDENTIALS",
+        message: "Current password is invalid.",
+        data: { field: "oldPassword" },
+        details: error,
+      });
+    }
+
+    return this.verifyIdToken(tokens.access_token);
+  }
+
+  async signInWithPassword(
+    email: string,
+    password: string,
+  ): Promise<RefreshTokens> {
     const normalizedEmail = email.trim().toLowerCase();
 
     if (!normalizedEmail || !password) {
       throw createAppError({
         code: "INVALID_CREDENTIALS",
-        message: "Current password verification failed.",
-        data: { field: "oldPassword" },
+        message: "Password sign-in credentials are missing.",
       });
     }
 
@@ -89,22 +108,26 @@ export class SupabaseAuthRepository implements AuthRepository {
     if (!res.ok) {
       throw createAppError({
         code: "INVALID_CREDENTIALS",
-        message: "Current password is invalid.",
-        data: { field: "oldPassword" },
+        message: "Password sign-in failed.",
         details: { status: res.status },
       });
     }
 
-    const data = (await res.json()) as { access_token?: string };
-    if (!data.access_token) {
+    const data = (await res.json()) as {
+      access_token?: string;
+      refresh_token?: string;
+    };
+    if (!data.access_token || !data.refresh_token) {
       throw createAppError({
         code: "INVALID_CREDENTIALS",
-        message: "Password verification response did not include an access token.",
-        data: { field: "oldPassword" },
+        message: "Password sign-in response did not include both tokens.",
       });
     }
 
-    return this.verifyIdToken(data.access_token);
+    return {
+      access_token: data.access_token,
+      refresh_token: data.refresh_token,
+    };
   }
 
   async createSessionCookie(idToken: string): Promise<string> {

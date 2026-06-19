@@ -8,6 +8,7 @@ import type { SessionData } from "@/features/me/me.type";
 
 import type { AuthRepository } from "../../repositories/authRepository.interface";
 import type { UserRepository } from "@/features/users/api/repositories/user.repository.interface";
+import { isTokenIssuedBeforeSessionCutoff } from "@/features/auth/api/utils/session-cutoff";
 
 import { AuthSessionMapper } from "../auth.session.mapper";
 
@@ -23,8 +24,6 @@ export class RestoreUserSessionUseCase {
     if (!refresh.hasRefresh) return null;
     try {
       const tokens = await this.authRepository.refreshSession(refresh.value);
-      await setSessionCookie(tokens.access_token);
-      await setRefreshCookie(tokens.refresh_token);
       const decoded = await this.authRepository.verifyIdToken(
         tokens.access_token,
       );
@@ -33,6 +32,13 @@ export class RestoreUserSessionUseCase {
         await clearAllAuthCookies();
         return null;
       }
+      if (isTokenIssuedBeforeSessionCutoff(tokens.access_token, userData)) {
+        await clearAllAuthCookies();
+        return null;
+      }
+
+      await setSessionCookie(tokens.access_token);
+      await setRefreshCookie(tokens.refresh_token);
       return this.mapper.mapUserToSessionData(userData);
     } catch {
       await clearAllAuthCookies();

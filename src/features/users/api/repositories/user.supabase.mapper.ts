@@ -45,6 +45,7 @@ export function mapUserRow(row: UserRow): UserEntity {
     avatarMeta: parseImageMeta(row.avatar_meta) ?? undefined,
     createdAt: parseDate(row.created_at) ?? new Date(0),
     updatedAt: parseDate(row.updated_at),
+    sessionInvalidatedAt: parseDate(row.session_invalidated_at),
     lastOnline: parseDate(row.last_online) ?? new Date(0),
     isActive: row.is_active ?? undefined,
     isBanned: row.is_banned ?? undefined,
@@ -165,6 +166,9 @@ export function toUpdateUserRow(data: UpdateUserPayload): UserUpdateRow {
   }
   if (data.lastOnline !== undefined) {
     row.last_online = toDbTimestamp(data.lastOnline);
+  }
+  if (data.sessionInvalidatedAt !== undefined) {
+    row.session_invalidated_at = toDbTimestamp(data.sessionInvalidatedAt);
   }
   if (data.isActive !== undefined) row.is_active = data.isActive;
   if (data.lastKnownIp !== undefined) row.last_known_ip = data.lastKnownIp;

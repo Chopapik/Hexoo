@@ -3,27 +3,46 @@ import fetchClient from "@/lib/fetchClient";
 import { UpdatePasswordData } from "../me.type";
 import useRecaptcha from "@/features/shared/hooks/useRecaptcha";
 import toast from "react-hot-toast";
-import { supabaseClient } from "@/lib/supabaseClient";
-import { useAppStore } from "@/lib/store/store";
 import { ApiError } from "@/lib/AppError";
 import { useI18n } from "@/i18n/useI18n";
 
 type ErrorCallback = (errorCode: string, field?: string) => void;
 
+type PasswordChangeErrorData = {
+  passwordChanged?: boolean;
+  reloginRequired?: boolean;
+  details?: Record<string, string[]>;
+};
+
+function getPasswordChangeErrorData(
+  error: ApiError,
+): PasswordChangeErrorData | undefined {
+  if (!error.data || typeof error.data !== "object") return undefined;
+  return error.data as PasswordChangeErrorData;
+}
+
 export const useUpdatePassword = (onError: ErrorCallback) => {
   const { t } = useI18n();
   const { getRecaptchaToken } = useRecaptcha();
-  const userEmail = useAppStore((s) => s.auth.user?.email);
 
   const mutation = useMutation({
     mutationFn: async (data: UpdatePasswordData) => {
       const token = await getRecaptchaToken("update_password");
       const payload = { ...data, recaptchaToken: token };
-      await fetchClient.put(`/me/password`, payload);
+
+      await fetchClient.put("/me/password", payload);
     },
+
     onError: (error: ApiError) => {
       if (!(error instanceof ApiError)) {
         toast.error(t("common.unknown"));
+        return;
+      }
+
+      const errorData = getPasswordChangeErrorData(error);
+
+      if (errorData?.passwordChanged && errorData?.reloginRequired) {
+        toast.success(t("settings.account.passwordChangedRelogin"));
         return;
       }
 
@@ -33,89 +52,38 @@ export const useUpdatePassword = (onError: ErrorCallback) => {
       }
 
       if (error.code === "VALIDATION_ERROR") {
-        const errorData = error.data as Record<string, unknown> | undefined;
-        const details = errorData?.details as
-          | Record<string, string[]>
-          | undefined;
+        const details = errorData?.details;
 
         if (details) {
           Object.keys(details).forEach((field) => {
             const messages = details[field];
+
             if (messages && messages.length > 0) {
               onError(messages[0], field);
             }
           });
+
           return;
         }
       }
 
       onError(error.code, "root");
     },
-    onSuccess: async (_response, variables) => {
-      if (!userEmail) return;
 
-      try {
-        const token = await getRecaptchaToken("change_password");
-        const { data: signInData, error: signInError } =
-          await supabaseClient.auth.signInWithPassword({
-            email: userEmail,
-            password: variables.newPassword,
-          });
-
-        if (signInError || !signInData.session?.access_token) {
-          toast.success(t("settings.account.passwordChangedRelogin"));
-          return;
-        }
-
-        await fetchClient.post("/auth/login", {
-          idToken: signInData.session.access_token,
-          recaptchaToken: token,
-        });
-        toast.success(t("settings.account.passwordChanged"));
-      } catch (err) {
-        console.error(err);
-        toast.success(t("settings.account.passwordChangedRelogin"));
-      }
+    onSuccess: () => {
+      toast.success(t("settings.account.passwordChanged"));
     },
   });
 
   const handleUpdatePassword = async (
-    data: UpdatePasswordData
+    data: UpdatePasswordData,
   ): Promise<boolean> => {
-    if (!userEmail) {
-      toast.error(t("settings.account.missingEmail"));
-      return false;
-    }
-
     try {
-      const { error } = await supabaseClient.auth.signInWithPassword({
-        email: userEmail,
-        password: data.oldPassword,
-      });
-
-      if (error) {
-        const msg = error.message?.toLowerCase() ?? "";
-        if (
-          msg.includes("invalid") ||
-          msg.includes("credentials") ||
-          msg.includes("invalid_login_credentials")
-        ) {
-          onError("auth/wrong-password", "oldPassword");
-        } else if (msg.includes("too many") || msg.includes("rate")) {
-          toast.error(t("settings.account.tooManyAttempts"));
-        } else {
-          toast.error(t("settings.account.verifyOldPasswordError"));
-        }
-        return false;
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error(t("common.unknown"));
+      await mutation.mutateAsync(data);
+      return true;
+    } catch {
       return false;
     }
-
-    await mutation.mutateAsync(data);
-    return true;
   };
 
   return {

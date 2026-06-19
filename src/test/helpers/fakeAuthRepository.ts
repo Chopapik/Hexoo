@@ -10,6 +10,7 @@ import type {
 type AuthOperation =
   | "verifyIdToken"
   | "verifyPassword"
+  | "signInWithPassword"
   | "createSessionCookie"
   | "refreshSession"
   | "getUserByEmail"
@@ -20,6 +21,7 @@ type AuthOperation =
 export type FakeAuthCall =
   | { operation: "verifyIdToken"; idToken: string }
   | { operation: "verifyPassword"; email: string; password: string }
+  | { operation: "signInWithPassword"; email: string; password: string }
   | { operation: "createSessionCookie"; idToken: string; expiresIn: number }
   | { operation: "refreshSession"; refreshToken: string }
   | { operation: "getUserByEmail"; email: string }
@@ -99,6 +101,27 @@ export class FakeAuthRepository implements AuthRepository {
     }
 
     return { uid: user.uid, email: user.email };
+  }
+
+  async signInWithPassword(
+    email: string,
+    password: string,
+  ): Promise<RefreshTokens> {
+    this.calls.push({ operation: "signInWithPassword", email, password });
+    this.throwIfFailed("signInWithPassword");
+
+    const user = [...this.usersByUid.values()].find(
+      (candidate) => candidate.email === email,
+    );
+
+    if (!user || user.password !== password || user.disabled) {
+      throw new Error("INVALID_CREDENTIALS");
+    }
+
+    return {
+      access_token: user.uid,
+      refresh_token: `refresh:${user.uid}`,
+    };
   }
 
   async createSessionCookie(

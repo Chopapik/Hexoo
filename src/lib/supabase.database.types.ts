@@ -375,6 +375,7 @@ export type Database = {
           restricted_by: string | null
           restriction_reason: string | null
           role: string
+          session_invalidated_at: string | null
           uid: string
           updated_at: string | null
         }
@@ -397,6 +398,7 @@ export type Database = {
           restricted_by?: string | null
           restriction_reason?: string | null
           role?: string
+          session_invalidated_at?: string | null
           uid: string
           updated_at?: string | null
         }
@@ -419,6 +421,7 @@ export type Database = {
           restricted_by?: string | null
           restriction_reason?: string | null
           role?: string
+          session_invalidated_at?: string | null
           uid?: string
           updated_at?: string | null
         }
@@ -636,4 +639,3 @@ export const Constants = {
     Enums: {},
   },
 } as const
-

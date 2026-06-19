@@ -3,6 +3,7 @@ import { UserRole } from "@/features/users/types/user.type";
 import type { UserEntity } from "@/features/users/types/user.entity";
 
 vi.mock("./session.cookies", () => ({
+  clearAllAuthCookies: vi.fn(),
   getSessionCookie: vi.fn(),
 }));
 
@@ -26,7 +27,7 @@ vi.mock("@/features/images/utils/resolveImagePublicUrl", () => ({
   resolveImagePublicUrl: vi.fn(() => undefined),
 }));
 
-import { getSessionCookie } from "./session.cookies";
+import { clearAllAuthCookies, getSessionCookie } from "./session.cookies";
 import { authRepository } from "@/features/auth/api/repositories";
 import { userRepository } from "@/features/users/api/repositories";
 import {
@@ -34,6 +35,29 @@ import {
   getOptionalUserFromSession,
   getUserFromSession,
 } from "./session-user.service";
+
+function jwtWithIat(uid: string, iatSeconds: number): string {
+  const header = Buffer.from(JSON.stringify({ alg: "none" })).toString(
+    "base64url",
+  );
+  const payload = Buffer.from(JSON.stringify({ sub: uid, iat: iatSeconds }))
+    .toString("base64url");
+  return `${header}.${payload}.`;
+}
+
+function jwtWithAuthAndIssuedAt(
+  uid: string,
+  authTimeSeconds: number,
+  iatSeconds: number,
+): string {
+  const header = Buffer.from(JSON.stringify({ alg: "none" })).toString(
+    "base64url",
+  );
+  const payload = Buffer.from(
+    JSON.stringify({ sub: uid, auth_time: authTimeSeconds, iat: iatSeconds }),
+  ).toString("base64url");
+  return `${header}.${payload}.`;
+}
 
 function user(overrides: Partial<UserEntity> = {}): UserEntity {
   return {
@@ -111,6 +135,75 @@ describe("AUTH-SESSION-ROLE-001 and AUTH-BAN-001 session resolver", () => {
 
     await expect(getUserFromSession()).rejects.toMatchObject({
       code: "ACCOUNT_BANNED",
+    });
+  });
+
+  it("AUTH-PASSWORD-SESSION-001 rejects an access token issued before the session cutoff", async () => {
+    vi.mocked(getSessionCookie).mockResolvedValue({
+      session: true,
+      value: jwtWithIat("user-001", 1_700_000_000),
+    });
+    vi.mocked(userRepository.getUserByUid).mockResolvedValue(
+      user({
+        sessionInvalidatedAt: new Date("2024-01-01T00:00:00.000Z"),
+      }),
+    );
+
+    await expect(getUserFromSession()).rejects.toMatchObject({
+      code: "INVALID_SESSION",
+    });
+    expect(clearAllAuthCookies).toHaveBeenCalled();
+  });
+
+  it("AUTH-PASSWORD-SESSION-001 accepts an access token issued after the session cutoff", async () => {
+    vi.mocked(getSessionCookie).mockResolvedValue({
+      session: true,
+      value: jwtWithIat("user-001", 1_800_000_000),
+    });
+    vi.mocked(userRepository.getUserByUid).mockResolvedValue(
+      user({
+        sessionInvalidatedAt: new Date("2024-01-01T00:00:00.000Z"),
+      }),
+    );
+
+    await expect(getUserFromSession()).resolves.toMatchObject({
+      uid: "user-001",
+    });
+  });
+
+  it("AUTH-PASSWORD-SESSION-001 uses refreshed token iat instead of its older auth_time", async () => {
+    vi.mocked(getSessionCookie).mockResolvedValue({
+      session: true,
+      value: jwtWithAuthAndIssuedAt(
+        "user-001",
+        1_700_000_000,
+        1_800_000_000,
+      ),
+    });
+    vi.mocked(userRepository.getUserByUid).mockResolvedValue(
+      user({
+        sessionInvalidatedAt: new Date(1_800_000_000 * 1000),
+      }),
+    );
+
+    await expect(getUserFromSession()).resolves.toMatchObject({
+      uid: "user-001",
+    });
+  });
+
+  it("AUTH-PASSWORD-SESSION-001 does not treat updatedAt as a session cutoff", async () => {
+    vi.mocked(getSessionCookie).mockResolvedValue({
+      session: true,
+      value: jwtWithIat("user-001", 1_700_000_000),
+    });
+    vi.mocked(userRepository.getUserByUid).mockResolvedValue(
+      user({
+        updatedAt: new Date("2024-01-01T00:00:00.000Z"),
+      }),
+    );
+
+    await expect(getUserFromSession()).resolves.toMatchObject({
+      uid: "user-001",
     });
   });
 

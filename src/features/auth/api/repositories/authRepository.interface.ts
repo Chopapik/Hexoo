@@ -31,6 +31,7 @@ export type AuthCreateUserProperties = {
 export interface AuthRepository {
   verifyIdToken(idToken: string): Promise<AuthDecodedToken>;
   verifyPassword(email: string, password: string): Promise<AuthDecodedToken>;
+  signInWithPassword(email: string, password: string): Promise<RefreshTokens>;
   createSessionCookie(idToken: string, expiresIn: number): Promise<string>;
   /** Exchange refresh token for new access + refresh tokens. */
   refreshSession(refreshToken: string): Promise<RefreshTokens>;

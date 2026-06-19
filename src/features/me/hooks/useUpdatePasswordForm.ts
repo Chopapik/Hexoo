@@ -28,12 +28,14 @@ export default function useUpdatePasswordForm() {
         type: "server",
         message: errorCode,
       });
-    } else {
-      setError("root", {
-        type: "server",
-        message: errorCode,
-      });
+
+      return;
     }
+
+    setError("root", {
+      type: "server",
+      message: errorCode,
+    });
   };
 
   return {

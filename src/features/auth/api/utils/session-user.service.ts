@@ -1,11 +1,12 @@
 import { createAppError } from "@/lib/AppError";
-import { getSessionCookie } from "./session.cookies";
+import { clearAllAuthCookies, getSessionCookie } from "./session.cookies";
 import { logActivity } from "@/features/activity/api/services";
 import { authRepository } from "../repositories";
 import { userRepository } from "@/features/users/api/repositories";
 import { resolveImagePublicUrl } from "@/features/images/utils/resolveImagePublicUrl";
 import { UserRole } from "@/features/users/types/user.type";
 import type { SessionData } from "@/features/me/me.type";
+import { isTokenIssuedBeforeSessionCutoff } from "./session-cutoff";
 
 export async function getUserFromSession(): Promise<SessionData | never> {
   const sessionCookie = await getSessionCookie();
@@ -45,6 +46,14 @@ export async function getUserFromSession(): Promise<SessionData | never> {
     throw createAppError({
       message: "[getUserFromSession] User account is banned",
       code: "ACCOUNT_BANNED",
+    });
+  }
+
+  if (isTokenIssuedBeforeSessionCutoff(sessionCookie.value, userData)) {
+    await clearAllAuthCookies();
+    throw createAppError({
+      message: "[getUserFromSession] Session token was invalidated",
+      code: "INVALID_SESSION",
     });
   }
 

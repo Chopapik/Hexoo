@@ -19,6 +19,7 @@ export interface UserEntity {
 
   createdAt: Date;
   updatedAt?: Date;
+  sessionInvalidatedAt?: Date;
   lastOnline: Date;
 
   isActive?: boolean;
