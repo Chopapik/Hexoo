@@ -122,12 +122,34 @@ export class AdminService implements IAdminService {
 
     const uid = userRecord.uid;
 
-    await userRepository.createUser({
-      uid,
-      name: data.name,
-      email: data.email,
-      role,
-    });
+    try {
+      await userRepository.createUser({
+        uid,
+        name: data.name,
+        email: data.email,
+        role,
+      });
+    } catch (error) {
+      try {
+        await authRepository.deleteUser(uid);
+      } catch (compensationError) {
+        throw createAppError({
+          code: "DB_ERROR",
+          message:
+            "[adminService.adminCreateUserAccount] Failed to create DB profile and Auth cleanup failed",
+          details: { error, compensationError },
+          data: { compensation: "FAILED", uid },
+        });
+      }
+
+      throw createAppError({
+        code: "DB_ERROR",
+        message:
+          "[adminService.adminCreateUserAccount] Failed to create DB profile; Auth user was removed",
+        details: error,
+        data: { compensation: "AUTH_DELETED", uid },
+      });
+    }
 
     await userRepository.updateUser(uid, {});
 
@@ -248,6 +270,7 @@ export class AdminService implements IAdminService {
     }
 
     await authRepository.updateUser(uid, { password: newPassword });
+    await userRepository.updateUser(uid, { sessionInvalidatedAt: new Date() });
 
     await logActivity(uid, "PASSWORD_CHANGED", "Password changed by admin");
     await logActivity(

@@ -6,6 +6,7 @@ import {
 import { isUsernameTaken } from "../../utils/checkUsernameUnique";
 import type { ActivityType } from "@/features/activity/api/services";
 import { UserRole } from "@/features/users/types/user.type";
+import type { ErrorCode } from "@/lib/AppError";
 
 import type { AuthRepository } from "../../repositories/authRepository.interface";
 import type { UserRepository } from "@/features/users/api/repositories/user.repository.interface";
@@ -38,18 +39,53 @@ export class RegisterUserUseCase {
     const decodedToken = await this.authRepository.verifyIdToken(idToken);
 
     const { uid, email } = decodedToken;
-    const displayName = name.trim();
+    let existingProfile;
+    try {
+      existingProfile = await this.userRepository.getUserByUid(uid);
+    } catch (error) {
+      throw createAppError({
+        code: "DB_ERROR",
+        message: "[authService.registerUser] Failed to load user profile.",
+        details: error,
+      });
+    }
+
+    if (existingProfile) {
+      await this.issueSession(idToken, data.refreshToken);
+
+      return {
+        user: {
+          ...this.mapper.mapUserToSessionData(existingProfile, email),
+          email: (email ?? existingProfile.email) || undefined,
+          role: "user" as const,
+        },
+      };
+    }
+
+    const displayName = (name ?? "").trim();
 
     if (!displayName) {
-      throw createAppError({
+      return this.cleanupFreshRegistrationAndThrow(uid, {
         code: "VALIDATION_ERROR",
         message: "[authService.registerUser] Display name is required.",
         details: { field: "name" },
       });
     }
 
-    if (await isUsernameTaken(displayName)) {
-      throw createAppError({
+    let usernameTaken;
+    try {
+      usernameTaken = await isUsernameTaken(displayName);
+    } catch (error) {
+      return this.cleanupFreshRegistrationAndThrow(uid, {
+        code: "DB_ERROR",
+        message:
+          "[authService.registerUser] Failed to validate display name uniqueness.",
+        details: error,
+      });
+    }
+
+    if (usernameTaken) {
+      return this.cleanupFreshRegistrationAndThrow(uid, {
         code: "CONFLICT",
         message: `[authService.registerUser] Display name '${displayName}' is already taken.`,
         details: { field: "name" },
@@ -63,39 +99,93 @@ export class RegisterUserUseCase {
         email: email ?? "",
         role: UserRole.User,
       });
-
       await this.logActivity(uid, "USER_CREATED", "Account created");
-    } catch {
-      throw createAppError({
+      await this.issueSession(idToken, data.refreshToken);
+
+      const createdUser = await this.userRepository.getUserByUid(uid);
+
+      if (!createdUser) {
+        throw createAppError({
+          code: "DB_ERROR",
+          message:
+            "[authService.registerUser] Created user profile could not be loaded.",
+          details: { uid },
+        });
+      }
+
+      return {
+        user: {
+          ...this.mapper.mapUserToSessionData(createdUser, email),
+          email: (email ?? createdUser.email) || undefined,
+          role: "user" as const,
+        },
+      };
+    } catch (error) {
+      return this.cleanupFreshRegistrationAndThrow(uid, {
         code: "DB_ERROR",
-        message:
-          "[authService.registerUser] Failed to create user document in database.",
+        message: "[authService.registerUser] Registration failed.",
+        details: error,
       });
     }
+  }
 
+  private async issueSession(idToken: string, refreshToken?: string) {
     const sessionCookie = await this.authRepository.createSessionCookie(
       idToken,
       SESSION_EXPIRES_MS,
     );
 
     await setSessionCookie(sessionCookie);
-    if (data.refreshToken) await setRefreshCookie(data.refreshToken);
+    if (refreshToken) await setRefreshCookie(refreshToken);
+  }
 
-    const createdUser = await this.userRepository.getUserByUid(uid);
+  private async cleanupFreshRegistrationAndThrow(
+    uid: string,
+    error: {
+      code: ErrorCode;
+      message: string;
+      details?: unknown;
+    },
+  ): Promise<never> {
+    const compensationErrors: unknown[] = [];
 
-    return {
-      user: createdUser
-        ? {
-            ...this.mapper.mapUserToSessionData(createdUser, email),
-            email: (email ?? createdUser.email) || undefined,
-            role: "user" as const,
-          }
-        : {
-            uid,
-            name: displayName,
-            email: email ?? undefined,
-            role: "user" as const,
-          },
-    };
+    try {
+      await this.userRepository.deleteUser(uid);
+    } catch (compensationError) {
+      compensationErrors.push({
+        stage: "dbProfile",
+        error: compensationError,
+      });
+    }
+
+    try {
+      await this.authRepository.deleteUser(uid);
+    } catch (compensationError) {
+      compensationErrors.push({
+        stage: "authUser",
+        error: compensationError,
+      });
+    }
+
+    if (compensationErrors.length > 0) {
+      throw createAppError({
+        code: "DB_ERROR",
+        message:
+          "[authService.registerUser] Registration failed and cleanup failed.",
+        details: {
+          error: error.details,
+          compensationErrors,
+          originalCode: error.code,
+        },
+        data: { compensation: "FAILED", uid },
+      });
+    }
+
+    throw createAppError({
+      code: error.code,
+      message: error.message,
+      details: error.details,
+      data: { compensation: "AUTH_AND_PROFILE_DELETED", uid },
+    });
   }
 }
