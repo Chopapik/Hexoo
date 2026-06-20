@@ -21,6 +21,7 @@ import {
   toCreateCommentTxArgs,
   toUpdateRow,
 } from "./comment.supabase.mapper";
+import { createAppError } from "@/lib/AppError";
 
 const COMMENTS_TABLE = "comments";
 const COMMENT_REPORTS_TABLE = "comment_reports";
@@ -84,13 +85,19 @@ export class CommentSupabaseRepository implements CommentRepository {
   async updateComment(
     commentId: string,
     data: UpdateCommentPayload,
-  ): Promise<void> {
+  ): Promise<CommentEntity> {
     const row = toUpdateRow(data);
-    const { error } = await supabaseAdmin
+    const { data: updated, error } = await supabaseAdmin
       .from(COMMENTS_TABLE)
       .update(row)
-      .eq("id", commentId);
+      .eq("id", commentId)
+      .select("*")
+      .maybeSingle();
     throwDbError(error);
+    if (!updated) {
+      throw createAppError({ code: "NOT_FOUND", message: "Comment not found" });
+    }
+    return mapCommentRow(updated);
   }
 
   async deleteComment(commentId: string, postId: string): Promise<void> {
@@ -99,6 +106,12 @@ export class CommentSupabaseRepository implements CommentRepository {
       p_post_id: postId,
     };
     const { error } = await supabaseAdmin.rpc("delete_comment_tx", payload);
+    if (error?.message?.includes("not found")) {
+      throw createAppError({ code: "NOT_FOUND", message: error.message });
+    }
+    if (error?.message?.includes("does not belong")) {
+      throw createAppError({ code: "CONFLICT", message: error.message });
+    }
     throwDbError(error);
   }
 

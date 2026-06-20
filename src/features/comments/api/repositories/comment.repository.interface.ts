@@ -19,7 +19,7 @@ export interface CommentRepository {
   updateComment(
     commentId: string,
     data: UpdateCommentPayload,
-  ): Promise<void>;
+  ): Promise<CommentEntity>;
   deleteComment(commentId: string, postId: string): Promise<void>;
   reportComment(
     commentId: string,

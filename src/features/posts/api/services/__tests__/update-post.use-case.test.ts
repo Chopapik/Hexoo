@@ -42,6 +42,7 @@ describe("UpdatePostUseCase", () => {
       createMockSession(),
     );
     vi.mocked(repository.getPostById).mockResolvedValue(post);
+    vi.mocked(repository.updatePost).mockResolvedValue(post);
     vi.mocked(moderationWorkflow.recordContentModerationResult).mockResolvedValue(
       undefined,
     );
@@ -97,9 +98,8 @@ describe("UpdatePostUseCase", () => {
       text: "Updated",
       isEdited: true,
     });
-    vi.mocked(repository.getPostById)
-      .mockResolvedValueOnce(post)
-      .mockResolvedValueOnce(updatedPost);
+    vi.mocked(repository.getPostById).mockResolvedValueOnce(post);
+    vi.mocked(repository.updatePost).mockResolvedValueOnce(updatedPost);
     vi.mocked(enricher.enrichOne).mockResolvedValue({
       ...enriched,
       text: "Updated",
@@ -120,6 +120,11 @@ describe("UpdatePostUseCase", () => {
       expect.stringContaining("post-1"),
     );
     expect(result.text).toBe("Updated");
+    expect(repository.getPostById).toHaveBeenCalledTimes(1);
+    expect(enricher.enrichOne).toHaveBeenCalledWith(
+      updatedPost,
+      createMockSession(),
+    );
   });
 
   it("propagates repository errors", async () => {

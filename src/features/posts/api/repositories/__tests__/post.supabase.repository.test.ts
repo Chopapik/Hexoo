@@ -204,7 +204,7 @@ describe("PostSupabaseRepository", () => {
   describe("deletePost", () => {
     it("deletes by id", async () => {
       const chain = createQueryChain();
-      resolveChain(chain, { type: "void" });
+      chain.maybeSingle.mockResolvedValue({ data: { id: "p1" }, error: null });
       mockFrom.mockReturnValue(chain);
 
       await repository.deletePost("p1");
@@ -331,7 +331,12 @@ describe("PostSupabaseRepository", () => {
       });
       resolveChain(upsertChain, { type: "void" });
       resolveChain(countChain, { type: "count", count: options.reportsCount });
-      resolveChain(updateChain, { type: "void" });
+      updateChain.maybeSingle.mockResolvedValue({
+        data: options.post
+          ? { ...options.post, is_pending: true }
+          : null,
+        error: null,
+      });
 
       let postsCalls = 0;
       let reportsCalls = 0;

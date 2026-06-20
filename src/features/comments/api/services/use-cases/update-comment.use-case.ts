@@ -52,7 +52,7 @@ export class UpdateCommentUseCase {
       undefined,
     );
 
-    await this.repository.updateComment(commentId, {
+    const updated = await this.repository.updateComment(commentId, {
       text: data.text,
       isEdited: true,
       isPending: processed.isPending,
@@ -65,9 +65,6 @@ export class UpdateCommentUseCase {
       "COMMENT_UPDATED",
       `User updated comment ${commentId}`,
     );
-
-    const updated = await this.repository.getCommentById(commentId);
-    assertCommentExists(updated, "UpdateCommentUseCase");
 
     return this.enricher.enrichOne(updated, this.session);
   }

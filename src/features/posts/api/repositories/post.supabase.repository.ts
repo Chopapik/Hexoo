@@ -12,6 +12,7 @@ import type {
 import type { PostEntity } from "../../types/post.entity";
 import type { PostReportInsertRow } from "../../types/post.row";
 import { mapPostRow, toInsertRow, toUpdateRow } from "./post.supabase.mapper";
+import { createAppError } from "@/lib/AppError";
 
 const POST_REPORTS_TABLE = "post_reports";
 
@@ -29,18 +30,32 @@ export class PostSupabaseRepository implements PostRepository {
     return inserted.id;
   }
 
-  async updatePost(postId: string, data: UpdatePostPayload): Promise<void> {
+  async updatePost(postId: string, data: UpdatePostPayload): Promise<PostEntity> {
     const row = toUpdateRow(data);
-    const { error } = await supabaseAdmin
+    const { data: updated, error } = await supabaseAdmin
       .from(TABLE)
       .update(row)
-      .eq("id", postId);
+      .eq("id", postId)
+      .select("*")
+      .maybeSingle();
     throwDbError(error);
+    if (!updated) {
+      throw createAppError({ code: "NOT_FOUND", message: "Post not found" });
+    }
+    return mapPostRow(updated);
   }
 
   async deletePost(postId: string): Promise<void> {
-    const { error } = await supabaseAdmin.from(TABLE).delete().eq("id", postId);
+    const { data: deleted, error } = await supabaseAdmin
+      .from(TABLE)
+      .delete()
+      .eq("id", postId)
+      .select("id")
+      .maybeSingle();
     throwDbError(error);
+    if (!deleted) {
+      throw createAppError({ code: "NOT_FOUND", message: "Post not found" });
+    }
   }
 
   async getPostById(postId: string): Promise<PostEntity | null> {

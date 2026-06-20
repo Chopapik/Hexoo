@@ -75,7 +75,7 @@ export class UpdatePostUseCase {
       await this.imageDeleter(post.imageMeta);
     }
 
-    await this.repository.updatePost(postId, {
+    const updatedPost = await this.repository.updatePost(postId, {
       text: nextText,
       imageMeta: processed.imageMeta ?? post.imageMeta,
       isPending: processed.isPending,
@@ -85,9 +85,6 @@ export class UpdatePostUseCase {
     });
 
     await logActivity(user.uid, "POST_UPDATED", `User updated post ${postId}`);
-
-    const updatedPost = await this.repository.getPostById(postId);
-    assertPostExists(updatedPost, "UpdatePostUseCase");
 
     return this.enricher.enrichOne(updatedPost, this.session);
   }

@@ -49,7 +49,7 @@ export const CreatePostSchema = z
   );
 
 export const UpdatePostSchema = z.object({
-  text: z.string().min(1).optional(),
+  text: z.string().min(1).max(POST_MAX_CHARS, "text_too_long").optional(),
   imageFile: z
     .custom<File>(isFileLike, "wrong_file_type")
     .optional()

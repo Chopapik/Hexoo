@@ -5,7 +5,7 @@ import { CreatePostPayload, UpdatePostPayload } from "../../types/post.payload";
 export interface PostRepository {
   createPost(data: CreatePostPayload): Promise<string>;
 
-  updatePost(postId: string, data: UpdatePostPayload): Promise<void>;
+  updatePost(postId: string, data: UpdatePostPayload): Promise<PostEntity>;
 
   deletePost(postId: string): Promise<void>;
 
