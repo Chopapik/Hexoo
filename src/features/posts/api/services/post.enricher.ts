@@ -35,7 +35,11 @@ export class PostEnricher {
       getUsersByIds(authorIds),
 
       session && visiblePostIds.length > 0
-        ? this.likeRepository.getLikesForParents(session.uid, visiblePostIds)
+        ? this.likeRepository.getLikesForParents(
+            session.uid,
+            "posts",
+            visiblePostIds,
+          )
         : Promise.resolve<string[]>([]),
 
       ownPostIds.length > 0

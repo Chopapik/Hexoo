@@ -496,13 +496,14 @@ export type Database = {
         Args: { p_moderator_uid: string; p_uid: string }
         Returns: undefined
       }
-      toggle_like_tx: {
+      set_like_state_tx: {
         Args: {
+          p_liked: boolean
           p_parent_collection: string
           p_parent_id: string
           p_user_id: string
         }
-        Returns: boolean
+        Returns: Json
       }
     }
     Enums: {

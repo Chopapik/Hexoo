@@ -1,12 +1,14 @@
+import { z } from "zod";
+
 export type LikeParentCollection = "posts" | "comments";
 
-export interface ToggleLikeRequestDto {
-  parentId: string;
-  parentCollection: LikeParentCollection;
-}
+export const SetLikeStateSchema = z.object({
+  liked: z.boolean(),
+});
 
-export interface ToggleLikeResponseDto {
-  parentId: string;
-  isLiked: boolean;
+export type SetLikeStateRequestDto = z.infer<typeof SetLikeStateSchema>;
+
+export interface SetLikeStateResponseDto {
+  liked: boolean;
   likesCount: number;
 }

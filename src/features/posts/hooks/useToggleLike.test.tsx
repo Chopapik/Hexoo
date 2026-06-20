@@ -68,7 +68,10 @@ describe("useToggleLike", () => {
   });
 
   it("optimistically toggles like in posts cache", async () => {
-    vi.mocked(fetchClient.post).mockResolvedValue(undefined);
+    vi.mocked(fetchClient.post).mockResolvedValue({
+      liked: true,
+      likesCount: 4,
+    });
 
     const post = {
       id: "p1",
@@ -83,7 +86,7 @@ describe("useToggleLike", () => {
     });
 
     await act(async () => {
-      result.current.toggleLike("p1");
+      result.current.toggleLike("p1", true);
     });
 
     await waitFor(() => {
@@ -98,7 +101,9 @@ describe("useToggleLike", () => {
     });
 
     await waitFor(() =>
-      expect(fetchClient.post).toHaveBeenCalledWith("/posts/p1/like"),
+      expect(fetchClient.post).toHaveBeenCalledWith("/posts/p1/like", {
+        liked: true,
+      }),
     );
   });
 
@@ -118,7 +123,7 @@ describe("useToggleLike", () => {
     });
 
     await act(async () => {
-      result.current.toggleLike("p1");
+      result.current.toggleLike("p1", false);
     });
 
     await waitFor(() =>

@@ -1,6 +1,14 @@
-import type { ToggleLikePayload } from "@/features/likes/types/like.payload";
+import type { SetLikeStatePayload } from "@/features/likes/types/like.payload";
+import type {
+  LikeParentCollection,
+  SetLikeStateResponseDto,
+} from "@/features/likes/types/like.dto";
 
 export interface LikeRepository {
-  toggleLike(payload: ToggleLikePayload): Promise<void>;
-  getLikesForParents(userId: string, parentIds: string[]): Promise<string[]>;
+  setLikeState(payload: SetLikeStatePayload): Promise<SetLikeStateResponseDto>;
+  getLikesForParents(
+    userId: string,
+    parentCollection: LikeParentCollection,
+    parentIds: string[],
+  ): Promise<string[]>;
 }

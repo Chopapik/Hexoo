@@ -1,4 +1,6 @@
-import { toggleLike } from "@/features/likes/api/services";
+import { setLikeState } from "@/features/likes/api/services";
+import { SetLikeStateSchema } from "@/features/likes/types/like.dto";
+import { createAppError } from "@/lib/AppError";
 import { AnyRouteContext, withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import { NextRequest } from "next/server";
@@ -8,7 +10,15 @@ export const POST = withErrorHandling(
   async (req: NextRequest, context: AnyRouteContext<{ id: string }>) => {
     const { id } = await context.params;
     const session = await getUserFromSession();
-    const result = await toggleLike(session, id, "posts");
+    const body = await req.json().catch(() => null);
+    const parsed = SetLikeStateSchema.safeParse(body);
+    if (!parsed.success) {
+      throw createAppError({
+        code: "VALIDATION_ERROR",
+        message: "Invalid like target state",
+      });
+    }
+    const result = await setLikeState(session, id, "posts", parsed.data.liked);
     return handleSuccess(result);
   },
 );

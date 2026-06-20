@@ -1,9 +1,17 @@
-import type { LikeParentCollection } from "@/features/likes/types/like.dto";
+import type {
+  LikeParentCollection,
+  SetLikeStateResponseDto,
+} from "@/features/likes/types/like.dto";
 
 export interface LikeService {
-  toggleLike(
+  setLikeState(
     parentId: string,
     parentCollection: LikeParentCollection,
-  ): Promise<void>;
-  getLikesForParents(userId: string, parentIds: string[]): Promise<string[]>;
+    liked: boolean,
+  ): Promise<SetLikeStateResponseDto>;
+  getLikesForParents(
+    userId: string,
+    parentCollection: LikeParentCollection,
+    parentIds: string[],
+  ): Promise<string[]>;
 }

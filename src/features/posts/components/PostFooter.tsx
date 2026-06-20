@@ -27,7 +27,7 @@ export const PostFooter = ({ post, onCommentClick }: PostFooterProps) => {
         onClick={(e) => {
           e.stopPropagation();
           if (!user) return;
-          toggleLike(post.id);
+          toggleLike(post.id, !Boolean(post.isLikedByMe));
         }}
       >
         <div className="p-1 -m-1 flex items-center justify-center">

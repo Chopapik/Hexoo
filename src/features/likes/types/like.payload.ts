@@ -1,9 +1,10 @@
 import type { LikeParentCollection } from "./like.dto";
 
-export type ToggleLikePayload = {
+export type SetLikeStatePayload = {
   userId: string;
   parentId: string;
   parentCollection: LikeParentCollection;
+  liked: boolean;
 };
 
 export type CreateLikePayload = {

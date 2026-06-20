@@ -24,6 +24,7 @@ export class CommentEnricher {
       session && comments.length > 0
         ? await this.likeRepository.getLikesForParents(
             session.uid,
+            "comments",
             comments.map((comment) => comment.id),
           )
         : [];
