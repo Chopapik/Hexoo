@@ -5,6 +5,10 @@ import { createAppError } from "@/lib/AppError";
 import { logModerationEvent } from "@/features/moderation/api/services/moderationLog.service";
 import type { ModerationLogPayload } from "@/features/moderation/api/services/moderationLog.service";
 import { ModerationStatus } from "@/features/shared/types/content.type";
+import type {
+  ModerationEvidence,
+  ModerationEvidenceSource,
+} from "@/features/moderation/types/moderation.type";
 
 /**
  * Payload to log later with resourceType/resourceId, e.g. after post is created.
@@ -19,13 +23,17 @@ export interface ModerationVerdict {
   isNSFW: boolean;
 }
 
-type ModerationSource = "text" | "image";
+type ModerationSource = ModerationEvidenceSource;
 type ModerationCategoryScoreMap = Record<string, number>;
 
 type ModerationFlags = {
   flaggedReasons: string[];
   flaggedSource: ModerationSource[];
   flaggedScores: ModerationCategoryScoreMap;
+  evidenceByCategory: Record<
+    string,
+    { score: number; sources: ModerationSource[] }
+  >;
 };
 
 type ModerationSignal = {
@@ -148,6 +156,48 @@ function addModerationSignal(
       flags.flaggedScores[category] ?? 0,
       score,
     );
+
+    const evidence = flags.evidenceByCategory[category] ?? {
+      score: 0,
+      sources: [],
+    };
+    evidence.score = Math.max(evidence.score, score);
+    if (!evidence.sources.includes(source)) evidence.sources.push(source);
+    evidence.sources.sort((a, b) =>
+      ["text", "image"].indexOf(a) - ["text", "image"].indexOf(b),
+    );
+    flags.evidenceByCategory[category] = evidence;
+  }
+}
+
+function toModerationEvidence(flags: ModerationFlags): ModerationEvidence[] {
+  return Object.entries(flags.evidenceByCategory)
+    .sort(([categoryA], [categoryB]) => categoryA.localeCompare(categoryB))
+    .map(([category, evidence]) => ({ category, ...evidence }));
+}
+
+const MODERATION_PROVIDER_TIMEOUT_MS = 5_000;
+
+async function callModerationProvider<T>(call: () => Promise<T>): Promise<T> {
+  let timeout: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      call(),
+      new Promise<never>((_, reject) => {
+        timeout = setTimeout(
+          () => reject(new Error("moderation_timeout")),
+          MODERATION_PROVIDER_TIMEOUT_MS,
+        );
+      }),
+    ]);
+  } catch (error) {
+    throw createAppError({
+      code: "MODERATION_UNAVAILABLE",
+      message: "Content moderation is temporarily unavailable.",
+      details: error,
+    });
+  } finally {
+    if (timeout) clearTimeout(timeout);
   }
 }
 
@@ -170,15 +220,18 @@ const collectModerationFlags = async (
     flaggedReasons: [],
     flaggedSource: [],
     flaggedScores: {},
+    evidenceByCategory: {},
   };
 
   if (text && text.trim()) {
-    const textResult = await moderateText(text);
+    const textResult = await callModerationProvider(() => moderateText(text));
     addModerationSignal("text", textResult, flags);
   }
 
   if (hasFile(imageFile)) {
-    const imageResult = await moderateImage(imageFile);
+    const imageResult = await callModerationProvider(() =>
+      moderateImage(imageFile),
+    );
     addModerationSignal("image", imageResult, flags);
   }
 
@@ -256,7 +309,7 @@ export const enforceStrictModeration = async (
   imageFile?: File | null,
   contextLabel: string = "content",
 ): Promise<{ flaggedReasons: string[]; flaggedSource: ModerationSource[] }> => {
-  const { flaggedReasons, flaggedSource, flaggedScores } =
+  const { flaggedReasons, flaggedSource, flaggedScores, evidenceByCategory } =
     await collectModerationFlags(text, imageFile);
 
   if (flaggedReasons.length === 0) {
@@ -291,6 +344,12 @@ export const enforceStrictModeration = async (
     reasonDetails: `Categories: ${flaggedReasons.join(
       ", ",
     )}. Scores: ${formatScoreDetails(flaggedScores)}`,
+    evidence: toModerationEvidence({
+      flaggedReasons,
+      flaggedSource,
+      flaggedScores,
+      evidenceByCategory,
+    }),
   });
 
   throw createAppError({
@@ -320,8 +379,9 @@ export const performModeration = async (
    * after post is created/updated.
    */
   moderationLogPayloadForResource?: ModerationLogPayloadForResource;
+  moderationEvidence: ModerationEvidence[];
 }> => {
-  const { flaggedReasons, flaggedSource, flaggedScores } =
+  const { flaggedReasons, flaggedSource, flaggedScores, evidenceByCategory } =
     await collectModerationFlags(text, imageFile);
 
   let moderationStatus: ModerationStatus = ModerationStatus.Approved;
@@ -355,6 +415,12 @@ export const performModeration = async (
           )}. Sources: ${flaggedSource.join(
             ", ",
           )}. Scores: ${formatScoreDetails(flaggedScores)}`,
+          evidence: toModerationEvidence({
+            flaggedReasons,
+            flaggedSource,
+            flaggedScores,
+            evidenceByCategory,
+          }),
         }
       : undefined;
 
@@ -378,6 +444,12 @@ export const performModeration = async (
     moderationStatus,
     flaggedReasons,
     flaggedSource,
+    moderationEvidence: toModerationEvidence({
+      flaggedReasons,
+      flaggedSource,
+      flaggedScores,
+      evidenceByCategory,
+    }),
     isNSFW,
     isPending,
     moderationLogPayloadForResource: isPending

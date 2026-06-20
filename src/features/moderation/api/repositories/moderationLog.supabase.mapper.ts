@@ -13,6 +13,32 @@ import type {
 type ModerationLogRow = Tables<"moderation_logs">;
 type ModerationLogInsertRow = TablesInsert<"moderation_logs">;
 
+type StoredReasonDetails = {
+  summary?: string;
+  evidence?: ModerationLogPayload["evidence"];
+};
+
+function encodeReasonDetails(payload: ModerationLogPayload): string | null {
+  if (!payload.evidence) return payload.reasonDetails ?? null;
+  return JSON.stringify({
+    summary: payload.reasonDetails,
+    evidence: payload.evidence,
+  } satisfies StoredReasonDetails);
+}
+
+function decodeReasonDetails(value: string | null): StoredReasonDetails {
+  if (!value) return {};
+  try {
+    const parsed = JSON.parse(value) as StoredReasonDetails;
+    if (parsed && (parsed.summary !== undefined || parsed.evidence)) {
+      return parsed;
+    }
+  } catch {
+    // Legacy rows store plain text.
+  }
+  return { summary: value };
+}
+
 function toModerationStatus(value: string): ModerationStatus {
   if (value === ModerationStatus.Approved) return ModerationStatus.Approved;
   if (value === ModerationStatus.Rejected) return ModerationStatus.Rejected;
@@ -60,13 +86,14 @@ export function toModerationLogInsertRow(
     source: payload.source ?? null,
     actor_id: payload.actorId ?? null,
     reason_summary: payload.reasonSummary ?? null,
-    reason_details: payload.reasonDetails ?? null,
+    reason_details: encodeReasonDetails(payload),
   };
 }
 
 export function mapModerationLogRow(
   row: ModerationLogRow,
 ): ModerationLogPayload {
+  const details = decodeReasonDetails(row.reason_details);
   return {
     userId: row.user_id,
     timestamp: parseDate(row.timestamp),
@@ -78,6 +105,7 @@ export function mapModerationLogRow(
     source: toModerationSource(row.source),
     actorId: row.actor_id ?? undefined,
     reasonSummary: row.reason_summary ?? undefined,
-    reasonDetails: row.reason_details ?? undefined,
+    reasonDetails: details.summary,
+    evidence: details.evidence,
   };
 }

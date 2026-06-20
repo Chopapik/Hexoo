@@ -6,13 +6,21 @@ import type { CommentEntity } from "@/features/comments/types/comment.entity";
 import type { PostEntity } from "@/features/posts/types/post.entity";
 import type { ModerationCommentResponseDto as ModerationCommentResponse } from "@/features/comments/types/comment.dto";
 import type { ModerationPostResponseDto as ModerationPostResponse } from "@/features/posts/types/post.dto";
+import { deriveCanonicalContentStatus } from "@/features/moderation/types/moderation.type";
 
 type ModerationInfo = NonNullable<ModerationPostResponse["moderationInfo"]>;
 
 export class ModerationEnricher {
-  private buildModerationFields(latestLog: ModerationLogPayload | undefined) {
+  private buildModerationFields(
+    isPending: boolean,
+    latestLog: ModerationLogPayload | undefined,
+  ) {
     return {
-      moderationStatus: latestLog?.verdict ?? ModerationStatus.Pending,
+      moderationStatus: deriveCanonicalContentStatus({
+        isPending,
+        decision: latestLog?.verdict,
+        reasonSummary: latestLog?.reasonSummary,
+      }),
       flaggedReasons: latestLog?.categories ?? [],
       moderationInfo: latestLog
         ? ({
@@ -43,7 +51,7 @@ export class ModerationEnricher {
 
       return {
         ...post,
-        ...this.buildModerationFields(latestLog),
+        ...this.buildModerationFields(Boolean(post.isPending), latestLog),
         imageUrl: resolveImagePublicUrl(post.imageMeta) ?? null,
         userName: author?.name ?? "Unknown",
         userAvatarUrl: resolveImagePublicUrl(author?.avatarMeta) ?? null,
@@ -73,7 +81,7 @@ export class ModerationEnricher {
 
       return {
         ...comment,
-        ...this.buildModerationFields(latestLog),
+        ...this.buildModerationFields(Boolean(comment.isPending), latestLog),
         imageUrl: resolveImagePublicUrl(comment.imageMeta) ?? null,
         userName: author?.name ?? "Unknown",
         userAvatarUrl: resolveImagePublicUrl(author?.avatarMeta) ?? null,

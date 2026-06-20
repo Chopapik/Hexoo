@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { PostEntity } from "./post.entity";
 import { ModerationStatus } from "@/features/shared/types/content.type";
+import type { CanonicalContentStatus } from "@/features/moderation/types/moderation.type";
 import { isValidYouTubeUrl } from "../utils/youtubeUtils";
 import { isFileLike } from "@/features/images/utils/isFileLike";
 
@@ -122,7 +123,7 @@ export type PublicPostResponseDto = Omit<
 
 export type ModerationPostResponseDto = PostEntity & {
   imageUrl?: string | null;
-  moderationStatus: ModerationStatus;
+  moderationStatus: CanonicalContentStatus;
   flaggedReasons?: string[];
   moderationInfo?: {
     verdict: ModerationStatus;

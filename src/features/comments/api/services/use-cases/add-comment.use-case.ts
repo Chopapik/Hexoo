@@ -13,6 +13,7 @@ import {
 import type { CreateCommentPayload } from "../../../types/comment.payload";
 
 import { assertNotRestricted, requireSession } from "../comment.guards";
+import { logModerationEvent } from "@/features/moderation/api/services/moderationLog.service";
 
 export class AddCommentUseCase {
   constructor(
@@ -57,7 +58,20 @@ export class AddCommentUseCase {
       imageMeta: processed.imageMeta ?? null,
     };
 
-    await this.repository.createComment(postId, payload);
+    const commentId = await this.repository.createComment(postId, payload);
+
+    if (processed.moderationLogPayloadForResource) {
+      try {
+        await logModerationEvent({
+          ...processed.moderationLogPayloadForResource,
+          resourceType: "comment",
+          resourceId: commentId,
+        });
+      } catch (error) {
+        await this.repository.deleteComment(commentId, postId);
+        throw error;
+      }
+    }
 
     await logActivity(
       user.uid,

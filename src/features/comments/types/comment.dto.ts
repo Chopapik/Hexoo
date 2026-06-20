@@ -1,6 +1,7 @@
 import { z } from "zod";
 import type { CommentEntity } from "./comment.entity";
 import type { ModerationStatus } from "@/features/shared/types/content.type";
+import type { CanonicalContentStatus } from "@/features/moderation/types/moderation.type";
 
 export const COMMENT_MAX_CHARS = 500;
 export const COMMENT_MAX_IMAGE_FILE_SIZE_BYTES = 5 * 1024 * 1024;
@@ -109,7 +110,7 @@ export type ModerationCommentParentPostPreview = {
 
 export type ModerationCommentResponseDto = CommentEntity & {
   imageUrl?: string | null;
-  moderationStatus: ModerationStatus;
+  moderationStatus: CanonicalContentStatus;
   flaggedReasons?: string[];
   moderationInfo?: {
     verdict: ModerationStatus;

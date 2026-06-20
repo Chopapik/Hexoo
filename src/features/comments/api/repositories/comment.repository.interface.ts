@@ -9,7 +9,7 @@ export interface CommentRepository {
   createComment(
     postId: string,
     data: CreateCommentPayload,
-  ): Promise<void>;
+  ): Promise<string>;
   getCommentById(commentId: string): Promise<CommentEntity | null>;
   getCommentsByPostId(postId: string): Promise<CommentEntity[]>;
   getCommentsPendingModeration(

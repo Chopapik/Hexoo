@@ -69,10 +69,15 @@ export class CreatePostUseCase {
 
     const postId = await this.repository.createPost(dbInput);
 
-    await this.moderationWorkflow.recordContentModerationResult(
-      postId,
-      processed.moderationLogPayloadForResource,
-    );
+    try {
+      await this.moderationWorkflow.recordContentModerationResult(
+        postId,
+        processed.moderationLogPayloadForResource,
+      );
+    } catch (error) {
+      await this.repository.deletePost(postId);
+      throw error;
+    }
 
     await logActivity(user.uid, "POST_CREATED", "User created a new post");
 

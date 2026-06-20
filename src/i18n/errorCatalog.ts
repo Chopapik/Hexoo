@@ -167,6 +167,12 @@ export const ERROR_CATALOG: Record<GlobalErrorCode, ErrorCatalogEntry> = {
       en: "Service is temporarily unavailable",
     },
   },
+  MODERATION_UNAVAILABLE: {
+    message: {
+      pl: "Moderacja treści jest chwilowo niedostępna",
+      en: "Content moderation is temporarily unavailable",
+    },
+  },
   POLICY_VIOLATION: {
     message: {
       pl: "Treść narusza zasady serwisu",

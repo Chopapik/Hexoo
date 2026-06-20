@@ -11,6 +11,8 @@ import type { ModerationService as IModerationService } from "@/features/moderat
 import type { SessionData } from "@/features/me/me.type";
 import type { ModeratorService as IModeratorService } from "./moderator.service.interface";
 import type { AuthRepository } from "@/features/auth/api/repositories/authRepository.interface";
+import { getLatestModerationLogForResource } from "@/features/moderation/api/services/moderationLog.service";
+import { deriveCanonicalContentStatus } from "@/features/moderation/types/moderation.type";
 
 export class ModeratorService implements IModeratorService {
   constructor(
@@ -77,6 +79,45 @@ export class ModeratorService implements IModeratorService {
         details: error,
       });
     }
+  }
+
+  private async isReviewNoOp(
+    table: "posts" | "comments",
+    resourceId: string,
+    action: "approve" | "reject" | "quarantine",
+  ): Promise<boolean> {
+    const { data, error } = await supabaseAdmin
+      .from(table)
+      .select("is_pending")
+      .eq("id", resourceId)
+      .maybeSingle();
+
+    if (error) {
+      throw createAppError({
+        code: "DB_ERROR",
+        message: "[moderatorService.isReviewNoOp] Failed to read content state",
+        details: error,
+      });
+    }
+
+    if (!data) return action === "reject";
+    if (action === "approve") return !data.is_pending;
+    if (action === "quarantine") {
+      if (!data.is_pending) return false;
+      const resourceType = table === "posts" ? "post" : "comment";
+      const latestLog = await getLatestModerationLogForResource(
+        resourceType,
+        resourceId,
+      );
+      return (
+        deriveCanonicalContentStatus({
+          isPending: true,
+          decision: latestLog?.verdict,
+          reasonSummary: latestLog?.reasonSummary,
+        }) === "quarantined"
+      );
+    }
+    return false;
   }
 
   async getModerationQueueForPosts(
@@ -226,6 +267,8 @@ export class ModeratorService implements IModeratorService {
       });
     }
 
+    if (await this.isReviewNoOp("posts", postId, action)) return;
+
     const { data: txResult, error } = await supabaseAdmin.rpc(
       "moderator_review_post_tx",
       {
@@ -293,6 +336,8 @@ export class ModeratorService implements IModeratorService {
         message: "[moderatorService.reviewComment] justification is required",
       });
     }
+
+    if (await this.isReviewNoOp("comments", commentId, action)) return;
 
     const { data: txResult, error } = await supabaseAdmin.rpc(
       "moderator_review_comment_tx",

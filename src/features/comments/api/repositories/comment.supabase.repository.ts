@@ -29,12 +29,16 @@ export class CommentSupabaseRepository implements CommentRepository {
   async createComment(
     postId: string,
     data: CreateCommentPayload,
-  ): Promise<void> {
-    const { error } = await supabaseAdmin.rpc(
+  ): Promise<string> {
+    const { data: commentId, error } = await supabaseAdmin.rpc(
       "create_comment_tx",
       toCreateCommentTxArgs(postId, data),
     );
     throwDbError(error);
+    if (!commentId) {
+      throw new Error("create_comment_tx returned no comment id");
+    }
+    return commentId;
   }
 
   async getCommentsByPostId(postId: string): Promise<CommentEntity[]> {
