@@ -1,6 +1,10 @@
 import { createAppError } from "@/lib/AppError";
 import { formatZodErrorFlat } from "@/lib/zod";
-import { uploadImage, deleteImage } from "@/features/images/api/image.service";
+import {
+  prepareImage,
+  uploadPreparedImage,
+  deleteImage,
+} from "@/features/images/api/image.service";
 import { enforceStrictModeration } from "@/features/moderation/utils/assessSafety";
 import { logActivity } from "@/features/activity/api/services";
 import { isUsernameTaken } from "@/features/auth/api/utils/checkUsernameUnique";
@@ -8,6 +12,12 @@ import { resolveImagePublicUrl } from "@/features/images/utils/resolveImagePubli
 import type { ImageMeta } from "@/features/images/types/image.type";
 import type { UpdateUserPayload } from "@/features/users/types/user.payload";
 import type { AuthRepository } from "@/features/auth/api/repositories/authRepository.interface";
+import {
+  deleteImageWithRetry,
+  type ImageDeleter,
+} from "@/features/images/api/image-cleanup";
+import type { PreparedImageUpload } from "@/features/images/api/image-resource-limits";
+import type { ImageUploadResult } from "@/features/images/api/imageService.interface";
 import type { UserRepository } from "@/features/users/api/repositories/user.repository.interface";
 import {
   UpdateProfileData,
@@ -20,6 +30,19 @@ export class UpdateProfileUseCase {
     private readonly session: SessionData,
     private readonly userRepository: UserRepository,
     private readonly authRepository: AuthRepository,
+    private readonly imageServices: {
+      prepare: (file: File | Blob) => Promise<PreparedImageUpload>;
+      upload: (
+        prepared: PreparedImageUpload,
+        uid: string,
+        storageFolder: string,
+      ) => Promise<ImageUploadResult>;
+      delete: ImageDeleter;
+    } = {
+      prepare: prepareImage,
+      upload: uploadPreparedImage,
+      delete: deleteImage,
+    },
   ) {}
 
   async execute(data: UpdateProfileData) {
@@ -67,6 +90,10 @@ export class UpdateProfileUseCase {
       }
     }
 
+    const preparedAvatar = avatarFile
+      ? await this.imageServices.prepare(avatarFile)
+      : undefined;
+
     await enforceStrictModeration(
       uid,
       name,
@@ -77,6 +104,7 @@ export class UpdateProfileUseCase {
     const authUpdate: { displayName?: string } = {};
     const dbUpdate: UpdateUserPayload = { updatedAt: new Date() };
     let savedAvatarMeta: ImageMeta | undefined;
+    let oldAvatarMeta: ImageMeta | null | undefined;
 
     if (name) {
       const displayName = name.trim();
@@ -84,12 +112,12 @@ export class UpdateProfileUseCase {
       dbUpdate.name = displayName;
     }
 
-    if (avatarFile) {
-      const uploadResult = await uploadImage(avatarFile, uid, "avatars");
-
-      if (userData?.avatarMeta) {
-        await deleteImage(userData.avatarMeta);
-      }
+    if (preparedAvatar) {
+      const uploadResult = await this.imageServices.upload(
+        preparedAvatar,
+        uid,
+        "avatars",
+      );
 
       const avatarMeta: ImageMeta = {
         storageBucket: uploadResult.storageBucket,
@@ -100,14 +128,35 @@ export class UpdateProfileUseCase {
         sizeBytes: uploadResult.sizeBytes,
       };
       savedAvatarMeta = avatarMeta;
+      oldAvatarMeta = userData?.avatarMeta;
       dbUpdate.avatarMeta = avatarMeta;
     }
 
-    if (Object.keys(authUpdate).length > 0) {
-      await this.authRepository.updateUser(uid, authUpdate);
+    try {
+      if (Object.keys(authUpdate).length > 0) {
+        await this.authRepository.updateUser(uid, authUpdate);
+      }
+
+      await this.userRepository.updateUser(uid, dbUpdate);
+    } catch (error) {
+      if (savedAvatarMeta) {
+        try {
+          await deleteImageWithRetry(
+            savedAvatarMeta,
+            this.imageServices.delete,
+          );
+        } catch (cleanupError) {
+          throw createAppError({
+            code: "EXTERNAL_SERVICE",
+            message: "[UpdateProfileUseCase] Avatar rollback failed.",
+            details: { originalError: error, cleanupError, savedAvatarMeta },
+          });
+        }
+      }
+      throw error;
     }
 
-    await this.userRepository.updateUser(uid, dbUpdate);
+    await deleteImageWithRetry(oldAvatarMeta, this.imageServices.delete);
 
     await logActivity(
       uid,
