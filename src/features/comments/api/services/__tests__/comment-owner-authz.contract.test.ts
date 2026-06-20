@@ -48,6 +48,7 @@ const enricher = {
     userAvatarUrl: null,
   })),
 } as unknown as CommentEnricher;
+const imageDeleter = vi.fn(async () => undefined);
 
 async function expectCode(promise: Promise<unknown>, code: string) {
   await expect(promise).rejects.toMatchObject({ code });
@@ -66,7 +67,9 @@ describe("comment owner authorization contract", () => {
               "comment-1",
               { text: "updated" },
             )
-          : new DeleteCommentUseCase(repository, null).execute("comment-1");
+          : new DeleteCommentUseCase(repository, imageDeleter, null).execute(
+              "comment-1",
+            );
       await expectCode(promise, "AUTH_REQUIRED");
     },
   );
@@ -83,7 +86,11 @@ describe("comment owner authorization contract", () => {
               enricher,
               ownerSession,
             ).execute("comment-1", { text: "updated" })
-          : new DeleteCommentUseCase(repository, ownerSession).execute("comment-1");
+          : new DeleteCommentUseCase(
+              repository,
+              imageDeleter,
+              ownerSession,
+            ).execute("comment-1");
       await expectCode(promise, "FORBIDDEN");
       expect(repository.updateComment).not.toHaveBeenCalled();
       expect(repository.deleteComment).not.toHaveBeenCalled();
@@ -98,7 +105,11 @@ describe("comment owner authorization contract", () => {
       enricher,
       ownerSession,
     ).execute("comment-1", { text: "updated" });
-    await new DeleteCommentUseCase(repository, ownerSession).execute("comment-1");
+    await new DeleteCommentUseCase(
+      repository,
+      imageDeleter,
+      ownerSession,
+    ).execute("comment-1");
     expect(repository.updateComment).toHaveBeenCalledTimes(1);
     expect(repository.deleteComment).toHaveBeenCalledWith("comment-1", "post-1");
   });

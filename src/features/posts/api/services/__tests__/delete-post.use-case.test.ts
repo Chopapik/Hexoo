@@ -14,6 +14,7 @@ import {
 import { logActivity } from "@/features/activity/api/services";
 
 const imageDeleter = vi.fn();
+const commentImageInventory = vi.fn(async () => []);
 
 describe("DeletePostUseCase", () => {
   let repository: ReturnType<typeof createMockPostRepository>;
@@ -22,13 +23,23 @@ describe("DeletePostUseCase", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     repository = createMockPostRepository();
-    useCase = new DeletePostUseCase(repository, imageDeleter, createMockSession());
+    useCase = new DeletePostUseCase(
+      repository,
+      imageDeleter,
+      commentImageInventory,
+      createMockSession(),
+    );
     vi.mocked(logActivity).mockResolvedValue(undefined);
     vi.mocked(imageDeleter).mockResolvedValue(undefined);
   });
 
   it("throws AUTH_REQUIRED when no session", async () => {
-    const noSession = new DeletePostUseCase(repository, imageDeleter, null);
+    const noSession = new DeletePostUseCase(
+      repository,
+      imageDeleter,
+      commentImageInventory,
+      null,
+    );
     await expectAppError(() => noSession.execute("post-1"), "AUTH_REQUIRED");
   });
 

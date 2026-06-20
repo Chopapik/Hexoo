@@ -15,6 +15,8 @@ import {
 } from "./helpers/post-test.helpers";
 import { logActivity } from "@/features/activity/api/services";
 
+const imageDeleter = vi.fn(async () => undefined);
+
 describe("CreatePostUseCase", () => {
   let repository: ReturnType<typeof createMockPostRepository>;
   let contentService: ReturnType<typeof createMockPostContentService>;
@@ -31,6 +33,7 @@ describe("CreatePostUseCase", () => {
       contentService,
       moderationWorkflow,
       createMockSession(),
+      imageDeleter,
     );
     vi.mocked(repository.createPost).mockResolvedValue("new-post-id");
     vi.mocked(moderationWorkflow.recordContentModerationResult).mockResolvedValue(
@@ -45,6 +48,7 @@ describe("CreatePostUseCase", () => {
       contentService,
       moderationWorkflow,
       null,
+      imageDeleter,
     );
     await expectAppError(
       () => noSession.execute({ text: "hello", youtubeUrl: "" }),
@@ -58,6 +62,7 @@ describe("CreatePostUseCase", () => {
       contentService,
       moderationWorkflow,
       createRestrictedSession(),
+      imageDeleter,
     );
     await expectAppError(
       () => restricted.execute({ text: "hello", youtubeUrl: "" }),

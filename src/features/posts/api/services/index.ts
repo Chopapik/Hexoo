@@ -19,6 +19,7 @@ import type {
 } from "../../types/post.dto";
 import type { ModerationStatus } from "@/features/shared/types/content.type";
 import type { SessionData } from "@/features/me/me.type";
+import { commentRepository } from "@/features/comments/api/repositories";
 
 const postContentService = new PostContentService();
 const postEnricher = new PostEnricher(likeRepository);
@@ -32,6 +33,7 @@ export const getPostService = (
     postContentService,
     postModerationWorkflow,
     session,
+    deleteImage,
   );
 
   const updatePostUseCase = new UpdatePostUseCase(
@@ -46,6 +48,7 @@ export const getPostService = (
   const deletePostUseCase = new DeletePostUseCase(
     postRepository,
     deleteImage,
+    (postId) => commentRepository.getImageMetasByPostId(postId),
     session,
   );
 

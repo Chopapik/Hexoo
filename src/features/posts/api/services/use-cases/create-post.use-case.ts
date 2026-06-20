@@ -15,6 +15,10 @@ import {
 
 import type { CreatePostPayload } from "../../../types/post.payload";
 import { assertNotRestricted, requireSession } from "../post.guards";
+import {
+  rollbackUploadedImage,
+  type ImageDeleter,
+} from "@/features/images/api/image-cleanup";
 
 export class CreatePostUseCase {
   constructor(
@@ -22,6 +26,7 @@ export class CreatePostUseCase {
     private readonly contentService: PostContentService,
     private readonly moderationWorkflow: PostModerationWorkflow,
     private readonly session: SessionData | null,
+    private readonly imageDeleter: ImageDeleter,
   ) {}
 
   async execute(
@@ -67,7 +72,16 @@ export class CreatePostUseCase {
       youtubeUrl: data.youtubeUrl?.trim() || null,
     };
 
-    const postId = await this.repository.createPost(dbInput);
+    let postId: string;
+    try {
+      postId = await this.repository.createPost(dbInput);
+    } catch (error) {
+      return rollbackUploadedImage(
+        processed.imageMeta,
+        error,
+        this.imageDeleter,
+      );
+    }
 
     try {
       await this.moderationWorkflow.recordContentModerationResult(
@@ -76,7 +90,11 @@ export class CreatePostUseCase {
       );
     } catch (error) {
       await this.repository.deletePost(postId);
-      throw error;
+      return rollbackUploadedImage(
+        processed.imageMeta,
+        error,
+        this.imageDeleter,
+      );
     }
 
     await logActivity(user.uid, "POST_CREATED", "User created a new post");

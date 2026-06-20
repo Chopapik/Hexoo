@@ -42,6 +42,7 @@ const pending = {
     evidence,
   },
 };
+const deleteImage = vi.fn(async () => undefined);
 
 describe("moderation log coherence contract", () => {
   beforeEach(() => {
@@ -59,7 +60,12 @@ describe("moderation log coherence contract", () => {
       process: vi.fn().mockResolvedValue(pending),
     } as unknown as PostContentService;
 
-    await new AddCommentUseCase(repository, contentService, session).execute({
+    await new AddCommentUseCase(
+      repository,
+      contentService,
+      session,
+      deleteImage,
+    ).execute({
       postId: "post-1",
       text: "comment",
     });
@@ -85,7 +91,12 @@ describe("moderation log coherence contract", () => {
     services.logModerationEvent.mockRejectedValue(new Error("log failed"));
 
     await expect(
-      new AddCommentUseCase(repository, contentService, session).execute({
+      new AddCommentUseCase(
+        repository,
+        contentService,
+        session,
+        deleteImage,
+      ).execute({
         postId: "post-1",
         text: "comment",
       }),
@@ -113,6 +124,7 @@ describe("moderation log coherence contract", () => {
         contentService,
         new PostModerationWorkflow(repository),
         session,
+        deleteImage,
       ).execute({ text: "post", youtubeUrl: "" }),
     ).rejects.toThrow("log failed");
     expect(repository.deletePost).toHaveBeenCalledWith("post-1");

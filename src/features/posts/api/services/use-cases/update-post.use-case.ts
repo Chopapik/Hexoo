@@ -3,6 +3,10 @@ import { formatZodErrorFlat } from "@/lib/zod";
 import { logActivity } from "@/features/activity/api/services";
 import type { SessionData } from "@/features/me/me.type";
 import type { ImageMeta } from "@/features/images/types/image.type";
+import {
+  deleteImageWithRetry,
+  rollbackUploadedImage,
+} from "@/features/images/api/image-cleanup";
 
 import type { PostRepository } from "../../repositories/post.repository.interface";
 import type { PostContentService } from "../post.content.service";
@@ -66,23 +70,33 @@ export class UpdatePostUseCase {
       data.imageFile,
     );
 
-    await this.moderationWorkflow.recordContentModerationResult(
-      postId,
-      processed.moderationLogPayloadForResource,
-    );
+    let updatedPost;
+    try {
+      await this.moderationWorkflow.recordContentModerationResult(
+        postId,
+        processed.moderationLogPayloadForResource,
+      );
 
-    if (processed.imageMeta && post.imageMeta) {
-      await this.imageDeleter(post.imageMeta);
+      updatedPost = await this.repository.updatePost(postId, {
+        text: nextText,
+        imageMeta: processed.imageMeta ?? post.imageMeta,
+        isPending: processed.isPending,
+        isNSFW: processed.isNSFW,
+        isEdited: true,
+        updatedAt: new Date(),
+      });
+    } catch (error) {
+      return rollbackUploadedImage(
+        processed.imageMeta,
+        error,
+        this.imageDeleter,
+      );
     }
 
-    const updatedPost = await this.repository.updatePost(postId, {
-      text: nextText,
-      imageMeta: processed.imageMeta ?? post.imageMeta,
-      isPending: processed.isPending,
-      isNSFW: processed.isNSFW,
-      isEdited: true,
-      updatedAt: new Date(),
-    });
+    // The old object remains valid until the DB no longer references it.
+    if (processed.imageMeta && post.imageMeta) {
+      await deleteImageWithRetry(post.imageMeta, this.imageDeleter);
+    }
 
     await logActivity(user.uid, "POST_UPDATED", `User updated post ${postId}`);
 

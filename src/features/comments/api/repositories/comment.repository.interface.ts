@@ -4,6 +4,7 @@ import type {
   UpdateCommentPayload,
 } from "../../types/comment.payload";
 import type { ReportDetails } from "@/features/shared/types/report.type";
+import type { ImageMeta } from "@/features/images/types/image.type";
 
 export interface CommentRepository {
   createComment(
@@ -12,6 +13,7 @@ export interface CommentRepository {
   ): Promise<string>;
   getCommentById(commentId: string): Promise<CommentEntity | null>;
   getCommentsByPostId(postId: string): Promise<CommentEntity[]>;
+  getImageMetasByPostId(postId: string): Promise<ImageMeta[]>;
   getCommentsPendingModeration(
     limit: number,
     startAfterId?: string,

@@ -14,12 +14,17 @@ import type { CreateCommentPayload } from "../../../types/comment.payload";
 
 import { assertNotRestricted, requireSession } from "../comment.guards";
 import { logModerationEvent } from "@/features/moderation/api/services/moderationLog.service";
+import {
+  rollbackUploadedImage,
+  type ImageDeleter,
+} from "@/features/images/api/image-cleanup";
 
 export class AddCommentUseCase {
   constructor(
     private readonly repository: CommentRepository,
     private readonly contentService: PostContentService,
     private readonly session: SessionData | null,
+    private readonly imageDeleter: ImageDeleter,
   ) {}
 
   async execute(data: AddCommentRequest): Promise<AddCommentResponse> {
@@ -58,7 +63,16 @@ export class AddCommentUseCase {
       imageMeta: processed.imageMeta ?? null,
     };
 
-    const commentId = await this.repository.createComment(postId, payload);
+    let commentId: string;
+    try {
+      commentId = await this.repository.createComment(postId, payload);
+    } catch (error) {
+      return rollbackUploadedImage(
+        processed.imageMeta,
+        error,
+        this.imageDeleter,
+      );
+    }
 
     if (processed.moderationLogPayloadForResource) {
       try {
@@ -69,7 +83,11 @@ export class AddCommentUseCase {
         });
       } catch (error) {
         await this.repository.deleteComment(commentId, postId);
-        throw error;
+        return rollbackUploadedImage(
+          processed.imageMeta,
+          error,
+          this.imageDeleter,
+        );
       }
     }
 

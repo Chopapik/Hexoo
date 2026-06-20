@@ -17,6 +17,7 @@ import type {
   PublicCommentResponseDto as PublicCommentResponse,
 } from "../../types/comment.dto";
 import type { SessionData } from "@/features/me/me.type";
+import { deleteImage } from "@/features/images/api/image.service";
 
 const postContentService = new PostContentService();
 const commentEnricher = new CommentEnricher(likeRepository);
@@ -28,6 +29,7 @@ export const getCommentService = (
     commentRepository,
     postContentService,
     session,
+    deleteImage,
   );
 
   const getCommentsByPostIdUseCase = new GetCommentsByPostIdUseCase(
@@ -45,6 +47,7 @@ export const getCommentService = (
 
   const deleteCommentUseCase = new DeleteCommentUseCase(
     commentRepository,
+    deleteImage,
     session,
   );
 

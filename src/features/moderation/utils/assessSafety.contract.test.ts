@@ -4,6 +4,7 @@ const provider = vi.hoisted(() => ({
   moderateText: vi.fn(),
   moderateImage: vi.fn(),
   uploadImage: vi.fn(),
+  prepareImage: vi.fn(),
   logModerationEvent: vi.fn(),
 }));
 
@@ -15,7 +16,8 @@ vi.mock("@/features/moderation/api/imageModeration", () => ({
 }));
 vi.mock("@/features/images/api/image.service", () => ({
   hasFile: (file?: File | null) => file instanceof File,
-  uploadImage: provider.uploadImage,
+  prepareImage: provider.prepareImage,
+  uploadPreparedImage: provider.uploadImage,
 }));
 vi.mock("@/features/moderation/api/services/moderationLog.service", () => ({
   logModerationEvent: provider.logModerationEvent,
@@ -42,6 +44,11 @@ describe("moderation provider and evidence contracts", () => {
     vi.clearAllMocks();
     provider.moderateText.mockResolvedValue(cleanResult);
     provider.moderateImage.mockResolvedValue(cleanResult);
+    provider.prepareImage.mockImplementation(async (file: File) => ({
+      file,
+      inputBuffer: Buffer.from("image"),
+      metadata: { width: 1, height: 1, pages: 1 },
+    }));
   });
 
   afterEach(() => vi.useRealTimers());
@@ -91,6 +98,7 @@ describe("moderation provider and evidence contracts", () => {
         name: "User",
         role: UserRole.User,
       },
+      vi.fn(async () => undefined),
     );
 
     await expect(

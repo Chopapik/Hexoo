@@ -16,6 +16,7 @@ import {
 
 describe("post owner authorization contract", () => {
   const imageDeleter = vi.fn();
+  const commentImageInventory = vi.fn(async () => []);
   const ownerPost = createMockPost({ id: "post-1", userId: "user-1" });
 
   beforeEach(() => vi.clearAllMocks());
@@ -39,7 +40,13 @@ describe("post owner authorization contract", () => {
         );
       } else {
         await expectAppError(
-          () => new DeletePostUseCase(repository, imageDeleter, null).execute("post-1"),
+          () =>
+            new DeletePostUseCase(
+              repository,
+              imageDeleter,
+              commentImageInventory,
+              null,
+            ).execute("post-1"),
           "AUTH_REQUIRED",
         );
       }
@@ -74,6 +81,7 @@ describe("post owner authorization contract", () => {
             new DeletePostUseCase(
               repository,
               imageDeleter,
+              commentImageInventory,
               createMockSession(),
             ).execute("post-1"),
           "FORBIDDEN",
@@ -110,6 +118,7 @@ describe("post owner authorization contract", () => {
     await new DeletePostUseCase(
       repository,
       imageDeleter,
+      commentImageInventory,
       createMockSession(),
     ).execute("post-1");
 

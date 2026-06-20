@@ -1,5 +1,9 @@
 import { logActivity } from "@/features/activity/api/services";
 import type { SessionData } from "@/features/me/me.type";
+import {
+  deleteImageWithRetry,
+  type ImageDeleter,
+} from "@/features/images/api/image-cleanup";
 
 import type { CommentRepository } from "../../repositories/comment.repository.interface";
 
@@ -12,6 +16,7 @@ import {
 export class DeleteCommentUseCase {
   constructor(
     private readonly repository: CommentRepository,
+    private readonly imageDeleter: ImageDeleter,
     private readonly session: SessionData | null,
   ) {}
 
@@ -23,6 +28,8 @@ export class DeleteCommentUseCase {
     assertCommentAuthor(comment, user.uid);
 
     await this.repository.deleteComment(commentId, comment.postId);
+
+    await deleteImageWithRetry(comment.imageMeta, this.imageDeleter);
 
     await logActivity(
       user.uid,

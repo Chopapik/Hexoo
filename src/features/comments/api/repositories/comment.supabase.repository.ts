@@ -22,6 +22,7 @@ import {
   toUpdateRow,
 } from "./comment.supabase.mapper";
 import { createAppError } from "@/lib/AppError";
+import { parseImageMeta } from "@/features/images/utils/imageMeta";
 
 const COMMENTS_TABLE = "comments";
 const COMMENT_REPORTS_TABLE = "comment_reports";
@@ -51,6 +52,18 @@ export class CommentSupabaseRepository implements CommentRepository {
       .order("created_at", { ascending: false });
     throwDbError(error);
     return (data ?? []).map(mapCommentRow);
+  }
+
+  async getImageMetasByPostId(postId: string) {
+    const { data, error } = await supabaseAdmin
+      .from(COMMENTS_TABLE)
+      .select("image_meta")
+      .eq("post_id", postId)
+      .not("image_meta", "is", null);
+    throwDbError(error);
+    return (data ?? [])
+      .map((row) => parseImageMeta(row.image_meta))
+      .filter((meta) => meta !== null);
   }
 
   async getCommentsPendingModeration(
