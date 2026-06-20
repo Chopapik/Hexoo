@@ -1,5 +1,10 @@
 import { createAppError } from "@/lib/AppError";
 import { deleteImage } from "@/features/images/api/image.service";
+import {
+  deleteImages,
+  deleteImageWithRetry,
+} from "@/features/images/api/image-cleanup";
+import type { ImageMeta } from "@/features/images/types/image.type";
 import { parseImageMeta } from "@/features/images/utils/imageMeta";
 import { supabaseAdmin } from "@/lib/supabaseServer";
 import { ModerationCommentResponseDto as ModerationCommentResponse } from "@/features/comments/types/comment.dto";
@@ -118,6 +123,24 @@ export class ModeratorService implements IModeratorService {
       );
     }
     return false;
+  }
+
+  private async collectPostCommentImages(postId: string): Promise<ImageMeta[]> {
+    const { data, error } = await supabaseAdmin
+      .from("comments")
+      .select("image_meta")
+      .eq("post_id", postId);
+    if (error) {
+      throw createAppError({
+        code: "DB_ERROR",
+        message:
+          "[moderatorService.reviewPost] Failed to collect comment image cleanup inventory",
+        details: error,
+      });
+    }
+    return (data ?? [])
+      .map((row) => parseImageMeta(row.image_meta))
+      .filter((meta) => meta !== null);
   }
 
   async getModerationQueueForPosts(
@@ -269,6 +292,11 @@ export class ModeratorService implements IModeratorService {
 
     if (await this.isReviewNoOp("posts", postId, action)) return;
 
+    const commentImages =
+      action === "reject"
+        ? await this.collectPostCommentImages(postId)
+        : [];
+
     const { data: txResult, error } = await supabaseAdmin.rpc(
       "moderator_review_post_tx",
       {
@@ -306,11 +334,9 @@ export class ModeratorService implements IModeratorService {
 
     if (action === "reject" && result.deletedImageMeta != null) {
       const meta = parseImageMeta(result.deletedImageMeta);
-      try {
-        await deleteImage(meta);
-      } catch {
-        // DB transaction is already committed; image cleanup is best-effort.
-      }
+      await deleteImages([meta, ...commentImages], deleteImage);
+    } else if (action === "reject") {
+      await deleteImages(commentImages, deleteImage);
     }
   }
 
@@ -376,11 +402,7 @@ export class ModeratorService implements IModeratorService {
 
     if (action === "reject" && result.deletedImageMeta != null) {
       const meta = parseImageMeta(result.deletedImageMeta);
-      try {
-        await deleteImage(meta);
-      } catch {
-        // DB transaction is already committed; image cleanup is best-effort.
-      }
+      await deleteImageWithRetry(meta, deleteImage);
     }
   }
 }
