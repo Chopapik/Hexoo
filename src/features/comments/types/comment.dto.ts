@@ -2,9 +2,13 @@ import { z } from "zod";
 import type { CommentEntity } from "./comment.entity";
 import type { ModerationStatus } from "@/features/shared/types/content.type";
 import type { CanonicalContentStatus } from "@/features/moderation/types/moderation.type";
+import {
+  IMAGE_UPLOAD_ALLOWED_MIME_TYPES,
+  IMAGE_UPLOAD_MAX_BYTES,
+} from "@/features/images/image-resource-policy";
 
 export const COMMENT_MAX_CHARS = 500;
-export const COMMENT_MAX_IMAGE_FILE_SIZE_BYTES = 5 * 1024 * 1024;
+export const COMMENT_MAX_IMAGE_FILE_SIZE_BYTES = IMAGE_UPLOAD_MAX_BYTES;
 
 export const AddCommentSchema = z
   .object({
@@ -19,8 +23,8 @@ export const AddCommentSchema = z
       .refine(
         (file) =>
           !file ||
-          ["image/png", "image/jpeg", "image/webp", "image/gif"].includes(
-            file.type,
+          IMAGE_UPLOAD_ALLOWED_MIME_TYPES.includes(
+            file.type as (typeof IMAGE_UPLOAD_ALLOWED_MIME_TYPES)[number],
           ),
         "wrong_file_type",
       ),

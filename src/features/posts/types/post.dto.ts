@@ -4,8 +4,12 @@ import { ModerationStatus } from "@/features/shared/types/content.type";
 import type { CanonicalContentStatus } from "@/features/moderation/types/moderation.type";
 import { isValidYouTubeUrl } from "../utils/youtubeUtils";
 import { isFileLike } from "@/features/images/utils/isFileLike";
+import {
+  IMAGE_UPLOAD_ALLOWED_MIME_TYPES,
+  IMAGE_UPLOAD_MAX_BYTES,
+} from "@/features/images/image-resource-policy";
 
-export const MAX_IMAGE_FILE_SIZE_BYTES = 5 * 1024 * 1024;
+export const MAX_IMAGE_FILE_SIZE_BYTES = IMAGE_UPLOAD_MAX_BYTES;
 export const POST_MAX_CHARS = 2048;
 
 export const CreatePostSchema = z
@@ -21,8 +25,8 @@ export const CreatePostSchema = z
       .refine(
         (file) =>
           !file ||
-          ["image/png", "image/jpeg", "image/webp", "image/gif"].includes(
-            file.type,
+          IMAGE_UPLOAD_ALLOWED_MIME_TYPES.includes(
+            file.type as (typeof IMAGE_UPLOAD_ALLOWED_MIME_TYPES)[number],
           ),
         "wrong_file_type",
       ),
@@ -59,7 +63,10 @@ export const UpdatePostSchema = z.object({
     )
     .refine(
       (file) =>
-        !file || ["image/png", "image/jpeg", "image/webp"].includes(file.type),
+        !file ||
+        IMAGE_UPLOAD_ALLOWED_MIME_TYPES.includes(
+          file.type as (typeof IMAGE_UPLOAD_ALLOWED_MIME_TYPES)[number],
+        ),
       "wrong_file_type",
     ),
 });

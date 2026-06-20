@@ -9,6 +9,7 @@ import {
   getOptionalUserFromSession,
   getUserFromSession,
 } from "@/features/auth/api/utils/session-user.service";
+import { assertImageUploadRequestSize } from "@/features/images/api/image-resource-limits";
 
 export const POST = withErrorHandling(
   async (req: NextRequest, context: AnyRouteContext<{ id: string }>) => {
@@ -17,6 +18,7 @@ export const POST = withErrorHandling(
     const contentType = req.headers.get("content-type") || "";
 
     if (contentType.includes("multipart/form-data")) {
+      assertImageUploadRequestSize(req.headers);
       const form = await req.formData();
       const text = String(form.get("text") || "");
       const imageFile = form.get("imageFile");

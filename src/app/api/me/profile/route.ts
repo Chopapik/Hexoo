@@ -4,9 +4,11 @@ import { handleSuccess } from "@/lib/http/responseHelpers";
 import { NextRequest } from "next/server";
 import { getUserFromSession } from "@/features/auth/api/utils/session-user.service";
 import type { UpdateProfileData } from "@/features/me/me.type";
+import { assertImageUploadRequestSize } from "@/features/images/api/image-resource-limits";
 
 export const PUT = withErrorHandling(async (req: NextRequest) => {
   const session = await getUserFromSession();
+  assertImageUploadRequestSize(req.headers);
   const formData = await req.formData();
 
   const name = formData.get("name")?.toString();

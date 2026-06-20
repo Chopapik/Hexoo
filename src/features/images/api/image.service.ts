@@ -5,6 +5,11 @@ import { SupabaseImageStorageRepository } from "./image.supabase.repository";
 import { buildObjectKey } from "../utils/imageMeta";
 import type { ImageMeta } from "../types/image.type";
 import type { ImageUploadResult } from "./imageService.interface";
+import {
+  prepareImageUpload,
+  type PreparedImageUpload,
+  withImageProcessingTimeout,
+} from "./image-resource-limits";
 
 const storageRepository = new SupabaseImageStorageRepository();
 
@@ -19,45 +24,38 @@ function requireBucket(): string {
   return bucket;
 }
 
-export const uploadImage = async (
+export const defaultImageMetadataProbe = async (input: Buffer) => {
+  const metadata = await sharp(input, { animated: true }).metadata();
+  return {
+    width: metadata.width,
+    height: metadata.height,
+    pages: metadata.pages,
+  };
+};
+
+export const prepareImage = async (
   file: File | Blob,
+): Promise<PreparedImageUpload> =>
+  prepareImageUpload(file, defaultImageMetadataProbe);
+
+export const uploadPreparedImage = async (
+  prepared: PreparedImageUpload,
   uid: string,
   storageFolder: string,
 ): Promise<ImageUploadResult> => {
-  if (!file) {
-    throw createAppError({
-      code: "INVALID_INPUT",
-      message: "[imageService.uploadImage] No file provided",
-    });
-  }
-
-  let inputBuffer: Buffer;
-  try {
-    const arrayBuffer = await file.arrayBuffer();
-    inputBuffer = Buffer.from(arrayBuffer);
-  } catch {
-    throw createAppError({
-      code: "INVALID_INPUT",
-      message: "[imageService.uploadImage] Failed to read file",
-    });
-  }
-
   let processedBuffer: Buffer;
-  let isAnimated = false; 
+  const isAnimated = prepared.metadata.pages > 1;
 
   try {
-    const processor = sharp(inputBuffer, { animated: true });
-    const metadata = await processor.metadata();
-
-    isAnimated = !!(metadata.pages && metadata.pages > 1);
-
-    processedBuffer = await processor
-      .resize(1920, 1920, {
-        fit: "inside",
-        withoutEnlargement: true,
-      })
-      .webp({ quality: 80 })
-      .toBuffer();
+    processedBuffer = await withImageProcessingTimeout(
+      sharp(prepared.inputBuffer, { animated: true })
+        .resize(1920, 1920, {
+          fit: "inside",
+          withoutEnlargement: true,
+        })
+        .webp({ quality: 80 })
+        .toBuffer(),
+    );
   } catch (error) {
     throw createAppError({
       code: "VALIDATION_ERROR",
@@ -92,7 +90,7 @@ export const uploadImage = async (
       downloadToken,
       contentType: result.contentType,
       sizeBytes: result.sizeBytes,
-      isAnimated, 
+      isAnimated,
     };
 
     return {
@@ -108,6 +106,20 @@ export const uploadImage = async (
   }
 };
 
+export const uploadImage = async (
+  file: File | Blob,
+  uid: string,
+  storageFolder: string,
+): Promise<ImageUploadResult> => {
+  if (!file) {
+    throw createAppError({
+      code: "INVALID_INPUT",
+      message: "[imageService.uploadImage] No file provided",
+    });
+  }
+  return uploadPreparedImage(await prepareImage(file), uid, storageFolder);
+};
+
 export const deleteImage = async (
   meta: ImageMeta | null | undefined,
 ): Promise<void> => {
@@ -121,7 +133,7 @@ export const deleteImage = async (
     throw createAppError({
       code: "EXTERNAL_SERVICE",
       message: "[imageService.deleteImage] Failed to delete image from storage",
-      details: error,
+      details: { error, meta },
     });
   }
 };

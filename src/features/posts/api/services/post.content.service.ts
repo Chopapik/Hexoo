@@ -1,4 +1,8 @@
-import { hasFile, uploadImage } from "@/features/images/api/image.service";
+import {
+  hasFile,
+  prepareImage,
+  uploadPreparedImage,
+} from "@/features/images/api/image.service";
 import {
   performModeration,
   type ModerationLogPayloadForResource,
@@ -16,18 +20,29 @@ type ContentProcessResult = {
 };
 
 export class PostContentService {
+  constructor(
+    private readonly imagePreparer = prepareImage,
+    private readonly imageUploader = uploadPreparedImage,
+    private readonly moderator = performModeration,
+  ) {}
+
   async process(
     uid: string,
     text: string,
     resource: ContentResource,
     imageFile?: File | null,
   ): Promise<ContentProcessResult> {
-    const moderation = await performModeration(uid, text, imageFile);
+    // Validate byte/MIME/resource limits before OpenAI can read or receive the
+    // image. The prepared buffer is then reused by Sharp during upload.
+    const preparedImage = hasFile(imageFile)
+      ? await this.imagePreparer(imageFile)
+      : undefined;
+    const moderation = await this.moderator(uid, text, imageFile);
 
     let imageData: Pick<ContentProcessResult, "imageMeta"> = {};
 
-    if (hasFile(imageFile)) {
-      const upload = await uploadImage(imageFile, uid, resource);
+    if (preparedImage) {
+      const upload = await this.imageUploader(preparedImage, uid, resource);
       const imageMeta: ImageMeta = {
         storageBucket: upload.storageBucket,
         storageLocation: upload.storageLocation,

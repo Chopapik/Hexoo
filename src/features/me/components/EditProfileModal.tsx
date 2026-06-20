@@ -76,7 +76,10 @@ function EditProfileModalContent({
   const nameValue = watch("name") || "";
   const nameErrorCode = errors.name?.message as string | undefined;
   const nameLength = nameValue.trim().length;
-  const normalizedNameValue = nameValue.trim().toLowerCase().replace(/\s+/g, "");
+  const normalizedNameValue = nameValue
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, "");
   const normalizedCurrentName = user.name
     .trim()
     .toLowerCase()
@@ -381,7 +384,7 @@ function EditProfileModalContent({
                 type="file"
                 ref={fileInputRef}
                 className="hidden"
-                accept="image/png, image/jpeg, image/webp"
+                accept="image/png, image/jpeg, image/webp, image/gif"
                 onChange={handleAvatarInputChange}
               />
             </div>

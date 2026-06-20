@@ -12,6 +12,7 @@ import {
   getUserFromSession,
 } from "@/features/auth/api/utils/session-user.service";
 import { isFileLike } from "@/features/images/utils/isFileLike";
+import { assertImageUploadRequestSize } from "@/features/images/api/image-resource-limits";
 
 export const GET = withErrorHandling(
   async (req: NextRequest, context: AnyRouteContext<{ id: string }>) => {
@@ -29,6 +30,7 @@ export const PUT = withErrorHandling(
     const contentType = req.headers.get("content-type") || "";
 
     if (contentType.includes("multipart/form-data")) {
+      assertImageUploadRequestSize(req.headers);
       const form = await req.formData();
       const text = String(form.get("text") || "");
       const imageFileRaw = form.get("imageFile");

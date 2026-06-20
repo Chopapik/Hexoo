@@ -83,6 +83,19 @@ function bodyToRequestInit(
   }
 
   if (body.type === "formData") {
+    // Route handlers see Content-Length after the HTTP transport has encoded
+    // multipart data. Direct handler tests bypass that transport, so emulate
+    // its bounded, non-zero header without setting a multipart Content-Type.
+    if (!headers.has("Content-Length")) {
+      let estimatedBytes = 1024;
+      for (const [, value] of body.value.entries()) {
+        estimatedBytes +=
+          typeof value === "string"
+            ? new TextEncoder().encode(value).byteLength
+            : value.size;
+      }
+      headers.set("Content-Length", String(estimatedBytes));
+    }
     return { body: body.value };
   }
 

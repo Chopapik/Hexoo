@@ -9,10 +9,12 @@ import { NextRequest } from "next/server";
 import { CreatePostRequestDto } from "@/features/posts/types/post.dto";
 import { createPost, getPosts } from "@/features/posts/api/services";
 import { isFileLike } from "@/features/images/utils/isFileLike";
+import { assertImageUploadRequestSize } from "@/features/images/api/image-resource-limits";
 export const POST = withErrorHandling(async (req: NextRequest) => {
   const session = await getUserFromSession();
   const contentType = req.headers.get("content-type") || "";
   if (contentType.includes("multipart/form-data")) {
+    assertImageUploadRequestSize(req.headers);
     const form = await req.formData();
     const text = String(form.get("text") || "");
     const imageFileRaw = form.get("imageFile");

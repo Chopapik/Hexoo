@@ -1,6 +1,10 @@
 import z from "zod";
 import { UserRole } from "../users/types/user.type";
 import { BaseUsernameSchema } from "@/features/shared/utils/usernameSchema";
+import {
+  IMAGE_UPLOAD_ALLOWED_MIME_TYPES,
+  IMAGE_UPLOAD_MAX_BYTES,
+} from "@/features/images/image-resource-policy";
 
 export type SessionData = {
   uid: string;
@@ -37,10 +41,13 @@ export const UpdateProfileSchema = z.object({
   avatarFile: z
     .instanceof(File)
     .optional()
-    .refine((file) => !file || file.size <= 5 * 1024 * 1024, "file_too_big")
+    .refine((file) => !file || file.size <= IMAGE_UPLOAD_MAX_BYTES, "file_too_big")
     .refine(
       (file) =>
-        !file || ["image/png", "image/jpeg", "image/webp"].includes(file.type),
+        !file ||
+        IMAGE_UPLOAD_ALLOWED_MIME_TYPES.includes(
+          file.type as (typeof IMAGE_UPLOAD_ALLOWED_MIME_TYPES)[number],
+        ),
       "wrong_file_type",
     ),
 });
