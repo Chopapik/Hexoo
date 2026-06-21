@@ -1,4 +1,4 @@
--- Complete Batch 3/4: canonical content status, atomic moderation evidence,
+-- Batch 3/4: canonical content status, atomic moderation evidence,
 -- and the remaining application-backed text constraints.
 
 do $$ begin
@@ -10,23 +10,9 @@ exception
 end $$;
 
 alter table public.posts
-  add column if not exists status public.content_status;
+  add column if not exists status public.content_status not null default 'visible';
 alter table public.comments
-  add column if not exists status public.content_status;
-
-update public.posts
-set status = case when is_pending then 'pending' else 'visible' end::public.content_status
-where status is null;
-update public.comments
-set status = case when is_pending then 'pending' else 'visible' end::public.content_status
-where status is null;
-
-alter table public.posts
-  alter column status set default 'visible',
-  alter column status set not null;
-alter table public.comments
-  alter column status set default 'visible',
-  alter column status set not null;
+  add column if not exists status public.content_status not null default 'visible';
 
 alter table public.moderation_logs
   add column if not exists previous_status public.content_status,
@@ -390,3 +376,17 @@ alter table public.moderation_logs
 -- private users row is anonymized or removed. Polymorphic likes.parent_id and
 -- moderation_logs.resource_id cannot use one ordinary FK. Resource-specific
 -- report FKs and comments.post_id remain enforced with ON DELETE CASCADE.
+
+-- Backfill canonical status after all schema changes in this migration.
+-- This intentionally runs last so remote databases with existing rows and
+-- deferred comment counter trigger events do not see later ALTER TABLE work
+-- on posts/comments in the same migration statement batch.
+update public.posts
+set status = case when is_pending then 'pending' else 'visible' end::public.content_status
+where is_pending = true
+  and status is distinct from 'pending'::public.content_status;
+
+update public.comments
+set status = case when is_pending then 'pending' else 'visible' end::public.content_status
+where is_pending = true
+  and status is distinct from 'pending'::public.content_status;
