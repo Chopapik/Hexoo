@@ -3,7 +3,6 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const database = vi.hoisted(() => ({
   rpc: vi.fn(),
   maybeSingle: vi.fn(),
-  getLatestModerationLogForResource: vi.fn(),
   deleteImage: vi.fn(),
   commentImageRows: [] as Array<{ image_meta: unknown }>,
 }));
@@ -25,11 +24,6 @@ vi.mock("@/lib/supabaseServer", () => ({
 vi.mock("@/features/images/api/image.service", () => ({
   deleteImage: database.deleteImage,
 }));
-vi.mock("@/features/moderation/api/services/moderationLog.service", () => ({
-  getLatestModerationLogForResource:
-    database.getLatestModerationLogForResource,
-}));
-
 import { ModeratorService } from "../moderator.service";
 import type { ModerationService } from "@/features/moderation/api/services/moderation.service.interface";
 import { UserRole } from "@/features/users/types/user.type";
@@ -48,10 +42,6 @@ describe("moderator action idempotency contract", () => {
     database.rpc.mockResolvedValue({ data: {}, error: null });
     database.deleteImage.mockResolvedValue(undefined);
     database.commentImageRows = [];
-    database.getLatestModerationLogForResource.mockResolvedValue({
-      verdict: "pending",
-      reasonSummary: "Post moved to quarantine by moderator",
-    });
   });
 
   it.each(["approve", "reject", "quarantine"] as const)(
@@ -59,14 +49,14 @@ describe("moderator action idempotency contract", () => {
     async (action) => {
       database.maybeSingle
         .mockResolvedValueOnce({
-          data: { is_pending: action !== "quarantine" },
+          data: { status: "pending" },
           error: null,
         })
         .mockResolvedValueOnce({
           data:
             action === "reject"
               ? null
-              : { is_pending: action === "quarantine" },
+              : { status: action === "approve" ? "visible" : "quarantined" },
           error: null,
         });
       const service = new ModeratorService(session, moderationService, null);
@@ -77,16 +67,20 @@ describe("moderator action idempotency contract", () => {
 
       expect(database.rpc).toHaveBeenCalledTimes(1);
       expect(database.rpc).toHaveBeenCalledWith(
-        "moderator_review_post_tx",
-        expect.objectContaining({ p_action: action, p_post_id: "post-1" }),
+        "moderator_review_content_guarded_tx",
+        expect.objectContaining({
+          p_action: action,
+          p_resource_type: "post",
+          p_resource_id: "post-1",
+        }),
       );
     },
   );
 
   it("applies the same no-op retry guard to comments", async () => {
     database.maybeSingle
-      .mockResolvedValueOnce({ data: { is_pending: true }, error: null })
-      .mockResolvedValueOnce({ data: { is_pending: false }, error: null });
+      .mockResolvedValueOnce({ data: { status: "pending" }, error: null })
+      .mockResolvedValueOnce({ data: { status: "visible" }, error: null });
     const service = new ModeratorService(session, moderationService, null);
 
     await service.reviewComment("comment-1", "approve", false, [], "");
@@ -94,10 +88,11 @@ describe("moderator action idempotency contract", () => {
 
     expect(database.rpc).toHaveBeenCalledTimes(1);
     expect(database.rpc).toHaveBeenCalledWith(
-      "moderator_review_comment_tx",
+      "moderator_review_content_guarded_tx",
       expect.objectContaining({
         p_action: "approve",
-        p_comment_id: "comment-1",
+        p_resource_type: "comment",
+        p_resource_id: "comment-1",
       }),
     );
   });
@@ -113,7 +108,7 @@ describe("moderator action idempotency contract", () => {
     };
     const commentImage = { ...postImage, storageLocation: "comments", fileName: "comment.webp" };
     database.maybeSingle.mockResolvedValue({
-      data: { is_pending: true },
+      data: { status: "pending" },
       error: null,
     });
     database.commentImageRows = [{ image_meta: commentImage }];
@@ -144,7 +139,7 @@ describe("moderator action idempotency contract", () => {
       sizeBytes: 10,
     };
     database.maybeSingle.mockResolvedValue({
-      data: { is_pending: true },
+      data: { status: "pending" },
       error: null,
     });
     database.rpc.mockResolvedValue({

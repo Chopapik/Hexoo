@@ -16,8 +16,6 @@ import type { ModerationService as IModerationService } from "@/features/moderat
 import type { SessionData } from "@/features/me/me.type";
 import type { ModeratorService as IModeratorService } from "./moderator.service.interface";
 import type { AuthRepository } from "@/features/auth/api/repositories/authRepository.interface";
-import { getLatestModerationLogForResource } from "@/features/moderation/api/services/moderationLog.service";
-import { deriveCanonicalContentStatus } from "@/features/moderation/types/moderation.type";
 
 export class ModeratorService implements IModeratorService {
   constructor(
@@ -93,7 +91,7 @@ export class ModeratorService implements IModeratorService {
   ): Promise<boolean> {
     const { data, error } = await supabaseAdmin
       .from(table)
-      .select("is_pending")
+      .select("status")
       .eq("id", resourceId)
       .maybeSingle();
 
@@ -106,22 +104,8 @@ export class ModeratorService implements IModeratorService {
     }
 
     if (!data) return action === "reject";
-    if (action === "approve") return !data.is_pending;
-    if (action === "quarantine") {
-      if (!data.is_pending) return false;
-      const resourceType = table === "posts" ? "post" : "comment";
-      const latestLog = await getLatestModerationLogForResource(
-        resourceType,
-        resourceId,
-      );
-      return (
-        deriveCanonicalContentStatus({
-          isPending: true,
-          decision: latestLog?.verdict,
-          reasonSummary: latestLog?.reasonSummary,
-        }) === "quarantined"
-      );
-    }
+    if (action === "approve") return data.status === "visible";
+    if (action === "quarantine") return data.status === "quarantined";
     return false;
   }
 
@@ -298,9 +282,10 @@ export class ModeratorService implements IModeratorService {
         : [];
 
     const { data: txResult, error } = await supabaseAdmin.rpc(
-      "moderator_review_post_tx",
+      "moderator_review_content_guarded_tx",
       {
-        p_post_id: postId,
+        p_resource_type: "post",
+        p_resource_id: postId,
         p_action: action,
         p_moderator_uid: moderator.uid,
         p_categories: categories,
@@ -366,9 +351,10 @@ export class ModeratorService implements IModeratorService {
     if (await this.isReviewNoOp("comments", commentId, action)) return;
 
     const { data: txResult, error } = await supabaseAdmin.rpc(
-      "moderator_review_comment_tx",
+      "moderator_review_content_guarded_tx",
       {
-        p_comment_id: commentId,
+        p_resource_type: "comment",
+        p_resource_id: commentId,
         p_action: action,
         p_moderator_uid: moderator.uid,
         p_categories: categories,
