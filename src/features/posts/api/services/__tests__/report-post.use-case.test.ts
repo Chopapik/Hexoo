@@ -71,7 +71,7 @@ describe("ReportPostUseCase", () => {
     await expectAppError(() => useCase.execute("post-1", "spam"), "CONFLICT");
   });
 
-  it("reports post and records moderation workflow", async () => {
+  it("records the user report without treating it as a moderation decision", async () => {
     const result = await useCase.execute("post-1", "spam", "repeated ads");
 
     expect(repository.reportPost).toHaveBeenCalledWith(
@@ -82,7 +82,7 @@ describe("ReportPostUseCase", () => {
         details: "repeated ads",
       }),
     );
-    expect(moderationWorkflow.recordUserReport).toHaveBeenCalled();
+    expect(moderationWorkflow.recordUserReport).not.toHaveBeenCalled();
     expect(moderationWorkflow.recordReportThresholdHidden).not.toHaveBeenCalled();
     expect(logActivity).toHaveBeenCalledWith(
       "user-1",
@@ -92,7 +92,7 @@ describe("ReportPostUseCase", () => {
     expect(result).toEqual({ hidden: false, reportsCount: 1 });
   });
 
-  it("records threshold hidden when post becomes hidden", async () => {
+  it("leaves threshold status/audit persistence to the repository transaction", async () => {
     vi.mocked(repository.reportPost).mockResolvedValue({
       hidden: true,
       reportsCount: 5,
@@ -100,7 +100,7 @@ describe("ReportPostUseCase", () => {
 
     const result = await useCase.execute("post-1", "hate");
 
-    expect(moderationWorkflow.recordReportThresholdHidden).toHaveBeenCalled();
+    expect(moderationWorkflow.recordReportThresholdHidden).not.toHaveBeenCalled();
     expect(result).toEqual({ hidden: true, reportsCount: 5 });
   });
 

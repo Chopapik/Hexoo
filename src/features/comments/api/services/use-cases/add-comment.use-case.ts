@@ -13,11 +13,11 @@ import {
 import type { CreateCommentPayload } from "../../../types/comment.payload";
 
 import { assertNotRestricted, requireSession } from "../comment.guards";
-import { logModerationEvent } from "@/features/moderation/api/services/moderationLog.service";
 import {
   rollbackUploadedImage,
   type ImageDeleter,
 } from "@/features/images/api/image-cleanup";
+import { toModerationContext } from "@/features/moderation/api/repositories/moderationLog.supabase.mapper";
 
 export class AddCommentUseCase {
   constructor(
@@ -58,37 +58,23 @@ export class AddCommentUseCase {
       createdAt: now,
       updatedAt: now,
       isPending: processed.isPending,
+      moderationStatus: processed.isPending ? "pending" : "visible",
+      moderationContext: toModerationContext(
+        processed.moderationLogPayloadForResource,
+      ),
       isNSFW: processed.isNSFW,
       isEdited: false,
       imageMeta: processed.imageMeta ?? null,
     };
 
-    let commentId: string;
     try {
-      commentId = await this.repository.createComment(postId, payload);
+      await this.repository.createComment(postId, payload);
     } catch (error) {
       return rollbackUploadedImage(
         processed.imageMeta,
         error,
         this.imageDeleter,
       );
-    }
-
-    if (processed.moderationLogPayloadForResource) {
-      try {
-        await logModerationEvent({
-          ...processed.moderationLogPayloadForResource,
-          resourceType: "comment",
-          resourceId: commentId,
-        });
-      } catch (error) {
-        await this.repository.deleteComment(commentId, postId);
-        return rollbackUploadedImage(
-          processed.imageMeta,
-          error,
-          this.imageDeleter,
-        );
-      }
     }
 
     await logActivity(

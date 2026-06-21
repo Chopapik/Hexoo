@@ -19,12 +19,13 @@ import {
   rollbackUploadedImage,
   type ImageDeleter,
 } from "@/features/images/api/image-cleanup";
+import { toModerationContext } from "@/features/moderation/api/repositories/moderationLog.supabase.mapper";
 
 export class CreatePostUseCase {
   constructor(
     private readonly repository: PostRepository,
     private readonly contentService: PostContentService,
-    private readonly moderationWorkflow: PostModerationWorkflow,
+    _moderationWorkflow: PostModerationWorkflow,
     private readonly session: SessionData | null,
     private readonly imageDeleter: ImageDeleter,
   ) {}
@@ -62,6 +63,10 @@ export class CreatePostUseCase {
       device: "Web",
       imageMeta: processed.imageMeta ?? null,
       isPending: processed.isPending,
+      moderationStatus: processed.isPending ? "pending" : "visible",
+      moderationContext: toModerationContext(
+        processed.moderationLogPayloadForResource,
+      ),
       isNSFW: processed.isNSFW,
       likesCount: 0,
       commentsCount: 0,
@@ -76,20 +81,6 @@ export class CreatePostUseCase {
     try {
       postId = await this.repository.createPost(dbInput);
     } catch (error) {
-      return rollbackUploadedImage(
-        processed.imageMeta,
-        error,
-        this.imageDeleter,
-      );
-    }
-
-    try {
-      await this.moderationWorkflow.recordContentModerationResult(
-        postId,
-        processed.moderationLogPayloadForResource,
-      );
-    } catch (error) {
-      await this.repository.deletePost(postId);
       return rollbackUploadedImage(
         processed.imageMeta,
         error,

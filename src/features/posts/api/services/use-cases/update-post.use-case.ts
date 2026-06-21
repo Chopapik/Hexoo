@@ -7,6 +7,7 @@ import {
   deleteImageWithRetry,
   rollbackUploadedImage,
 } from "@/features/images/api/image-cleanup";
+import { toModerationContext } from "@/features/moderation/api/repositories/moderationLog.supabase.mapper";
 
 import type { PostRepository } from "../../repositories/post.repository.interface";
 import type { PostContentService } from "../post.content.service";
@@ -32,7 +33,7 @@ export class UpdatePostUseCase {
   constructor(
     private readonly repository: PostRepository,
     private readonly contentService: PostContentService,
-    private readonly moderationWorkflow: PostModerationWorkflow,
+    _moderationWorkflow: PostModerationWorkflow,
     private readonly enricher: PostEnricher,
     private readonly imageDeleter: ImageDeleter,
     private readonly session: SessionData | null,
@@ -72,15 +73,14 @@ export class UpdatePostUseCase {
 
     let updatedPost;
     try {
-      await this.moderationWorkflow.recordContentModerationResult(
-        postId,
-        processed.moderationLogPayloadForResource,
-      );
-
       updatedPost = await this.repository.updatePost(postId, {
         text: nextText,
         imageMeta: processed.imageMeta ?? post.imageMeta,
         isPending: processed.isPending,
+        moderationStatus: processed.isPending ? "pending" : "visible",
+        moderationContext: toModerationContext(
+          processed.moderationLogPayloadForResource,
+        ),
         isNSFW: processed.isNSFW,
         isEdited: true,
         updatedAt: new Date(),

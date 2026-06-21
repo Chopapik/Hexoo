@@ -17,6 +17,7 @@ import {
   assertCommentExists,
   requireSession,
 } from "../comment.guards";
+import { toModerationContext } from "@/features/moderation/api/repositories/moderationLog.supabase.mapper";
 
 export class UpdateCommentUseCase {
   constructor(
@@ -56,6 +57,10 @@ export class UpdateCommentUseCase {
       text: data.text,
       isEdited: true,
       isPending: processed.isPending,
+      moderationStatus: processed.isPending ? "pending" : "visible",
+      moderationContext: toModerationContext(
+        processed.moderationLogPayloadForResource,
+      ),
       isNSFW: processed.isNSFW,
       updatedAt: new Date(),
     });

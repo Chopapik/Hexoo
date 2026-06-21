@@ -17,7 +17,7 @@ import {
 export class ReportPostUseCase {
   constructor(
     private readonly repository: PostRepository,
-    private readonly moderationWorkflow: PostModerationWorkflow,
+    _moderationWorkflow: PostModerationWorkflow,
     private readonly session: SessionData | null,
   ) {}
 
@@ -62,24 +62,6 @@ export class ReportPostUseCase {
       details: data.details,
       createdAt: new Date(),
     });
-
-    await this.moderationWorkflow.recordUserReport({
-      post,
-      postId,
-      reporterId: user.uid,
-      reason: data.reason,
-      details: data.details,
-    });
-
-    if (result.hidden) {
-      await this.moderationWorkflow.recordReportThresholdHidden({
-        post,
-        postId,
-        reporterId: user.uid,
-        reason: data.reason,
-        details: data.details,
-      });
-    }
 
     await logActivity(
       user.uid,

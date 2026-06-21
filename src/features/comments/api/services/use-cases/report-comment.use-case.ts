@@ -1,7 +1,5 @@
 import { createAppError } from "@/lib/AppError";
 import { formatZodErrorFlat } from "@/lib/zod";
-import { ModerationStatus } from "@/features/shared/types/content.type";
-import { logModerationEvent } from "@/features/moderation/api/services/moderationLog.service";
 import { logActivity } from "@/features/activity/api/services";
 import type { SessionData } from "@/features/me/me.type";
 
@@ -43,20 +41,6 @@ export class ReportCommentUseCase {
       reason,
       details,
       createdAt: new Date(),
-    });
-
-    await logModerationEvent({
-      userId: comment.userId,
-      timestamp: new Date(),
-      verdict: ModerationStatus.Pending,
-      categories: [reason],
-      actionTaken: "FLAGGED_FOR_REVIEW",
-      resourceType: "comment",
-      resourceId: commentId,
-      source: "user_report",
-      actorId: user.uid,
-      reasonSummary: "Comment reported by user",
-      reasonDetails: details ? `${reason}: ${details}` : reason,
     });
 
     await logActivity(

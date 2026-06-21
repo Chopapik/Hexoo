@@ -57,25 +57,22 @@ describe("STORAGE-UPLOAD-ROLLBACK-001", () => {
     expect(deleteImage).toHaveBeenCalledWith(newImage);
   });
 
-  it("deletes a post upload after a compensated moderation-log failure", async () => {
+  it("deletes a post upload when the atomic content/log write fails", async () => {
     const repository = createMockPostRepository();
-    vi.mocked(repository.createPost).mockResolvedValue("post-1");
-    vi.mocked(repository.deletePost).mockResolvedValue(undefined);
-    const workflow = createMockPostModerationWorkflow();
-    vi.mocked(workflow.recordContentModerationResult).mockRejectedValue(
+    vi.mocked(repository.createPost).mockRejectedValue(
       new Error("log failed"),
     );
     const useCase = new CreatePostUseCase(
       repository,
       content,
-      workflow,
+      createMockPostModerationWorkflow(),
       createMockSession(),
       deleteImage,
     );
     await expect(
       useCase.execute({ text: "post", youtubeUrl: "" }),
     ).rejects.toThrow("log failed");
-    expect(repository.deletePost).toHaveBeenCalledWith("post-1");
+    expect(repository.deletePost).not.toHaveBeenCalled();
     expect(deleteImage).toHaveBeenCalledWith(newImage);
   });
 
