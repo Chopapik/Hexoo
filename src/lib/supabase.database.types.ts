@@ -105,7 +105,9 @@ export type Database = {
           is_nsfw: boolean
           is_pending: boolean
           likes_count: number
+          moderation_context: Json | null
           post_id: string
+          status: Database["public"]["Enums"]["content_status"]
           text: string
           updated_at: string | null
           user_id: string
@@ -121,7 +123,9 @@ export type Database = {
           is_nsfw?: boolean
           is_pending?: boolean
           likes_count?: number
+          moderation_context?: Json | null
           post_id: string
+          status?: Database["public"]["Enums"]["content_status"]
           text?: string
           updated_at?: string | null
           user_id: string
@@ -137,7 +141,9 @@ export type Database = {
           is_nsfw?: boolean
           is_pending?: boolean
           likes_count?: number
+          moderation_context?: Json | null
           post_id?: string
+          status?: Database["public"]["Enums"]["content_status"]
           text?: string
           updated_at?: string | null
           user_id?: string
@@ -183,6 +189,8 @@ export type Database = {
           categories: string[]
           created_at: string
           id: string
+          new_status: Database["public"]["Enums"]["content_status"] | null
+          previous_status: Database["public"]["Enums"]["content_status"] | null
           reason_details: string | null
           reason_summary: string | null
           resource_id: string | null
@@ -198,6 +206,8 @@ export type Database = {
           categories?: string[]
           created_at?: string
           id?: string
+          new_status?: Database["public"]["Enums"]["content_status"] | null
+          previous_status?: Database["public"]["Enums"]["content_status"] | null
           reason_details?: string | null
           reason_summary?: string | null
           resource_id?: string | null
@@ -213,6 +223,8 @@ export type Database = {
           categories?: string[]
           created_at?: string
           id?: string
+          new_status?: Database["public"]["Enums"]["content_status"] | null
+          previous_status?: Database["public"]["Enums"]["content_status"] | null
           reason_details?: string | null
           reason_summary?: string | null
           resource_id?: string | null
@@ -223,51 +235,6 @@ export type Database = {
           verdict?: string
         }
         Relationships: []
-      }
-      notifications: {
-        Row: {
-          actor_id: string
-          created_at: string
-          id: string
-          is_read: boolean
-          receiver_id: string
-          target_id: string
-          type: string
-        }
-        Insert: {
-          actor_id: string
-          created_at?: string
-          id?: string
-          is_read?: boolean
-          receiver_id: string
-          target_id: string
-          type: string
-        }
-        Update: {
-          actor_id?: string
-          created_at?: string
-          id?: string
-          is_read?: boolean
-          receiver_id?: string
-          target_id?: string
-          type?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "notifications_actor_id_fkey"
-            columns: ["actor_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["uid"]
-          },
-          {
-            foreignKeyName: "notifications_receiver_id_fkey"
-            columns: ["receiver_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["uid"]
-          },
-        ]
       }
       post_reports: {
         Row: {
@@ -316,6 +283,8 @@ export type Database = {
           is_nsfw: boolean
           is_pending: boolean
           likes_count: number
+          moderation_context: Json | null
+          status: Database["public"]["Enums"]["content_status"]
           text: string
           updated_at: string | null
           user_id: string
@@ -332,6 +301,8 @@ export type Database = {
           is_nsfw?: boolean
           is_pending?: boolean
           likes_count?: number
+          moderation_context?: Json | null
+          status?: Database["public"]["Enums"]["content_status"]
           text?: string
           updated_at?: string | null
           user_id: string
@@ -348,6 +319,8 @@ export type Database = {
           is_nsfw?: boolean
           is_pending?: boolean
           likes_count?: number
+          moderation_context?: Json | null
+          status?: Database["public"]["Enums"]["content_status"]
           text?: string
           updated_at?: string | null
           user_id?: string
@@ -442,21 +415,13 @@ export type Database = {
           p_is_nsfw: boolean
           p_is_pending: boolean
           p_likes_count: number
+          p_moderation_context?: Json
           p_post_id: string
           p_text: string
           p_updated_at: string
           p_user_id: string
         }
         Returns: string
-      }
-      create_notification_if_needed: {
-        Args: {
-          p_actor_id: string
-          p_receiver_id: string
-          p_target_id: string
-          p_type: string
-        }
-        Returns: undefined
       }
       delete_comment_tx: {
         Args: { p_comment_id: string; p_post_id: string }
@@ -478,6 +443,18 @@ export type Database = {
           p_comment_id: string
           p_justification: string
           p_moderator_uid: string
+        }
+        Returns: Json
+      }
+      moderator_review_content_guarded_tx: {
+        Args: {
+          p_action: string
+          p_ban_author?: boolean
+          p_categories: string[]
+          p_justification: string
+          p_moderator_uid: string
+          p_resource_id: string
+          p_resource_type: string
         }
         Returns: Json
       }
@@ -507,7 +484,7 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      content_status: "visible" | "pending" | "quarantined" | "rejected"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -637,6 +614,8 @@ export const Constants = {
     Enums: {},
   },
   public: {
-    Enums: {},
+    Enums: {
+      content_status: ["visible", "pending", "quarantined", "rejected"],
+    },
   },
 } as const

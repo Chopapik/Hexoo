@@ -7,6 +7,12 @@ export enum ModerationStatus {
   Rejected = "rejected",
 }
 
+export type ContentStatus =
+  | "visible"
+  | "pending"
+  | "quarantined"
+  | "rejected";
+
 export interface ContentBase {
   id: string;
   userId: string;
@@ -19,6 +25,7 @@ export interface ContentBase {
   updatedAt?: Date;
 
   isPending?: boolean;
+  moderationStatus?: ContentStatus;
   isNSFW: boolean;
   isEdited: boolean;
 

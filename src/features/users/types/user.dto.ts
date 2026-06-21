@@ -1,15 +1,17 @@
 import { z } from "zod";
+
+export const USER_DISPLAY_NAME_MAX_CHARS = 50;
 import type { UserEntity } from "./user.entity";
 import { UserRole } from "./user.type";
 
 export const CreateUserSchema = z.object({
-  name: z.string().min(1).max(50),
+  name: z.string().min(1).max(USER_DISPLAY_NAME_MAX_CHARS),
   email: z.string().email(),
   role: z.nativeEnum(UserRole),
 });
 
 export const UpdateUserSchema = z.object({
-  name: z.string().min(1).max(50).optional(),
+  name: z.string().min(1).max(USER_DISPLAY_NAME_MAX_CHARS).optional(),
   email: z.string().email().optional(),
   role: z.nativeEnum(UserRole).optional(),
   isActive: z.boolean().optional(),

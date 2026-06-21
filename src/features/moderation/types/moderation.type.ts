@@ -1,4 +1,9 @@
+import type { ContentStatus } from "@/features/shared/types/content.type";
+
 export type ModerationResourceType = "post" | "comment";
+
+export const MODERATION_REASON_SUMMARY_MAX_CHARS = 500;
+export const MODERATION_REASON_DETAILS_MAX_CHARS = 4000;
 
 export type ModerationEvidenceSource = "text" | "image";
 
@@ -8,11 +13,7 @@ export type ModerationEvidence = {
   sources: ModerationEvidenceSource[];
 };
 
-export type CanonicalContentStatus =
-  | "visible"
-  | "pending"
-  | "rejected"
-  | "quarantined";
+export type CanonicalContentStatus = ContentStatus;
 
 export function deriveCanonicalContentStatus(input: {
   isPending: boolean;
