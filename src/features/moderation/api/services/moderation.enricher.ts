@@ -1,6 +1,5 @@
 import { getUsersByIds } from "@/features/users/api/services";
 import { resolveImagePublicUrl } from "@/features/images/utils/resolveImagePublicUrl";
-import { ModerationStatus } from "@/features/shared/types/content.type";
 import type { ModerationLogPayload } from "./moderationLog.service";
 import type { CommentEntity } from "@/features/comments/types/comment.entity";
 import type { PostEntity } from "@/features/posts/types/post.entity";
@@ -12,15 +11,18 @@ type ModerationInfo = NonNullable<ModerationPostResponse["moderationInfo"]>;
 
 export class ModerationEnricher {
   private buildModerationFields(
+    persistedStatus: PostEntity["moderationStatus"],
     isPending: boolean,
     latestLog: ModerationLogPayload | undefined,
   ) {
     return {
-      moderationStatus: deriveCanonicalContentStatus({
-        isPending,
-        decision: latestLog?.verdict,
-        reasonSummary: latestLog?.reasonSummary,
-      }),
+      moderationStatus:
+        persistedStatus ??
+        deriveCanonicalContentStatus({
+          isPending,
+          decision: latestLog?.verdict,
+          reasonSummary: latestLog?.reasonSummary,
+        }),
       flaggedReasons: latestLog?.categories ?? [],
       moderationInfo: latestLog
         ? ({
@@ -51,7 +53,11 @@ export class ModerationEnricher {
 
       return {
         ...post,
-        ...this.buildModerationFields(Boolean(post.isPending), latestLog),
+        ...this.buildModerationFields(
+          post.moderationStatus,
+          Boolean(post.isPending),
+          latestLog,
+        ),
         imageUrl: resolveImagePublicUrl(post.imageMeta) ?? null,
         userName: author?.name ?? "Unknown",
         userAvatarUrl: resolveImagePublicUrl(author?.avatarMeta) ?? null,
@@ -81,7 +87,11 @@ export class ModerationEnricher {
 
       return {
         ...comment,
-        ...this.buildModerationFields(Boolean(comment.isPending), latestLog),
+        ...this.buildModerationFields(
+          comment.moderationStatus,
+          Boolean(comment.isPending),
+          latestLog,
+        ),
         imageUrl: resolveImagePublicUrl(comment.imageMeta) ?? null,
         userName: author?.name ?? "Unknown",
         userAvatarUrl: resolveImagePublicUrl(author?.avatarMeta) ?? null,

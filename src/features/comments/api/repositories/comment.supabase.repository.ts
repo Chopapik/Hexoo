@@ -5,7 +5,6 @@ import {
 } from "@/lib/supabaseRepository";
 import { ModerationStatus } from "@/features/shared/types/content.type";
 import { ReportDetails } from "@/features/shared/types/report.type";
-import { logModerationEvent } from "@/features/moderation/api/services/moderationLog.service";
 import type { CommentRepository } from "./comment.repository.interface";
 import type {
   CreateCommentPayload,
@@ -23,6 +22,7 @@ import {
 } from "./comment.supabase.mapper";
 import { createAppError } from "@/lib/AppError";
 import { parseImageMeta } from "@/features/images/utils/imageMeta";
+import { toModerationContext } from "@/features/moderation/api/repositories/moderationLog.supabase.mapper";
 
 const COMMENTS_TABLE = "comments";
 const COMMENT_REPORTS_TABLE = "comment_reports";
@@ -48,7 +48,7 @@ export class CommentSupabaseRepository implements CommentRepository {
       .from(COMMENTS_TABLE)
       .select("*")
       .eq("post_id", postId)
-      .eq("is_pending", false)
+      .eq("status", "visible")
       .order("created_at", { ascending: false });
     throwDbError(error);
     return (data ?? []).map(mapCommentRow);
@@ -73,7 +73,7 @@ export class CommentSupabaseRepository implements CommentRepository {
     const query = supabaseAdmin
       .from(COMMENTS_TABLE)
       .select("*")
-      .eq("is_pending", true)
+      .in("status", ["pending", "quarantined"])
       .order("created_at", { ascending: false })
       .limit(limit);
 
@@ -167,20 +167,18 @@ export class CommentSupabaseRepository implements CommentRepository {
     if (shouldHide) {
       await this.updateComment(commentId, {
         isPending: true,
-      });
-
-      await logModerationEvent({
-        userId: comment.userId,
-        timestamp: new Date(),
-        verdict: ModerationStatus.Pending,
-        categories: [reportDetails.reason],
-        actionTaken: "FLAGGED_FOR_REVIEW",
-        resourceType: "comment",
-        resourceId: commentId,
-        source: "user_report",
-        actorId: reportDetails.uid,
-        reasonSummary: "Comment hidden after multiple user reports",
-        reasonDetails: reportDetails.details ?? undefined,
+        moderationStatus: "pending",
+        moderationContext: toModerationContext({
+          userId: comment.userId,
+          timestamp: new Date(),
+          verdict: ModerationStatus.Pending,
+          categories: [reportDetails.reason],
+          actionTaken: "FLAGGED_FOR_REVIEW",
+          source: "user_report",
+          actorId: reportDetails.uid,
+          reasonSummary: "Comment hidden after multiple user reports",
+          reasonDetails: reportDetails.details ?? undefined,
+        }),
       });
     }
 

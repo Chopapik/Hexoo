@@ -1,4 +1,5 @@
 import { CommentEntity } from "./comment.entity";
+import type { Json } from "@/lib/supabase.database.types";
 
 export type CreateCommentPayload = Omit<
   CommentEntity,
@@ -6,10 +7,12 @@ export type CreateCommentPayload = Omit<
 > & {
   createdAt: Date;
   updatedAt: Date;
+  moderationContext?: Json | null;
 };
 
 export type UpdateCommentPayload = Partial<
   Omit<CommentEntity, "id" | "userId" | "postId" | "createdAt">
 > & {
   updatedAt?: Date;
+  moderationContext?: Json | null;
 };

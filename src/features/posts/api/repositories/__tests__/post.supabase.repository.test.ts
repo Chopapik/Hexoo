@@ -225,7 +225,7 @@ describe("PostSupabaseRepository", () => {
       const result = await repository.getPosts(20);
 
       expect(mockFrom).toHaveBeenCalledTimes(1);
-      expect(listChain.eq).toHaveBeenCalledWith("is_pending", false);
+      expect(listChain.eq).toHaveBeenCalledWith("status", "visible");
       expect(listChain.order).toHaveBeenCalledWith("created_at", {
         ascending: false,
       });
@@ -299,7 +299,7 @@ describe("PostSupabaseRepository", () => {
       const result = await repository.getPostsByUserId("user-abc", 15, "c1");
 
       expect(listChain.eq).toHaveBeenCalledWith("user_id", "user-abc");
-      expect(listChain.eq).toHaveBeenCalledWith("is_pending", false);
+      expect(listChain.eq).toHaveBeenCalledWith("status", "visible");
       expect(listChain.limit).toHaveBeenCalledWith(15);
       expect(listChain.or).toHaveBeenCalledWith(
         "created_at.lt.2026-05-10T08:00:00.000Z,and(created_at.eq.2026-05-10T08:00:00.000Z,id.lt.c1)",
@@ -397,7 +397,16 @@ describe("PostSupabaseRepository", () => {
 
       const result = await repository.reportPost("post-1", reportDetails);
 
-      expect(updateChain.update).toHaveBeenCalledWith({ is_pending: true });
+      expect(updateChain.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          is_pending: true,
+          status: "pending",
+          moderation_context: expect.objectContaining({
+            source: "user_report",
+            reasonSummary: "Post hidden after multiple user reports",
+          }),
+        }),
+      );
       expect(updateChain.eq).toHaveBeenCalledWith("id", "post-1");
       expect(result).toEqual({ hidden: true, reportsCount: 3 });
     });

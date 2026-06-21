@@ -8,6 +8,7 @@ import type { ModerationResourceType } from "@/features/moderation/types/moderat
 import type {
   Tables,
   TablesInsert,
+  Json,
 } from "@/lib/supabase.database.types";
 
 type ModerationLogRow = Tables<"moderation_logs">;
@@ -24,6 +25,28 @@ function encodeReasonDetails(payload: ModerationLogPayload): string | null {
     summary: payload.reasonDetails,
     evidence: payload.evidence,
   } satisfies StoredReasonDetails);
+}
+
+export function toModerationContext(
+  payload:
+    | Omit<ModerationLogPayload, "resourceType" | "resourceId">
+    | null
+    | undefined,
+): Json | null {
+  if (!payload) return null;
+  return {
+    timestamp: payload.timestamp?.toISOString() ?? new Date().toISOString(),
+    verdict: payload.verdict,
+    categories: payload.categories ?? [],
+    actionTaken: payload.actionTaken,
+    source: payload.source ?? null,
+    actorId: payload.actorId ?? null,
+    reasonSummary: payload.reasonSummary ?? null,
+    reasonDetails: payload.reasonDetails ?? null,
+    evidence: payload.evidence
+      ? (payload.evidence as unknown as Json)
+      : null,
+  };
 }
 
 function decodeReasonDetails(value: string | null): StoredReasonDetails {
@@ -87,6 +110,8 @@ export function toModerationLogInsertRow(
     actor_id: payload.actorId ?? null,
     reason_summary: payload.reasonSummary ?? null,
     reason_details: encodeReasonDetails(payload),
+    previous_status: payload.previousStatus ?? null,
+    new_status: payload.newStatus ?? null,
   };
 }
 
@@ -107,5 +132,7 @@ export function mapModerationLogRow(
     reasonSummary: row.reason_summary ?? undefined,
     reasonDetails: details.summary,
     evidence: details.evidence,
+    previousStatus: row.previous_status ?? undefined,
+    newStatus: row.new_status ?? undefined,
   };
 }

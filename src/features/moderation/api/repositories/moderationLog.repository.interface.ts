@@ -1,6 +1,7 @@
 import type { ModerationStatus } from "@/features/shared/types/content.type";
 import type { ModerationResourceType } from "@/features/moderation/types/moderation.type";
 import type { ModerationEvidence } from "@/features/moderation/types/moderation.type";
+import type { ContentStatus } from "@/features/shared/types/content.type";
 
 export type ModerationActionTaken =
   | "BLOCKED_CREATION"
@@ -20,6 +21,8 @@ export interface ModerationLogPayload {
   reasonSummary?: string;
   reasonDetails?: string;
   evidence?: ModerationEvidence[];
+  previousStatus?: ContentStatus;
+  newStatus?: ContentStatus;
 }
 
 export interface ModerationLogRepository {

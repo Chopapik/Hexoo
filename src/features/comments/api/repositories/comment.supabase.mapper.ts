@@ -19,6 +19,7 @@ export type CreateCommentTxArgs = {
   p_image_url: string | null;
   p_is_nsfw: boolean;
   p_is_pending: boolean;
+  p_moderation_context: Json | null;
   p_likes_count: number;
   p_post_id: string;
   p_text: string;
@@ -42,6 +43,7 @@ export function mapCommentRow(row: CommentRow): CommentEntity {
     updatedAt: parseDate(row.updated_at),
     isNSFW: row.is_nsfw,
     isPending: row.is_pending,
+    moderationStatus: row.status,
     isEdited: row.is_edited,
     imageMeta: parseImageMeta(row.image_meta) ?? undefined,
     device: row.device ?? undefined,
@@ -64,6 +66,7 @@ export function toCreateCommentTxArgs(
     p_updated_at: data.updatedAt ? toDbTimestamp(data.updatedAt) : null,
     p_is_nsfw: data.isNSFW ?? false,
     p_is_pending: data.isPending ?? false,
+    p_moderation_context: data.moderationContext ?? null,
     p_image_url: null,
     p_image_meta: imageMetaToJson(data.imageMeta),
     p_device: data.device ?? null,
@@ -76,6 +79,10 @@ export function toUpdateRow(data: UpdateCommentPayload): CommentUpdateRow {
   if (data.text != null) row.text = data.text;
   if (data.isNSFW != null) row.is_nsfw = data.isNSFW;
   if (data.isPending != null) row.is_pending = data.isPending;
+  if (data.moderationStatus != null) row.status = data.moderationStatus;
+  if (data.moderationContext !== undefined) {
+    row.moderation_context = data.moderationContext;
+  }
   if (data.isEdited != null) row.is_edited = data.isEdited;
   if (data.imageMeta !== undefined) {
     row.image_meta = imageMetaToJson(data.imageMeta);

@@ -37,6 +37,7 @@ export function mapPostRow(row: PostRow): PostEntity {
     createdAt: parseDate(row.created_at) ?? new Date(0),
     updatedAt: parseDate(row.updated_at),
     isPending: row.is_pending,
+    moderationStatus: row.status,
     isNSFW: row.is_nsfw,
     isEdited: row.is_edited,
     imageMeta: parseImageMeta(row.image_meta) ?? undefined,
@@ -59,6 +60,10 @@ export function toInsertRow(data: CreatePostPayload): PostInsertRow {
   if (data.updatedAt != null) row.updated_at = toDbTimestamp(data.updatedAt);
   if (data.isNSFW != null) row.is_nsfw = data.isNSFW;
   if (data.isPending != null) row.is_pending = data.isPending;
+  if (data.moderationStatus != null) row.status = data.moderationStatus;
+  if (data.moderationContext !== undefined) {
+    row.moderation_context = data.moderationContext;
+  }
   if (data.isEdited != null) row.is_edited = data.isEdited;
   if (data.imageMeta !== undefined) {
     row.image_meta = imageMetaToJson(data.imageMeta);
@@ -78,6 +83,10 @@ export function toUpdateRow(data: UpdatePostPayload): PostUpdateRow {
   if (data.updatedAt != null) row.updated_at = toDbTimestamp(data.updatedAt);
   if (data.isNSFW != null) row.is_nsfw = data.isNSFW;
   if (data.isPending != null) row.is_pending = data.isPending;
+  if (data.moderationStatus != null) row.status = data.moderationStatus;
+  if (data.moderationContext !== undefined) {
+    row.moderation_context = data.moderationContext;
+  }
   if (data.isEdited != null) row.is_edited = data.isEdited;
   if (data.imageMeta !== undefined) {
     row.image_meta = imageMetaToJson(data.imageMeta);

@@ -13,6 +13,8 @@ import type { PostEntity } from "../../types/post.entity";
 import type { PostReportInsertRow } from "../../types/post.row";
 import { mapPostRow, toInsertRow, toUpdateRow } from "./post.supabase.mapper";
 import { createAppError } from "@/lib/AppError";
+import { ModerationStatus } from "@/features/shared/types/content.type";
+import { toModerationContext } from "@/features/moderation/api/repositories/moderationLog.supabase.mapper";
 
 const POST_REPORTS_TABLE = "post_reports";
 
@@ -83,7 +85,7 @@ export class PostSupabaseRepository implements PostRepository {
     const query = supabaseAdmin
       .from(TABLE)
       .select("*")
-      .eq("is_pending", false)
+      .eq("status", "visible")
       .order("created_at", { ascending: false })
       .limit(limit);
 
@@ -103,7 +105,7 @@ export class PostSupabaseRepository implements PostRepository {
       .from(TABLE)
       .select("*")
       .eq("user_id", userId)
-      .eq("is_pending", false)
+      .eq("status", "visible")
       .order("created_at", { ascending: false })
       .limit(limit);
 
@@ -153,6 +155,18 @@ export class PostSupabaseRepository implements PostRepository {
     if (shouldHide) {
       await this.updatePost(postId, {
         isPending: true,
+        moderationStatus: "pending",
+        moderationContext: toModerationContext({
+          userId: post.userId,
+          timestamp: new Date(),
+          verdict: ModerationStatus.Pending,
+          categories: [reportDetails.reason],
+          actionTaken: "FLAGGED_FOR_REVIEW",
+          source: "user_report",
+          actorId: reportDetails.uid,
+          reasonSummary: "Post hidden after multiple user reports",
+          reasonDetails: reportDetails.details ?? undefined,
+        }),
       });
     }
 
@@ -178,7 +192,7 @@ export class PostSupabaseRepository implements PostRepository {
     const query = supabaseAdmin
       .from(TABLE)
       .select("*")
-      .eq("is_pending", true)
+      .in("status", ["pending", "quarantined"])
       .order("created_at", { ascending: false })
       .limit(limit);
 
