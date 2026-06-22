@@ -1,14 +1,12 @@
 import { describe, it, expect } from "vitest";
 import {
   requireSession,
-  assertNotRestricted,
   assertPostId,
   assertPostExists,
   assertPostAuthor,
 } from "../post.guards";
 import {
   createMockSession,
-  createRestrictedSession,
   createMockPost,
   expectAppError,
 } from "./helpers/post-test.helpers";
@@ -22,19 +20,6 @@ describe("post.guards", () => {
 
     it("throws AUTH_REQUIRED when session is null", async () => {
       await expectAppError(async () => requireSession(null), "AUTH_REQUIRED");
-    });
-  });
-
-  describe("assertNotRestricted", () => {
-    it("does not throw for an unrestricted session", () => {
-      expect(() => assertNotRestricted(createMockSession())).not.toThrow();
-    });
-
-    it("throws FORBIDDEN for a restricted session", async () => {
-      await expectAppError(
-        async () => assertNotRestricted(createRestrictedSession()),
-        "FORBIDDEN",
-      );
     });
   });
 

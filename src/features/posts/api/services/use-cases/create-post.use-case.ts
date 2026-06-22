@@ -14,7 +14,7 @@ import {
 } from "../../../types/post.dto";
 
 import type { CreatePostPayload } from "../../../types/post.payload";
-import { assertNotRestricted, requireSession } from "../post.guards";
+import { requireSession } from "../post.guards";
 import {
   rollbackUploadedImage,
   type ImageDeleter,
@@ -34,7 +34,6 @@ export class CreatePostUseCase {
     createPostData: CreatePostRequest,
   ): Promise<CreatePostResponse> {
     const user = requireSession(this.session);
-    assertNotRestricted(user);
 
     const parsed = CreatePostSchema.safeParse(createPostData);
 

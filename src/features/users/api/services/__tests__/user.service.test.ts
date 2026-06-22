@@ -13,9 +13,6 @@ describe("UserService", () => {
   const getUserProfileUseCase = createMockUseCase();
   const touchLastOnlineUseCase = createMockUseCase();
   const getUsersByIdsUseCase = createMockUseCase();
-  const unrestrictUserUseCase = createMockUseCase();
-  const restrictUserUseCase = createMockUseCase();
-  const restrictUserBySystemUseCase = createMockUseCase();
 
   let service: UserService;
 
@@ -27,9 +24,6 @@ describe("UserService", () => {
       getUserProfileUseCase,
       touchLastOnlineUseCase,
       getUsersByIdsUseCase,
-      unrestrictUserUseCase,
-      restrictUserUseCase,
-      restrictUserBySystemUseCase,
     );
   });
 
@@ -80,27 +74,5 @@ describe("UserService", () => {
 
     expect(getUsersByIdsUseCase.execute).toHaveBeenCalledWith(["a", "b"]);
     expect(result).toBe(map);
-  });
-
-  it("delegates unrestrictUser", async () => {
-    await service.unrestrictUser("u1");
-
-    expect(unrestrictUserUseCase.execute).toHaveBeenCalledWith("u1");
-  });
-
-  it("delegates restrictUser", async () => {
-    const data = { uid: "u1", reason: "spam" };
-    await service.restrictUser(data);
-
-    expect(restrictUserUseCase.execute).toHaveBeenCalledWith(data);
-  });
-
-  it("delegates restrictUserBySystem", async () => {
-    await service.restrictUserBySystem("u1", "AI flag");
-
-    expect(restrictUserBySystemUseCase.execute).toHaveBeenCalledWith(
-      "u1",
-      "AI flag",
-    );
   });
 });

@@ -12,7 +12,7 @@ import {
 } from "../../../types/comment.dto";
 import type { CreateCommentPayload } from "../../../types/comment.payload";
 
-import { assertNotRestricted, requireSession } from "../comment.guards";
+import { requireSession } from "../comment.guards";
 import {
   rollbackUploadedImage,
   type ImageDeleter,
@@ -29,7 +29,6 @@ export class AddCommentUseCase {
 
   async execute(data: AddCommentRequest): Promise<AddCommentResponse> {
     const user = requireSession(this.session);
-    assertNotRestricted(user);
 
     const parsed = AddCommentSchema.safeParse(data);
     if (!parsed.success) {

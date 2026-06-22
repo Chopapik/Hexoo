@@ -56,7 +56,7 @@ describe("CreatePostUseCase", () => {
     );
   });
 
-  it("throws FORBIDDEN when user is restricted", async () => {
+  it("does not enforce the legacy restriction flag", async () => {
     const restricted = new CreatePostUseCase(
       repository,
       contentService,
@@ -64,10 +64,9 @@ describe("CreatePostUseCase", () => {
       createRestrictedSession(),
       imageDeleter,
     );
-    await expectAppError(
-      () => restricted.execute({ text: "hello", youtubeUrl: "" }),
-      "FORBIDDEN",
-    );
+    await expect(
+      restricted.execute({ text: "hello", youtubeUrl: "" }),
+    ).resolves.toMatchObject({ postId: "new-post-id" });
   });
 
   it("throws VALIDATION_ERROR for empty text with no image", async () => {

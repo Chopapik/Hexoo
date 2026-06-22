@@ -1,6 +1,5 @@
 import {
   CreateUserRequestDto as CreateUserRequest,
-  RestrictUserRequestDto as RestrictUserRequest,
   UserProfileResponseDto as UserProfileResponse,
 } from "../../types/user.dto";
 import type { UserEntity } from "../../types/user.entity";
@@ -14,7 +13,4 @@ export interface UserService {
   getUsersByIds(
     uids: string[],
   ): Promise<Record<string, { name: string; avatarMeta?: ImageMeta | null }>>;
-  unrestrictUser(uid: string): Promise<void>;
-  restrictUser(data: RestrictUserRequest): Promise<void>;
-  restrictUserBySystem(uid: string, reason: string): Promise<void>;
 }

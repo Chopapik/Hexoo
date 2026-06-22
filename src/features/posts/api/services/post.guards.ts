@@ -13,15 +13,6 @@ export function requireSession(session: SessionData | null): SessionData {
   return session;
 }
 
-export function assertNotRestricted(session: SessionData): void {
-  if (session.isRestricted) {
-    throw createAppError({
-      code: "FORBIDDEN",
-      data: { reason: "account_restricted" },
-    });
-  }
-}
-
 export function assertPostId(postId: string, context: string): void {
   if (!postId?.trim()) {
     throw createAppError({
