@@ -39,6 +39,10 @@ vi.mock("@/features/users/api/repositories", () => ({
   },
 }));
 
+vi.mock("@/features/me/api/services", () => ({
+  processAccountDeletion: vi.fn(async () => ({ state: "completed" })),
+}));
+
 vi.mock("@/lib/supabaseServer", () => ({
   supabaseAdmin: {
     rpc: vi.fn(async () => ({ data: {}, error: null })),

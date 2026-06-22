@@ -9,9 +9,21 @@ import type { AdminService as IAdminService } from "./admin.service.interface";
 import type { AuthUpdateUserProperties } from "@/features/auth/api/repositories/authRepository.interface";
 import type { UpdateUserPayload } from "@/features/users/types/user.payload";
 import { UserRole } from "@/features/users/types/user.type";
+import type { AccountDeletionResult } from "@/features/me/api/services";
+
+type AccountDeletionExecutor = (uid: string) => Promise<AccountDeletionResult>;
+
+const defaultAccountDeletionExecutor: AccountDeletionExecutor = async (uid) => {
+  const { processAccountDeletion } = await import("@/features/me/api/services");
+  return processAccountDeletion(uid);
+};
 
 export class AdminService implements IAdminService {
-  constructor(private readonly session: SessionData | null) {}
+  constructor(
+    private readonly session: SessionData | null,
+    private readonly deleteAccount: AccountDeletionExecutor =
+      defaultAccountDeletionExecutor,
+  ) {}
 
   private ensureAdmin() {
     if (!this.session) {
@@ -89,15 +101,18 @@ export class AdminService implements IAdminService {
 
     await this.ensureTargetAdminCanBeRemoved(uid);
 
-    await logActivity(uid, "USER_DELETED", "User account deleted by admin");
-    await logActivity(
-      this.session!.uid,
-      "ADMIN_DELETED_USER",
-      `Deleted user ${uid}`,
-    );
+    const result = await this.deleteAccount(uid);
 
-    await authRepository.deleteUser(uid);
-    await userRepository.deleteUser(uid);
+    await Promise.all([
+      logActivity(uid, "USER_DELETED", "User account deleted by admin"),
+      logActivity(
+        this.session!.uid,
+        "ADMIN_DELETED_USER",
+        `Deleted user ${uid}`,
+      ),
+    ]).catch(() => undefined);
+
+    return result;
   }
 
   async adminCreateUserAccount(data: AdminUserCreate) {

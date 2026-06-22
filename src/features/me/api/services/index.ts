@@ -3,17 +3,25 @@ import type { UpdateProfileData } from "../../me.type";
 import { MeService } from "./me.service";
 import { authRepository } from "@/features/auth/api/repositories";
 import { userRepository } from "@/features/users/api/repositories";
+import { accountDeletionRepository } from "../repositories";
+import { deleteImage } from "@/features/images/api/image.service";
 import {
   DeleteAccountUseCase,
   UpdateProfileUseCase,
   UpdatePasswordUseCase,
 } from "./use-cases";
+import { ProcessAccountDeletionUseCase } from "./use-cases/process-account-deletion.use-case";
+
+const processAccountDeletionUseCase = new ProcessAccountDeletionUseCase(
+  accountDeletionRepository,
+  authRepository,
+  deleteImage,
+);
 
 export const getMeService = (session: SessionData): MeService => {
   const deleteAccountUseCase = new DeleteAccountUseCase(
     session,
-    userRepository,
-    authRepository,
+    processAccountDeletionUseCase,
   );
 
   const updateProfileUseCase = new UpdateProfileUseCase(
@@ -39,6 +47,12 @@ export async function deleteAccount(session: SessionData) {
   const service = getMeService(session);
   return await service.deleteAccount();
 }
+
+export async function processAccountDeletion(uid: string) {
+  return processAccountDeletionUseCase.execute(uid);
+}
+
+export type { AccountDeletionResult } from "./use-cases/process-account-deletion.use-case";
 
 export async function updateProfile(
   session: SessionData,

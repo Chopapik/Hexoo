@@ -1,7 +1,8 @@
 import type { AdminUserCreate } from "@/features/admin/types/admin.type";
+import type { AccountDeletionResult } from "@/features/me/api/services";
 
 export interface AdminService {
-  adminDeleteUser(uid: string): Promise<void>;
+  adminDeleteUser(uid: string): Promise<AccountDeletionResult>;
   adminCreateUserAccount(data: AdminUserCreate): Promise<{
     uid: string;
     email: string;

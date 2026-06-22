@@ -211,6 +211,13 @@ export class SupabaseAuthRepository implements AuthRepository {
   async deleteUser(uid: string): Promise<void> {
     const { error } = await supabaseAdmin.auth.admin.deleteUser(uid);
     if (error) {
+      const status = "status" in error ? error.status : undefined;
+      if (
+        status === 404 ||
+        error.message.toLowerCase().includes("user not found")
+      ) {
+        return;
+      }
       throw createAppError({
         code: "INTERNAL_ERROR",
         message: "Failed to delete user via Supabase Admin API.",
