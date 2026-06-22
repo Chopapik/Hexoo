@@ -105,12 +105,14 @@ describe("UserSupabaseRepository", () => {
     it("maps uid, display_name, and avatar_meta from chunk queries", async () => {
       const chain = {
         select: vi.fn().mockReturnThis(),
-        in: vi.fn().mockResolvedValue({
+        in: vi.fn().mockReturnThis(),
+        is: vi.fn().mockResolvedValue({
           data: [
             {
               uid: "u1",
               display_name: "One",
               avatar_meta: null,
+              deleted_at: null,
             },
           ],
           error: null,
@@ -123,8 +125,11 @@ describe("UserSupabaseRepository", () => {
       expect(result).toEqual({
         u1: { name: "One", avatarMeta: null },
       });
-      expect(chain.select).toHaveBeenCalledWith("uid, display_name, avatar_meta");
+      expect(chain.select).toHaveBeenCalledWith(
+        "uid, display_name, avatar_meta, deleted_at",
+      );
       expect(chain.in).toHaveBeenCalledWith("uid", ["u1"]);
+      expect(chain.is).toHaveBeenCalledWith("deleted_at", null);
     });
 
     it("returns empty record for empty uid list without querying", async () => {

@@ -17,7 +17,7 @@ export class GetUserProfileUseCase {
     if (!cleanedUid) return null;
 
     const userData = await this.repository.getUserByUid(cleanedUid);
-    if (!userData) return null;
+    if (!userData || userData.deletedAt) return null;
 
     return { user: this.profileMapper.toProfileResponse(userData) };
   }

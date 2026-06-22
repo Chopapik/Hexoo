@@ -34,6 +34,53 @@ export type Database = {
   }
   public: {
     Tables: {
+      account_deletion_jobs: {
+        Row: {
+          attempt_count: number
+          auth_deleted_at: string | null
+          avatar_deleted_at: string | null
+          avatar_meta: Json | null
+          completed_at: string | null
+          created_at: string
+          last_error: string | null
+          last_failed_step: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          attempt_count?: number
+          auth_deleted_at?: string | null
+          avatar_deleted_at?: string | null
+          avatar_meta?: Json | null
+          completed_at?: string | null
+          created_at?: string
+          last_error?: string | null
+          last_failed_step?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          attempt_count?: number
+          auth_deleted_at?: string | null
+          avatar_deleted_at?: string | null
+          avatar_meta?: Json | null
+          completed_at?: string | null
+          created_at?: string
+          last_error?: string | null
+          last_failed_step?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "account_deletion_jobs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["uid"]
+          },
+        ]
+      }
       activity_logs: {
         Row: {
           action: string
@@ -336,6 +383,7 @@ export type Database = {
           banned_by: string | null
           banned_reason: string | null
           created_at: string
+          deleted_at: string | null
           display_name: string
           display_name_normalized: string
           email: string
@@ -359,6 +407,7 @@ export type Database = {
           banned_by?: string | null
           banned_reason?: string | null
           created_at?: string
+          deleted_at?: string | null
           display_name?: string
           display_name_normalized?: string
           email: string
@@ -382,6 +431,7 @@ export type Database = {
           banned_by?: string | null
           banned_reason?: string | null
           created_at?: string
+          deleted_at?: string | null
           display_name?: string
           display_name_normalized?: string
           email?: string
@@ -405,6 +455,48 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      begin_account_deletion: {
+        Args: { p_uid: string }
+        Returns: {
+          attempt_count: number
+          auth_deleted_at: string | null
+          avatar_deleted_at: string | null
+          avatar_meta: Json | null
+          completed_at: string | null
+          created_at: string
+          last_error: string | null
+          last_failed_step: string | null
+          updated_at: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "account_deletion_jobs"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      complete_account_deletion_step: {
+        Args: { p_step: string; p_uid: string }
+        Returns: {
+          attempt_count: number
+          auth_deleted_at: string | null
+          avatar_deleted_at: string | null
+          avatar_meta: Json | null
+          completed_at: string | null
+          created_at: string
+          last_error: string | null
+          last_failed_step: string | null
+          updated_at: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "account_deletion_jobs"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       create_comment_tx: {
         Args: {
           p_comments_count: number
@@ -471,6 +563,10 @@ export type Database = {
       }
       moderator_unblock_user_tx: {
         Args: { p_moderator_uid: string; p_uid: string }
+        Returns: undefined
+      }
+      record_account_deletion_failure: {
+        Args: { p_error: string; p_step: string; p_uid: string }
         Returns: undefined
       }
       set_like_state_tx: {

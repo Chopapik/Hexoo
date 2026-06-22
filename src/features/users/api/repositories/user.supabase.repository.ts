@@ -64,8 +64,9 @@ export class UserSupabaseRepository implements UserRepository {
       const chunk = unique.slice(i, i + 30);
       const { data, error } = await supabaseAdmin
         .from(TABLE)
-        .select("uid, display_name, avatar_meta")
-        .in("uid", chunk);
+        .select("uid, display_name, avatar_meta, deleted_at")
+        .in("uid", chunk)
+        .is("deleted_at", null);
       throwDbError(error);
       for (const row of (data ?? []) as UserSummaryRow[]) {
         out[row.uid] = mapUserSummaryRow(row);

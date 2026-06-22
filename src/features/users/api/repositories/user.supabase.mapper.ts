@@ -46,6 +46,7 @@ export function mapUserRow(row: UserRow): UserEntity {
     createdAt: parseDate(row.created_at) ?? new Date(0),
     updatedAt: parseDate(row.updated_at),
     sessionInvalidatedAt: parseDate(row.session_invalidated_at),
+    deletedAt: parseDate(row.deleted_at),
     lastOnline: parseDate(row.last_online) ?? new Date(0),
     isActive: row.is_active ?? undefined,
     isBanned: row.is_banned ?? undefined,

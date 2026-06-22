@@ -7,4 +7,7 @@ import type {
 export type UserRow = Tables<"users">;
 export type UserInsertRow = TablesInsert<"users">;
 export type UserUpdateRow = TablesUpdate<"users">;
-export type UserSummaryRow = Pick<UserRow, "avatar_meta" | "display_name" | "uid">;
+export type UserSummaryRow = Pick<
+  UserRow,
+  "avatar_meta" | "display_name" | "uid" | "deleted_at"
+>;
