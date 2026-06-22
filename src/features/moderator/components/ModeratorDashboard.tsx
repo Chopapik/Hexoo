@@ -34,6 +34,7 @@ export default function ModeratorDashboard() {
   const observerTarget = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const target = observerTarget.current;
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
@@ -43,14 +44,15 @@ export default function ModeratorDashboard() {
       { threshold: 1.0 },
     );
 
-    if (observerTarget.current) {
-      observer.observe(observerTarget.current);
+    if (target) {
+      observer.observe(target);
     }
 
     return () => {
-      if (observerTarget.current) {
-        observer.unobserve(observerTarget.current);
+      if (target) {
+        observer.unobserve(target);
       }
+      observer.disconnect();
     };
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
@@ -109,7 +111,7 @@ export default function ModeratorDashboard() {
             <div className="flex items-center gap-3 shrink-0">
               <Button
                 onClick={() => refetch()}
-              text={t("common.refresh")}
+                text={t("common.refresh")}
                 size="sm"
                 isLoading={isFetching}
               />

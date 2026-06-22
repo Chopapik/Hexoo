@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import fetchClient from "@/lib/fetchClient";
 import { ApiError } from "@/lib/AppError";
 
@@ -33,17 +33,24 @@ export function useCheckUsername(
   const [isChecking, setIsChecking] = useState(false);
   const [isAvailable, setIsAvailable] = useState<boolean | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const requestIdRef = useRef(0);
 
   const debouncedUsername = useDebounce(username, 500);
 
   useEffect(() => {
+    const requestId = ++requestIdRef.current;
+    const controller = new AbortController();
+    let active = true;
     const trimmed = debouncedUsername.trim();
 
     if (!trimmed) {
       setIsAvailable(null);
       setError(null);
       setIsChecking(false);
-      return;
+      return () => {
+        active = false;
+        controller.abort();
+      };
     }
 
     if (
@@ -54,7 +61,10 @@ export function useCheckUsername(
       setIsAvailable(true);
       setError(null);
       setIsChecking(false);
-      return;
+      return () => {
+        active = false;
+        controller.abort();
+      };
     }
 
     const checkUsername = async () => {
@@ -62,13 +72,19 @@ export function useCheckUsername(
       setError(null);
 
       try {
-        const response = (await fetchClient.post("/auth/check-username", {
-          username: trimmed,
-        })) as { available: boolean };
+        const response = (await fetchClient.post(
+          "/auth/check-username",
+          { username: trimmed },
+          { signal: controller.signal },
+        )) as { available: boolean };
+
+        if (!active || requestId !== requestIdRef.current) return;
 
         setIsAvailable(response.available);
         setError(response.available ? null : "CONFLICT");
       } catch (error) {
+        if (!active || requestId !== requestIdRef.current) return;
+
         if (error instanceof ApiError && error.code === "CONFLICT") {
           setIsAvailable(false);
           setError("CONFLICT");
@@ -78,11 +94,18 @@ export function useCheckUsername(
           setError(null);
         }
       } finally {
-        setIsChecking(false);
+        if (active && requestId === requestIdRef.current) {
+          setIsChecking(false);
+        }
       }
     };
 
     checkUsername();
+
+    return () => {
+      active = false;
+      controller.abort();
+    };
   }, [debouncedUsername, options.currentUsername]);
 
   return {
