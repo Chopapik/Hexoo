@@ -138,6 +138,20 @@ describe("AUTH-SESSION-ROLE-001 and AUTH-BAN-001 session resolver", () => {
     });
   });
 
+  it("rejects a deleted profile and clears access and refresh cookies", async () => {
+    vi.mocked(userRepository.getUserByUid).mockResolvedValue(
+      user({
+        deletedAt: new Date("2026-02-01T00:00:00.000Z"),
+        sessionInvalidatedAt: new Date("2026-02-01T00:00:00.000Z"),
+      }),
+    );
+
+    await expect(getUserFromSession()).rejects.toMatchObject({
+      code: "ACCOUNT_DELETED",
+    });
+    expect(clearAllAuthCookies).toHaveBeenCalledOnce();
+  });
+
   it("AUTH-PASSWORD-SESSION-001 rejects an access token issued before the session cutoff", async () => {
     vi.mocked(getSessionCookie).mockResolvedValue({
       session: true,

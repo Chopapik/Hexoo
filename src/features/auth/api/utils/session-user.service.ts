@@ -42,6 +42,14 @@ export async function getUserFromSession(): Promise<SessionData | never> {
     });
   }
 
+  if (userData.deletedAt) {
+    await clearAllAuthCookies();
+    throw createAppError({
+      message: "[getUserFromSession] User account was deleted",
+      code: "ACCOUNT_DELETED",
+    });
+  }
+
   if (userData.isBanned) {
     throw createAppError({
       message: "[getUserFromSession] User account is banned",

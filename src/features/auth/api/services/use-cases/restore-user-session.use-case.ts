@@ -28,7 +28,7 @@ export class RestoreUserSessionUseCase {
         tokens.access_token,
       );
       const userData = await this.userRepository.getUserByUid(decoded.uid);
-      if (!userData || userData.isBanned) {
+      if (!userData || userData.isBanned || userData.deletedAt) {
         await clearAllAuthCookies();
         return null;
       }

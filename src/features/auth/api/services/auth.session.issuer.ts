@@ -35,6 +35,13 @@ export class AuthSessionIssuer {
   }): Promise<OAuthSessionUser> {
     const { userData, idToken, refreshToken, email, activityDetails } = params;
 
+    if (userData.deletedAt) {
+      throw createAppError({
+        code: "ACCOUNT_DELETED",
+        message: "[authService.issueAppSession] User account was deleted",
+      });
+    }
+
     if (userData.isBanned) {
       await this.logActivity(
         userData.uid,

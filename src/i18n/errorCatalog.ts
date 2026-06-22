@@ -185,6 +185,12 @@ export const ERROR_CATALOG: Record<GlobalErrorCode, ErrorCatalogEntry> = {
       en: "Your account has been banned",
     },
   },
+  ACCOUNT_DELETED: {
+    message: {
+      pl: "To konto zostało usunięte",
+      en: "This account has been deleted",
+    },
+  },
   // ===== CLIENT / ZOD validation =====
 
   // auth / login / register

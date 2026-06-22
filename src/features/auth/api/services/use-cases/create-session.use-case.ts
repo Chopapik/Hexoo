@@ -45,6 +45,13 @@ export class CreateSessionUseCase {
       });
     }
 
+    if (userData.deletedAt) {
+      throw createAppError({
+        code: "ACCOUNT_DELETED",
+        message: "[authService.createSession] User account was deleted",
+      });
+    }
+
     if (userData.isBanned) {
       await this.logActivity(
         uid,

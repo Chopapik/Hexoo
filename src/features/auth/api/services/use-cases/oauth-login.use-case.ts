@@ -32,6 +32,13 @@ export class OAuthLoginUseCase {
 
     const existing = await this.userRepository.getUserByUid(uid);
 
+    if (existing?.deletedAt) {
+      throw createAppError({
+        code: "ACCOUNT_DELETED",
+        message: "[authService.oauthLogin] User account was deleted",
+      });
+    }
+
     if (existing && existing.hasUsername) {
       const user = await this.sessionIssuer.issueAppSession({
         userData: existing,
