@@ -36,8 +36,10 @@ export class CommentEnricher {
       return {
         ...doc,
         imageUrl: resolveImagePublicUrl(doc.imageMeta) ?? null,
-        userName: author?.name ?? "Unknown",
-        userAvatarUrl: resolveImagePublicUrl(author?.avatarMeta) ?? null,
+        userName: author?.name.trim() || "Deleted user",
+        userAvatarUrl: author?.name.trim()
+          ? resolveImagePublicUrl(author.avatarMeta) ?? null
+          : null,
         isLikedByMe: likedCommentIdSet.has(doc.id),
       } satisfies PublicComment;
     });

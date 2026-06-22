@@ -59,8 +59,10 @@ export class PostEnricher {
       return {
         ...post,
         imageUrl: resolveImagePublicUrl(post.imageMeta) ?? null,
-        userName: author?.name ?? "Deleted user",
-        userAvatarUrl: resolveImagePublicUrl(author?.avatarMeta) ?? null,
+        userName: author?.name.trim() || "Deleted user",
+        userAvatarUrl: author?.name.trim()
+          ? resolveImagePublicUrl(author.avatarMeta) ?? null
+          : null,
         isLikedByMe: likedPostIdSet.has(post.id),
         moderationInfo: moderationLog
           ? {
