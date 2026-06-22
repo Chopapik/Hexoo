@@ -9,12 +9,12 @@ export type ApiSchemaMatrixEntry = {
   bodyEncoding: ApiSchemaBodyEncoding;
   requiresBody: boolean;
   queryParameters: string[];
-  expectedSuccessStatus: number;
+  expectedSuccessStatus: number | readonly number[];
   successHasJson: boolean;
   successAllowsNoContent: boolean;
   expectedErrorEnvelope: boolean;
   clientOrHook: string | null;
-  batch: 0;
+  batch: 0 | 8;
 };
 
 export const apiSchemaMatrix = [
@@ -88,6 +88,48 @@ export const apiSchemaMatrix = [
     clientOrHook: "SessionWatcher",
     batch: 0,
   },
+  {
+    contractId: "CLIENT-API-SCHEMA-MATRIX-001",
+    route: "/api/auth/check-username",
+    method: "POST",
+    bodyEncoding: "json",
+    requiresBody: true,
+    queryParameters: [],
+    expectedSuccessStatus: 200,
+    successHasJson: true,
+    successAllowsNoContent: false,
+    expectedErrorEnvelope: true,
+    clientOrHook: "useCheckUsername",
+    batch: 8,
+  },
+  {
+    contractId: "CLIENT-API-SCHEMA-MATRIX-001",
+    route: "/api/auth/register",
+    method: "POST",
+    bodyEncoding: "json",
+    requiresBody: true,
+    queryParameters: [],
+    expectedSuccessStatus: 201,
+    successHasJson: true,
+    successAllowsNoContent: false,
+    expectedErrorEnvelope: true,
+    clientOrHook: "auth/confirm",
+    batch: 8,
+  },
+  {
+    contractId: "CLIENT-API-SCHEMA-MATRIX-001",
+    route: "/api/me",
+    method: "DELETE",
+    bodyEncoding: "none",
+    requiresBody: false,
+    queryParameters: [],
+    expectedSuccessStatus: [200, 202],
+    successHasJson: true,
+    successAllowsNoContent: false,
+    expectedErrorEnvelope: true,
+    clientOrHook: "useDeleteAccount",
+    batch: 8,
+  },
 ] as const satisfies readonly ApiSchemaMatrixEntry[];
 
 export const deferredContractViolations = [
@@ -95,10 +137,5 @@ export const deferredContractViolations = [
     contractId: "CLIENT-API-BLOCK-001",
     batch: 1,
     reason: "Admin block/unblock body and authorization behavior belongs to Batch 1.",
-  },
-  {
-    contractId: "CLIENT-ERROR-ENVELOPE-001",
-    batch: 8,
-    reason: "Proxy-wide error envelope convergence belongs to Batch 8.",
   },
 ] as const;

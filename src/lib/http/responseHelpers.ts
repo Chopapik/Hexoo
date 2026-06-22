@@ -13,10 +13,15 @@ export function handleSuccess<T>(data?: T, status = 200) {
   return sendSuccess(data, status);
 }
 
-function sendError(code: string, status = 500, data?: Record<string, unknown>) {
+function sendError(
+  code: string,
+  message: string,
+  status = 500,
+  data?: Record<string, unknown>,
+) {
   const payload: ApiResponse = {
     ok: false,
-    error: { code, data },
+    error: { code, message, ...(data ? { data } : {}) },
   };
 
   return NextResponse.json(payload, { status });
@@ -37,5 +42,5 @@ export function handleError(
     details,
   };
   console.error("[api-error]", payload); // in future replaced by logging system
-  return sendError(code, status, data);
+  return sendError(code, message, status, data);
 }

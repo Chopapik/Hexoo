@@ -67,7 +67,13 @@ export async function proxy(request: NextRequest) {
     }
 
     const unauthorized = NextResponse.json(
-      { error: "Unauthorized" },
+      {
+        ok: false,
+        error: {
+          code: "AUTH_REQUIRED",
+          message: "Authentication required",
+        },
+      },
       { status: 401 },
     );
     unauthorized.cookies.delete("session");

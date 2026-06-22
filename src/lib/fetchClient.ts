@@ -40,6 +40,7 @@ type ApiErrorResponse = {
   ok: false;
   error: {
     code: ApiErrorCode;
+    message?: string;
     data?: ApiErrorData;
   };
 };
@@ -70,6 +71,30 @@ function isApiErrorResponse(body: unknown): body is ApiErrorResponse {
   return true;
 }
 
+function mapStatusToErrorCode(status: number): ApiErrorCode {
+  switch (status) {
+    case 400:
+    case 422:
+      return "VALIDATION_ERROR";
+    case 401:
+      return "AUTH_REQUIRED";
+    case 403:
+      return "FORBIDDEN";
+    case 404:
+      return "NOT_FOUND";
+    case 409:
+      return "CONFLICT";
+    case 502:
+      return "EXTERNAL_SERVICE";
+    case 503:
+      return "SERVICE_UNAVAILABLE";
+    case 504:
+      return "NETWORK_TIMEOUT";
+    default:
+      return "INTERNAL_ERROR";
+  }
+}
+
 async function handleResponse<T>(response: Response): Promise<T> {
   let body: unknown;
 
@@ -95,16 +120,9 @@ async function handleResponse<T>(response: Response): Promise<T> {
     });
   }
 
-  if (response.status === 404) {
-    throw new ApiError({
-      code: "NOT_FOUND" as ApiErrorCode,
-      status: 404,
-    });
-  }
-
   throw new ApiError({
-    code: "EXTERNAL_SERVICE" as ApiErrorCode,
-    status: response.status || 502,
+    code: mapStatusToErrorCode(response.status),
+    status: response.status || 500,
   });
 }
 

@@ -45,6 +45,7 @@ type ApiErrorEnvelope = {
   ok: false;
   error: {
     code: string;
+    message?: string;
     data?: Record<string, unknown>;
   };
 };

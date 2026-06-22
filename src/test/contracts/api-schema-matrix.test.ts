@@ -59,7 +59,7 @@ describe("CLIENT-API-SCHEMA-MATRIX-001 api schema matrix", () => {
   });
 
   it("CLIENT-API-SCHEMA-MATRIX-001 defines extensible entries with contract ids", () => {
-    expect(apiSchemaMatrix).toHaveLength(5);
+    expect(apiSchemaMatrix).toHaveLength(8);
     expect(apiSchemaMatrix).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
@@ -76,6 +76,26 @@ describe("CLIENT-API-SCHEMA-MATRIX-001 api schema matrix", () => {
           contractId: "CLIENT-API-SCHEMA-MATRIX-001",
           route: "/api/auth/last-online",
           expectedSuccessStatus: 204,
+        }),
+        expect.objectContaining({
+          route: "/api/auth/check-username",
+          method: "POST",
+          bodyEncoding: "json",
+          clientOrHook: "useCheckUsername",
+          batch: 8,
+        }),
+        expect.objectContaining({
+          route: "/api/auth/register",
+          method: "POST",
+          expectedSuccessStatus: 201,
+          batch: 8,
+        }),
+        expect.objectContaining({
+          route: "/api/me",
+          method: "DELETE",
+          bodyEncoding: "none",
+          expectedSuccessStatus: [200, 202],
+          batch: 8,
         }),
       ]),
     );
@@ -245,13 +265,13 @@ describe("CLIENT-API-SCHEMA-MATRIX-001 api schema matrix", () => {
     expectStatus(response, 400);
     const body = await readJsonResponse(response);
     expectApiErrorEnvelope(body, "VALIDATION_ERROR");
+    expect(body).toMatchObject({
+      error: { message: "Invalid test payload" },
+    });
   });
 
   it.todo(
     `${deferredContractViolations[0].contractId} -> Batch ${deferredContractViolations[0].batch}`,
   );
 
-  it.todo(
-    `${deferredContractViolations[1].contractId} -> Batch ${deferredContractViolations[1].batch}`,
-  );
 });
