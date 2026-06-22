@@ -9,7 +9,6 @@ import {
   RestoreUserSessionUseCase,
   CreateSessionUseCase,
   RegisterUserUseCase,
-  CheckEmailAvailabilityUseCase,
   CheckUsernameAvailabilityUseCase,
   OAuthLoginUseCase,
   CompleteOAuthProfileUseCase,
@@ -45,10 +44,6 @@ export const getAuthService = (): AuthService => {
     authSessionMapper,
   );
 
-  const checkEmailAvailabilityUseCase = new CheckEmailAvailabilityUseCase(
-    authRepository,
-  );
-
   const checkUsernameAvailabilityUseCase =
     new CheckUsernameAvailabilityUseCase();
 
@@ -70,7 +65,6 @@ export const getAuthService = (): AuthService => {
     restoreUserSessionUseCase,
     createSessionUseCase,
     registerUserUseCase,
-    checkEmailAvailabilityUseCase,
     checkUsernameAvailabilityUseCase,
     oauthLoginUseCase,
     completeOAuthProfileUseCase,
@@ -100,11 +94,6 @@ export async function registerUser(data: {
 }) {
   const service = getAuthService();
   return await service.registerUser(data);
-}
-
-export async function checkEmailAvailability(email: string) {
-  const service = getAuthService();
-  return await service.checkEmailAvailability(email);
 }
 
 export async function checkUsernameAvailability(username: string) {

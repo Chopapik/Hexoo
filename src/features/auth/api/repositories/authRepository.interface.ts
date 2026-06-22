@@ -4,7 +4,7 @@ export type AuthDecodedToken = {
   email?: string | null;
 };
 
-/** Minimal auth user record for e.g. checkEmailAvailability. */
+/** Minimal auth user record for trusted server-side identity operations. */
 export type AuthUserRecord = {
   uid: string;
   email?: string | null;

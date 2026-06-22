@@ -33,7 +33,8 @@ export default function useRegister(onError: ErrorCallback) {
         const msg = signUpError.message?.toLowerCase() ?? "";
 
         if (msg.includes("already") || msg.includes("exists")) {
-          onError("auth/email-already-exists", "email");
+          shouldKeepLoading = true;
+          router.push(`/verify-email?email=${encodeURIComponent(data.email)}`);
         } else if (msg.includes("password") || msg.includes("weak")) {
           onError("password_too_short", "password");
         } else {

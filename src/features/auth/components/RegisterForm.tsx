@@ -14,7 +14,6 @@ import { RegisterData } from "../types/auth.type";
 import { parseRegisterErrorMessages } from "../utils/registerErrorMap";
 import { useRegisterForm } from "../hooks/useRegisterForm";
 import { useCheckUsername } from "../hooks/useCheckUsername";
-import { useCheckEmail } from "../hooks/useCheckEmail";
 import { useI18n } from "@/i18n/useI18n";
 import AuthFormCard from "./AuthFormCard";
 
@@ -26,7 +25,6 @@ export default function RegisterForm() {
     errors,
     handleServerErrors,
     watchedName,
-    watchedEmail,
     watchedPassword,
   } = useRegisterForm();
 
@@ -36,11 +34,6 @@ export default function RegisterForm() {
     isAvailable: isUsernameAvailable,
     error: usernameError,
   } = useCheckUsername(watchedName || "");
-  const {
-    isChecking: isCheckingEmail,
-    isAvailable: isEmailAvailable,
-    error: emailError,
-  } = useCheckEmail(watchedEmail || "");
 
   const nameMessages = useMemo((): Message[] => {
     const validationMessages = parseRegisterErrorMessages(
@@ -96,42 +89,8 @@ export default function RegisterForm() {
       return validationMessages;
     }
 
-    if (emailError === "CONFLICT") {
-      return [
-        {
-          type: "Dismiss",
-          text: t("auth.emailTaken"),
-        },
-      ];
-    }
-
-    if (
-      isEmailAvailable === true &&
-      watchedEmail &&
-      watchedEmail.trim().length > 0 &&
-      !isCheckingEmail
-    ) {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (emailRegex.test(watchedEmail.trim())) {
-        return [
-          {
-            type: "Success",
-            text: t("auth.emailAvailable"),
-          },
-        ];
-      }
-    }
-
     return [];
-  }, [
-    errors.email?.message,
-    lang,
-    t,
-    emailError,
-    isEmailAvailable,
-    watchedEmail,
-    isCheckingEmail,
-  ]);
+  }, [errors.email?.message, lang]);
 
   const passwordMessages = useMemo((): Message[] => {
     const validationMessages = parseRegisterErrorMessages(

@@ -48,10 +48,6 @@ export interface AuthService {
       lastOnline?: Date | string;
     };
   }>;
-  checkEmailAvailability(email: string): Promise<{
-    available: boolean;
-    email: string;
-  }>;
   checkUsernameAvailability(username: string): Promise<{
     available: boolean;
     username: string;

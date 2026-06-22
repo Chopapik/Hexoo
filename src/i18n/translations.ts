@@ -83,7 +83,7 @@ const PL = {
   "auth.completeProfile.placeholder": "podaj nazwę",
   "auth.completeProfile.submit": "Dokończ rejestrację",
   "auth.verify.title": "Sprawdź swoją skrzynkę",
-  "auth.verify.copy": "Wysłaliśmy link aktywacyjny na Twój adres email. Kliknij go, żeby potwierdzić konto i dokończyć rejestrację.",
+  "auth.verify.copy": "Sprawdź swoją skrzynkę pocztową. Jeśli rejestracja dla podanego adresu jest możliwa, otrzymasz wiadomość z linkiem potwierdzającym.",
   "auth.verify.help": "Jeśli nie widzisz wiadomości, sprawdź folder Spam lub inne filtry poczty.",
   "auth.verify.resend": "Wyślij ponownie",
   "auth.verify.emailRequired": "Wpisz email, żeby wysłać link ponownie.",
@@ -542,7 +542,7 @@ export const TRANSLATIONS = {
     "auth.completeProfile.submit": "Complete registration",
     "auth.verify.title": "Check your inbox",
     "auth.verify.copy":
-      "We sent an activation link to your email address. Click it to confirm your account and finish registration.",
+    "Check your inbox. If registration is available for the provided address, you will receive a confirmation link.",
     "auth.verify.help":
       "If you do not see the message, check Spam or other email filters.",
     "auth.verify.resend": "Send again",
