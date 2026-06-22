@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit",
     "supabase:types": "supabase gen types typescript --local > src/lib/supabase.database.types.ts",
     "test": "vitest run",
+    "test:db": "bash scripts/test-db.sh",
     "test:node": "vitest run --project node",
     "test:watch": "vitest",
     "storybook": "storybook dev -p 6006",

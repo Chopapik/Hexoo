@@ -151,7 +151,10 @@ begin
     p_post_id, p_user_id, coalesce(p_text, ''), coalesce(p_likes_count, 0),
     coalesce(p_comments_count, 0), coalesce(p_created_at, now()), p_updated_at,
     coalesce(p_is_nsfw, false), coalesce(p_is_pending, false),
-    case when coalesce(p_is_pending, false) then 'pending' else 'visible' end,
+    case
+      when coalesce(p_is_pending, false) then 'pending'
+      else 'visible'
+    end::public.content_status,
     p_image_url, p_image_meta, p_device, p_moderation_context
   ) returning id into v_comment_id;
 
