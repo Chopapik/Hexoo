@@ -4,6 +4,11 @@ do $$
 declare
   admin_id uuid;
 begin
+  if current_setting('hexoo.allow_dev_admin_seed', true) is distinct from 'true' then
+    raise exception 'DEV_ADMIN_SEED_LOCAL_GUARD'
+      using hint = 'Run this seed only in an explicit local session after SET hexoo.allow_dev_admin_seed = true.';
+  end if;
+
   if not exists (
     select 1
     from auth.users
