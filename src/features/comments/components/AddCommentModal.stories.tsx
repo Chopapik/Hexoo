@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { expect, within } from "storybook/test";
+import { expect, waitFor, within } from "storybook/test";
 
 import type { PublicPostResponseDto } from "@/features/posts/types/post.dto";
 import AddCommentModal from "./AddCommentModal";
@@ -52,12 +52,17 @@ export const ValidationError: Story = {
   play: async ({ canvasElement, userEvent }) => {
     const body = within(canvasElement.ownerDocument.body);
 
-    await userEvent.click(
-      await body.findByRole("button", { name: /add comment|dodaj komentarz/i }),
+    const submitButton = await body.findByRole("button", {
+      name: /add comment|dodaj komentarz/i,
+    });
+
+    await waitFor(() => expect(submitButton).toBeVisible());
+    await userEvent.click(submitButton);
+
+    const error = await body.findByText(
+      /comment cannot be empty|komentarz nie może być pusty/i,
     );
 
-    await expect(
-      await body.findByText(/comment cannot be empty|komentarz nie może być pusty/i),
-    ).toBeVisible();
+    await waitFor(() => expect(error).toBeVisible());
   },
 };
