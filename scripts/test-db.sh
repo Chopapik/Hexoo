@@ -13,9 +13,9 @@ fi
 
 readonly DB_CONTAINER="supabase_db_${PROJECT_ID}"
 readonly SQL_TESTS=(
-  "supabase/tests/batch_4_comment_integrity.sql"
-  "supabase/tests/batch_5_like_target_state.sql"
-  "supabase/tests/batch_9_db_security.sql"
+  "supabase/tests/comment_status_counter_contract.sql"
+  "supabase/tests/like_target_state_contract.sql"
+  "supabase/tests/db_security_boundary_contract.sql"
 )
 
 if ! docker inspect "${DB_CONTAINER}" >/dev/null 2>&1; then
