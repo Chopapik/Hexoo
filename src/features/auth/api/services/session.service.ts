@@ -10,6 +10,15 @@ import {
 import { userRepository } from "@/features/users/api/repositories";
 
 const authRepository = new SupabaseAuthRepository();
+const E2E_SESSION_COOKIE_NAME = "__hexoo_e2e_session";
+
+function hasE2ESessionCookie(request: NextRequest): boolean {
+  return (
+    process.env.NODE_ENV !== "production" &&
+    process.env.HEXOO_E2E_SMOKE === "true" &&
+    Boolean(request.cookies.get(E2E_SESSION_COOKIE_NAME)?.value)
+  );
+}
 
 async function hasValidAccessToken(accessToken: string): Promise<boolean> {
   try {
@@ -62,6 +71,10 @@ export async function isUserAuthenticated(
   request: NextRequest,
   response?: NextResponse,
 ): Promise<boolean> {
+  if (hasE2ESessionCookie(request)) {
+    return true;
+  }
+
   const sessionCookie = getSessionCookieFromRequest(request);
 
   if (sessionCookie.session) {

@@ -1,6 +1,10 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { UserRole } from "@/features/users/types/user.type";
 import type { UserEntity } from "@/features/users/types/user.entity";
+
+vi.mock("next/headers", () => ({
+  cookies: vi.fn(),
+}));
 
 vi.mock("./session.cookies", () => ({
   clearAllAuthCookies: vi.fn(),
@@ -27,6 +31,7 @@ vi.mock("@/features/images/utils/resolveImagePublicUrl", () => ({
   resolveImagePublicUrl: vi.fn(() => undefined),
 }));
 
+import { cookies } from "next/headers";
 import { clearAllAuthCookies, getSessionCookie } from "./session.cookies";
 import { authRepository } from "@/features/auth/api/repositories";
 import { userRepository } from "@/features/users/api/repositories";
@@ -86,6 +91,10 @@ describe("AUTH-SESSION-ROLE-001 and AUTH-BAN-001 session resolver", () => {
       email: "token-role-is-not-trusted@example.test",
     });
     vi.mocked(userRepository.getUserByUid).mockResolvedValue(user());
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
   });
 
   it("AUTH-SESSION-ROLE-001 loads UID and role from verified token plus DB profile", async () => {
@@ -231,5 +240,30 @@ describe("AUTH-SESSION-ROLE-001 and AUTH-BAN-001 session resolver", () => {
         isBanned: false,
       }),
     ).toThrow(expect.objectContaining({ code: "FORBIDDEN" }));
+  });
+
+  it("BATCH-10-E2E-GUARD ignores the E2E session cookie in production", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("HEXOO_E2E_SMOKE", "true");
+    vi.mocked(getSessionCookie).mockResolvedValue({ session: false });
+    vi.mocked(cookies).mockResolvedValue({
+      get: vi.fn(() => ({
+        value: Buffer.from(
+          JSON.stringify({
+            uid: "e2e-admin",
+            email: "e2e-admin@example.test",
+            name: "E2E Admin",
+            role: UserRole.Admin,
+          }),
+          "utf8",
+        ).toString("base64url"),
+      })),
+    } as never);
+
+    await expect(getUserFromSession()).rejects.toMatchObject({
+      code: "AUTH_REQUIRED",
+    });
+    expect(cookies).not.toHaveBeenCalled();
+    expect(authRepository.verifyIdToken).not.toHaveBeenCalled();
   });
 });

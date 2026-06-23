@@ -1,5 +1,6 @@
 import { createAppError } from "@/lib/AppError";
 import { clearAllAuthCookies, getSessionCookie } from "./session.cookies";
+import { cookies } from "next/headers";
 import { logActivity } from "@/features/activity/api/services";
 import { authRepository } from "../repositories";
 import { userRepository } from "@/features/users/api/repositories";
@@ -8,7 +9,75 @@ import { UserRole } from "@/features/users/types/user.type";
 import type { SessionData } from "@/features/me/me.type";
 import { isTokenIssuedBeforeSessionCutoff } from "./session-cutoff";
 
+const E2E_SESSION_COOKIE_NAME = "__hexoo_e2e_session";
+
+function isSessionRole(value: unknown): value is UserRole {
+  return (
+    value === UserRole.Admin ||
+    value === UserRole.Moderator ||
+    value === UserRole.User
+  );
+}
+
+function parseE2ESessionCookie(value: string): SessionData | null {
+  try {
+    const parsed = JSON.parse(
+      Buffer.from(value, "base64url").toString("utf8"),
+    ) as Partial<SessionData>;
+
+    if (
+      typeof parsed.uid !== "string" ||
+      typeof parsed.email !== "string" ||
+      typeof parsed.name !== "string" ||
+      !isSessionRole(parsed.role)
+    ) {
+      return null;
+    }
+
+    return {
+      uid: parsed.uid,
+      email: parsed.email,
+      name: parsed.name,
+      role: parsed.role,
+      avatarUrl:
+        typeof parsed.avatarUrl === "string" ? parsed.avatarUrl : undefined,
+      lastOnline:
+        typeof parsed.lastOnline === "string"
+          ? parsed.lastOnline
+          : new Date().toISOString(),
+      isRestricted: parsed.isRestricted === true,
+      isBanned: parsed.isBanned === true,
+    };
+  } catch {
+    return null;
+  }
+}
+
+async function getE2ESessionFromCookie(): Promise<SessionData | null> {
+  if (
+    process.env.NODE_ENV === "production" ||
+    process.env.HEXOO_E2E_SMOKE !== "true"
+  ) {
+    return null;
+  }
+
+  const cookieStore = await cookies();
+  const rawSession = cookieStore.get(E2E_SESSION_COOKIE_NAME)?.value;
+
+  if (!rawSession) {
+    return null;
+  }
+
+  return parseE2ESessionCookie(rawSession);
+}
+
 export async function getUserFromSession(): Promise<SessionData | never> {
+  const e2eSession = await getE2ESessionFromCookie();
+
+  if (e2eSession) {
+    return e2eSession;
+  }
+
   const sessionCookie = await getSessionCookie();
 
   if (!sessionCookie.session) {
