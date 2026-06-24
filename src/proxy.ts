@@ -50,6 +50,10 @@ function isPublicApiReadRequest(request: NextRequest): boolean {
   return false;
 }
 
+function isDemoResetApiRoute(pathname: string): boolean {
+  return process.env.IS_DEMO === "true" && pathname === "/api/demo/reset";
+}
+
 export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   const isApiRoute = pathname.startsWith("/api");
@@ -60,7 +64,10 @@ export async function proxy(request: NextRequest) {
 
   if (isApiRoute) {
     const allowedWithoutSession =
-      isAuthApiRoute || isLoggedIn || isPublicApiReadRequest(request);
+      isAuthApiRoute ||
+      isDemoResetApiRoute(pathname) ||
+      isLoggedIn ||
+      isPublicApiReadRequest(request);
 
     if (allowedWithoutSession) {
       return response;
