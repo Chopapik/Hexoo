@@ -16,7 +16,7 @@ The project started as a learning project and gradually evolved into a more comp
 
 The interface is designed in Figma and includes application screens, reusable components, and layout states.
 
-Link : https://www.figma.com/design/d0crry00BoOUu41LhebLfi/HEXOO-Design?node-id=149-7692&t=JPUn3fmxlBNyi2tV-1
+Link : https://www.figma.com/design/KurhjgFX2T3eJUp7jLIatB/HEXOO-Design-v-2.0?node-id=149-7692&p=f&t=uI8gbdBg5yeufQ2Y-0
 
 <img src="./docs/images/figma.png" alt="Figma" width="50%" style="border-radius:14px;" />
 
