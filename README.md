@@ -14,13 +14,31 @@ The project started as a learning project and gradually evolved into a more comp
 
 The app is built around a simple product idea: posting should feel direct, fast, and low-pressure. There are no recommendation algorithms, no engagement ranking, and no manipulated feed order — just a straightforward timeline and moderation tools for handling reported or harmful content.
 
-- **Live demo:** [Link](https://demo.hexoo.eu/)
+## Live demo
+
+A public demo version of Hexoo is available here:
+
+**Live demo:** [Link](https://demo.hexoo.eu/)
+
+You can test the app in two ways:
+
+1. Create your own account using the registration flow.
+2. Use the shared demo account:
+
+| Field    | Value           |
+| -------- | --------------- |
+| Email    | `demo@hexoo.eu` |
+| Password | `demo1234`      |
+
+This is a public demo environment. Please do not enter private information or real personal data.
+
+Demo data is reset automatically. Test accounts, uploaded images, posts, comments and reactions created by visitors may be removed during the next reset. The reset restores a curated demo state with example posts, comments and images.
 
 ## Design
 
 The interface is designed in Figma and includes application screens, reusable components, responsive layouts, and interaction states.
 
-**Figma design:** https://www.figma.com/design/KurhjgFX2T3eJUp7jLIatB/HEXOO-Design-v-2.0?node-id=149-7692&p=f&t=uI8gbdBg5yeufQ2Y-0
+**Figma design:** [Link](https://www.figma.com/design/KurhjgFX2T3eJUp7jLIatB/HEXOO-Design-v-2.0?node-id=149-7692&p=f&t=uI8gbdBg5yeufQ2Y-0)
 
 <img src="./docs/images/figma.png" alt="Figma" width="50%" style="border-radius:14px;" />
 

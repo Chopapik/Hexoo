@@ -63,14 +63,19 @@ export default function DemoNoticeModal({ isDemo }: DemoNoticeModalProps) {
       >
         <div className="space-y-4 px-4 py-5 font-sans text-sm leading-6 text-foreground-primary-default sm:px-6 sm:py-6">
           <p>
-            This is a public demo version of Hexoo. The data may be reset
-            automatically and other visitors may also test the app. Please do
-            not enter private information or real personal data.
+            This is a public demo version of Hexoo. You can create your own
+            account or use the shared demo account:
           </p>
+          <div>
+            <p>Email: demo@hexoo.eu</p>
+            <p>Password: demo1234</p>
+          </div>
           <p>
-            You can safely test registration, login, posts, comments, reactions
-            and image upload. Demo content may be removed during the next reset.
+            Demo data is reset automatically. Test accounts, uploaded images,
+            posts, comments and reactions created by visitors may be removed
+            during the next reset.
           </p>
+          <p>Please do not enter private information or real personal data.</p>
         </div>
       </Modal>
     </>
