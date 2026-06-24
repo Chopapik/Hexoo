@@ -14,7 +14,7 @@ The project started as a learning project and gradually evolved into a more comp
 
 The app is built around a simple product idea: posting should feel direct, fast, and low-pressure. There are no recommendation algorithms, no engagement ranking, and no manipulated feed order — just a straightforward timeline and moderation tools for handling reported or harmful content.
 
-- **Live demo:** TODO
+- **Live demo:** [Link](https://demo.hexoo.eu/)
 
 ## Design
 
