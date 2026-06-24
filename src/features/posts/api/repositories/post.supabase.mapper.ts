@@ -41,6 +41,7 @@ export function mapPostRow(row: PostRow): PostEntity {
     isNSFW: row.is_nsfw,
     isEdited: row.is_edited,
     imageMeta: parseImageMeta(row.image_meta) ?? undefined,
+    imageUrl: row.image_url ?? null,
     device: row.device ?? undefined,
     youtubeUrl: row.youtube_url ?? null,
     userReports: undefined,
@@ -68,6 +69,7 @@ export function toInsertRow(data: CreatePostPayload): PostInsertRow {
   if (data.imageMeta !== undefined) {
     row.image_meta = imageMetaToJson(data.imageMeta);
   }
+  if (data.imageUrl !== undefined) row.image_url = data.imageUrl;
   if (data.device !== undefined) row.device = data.device;
   if (data.youtubeUrl !== undefined) row.youtube_url = data.youtubeUrl || null;
 
@@ -91,6 +93,7 @@ export function toUpdateRow(data: UpdatePostPayload): PostUpdateRow {
   if (data.imageMeta !== undefined) {
     row.image_meta = imageMetaToJson(data.imageMeta);
   }
+  if (data.imageUrl !== undefined) row.image_url = data.imageUrl;
   if (data.device !== undefined) row.device = data.device;
   if (data.youtubeUrl !== undefined) row.youtube_url = data.youtubeUrl || null;
 

@@ -25,6 +25,14 @@ type DemoAuthUserSummary = {
   updated: boolean;
 };
 
+type SeedSummary = {
+  strategy: "seeded";
+  postsCreated: number;
+  commentsCreated: number;
+  reactionsCreated: number;
+  seedImagesLinked: number;
+};
+
 export type DemoResetSummary = {
   deleted: DeleteSummary;
   auth: {
@@ -36,10 +44,7 @@ export type DemoResetSummary = {
     deletedObjects: number;
     skipped: boolean;
   };
-  cleanState: {
-    strategy: "empty";
-    postsCreated: 0;
-  };
+  seed: SeedSummary;
 };
 
 type RequiredDemoEnv = {
@@ -52,6 +57,159 @@ type CountedDeleteResult = {
   count: number | null;
   error: { message?: string | null } | null;
 };
+
+type SeedPost = TablesInsert<"posts"> & {
+  id: string;
+  image_url: string | null;
+};
+
+type SeedComment = TablesInsert<"comments"> & {
+  id: string;
+};
+
+const DEMO_SEED_BASE_TIME = "2026-01-01T10:00:00.000Z";
+
+const DEMO_SEED_POSTS: readonly Omit<SeedPost, "user_id">[] = [
+  {
+    id: "00000000-0000-4000-8000-000000000101",
+    text: "Welcome to the Hexoo demo feed. This curated reset state is safe to explore, and anything visitors add will be cleaned up automatically.",
+    image_url: "/demo-seed/post-1.jpg",
+    image_meta: null,
+    likes_count: 0,
+    comments_count: 2,
+    created_at: DEMO_SEED_BASE_TIME,
+    updated_at: null,
+    is_nsfw: false,
+    is_pending: false,
+    is_edited: false,
+    status: "visible",
+    moderation_context: null,
+    device: "Demo seed",
+    youtube_url: null,
+  },
+  {
+    id: "00000000-0000-4000-8000-000000000102",
+    text: "Image posts, comments and reactions are ready to test. Upload your own temporary content during the session and the next reset will remove it.",
+    image_url: "/demo-seed/post-2.jpg",
+    image_meta: null,
+    likes_count: 0,
+    comments_count: 1,
+    created_at: "2026-01-01T09:55:00.000Z",
+    updated_at: null,
+    is_nsfw: false,
+    is_pending: false,
+    is_edited: false,
+    status: "visible",
+    moderation_context: null,
+    device: "Demo seed",
+    youtube_url: null,
+  },
+  {
+    id: "00000000-0000-4000-8000-000000000103",
+    text: "The demo includes the same public workflows as the app: profiles, feed browsing, comments, reporting and moderation-friendly content states.",
+    image_url: "/demo-seed/post-3.jpg",
+    image_meta: null,
+    likes_count: 0,
+    comments_count: 1,
+    created_at: "2026-01-01T09:50:00.000Z",
+    updated_at: null,
+    is_nsfw: false,
+    is_pending: false,
+    is_edited: false,
+    status: "visible",
+    moderation_context: null,
+    device: "Demo seed",
+    youtube_url: null,
+  },
+  {
+    id: "00000000-0000-4000-8000-000000000104",
+    text: "Recruiters and testers can sign up, create posts, add comments and try image upload without using real personal information.",
+    image_url: null,
+    image_meta: null,
+    likes_count: 0,
+    comments_count: 0,
+    created_at: "2026-01-01T09:45:00.000Z",
+    updated_at: null,
+    is_nsfw: false,
+    is_pending: false,
+    is_edited: false,
+    status: "visible",
+    moderation_context: null,
+    device: "Demo seed",
+    youtube_url: null,
+  },
+] as const;
+
+const DEMO_SEED_COMMENTS: readonly Omit<SeedComment, "user_id">[] = [
+  {
+    id: "00000000-0000-4000-8000-000000000201",
+    post_id: "00000000-0000-4000-8000-000000000101",
+    text: "This account is reset to the same safe baseline, so the demo stays predictable between visits.",
+    likes_count: 0,
+    comments_count: 0,
+    created_at: "2026-01-01T10:01:00.000Z",
+    updated_at: null,
+    is_nsfw: false,
+    is_pending: false,
+    is_edited: false,
+    status: "visible",
+    moderation_context: null,
+    image_url: null,
+    image_meta: null,
+    device: "Demo seed",
+  },
+  {
+    id: "00000000-0000-4000-8000-000000000202",
+    post_id: "00000000-0000-4000-8000-000000000101",
+    text: "Feel free to create temporary content during a review session; the scheduled reset will clean it up.",
+    likes_count: 0,
+    comments_count: 0,
+    created_at: "2026-01-01T10:02:00.000Z",
+    updated_at: null,
+    is_nsfw: false,
+    is_pending: false,
+    is_edited: false,
+    status: "visible",
+    moderation_context: null,
+    image_url: null,
+    image_meta: null,
+    device: "Demo seed",
+  },
+  {
+    id: "00000000-0000-4000-8000-000000000203",
+    post_id: "00000000-0000-4000-8000-000000000102",
+    text: "Static demo images are served from the app, while visitor uploads are removed from storage on reset.",
+    likes_count: 0,
+    comments_count: 0,
+    created_at: "2026-01-01T09:56:00.000Z",
+    updated_at: null,
+    is_nsfw: false,
+    is_pending: false,
+    is_edited: false,
+    status: "visible",
+    moderation_context: null,
+    image_url: null,
+    image_meta: null,
+    device: "Demo seed",
+  },
+  {
+    id: "00000000-0000-4000-8000-000000000204",
+    post_id: "00000000-0000-4000-8000-000000000103",
+    text: "Reports and moderation logs are cleared during reset so each session starts from a clean presentation state.",
+    likes_count: 0,
+    comments_count: 0,
+    created_at: "2026-01-01T09:51:00.000Z",
+    updated_at: null,
+    is_nsfw: false,
+    is_pending: false,
+    is_edited: false,
+    status: "visible",
+    moderation_context: null,
+    image_url: null,
+    image_meta: null,
+    device: "Demo seed",
+  },
+] as const;
 
 function requireDemoEnv(): RequiredDemoEnv {
   const email = process.env.DEMO_USER_EMAIL?.trim().toLowerCase();
@@ -397,6 +555,34 @@ async function deleteApplicationData(): Promise<DeleteSummary> {
   return deleted;
 }
 
+async function seedDemoContent(demoUid: string): Promise<SeedSummary> {
+  const posts = DEMO_SEED_POSTS.map((post) => ({
+    ...post,
+    user_id: demoUid,
+  }));
+
+  const comments = DEMO_SEED_COMMENTS.map((comment) => ({
+    ...comment,
+    user_id: demoUid,
+  }));
+
+  const { error: postError } = await supabaseAdmin.from("posts").insert(posts);
+  throwSupabaseError("insert demo seed posts", postError);
+
+  const { error: commentError } = await supabaseAdmin
+    .from("comments")
+    .insert(comments);
+  throwSupabaseError("insert demo seed comments", commentError);
+
+  return {
+    strategy: "seeded",
+    postsCreated: posts.length,
+    commentsCreated: comments.length,
+    reactionsCreated: 0,
+    seedImagesLinked: posts.filter((post) => post.image_url).length,
+  };
+}
+
 export async function resetDemoData(): Promise<DemoResetSummary> {
   if (process.env.IS_DEMO !== "true") {
     throw createAppError({
@@ -415,6 +601,7 @@ export async function resetDemoData(): Promise<DemoResetSummary> {
   await ensureDemoAuthUser(env);
   await ensureDemoProfile(demoUser, env);
   const storage = await cleanDemoStorage();
+  const seed = await seedDemoContent(demoUser.uid);
 
   const summary: DemoResetSummary = {
     deleted,
@@ -423,10 +610,7 @@ export async function resetDemoData(): Promise<DemoResetSummary> {
       demoUser,
     },
     storage,
-    cleanState: {
-      strategy: "empty",
-      postsCreated: 0,
-    },
+    seed,
   };
 
   console.info("[demoReset] Demo reset completed.", summary);

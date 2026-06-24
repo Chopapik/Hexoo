@@ -58,7 +58,7 @@ export class PostEnricher {
 
       return {
         ...post,
-        imageUrl: resolveImagePublicUrl(post.imageMeta) ?? null,
+        imageUrl: post.imageUrl ?? resolveImagePublicUrl(post.imageMeta) ?? null,
         userName: author?.name.trim() || "Deleted user",
         userAvatarUrl: author?.name.trim()
           ? resolveImagePublicUrl(author.avatarMeta) ?? null

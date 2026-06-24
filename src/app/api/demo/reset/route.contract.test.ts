@@ -32,9 +32,12 @@ vi.mock("@/features/demo/api/demoReset.service", () => ({
       deletedObjects: 0,
       skipped: false,
     },
-    cleanState: {
-      strategy: "empty",
-      postsCreated: 0,
+    seed: {
+      strategy: "seeded",
+      postsCreated: 4,
+      commentsCreated: 4,
+      reactionsCreated: 0,
+      seedImagesLinked: 3,
     },
   })),
 }));

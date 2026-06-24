@@ -30,6 +30,7 @@ export interface ContentBase {
   isEdited: boolean;
 
   imageMeta?: ImageMeta | null;
+  imageUrl?: string | null;
 
   device?: string | null;
 
