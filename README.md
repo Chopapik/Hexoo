@@ -8,25 +8,21 @@
 
 # Hexoo
 
-Hexoo is a lightweight social posting app focused on a simple chronological feed, quick interactions, and basic content moderation.
+Hexoo is a lightweight full-stack social posting app focused on a simple chronological feed, quick interactions, user profiles, image upload, comments, reactions, and content moderation.
 
-The project started as a learning project and gradually evolved into a more complete full-stack application with authentication, user-generated content, reusable UI components, moderation flow, and production deployment.
+The project started as a learning project and gradually evolved into a more complete portfolio-ready web application with authentication, user-generated content, reusable UI components, moderation flows, backend integration, and production deployment.
+
+The app is built around a simple product idea: posting should feel direct, fast, and low-pressure. There are no recommendation algorithms, no engagement ranking, and no manipulated feed order — just a straightforward timeline and moderation tools for handling reported or harmful content.
+
+- **Live demo:** TODO
 
 ## Design
 
-The interface is designed in Figma and includes application screens, reusable components, and layout states.
+The interface is designed in Figma and includes application screens, reusable components, responsive layouts, and interaction states.
 
-Link : https://www.figma.com/design/KurhjgFX2T3eJUp7jLIatB/HEXOO-Design-v-2.0?node-id=149-7692&p=f&t=uI8gbdBg5yeufQ2Y-0
+**Figma design:** [TODO](https://www.figma.com/design/KurhjgFX2T3eJUp7jLIatB/HEXOO-Design-v-2.0?node-id=149-7692&p=f&t=uI8gbdBg5yeufQ2Y-0)
 
 <img src="./docs/images/figma.png" alt="Figma" width="50%" style="border-radius:14px;" />
-
-## Overview
-
-Hexoo is built around a simple idea: posting should feel direct, fast, and low-pressure.
-
-There are no recommendation algorithms, no engagement ranking, and no manipulated feed order. The app focuses on a straightforward timeline, user profiles, comments, reactions, and moderation tools for handling harmful or extreme content.
-
-The project is currently used as a portfolio-ready full-stack application and a place for improving product design, frontend architecture, and backend integration.
 
 ## Main features
 
@@ -56,20 +52,21 @@ The project is currently used as a portfolio-ready full-stack application and a 
 - OpenAI API
 - reCAPTCHA
 
-<!-- ## Screenshots -->
+## Engineering scope
 
-<!-- Add or update screenshots in ./docs/images/ -->
+Hexoo includes several areas commonly found in real-world web applications:
 
-<!-- ![Hexoo preview](./docs/images/header-preview.png) -->
-
-<!-- Suggested screenshots to add later:
-
-![Feed preview](./docs/images/feed-preview.png)
-![Profile preview](./docs/images/profile-preview.png)
-![Post preview](./docs/images/post-preview.png)
-![Moderator preview](./docs/images/moderator-preview.png)
-
--->
+- authentication and protected user flows
+- session handling with Supabase Auth and cookies
+- user-generated content stored in a PostgreSQL-backed database
+- posts, comments, reactions, profiles, and image upload
+- role-based flows for users, moderators, and administrators
+- moderation queue, reports, decisions, and activity logs
+- form validation and typed data handling with Zod
+- server-side and client-side application logic
+- external API integration for automated content moderation
+- reusable frontend components and responsive UI implementation
+- deployment-ready configuration
 
 ## Project structure
 
@@ -83,43 +80,6 @@ src/
 supabase/       Supabase-related configuration and database files
 docs/           Project images and documentation assets
 ```
-
-## Technical scope
-
-Hexoo includes several areas commonly found in real-world web applications:
-
-- authentication and protected user flows
-- user-generated content
-- database-backed posts, comments, reactions, and profiles
-- form validation
-- server-side and client-side application logic
-- external API integration
-- moderation-related flows
-- reusable frontend components
-- responsive UI implementation
-- deployment-ready configuration
-
-## Status
-
-Hexoo is active and maintained in a slower development mode.
-
-Current focus:
-
-- improving project presentation and documentation
-- refining the interface and design system
-- improving moderation and safety flows
-- polishing responsive views
-- preparing a clearer public case study for recruiters and visitors
-
-## Project review
-
-The project is intended to be reviewed through:
-
-- code
-- the live application
-- the source code
-- screenshots
-- the Figma design file
 
 Local setup instructions are intentionally omitted because the application depends on private environment variables, Supabase configuration, external API keys, and production-specific services.
 
