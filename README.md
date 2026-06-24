@@ -20,7 +20,7 @@ The app is built around a simple product idea: posting should feel direct, fast,
 
 The interface is designed in Figma and includes application screens, reusable components, responsive layouts, and interaction states.
 
-**Figma design:** [TODO](https://www.figma.com/design/KurhjgFX2T3eJUp7jLIatB/HEXOO-Design-v-2.0?node-id=149-7692&p=f&t=uI8gbdBg5yeufQ2Y-0)
+**Figma design:** https://www.figma.com/design/KurhjgFX2T3eJUp7jLIatB/HEXOO-Design-v-2.0?node-id=149-7692&p=f&t=uI8gbdBg5yeufQ2Y-0
 
 <img src="./docs/images/figma.png" alt="Figma" width="50%" style="border-radius:14px;" />
 
