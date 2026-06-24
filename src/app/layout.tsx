@@ -11,6 +11,7 @@ import RecaptchaProvider from "@/lib/providers/RecaptchaProvider";
 import ToastContainer from "@/lib/providers/ToastContainer";
 import ThemeScript from "@/features/shared/components/ThemeScript";
 import LanguageBootstrap from "@/i18n/LanguageBootstrap";
+import DemoNoticeModal from "@/features/demo/components/DemoNoticeModal";
 
 export const metadata: Metadata = {
   title: "Hexoo",
@@ -21,6 +22,8 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const isDemo = process.env.NEXT_PUBLIC_IS_DEMO === "true";
+
   return (
     <html
       lang="pl"
@@ -35,6 +38,7 @@ export default function RootLayout({
           <QueryProvider>
             <LanguageBootstrap />
             {children}
+            <DemoNoticeModal isDemo={isDemo} />
             <ToastContainer />
           </QueryProvider>
         </RecaptchaProvider>
