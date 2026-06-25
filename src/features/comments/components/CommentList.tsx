@@ -2,8 +2,11 @@
 
 import type { PublicCommentResponseDto } from "../types/comment.dto";
 import { CommentItem } from "./CommentItem";
+
 import { AppLoader } from "@/features/shared/components/ui/AppLoader";
+
 import { useI18n } from "@/i18n/useI18n";
+
 import { cn } from "@/features/shared/utils/utils";
 
 interface CommentListProps {
@@ -13,7 +16,7 @@ interface CommentListProps {
 }
 
 const commentsStatusClassName =
-  "flex min-h-[84px] w-full min-w-0 items-center justify-center px-4 py-8 text-center md:min-w-[527px]";
+  "flex w-full min-w-0 flex-1 self-stretch items-center justify-center px-4 py-8 text-center";
 
 export const CommentList = ({
   comments,
@@ -33,7 +36,7 @@ export const CommentList = ({
   if (comments.length === 0) {
     return (
       <div className={cn(commentsStatusClassName, className)}>
-        <p className="text-foreground-secondary-default text-sm font-sans">
+        <p className="font-sans text-sm text-foreground-secondary-default">
           {t("comment.empty")}
         </p>
       </div>
@@ -41,7 +44,7 @@ export const CommentList = ({
   }
 
   return (
-    <div className={cn("flex flex-col", className)}>
+    <div className={cn("flex w-full min-w-0 flex-col", className)}>
       {comments.map((comment) => (
         <CommentItem key={comment.id} comment={comment} />
       ))}
