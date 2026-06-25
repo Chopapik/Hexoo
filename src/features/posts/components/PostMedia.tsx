@@ -2,9 +2,13 @@
 
 import type { CSSProperties, SyntheticEvent } from "react";
 import { useMemo, useState } from "react";
+
 import { DitheredImage } from "@/features/shared/components/media/DitheredImage";
+
 import { cn } from "@/features/shared/utils/utils";
+
 import { useI18n } from "@/i18n/useI18n";
+
 import { useAppStore } from "@/lib/store/store";
 
 type ImageDimensions = {
@@ -25,6 +29,7 @@ type PostMediaProps = {
   className?: string;
   intrinsicDimensions?: ImageDimensions;
   presentation?: "inline" | "modal";
+  fillContainer?: boolean;
   onReadyChange?: (isReady: boolean) => void;
 };
 
@@ -40,22 +45,30 @@ export function PostMedia({
   className,
   intrinsicDimensions,
   presentation = "inline",
+  fillContainer = false,
   onReadyChange,
 }: PostMediaProps) {
   const { t } = useI18n();
+
   const dithering = useAppStore((s) => s.settings.postDithering);
+
   const isAnimated = isGifSource(src);
+
   const [imageState, setImageState] = useState<ImageState>({
     src,
     dimensions: intrinsicDimensions ?? null,
     isReady: false,
     hasError: false,
   });
+
   const isCurrentImageState = imageState.src === src;
+
   const imageDimensions = isCurrentImageState
     ? (imageState.dimensions ?? intrinsicDimensions ?? null)
     : (intrinsicDimensions ?? null);
+
   const isImageReady = isCurrentImageState && imageState.isReady;
+
   const hasImageError = isCurrentImageState && imageState.hasError;
 
   const imageAspectRatio =
@@ -63,13 +76,19 @@ export function PostMedia({
       ? imageDimensions.width / imageDimensions.height
       : DEFAULT_IMAGE_ASPECT_RATIO;
 
-  const mediaStyle = useMemo<CSSProperties>(
-    () => ({ aspectRatio: `${imageAspectRatio}` }),
-    [imageAspectRatio],
-  );
+  const shouldFillContainer = presentation === "modal" && fillContainer;
+
+  const mediaStyle = useMemo<CSSProperties | undefined>(() => {
+    if (shouldFillContainer) {
+      return undefined;
+    }
+
+    return { aspectRatio: `${imageAspectRatio}` };
+  }, [imageAspectRatio, shouldFillContainer]);
 
   const handleImageLoad = (event: SyntheticEvent<HTMLImageElement>) => {
     const image = event.currentTarget;
+
     const naturalWidth = image.naturalWidth;
     const naturalHeight = image.naturalHeight;
 
@@ -82,6 +101,7 @@ export function PostMedia({
       isReady: true,
       hasError: false,
     });
+
     onReadyChange?.(true);
   };
 
@@ -92,6 +112,7 @@ export function PostMedia({
       isReady: true,
       hasError: true,
     });
+
     onReadyChange?.(true);
   };
 
@@ -108,7 +129,9 @@ export function PostMedia({
         "relative flex w-full max-w-full items-center justify-center overflow-hidden bg-surface-card-background-default",
         presentation === "inline"
           ? "min-h-[220px] max-h-[313px] rounded-xl border border-surface-card-border-default/60 md:h-[321px] md:max-h-none md:min-h-0 lg:h-[364px]"
-          : "min-h-[220px] max-h-[313px] bg-modal-overlay-background-default/30 md:h-[321px] md:max-h-none md:min-h-0 lg:h-[364px]",
+          : fillContainer
+            ? "h-full min-h-0 max-h-none flex-1 bg-modal-overlay-background-default/30"
+            : "min-h-[220px] max-h-[313px] bg-modal-overlay-background-default/30 md:h-[321px] md:max-h-none md:min-h-0 lg:h-[364px]",
         className,
       )}
       style={mediaStyle}

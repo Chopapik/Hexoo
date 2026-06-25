@@ -1,18 +1,26 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
+
 import Modal from "@/features/shared/components/layout/Modal";
 import Button from "@/features/shared/components/ui/Button";
 import { PostMeta } from "./PostMeta";
+
 import { CommentList } from "@/features/comments/components/CommentList";
 import { CommentForm } from "@/features/comments/components/CommentForm";
+
 import useComments from "@/features/comments/hooks/useComments";
+
 import { useAppStore } from "@/lib/store/store";
+
 import { isAsciiArt } from "../utils/asciiDetector";
 import type { PublicPostResponseDto } from "../types/post.dto";
+
 import { PostNsfwNotice } from "./PostNsfwNotice";
 import { PostMedia } from "./PostMedia";
+
 import { useI18n } from "@/i18n/useI18n";
+
 import { cn } from "@/features/shared/utils/utils";
 
 interface PostModalProps {
@@ -32,11 +40,14 @@ export const PostModal = ({
   revealNSFW,
 }: PostModalProps) => {
   const { t } = useI18n();
+
   const user = useAppStore((s) => s.auth.user);
+
   const showNSFWPosts = useAppStore((s) => s.settings.showNSFWPosts);
   const showNSFWComments = useAppStore((s) => s.settings.showNSFWComments);
 
   const { comments, isLoading } = useComments(post.id, isOpen);
+
   const visibleComments = useMemo(
     () =>
       showNSFWComments
@@ -44,6 +55,7 @@ export const PostModal = ({
         : comments.filter((comment) => !comment.isNSFW),
     [comments, showNSFWComments],
   );
+
   const hasHiddenNSFWComments = useMemo(
     () => !showNSFWComments && comments.some((comment) => comment.isNSFW),
     [comments, showNSFWComments],
@@ -54,6 +66,7 @@ export const PostModal = ({
   const isAscii = useMemo(() => isAsciiArt(post.text), [post.text]);
 
   const hasImage = !!post.imageUrl;
+
   const isContentVisible = !post.isNSFW || showNSFWPosts || Boolean(revealNSFW);
 
   const textClassName = cn(
@@ -70,8 +83,8 @@ export const PostModal = ({
   );
 
   const modalClassName = cn(
-    "h-dvh max-h-dvh overflow-hidden lg:h-[calc(100dvh-2rem)] lg:max-h-[calc(100dvh-2rem)]",
-    hasImage && "lg:!max-w-[calc(100vw-2rem)]",
+    "h-dvh max-h-dvh overflow-hidden lg:!h-[calc(100dvh-2rem)] lg:!max-h-[calc(100dvh-2rem)]",
+    hasImage && "lg:!w-[calc(100vw-2rem)] lg:!max-w-[calc(100vw-2rem)]",
   );
 
   return (
@@ -87,7 +100,8 @@ export const PostModal = ({
             src={post.imageUrl}
             alt={t("post.imageAlt")}
             presentation="modal"
-            className="hidden lg:flex lg:h-full lg:max-h-full lg:min-w-0 lg:flex-1 lg:rounded-none lg:border-0"
+            fillContainer
+            className="hidden lg:flex lg:h-full lg:min-h-0 lg:max-h-full lg:min-w-0 lg:flex-1 lg:basis-0 lg:rounded-none lg:border-0"
           />
         )}
 
@@ -115,8 +129,9 @@ export const PostModal = ({
                 </div>
               )}
 
-              {hasImage && post.imageUrl && (
-                isContentVisible ? (
+              {hasImage &&
+                post.imageUrl &&
+                (isContentVisible ? (
                   <PostMedia
                     src={post.imageUrl}
                     alt={t("post.imageAlt")}
@@ -127,8 +142,7 @@ export const PostModal = ({
                   <div className="flex min-h-[220px] w-full items-center justify-center overflow-hidden bg-modal-overlay-background-default/30 p-4">
                     <PostNsfwNotice />
                   </div>
-                )
-              )}
+                ))}
 
               {!isContentVisible && !hasImage && (
                 <div className="flex items-center justify-center p-4">
@@ -162,6 +176,7 @@ export const PostModal = ({
 
               <div className="min-h-0 flex-1 overflow-y-auto p-3 sm:p-4 scrollbar-hide">
                 <CommentList comments={visibleComments} isLoading={isLoading} />
+
                 {hasHiddenNSFWComments && (
                   <p className="mt-3 text-center text-xs text-foreground-muted-default">
                     {t("post.hiddenNsfw")}
@@ -192,6 +207,7 @@ export const PostModal = ({
 
             <div className="flex min-h-0 flex-1 flex-col justify-between overflow-y-auto p-4 pb-[236px] scrollbar-hide">
               <CommentList comments={visibleComments} isLoading={isLoading} />
+
               {hasHiddenNSFWComments && (
                 <p className="mb-3 text-center text-xs text-foreground-muted-default">
                   {t("post.hiddenNsfw")}
