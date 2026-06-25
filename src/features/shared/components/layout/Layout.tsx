@@ -18,15 +18,6 @@ const leftRailAsideClass =
 const rightRailAsideClass =
   "hidden lg:flex sticky top-[76px] h-[calc(100dvh-76px)] w-[235px] shrink-0 justify-center";
 
-function LeftRailWidthSpacer() {
-  return (
-    <div
-      className="invisible pointer-events-none h-full w-full shrink-0"
-      aria-hidden
-    />
-  );
-}
-
 const subscribeToHydration = (onStoreChange: () => void) => {
   queueMicrotask(onStoreChange);
   return () => {};
@@ -93,11 +84,7 @@ export const Layout: React.FC<{
       <div className="mx-auto w-full max-w-[1440px] pt-[108px] md:pt-[76px]">
         <div className="flex w-full items-start md:gap-4">
           <aside className={leftRailAsideClass}>
-            {user ? (
-              <LeftNav onOpenRight={openRight} user={user} />
-            ) : (
-              <LeftRailWidthSpacer />
-            )}
+            <LeftNav onOpenRight={openRight} user={user} />
           </aside>
           <main className="min-w-0 flex-1 px-2 pb-[84px] md:px-0 md:pb-0">
             {children}

@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { useI18n } from "@/i18n/useI18n";
 
@@ -229,11 +228,11 @@ export function RightNavGuestDisclaimer() {
   const { t } = useI18n();
 
   return (
-    <div className="hidden h-full w-[235px] self-start md:flex">
-      <div className="relative overflow-hidden">
-        <div className="relative min-h-32 overflow-hidden rounded-3xl bg-surface-chrome-background-default shadow-lg backdrop-blur-sm">
+    <div className="hidden h-[calc(100vh-76px)] min-h-[720px] w-[235px]  self-start overflow-hidden rounded-xl drop-shadow-[0px_4px_6px_rgba(0,0,0,0.25)] md:flex">
+      <div className="flex h-full min-h-[720px] w-full flex-col items-center justify-between pb-4">
+        <div className="relative flex h-[120px] w-full overflow-hidden rounded-3xl bg-surface-chrome-background-default shadow-lg backdrop-blur-sm">
           <RightNavGuestBackground />
-          <div className="relative z-10 h-full p-3 flex flex-col justify-end">
+          <div className="relative z-10 flex flex-col justify-end self-end p-3">
             <p className="text-xs uppercase font-serif tracking-[0.16em] text-foreground-secondary-default/80">
               {t("right.guestEyebrow")}
             </p>
@@ -241,6 +240,10 @@ export function RightNavGuestDisclaimer() {
               {t("right.guestCopy")}
             </p>
           </div>
+        </div>
+        <div className="flex min-h-[86px] w-full flex-col items-center justify-center overflow-hidden whitespace-nowrap text-center font-sans text-xs font-normal leading-tight text-foreground-muted-default">
+          <p>© 2025-2026 Hexoo Project.</p>
+          <p>Created by CHOPAPIK.</p>
         </div>
       </div>
     </div>

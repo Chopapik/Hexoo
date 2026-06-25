@@ -2,15 +2,12 @@ import Link from "next/link";
 import { NavItem } from "./NavItem";
 import { SessionData } from "@/features/me/me.type";
 import { UserRole } from "@/features/users/types/user.type";
-import Button from "@/features/shared/components/ui/Button";
-import { useAppStore } from "@/lib/store/store";
 import {
   ActivityIcon,
   HomeIcon,
   ProfileIcon,
   SettingsIcon,
 } from "@/features/shared/components/icons/NavIcons";
-import { Plus } from "lucide-react";
 import { useI18n } from "@/i18n/useI18n";
 
 type LeftNavProps = {
@@ -22,9 +19,8 @@ function roleKey(role: SessionData["role"] | undefined): string {
   return String(role ?? "").toLowerCase();
 }
 
-export function LeftNav({ onOpenRight, user }: LeftNavProps) {
+export function LeftNav({ user }: LeftNavProps) {
   const { t } = useI18n();
-  const openCreatePostModal = useAppStore((s) => s.openCreatePostModal);
   const r = roleKey(user?.role);
   const isAdmin = r === UserRole.Admin;
   const isModerator = r === UserRole.Moderator;
@@ -32,11 +28,17 @@ export function LeftNav({ onOpenRight, user }: LeftNavProps) {
 
   return (
     <div className="hidden h-full min-h-[720px] w-[235px] flex-col items-center justify-between pb-4 md:flex">
-      {user ? (
-        <div className="flex w-full flex-col items-center">
-          <nav className="flex w-full flex-col items-center overflow-hidden rounded-3xl bg-surface-chrome-background-default py-8 shadow-lg backdrop-blur-sm">
-            <div className="flex w-fit px-4 flex-col items-start justify-center font-sans ">
-              <NavItem label={t("nav.home")} to="/" icon={HomeIcon} />
+      <div className="flex w-full flex-col items-center">
+        <nav className="flex w-full flex-col items-center overflow-hidden rounded-3xl bg-surface-chrome-background-default py-8 shadow-lg backdrop-blur-sm">
+          <div className="flex w-fit flex-col items-start justify-center px-4 font-sans">
+            <NavItem
+              label={t("nav.home")}
+              to="/"
+              icon={HomeIcon}
+              active={user ? undefined : true}
+            />
+            {user ? (
+              <>
               <NavItem
                 label={t("nav.profile")}
                 to={`/profile/${user.uid}`}
@@ -74,10 +76,11 @@ export function LeftNav({ onOpenRight, user }: LeftNavProps) {
                   />
                 )
               ) : null}
-            </div>
-          </nav>
-        </div>
-      ) : null}
+              </>
+            ) : null}
+          </div>
+        </nav>
+      </div>
       <footer className="flex w-44 flex-col border-t border-foreground-muted-default py-2">
         <ul className="flex w-full flex-col items-start justify-start gap-0.5 text-left font-sans">
           <li>

@@ -15,6 +15,7 @@ export function NavItem({
   icon: Icon,
   hasNotification = false,
   variant = "sidebar",
+  active,
 }: {
   label: string;
   to: string;
@@ -22,13 +23,15 @@ export function NavItem({
   icon?: LucideIcon | React.ElementType;
   hasNotification?: boolean;
   variant?: NavItemVariant;
+  active?: boolean;
 }) {
   const pathname = usePathname();
 
-  const isActive =
+  const isPathActive =
     to === "/"
       ? pathname === "/"
       : pathname === to || pathname?.startsWith(`${to}/`);
+  const isActive = active ?? isPathActive;
 
   const iconClasses =
     "size-6 shrink-0 transition-colors duration-200 " +

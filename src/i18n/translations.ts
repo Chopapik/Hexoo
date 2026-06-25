@@ -53,7 +53,7 @@ const PL = {
   "right.noActiveUsers": "aktualnie nikt poza tobą nie jest aktywny",
   "right.profileSr": "Profil: {name}",
   "right.guestEyebrow": "czesc nise siemas",
-  "right.guestCopy": "Dołącz do Hexoo i odblokuj pełny podgląd społeczności.",
+  "right.guestCopy": "Zaloguj się, żeby odblokować pełny podgląd społeczności.",
 
   "auth.login.title": "Logowanie",
   "auth.login.submit": "Zaloguj się",
@@ -511,7 +511,7 @@ export const TRANSLATIONS = {
     "right.noActiveUsers": "no one except you is active right now",
     "right.profileSr": "Profile: {name}",
     "right.guestEyebrow": "hey, hi there",
-    "right.guestCopy": "Join Hexoo and unlock the full community view.",
+    "right.guestCopy": "Log in to unlock the full community view.",
 
     "auth.login.title": "Log in",
     "auth.login.submit": "Log in",
