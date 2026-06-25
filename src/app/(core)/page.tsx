@@ -8,7 +8,7 @@ export default function HomePage() {
   const user = useAppStore((s) => s.auth.user);
 
   return (
-    <div className="relative flex w-full flex-col gap-2 pb-8 pt-[108px] md:pb-0 md:pt-0">
+    <div className="relative flex w-full flex-col gap-2 pb-8 md:pb-0 md:pt-0">
       {user ? <CreatePostButton /> : null}
       <PostList />
     </div>

@@ -117,7 +117,7 @@ export default function CreatePostButton({
   ].join(" ");
 
   const labelClassName = [
-    "min-w-0 shrink whitespace-nowrap font-serif text-base font-normal leading-normal text-foreground-primary-default md:overflow-visible md:text-lg",
+    "min-w-0 shrink whitespace-nowrap font-serif text-base xs:text-lg leading-normal text-foreground-primary-default md:overflow-visible md:text-xl font-semibold md:leading-[1.9]",
     textClassName,
   ]
     .filter(Boolean)
@@ -141,7 +141,7 @@ export default function CreatePostButton({
               variant="outline"
               size="md"
               onClick={openCreatePostModal}
-              className="h-10 max-h-10 min-w-10 rounded-3xl border-[0.75px] px-0 py-[0.75px] md:px-[16.75px]"
+              className="h-10 max-h-10 min-w-10 rounded-3xl border-[0.75px] px-0 py-[0.75px] lg:px-[16.75px]"
               icon={
                 <>
                   <span className="relative shrink-0 size-5" aria-hidden>
@@ -150,10 +150,10 @@ export default function CreatePostButton({
                       strokeWidth={2}
                     />
                   </span>
-                  <span className="sr-only md:hidden">
+                  <span className="sr-only lg:hidden">
                     {t("post.createImageAction")}
                   </span>
-                  <span className="hidden whitespace-nowrap text-sm font-medium leading-5 tracking-[-0.14px] md:inline">
+                  <span className="hidden whitespace-nowrap text-sm font-medium leading-5 tracking-[-0.14px] lg:inline">
                     {t("post.createImageAction")}
                   </span>
                 </>
@@ -164,7 +164,7 @@ export default function CreatePostButton({
               variant="outline"
               size="md"
               onClick={openCreatePostModal}
-              className="h-10 max-h-10 min-w-10 px-0 py-[0.75px] md:px-[16.75px]"
+              className="h-10 max-h-10 min-w-10 px-0 py-[0.75px] lg:px-[16.75px]"
               icon={
                 <>
                   <span className="relative shrink-0 size-5" aria-hidden>
@@ -173,10 +173,10 @@ export default function CreatePostButton({
                       strokeWidth={2}
                     />
                   </span>
-                  <span className="sr-only md:hidden">
+                  <span className="sr-only lg:hidden">
                     {t("post.createTextAction")}
                   </span>
-                  <span className="hidden whitespace-nowrap text-sm font-medium leading-5 tracking-[-0.14px] md:inline">
+                  <span className="hidden whitespace-nowrap text-sm font-medium leading-5 tracking-[-0.14px] lg:inline">
                     {t("post.createTextAction")}
                   </span>
                 </>

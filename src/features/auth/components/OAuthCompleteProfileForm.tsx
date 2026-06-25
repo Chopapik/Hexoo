@@ -63,12 +63,12 @@ export default function OAuthCompleteProfileForm() {
   };
 
   return (
-    <div className="mx-auto inline-flex w-full max-w-md flex-col items-center justify-center gap-6 overflow-hidden px-4 py-8 xs:px-6 sm:max-w-2xl sm:gap-10 sm:rounded-[20px] sm:px-12 sm:py-12 sm:glass-card md:px-32 md:py-20">
+    <div className="mx-auto inline-flex w-full max-w-md flex-col items-center justify-center gap-6 overflow-hidden px-4 py-8 xs:px-6 sm:max-w-2xl sm:gap-10 sm:rounded-[20px] sm:px-12 sm:py-12 sm:glass-card md:px-32 md:py-20 ">
       <div className="py-0.5 flex flex-col justify-start items-center overflow-hidden">
         <div className="justify-start text-foreground-primary-default text-4xl sm:text-5xl font-bold font-serif">
           {t("auth.completeProfile.title")}
         </div>
-        <div className="justify-start text-foreground-secondary-default text-base sm:text-2xl font-bold font-sans text-center">
+        <div className="justify-start text-foreground-secondary-default text-base  font-bold font-sans text-center">
           {t("auth.completeProfile.subtitle")}
         </div>
       </div>
@@ -89,19 +89,23 @@ export default function OAuthCompleteProfileForm() {
             <div className="inline-flex h-full min-w-48 items-center justify-center gap-2 overflow-hidden rounded-lg bg-validation-error-background px-3">
               <Image src={warningIconUrl} alt="warning!" />
               <div className="justify-start font-sans text-xs font-semibold text-button-text-default">
-                {parseRegisterErrorMessages(errors.root?.message, lang)[0]?.text}
+                {
+                  parseRegisterErrorMessages(errors.root?.message, lang)[0]
+                    ?.text
+                }
               </div>
             </div>
           )}
         </div>
 
-        <div className="self-stretch flex flex-col justify-center items-end gap-1 mt-3 sm:mt-4">
+        <div className="self-stretch flex flex-col justify-center items-end gap-1 mt-3 sm:mt-4 w-full">
           <Button
             text={t("auth.completeProfile.submit")}
             size="xl"
             rightIconUrl={keyIconUrl}
             type="submit"
             isLoading={isLoading}
+            className="self-stretch"
           />
         </div>
       </form>

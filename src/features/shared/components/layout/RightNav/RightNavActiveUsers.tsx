@@ -35,7 +35,7 @@ export function RightNavActiveUsers() {
   return (
     <section className="flex w-full shrink-0 flex-col items-center">
       <div className="flex w-full flex-col items-center transition-all duration-300 ease-soft">
-        <h3 className="min-w-full text-center text-[10px] font-bold leading-[15px] tracking-[0.5px] text-[#262626] transition-all duration-300 ease-soft">
+        <h3 className="min-w-full text-center text-xs font-bold leading-[15px] tracking-[0.5px] text-[#262626] transition-all duration-300 ease-soft">
           {t("right.activeUsers")}
         </h3>
       </div>
@@ -57,7 +57,7 @@ export function RightNavActiveUsers() {
               className="h-[160px] w-[89px] object-cover"
               sizes="89px"
             />
-            <span className="min-w-full text-center font-serif text-[11px] font-medium leading-5 tracking-[-0.11px] text-foreground-secondary-default">
+            <span className="w-3/5 text-center font-serif text-sm font-medium leading-5 tracking-[-0.11px] text-foreground-secondary-default">
               {t("right.noActiveUsers")}
             </span>
           </>
@@ -69,7 +69,9 @@ export function RightNavActiveUsers() {
               title={u.name}
             >
               <Avatar src={u.avatarUrl} alt={u.name} width={52} height={52} />
-              <span className="sr-only">{t("right.profileSr", { name: u.name })}</span>
+              <span className="sr-only">
+                {t("right.profileSr", { name: u.name })}
+              </span>
             </Link>
           ))
         )}

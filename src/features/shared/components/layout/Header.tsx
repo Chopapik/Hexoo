@@ -1,10 +1,10 @@
 import Link from "next/link";
 import Button from "../ui/Button";
 import { Logo } from "../ui/Logo";
-import chevronRightUrl from "@/features/shared/assets/icons/chevronRight.svg?url";
 import { Avatar } from "@/features/shared/components/ui/Avatar";
 import { SessionData } from "@/features/me/me.type";
 import { useI18n } from "@/i18n/useI18n";
+import { LogIn } from "lucide-react";
 
 export const Header = ({ user }: { user: SessionData | null }) => {
   const { t } = useI18n();
@@ -17,8 +17,14 @@ export const Header = ({ user }: { user: SessionData | null }) => {
           aria-label="Hexoo"
           className="flex shrink-0 items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fuchsia-border-default/60"
         >
-          <Logo size="compact" className="flex h-[25px] w-[32px] items-center md:hidden" />
-          <Logo size="default" className="hidden h-[25px] w-[118px] items-center md:flex" />
+          <Logo
+            size="compact"
+            className="flex h-[25px] w-[32px] items-center md:hidden"
+          />
+          <Logo
+            size="default"
+            className="hidden h-[25px] w-[118px] items-center md:flex"
+          />
         </Link>
 
         <div className="flex shrink-0 items-center">
@@ -30,7 +36,7 @@ export const Header = ({ user }: { user: SessionData | null }) => {
               <Avatar
                 src={user.avatarUrl || undefined}
                 alt={user.name}
-                className="size-10 rounded-xl"
+                className="size-12 md:size-10 rounded-xl"
               />
 
               <div className="hidden min-h-[30px] flex-col items-start justify-center gap-0.5 overflow-hidden whitespace-nowrap leading-none md:flex">
@@ -45,16 +51,12 @@ export const Header = ({ user }: { user: SessionData | null }) => {
           ) : (
             <Link href="/login" prefetch={false}>
               <span className="md:hidden">
-                <Button
-                  text={t("header.login")}
-                  rightIconUrl={chevronRightUrl}
-                  size="sm"
-                />
+                <Button rightIcon={<LogIn className="size-4" />} />
               </span>
               <span className="hidden md:block">
                 <Button
                   text={t("header.login")}
-                  rightIconUrl={chevronRightUrl}
+                  rightIcon={<LogIn className="size-4" />}
                 />
               </span>
             </Link>

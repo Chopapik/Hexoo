@@ -4,10 +4,7 @@ import { useEffect, useState, useSyncExternalStore } from "react";
 import { Header } from "./Header";
 import { LeftNav } from "./LeftNav/LeftNav";
 import { BottomNav } from "./LeftNav/BottomNav";
-import {
-  RightNavOverlay,
-  RightNavSidebar,
-} from "./RightNav/RightNav";
+import { RightNavOverlay, RightNavSidebar } from "./RightNav/RightNav";
 import { RightNavGuestDisclaimer } from "./RightNav/RightNavGuestDisclaimer";
 import { useAppStore } from "@/lib/store/store";
 import CreatePostModal from "@/features/posts/components/CreatePostModal";
@@ -93,7 +90,7 @@ export const Layout: React.FC<{
       <header className="fixed inset-x-0 top-0 z-50">
         <Header user={user} />
       </header>
-      <div className="mx-auto w-full max-w-[1440px] md:pt-[76px]">
+      <div className="mx-auto w-full max-w-[1440px] pt-[108px] md:pt-[76px]">
         <div className="flex w-full items-start md:gap-4">
           <aside className={leftRailAsideClass}>
             {user ? (

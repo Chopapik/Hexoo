@@ -7,7 +7,6 @@ import { useAppStore } from "@/lib/store/store";
 import {
   ActivityIcon,
   HomeIcon,
-  MessagesIcon,
   ProfileIcon,
   SettingsIcon,
 } from "@/features/shared/components/icons/NavIcons";
@@ -36,18 +35,18 @@ export function LeftNav({ onOpenRight, user }: LeftNavProps) {
       {user ? (
         <div className="flex w-full flex-col items-center">
           <nav className="flex w-full flex-col items-center overflow-hidden rounded-3xl bg-surface-chrome-background-default py-8 shadow-lg backdrop-blur-sm">
-            <div className="flex w-[173px] flex-col items-start justify-center font-sans">
+            <div className="flex w-fit px-4 flex-col items-start justify-center font-sans ">
               <NavItem label={t("nav.home")} to="/" icon={HomeIcon} />
               <NavItem
                 label={t("nav.profile")}
                 to={`/profile/${user.uid}`}
                 icon={ProfileIcon}
               />
-              <NavItem
+              {/* <NavItem
                 label={t("nav.messages")}
                 to="/messages"
                 icon={MessagesIcon}
-              />
+              /> */}
               <NavItem
                 label={t("nav.settings")}
                 to="/settings"
@@ -77,14 +76,6 @@ export function LeftNav({ onOpenRight, user }: LeftNavProps) {
               ) : null}
             </div>
           </nav>
-
-          <div className="lg:hidden">
-            <Button
-              size="icon"
-              icon={<Plus className="size-5" />}
-              onClick={openCreatePostModal}
-            />
-          </div>
         </div>
       ) : null}
       <footer className="flex w-44 flex-col border-t border-foreground-muted-default py-2">

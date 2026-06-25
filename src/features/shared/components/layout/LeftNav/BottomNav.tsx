@@ -38,12 +38,12 @@ export function BottomNav({ user }: BottomNavProps) {
             variant="bottom"
           />
 
-          <NavItem
+          {/* <NavItem
             label={t("nav.messages")}
             to="/messages"
             icon={MessagesIcon}
             variant="bottom"
-          />
+          /> */}
 
           <NavItem
             label={t("nav.settings")}

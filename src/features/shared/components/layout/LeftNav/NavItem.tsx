@@ -40,9 +40,7 @@ export function NavItem({
 
   const linkClasses =
     "group/item relative inline-flex items-center rounded-xl transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fuchsia-border-default/60 " +
-    (isSidebar
-      ? "h-12 w-full justify-start"
-      : "size-[30px] justify-center");
+    (isSidebar ? "h-12 w-fit justify-start" : "size-[30px] justify-center");
 
   return (
     <Link
@@ -75,11 +73,7 @@ export function NavItem({
               (() => {
                 const I = Icon as LucideIcon;
                 return (
-                  <I
-                    className={iconClasses}
-                    strokeWidth={2}
-                    fill="none"
-                  />
+                  <I className={iconClasses} strokeWidth={2} fill="none" />
                 );
               })()
             ) : iconUrl ? (
@@ -110,10 +104,10 @@ export function NavItem({
         </div>
 
         {isSidebar ? (
-          <div className="flex justify-start items-start overflow-hidden">
+          <div className="flex justify-start items-start overflow-hidden ">
             <div
               className={
-                "block font-sans text-lg font-semibold leading-[1.2] transition-colors duration-200 " +
+                "block font-sans text-lg font-semibold leading-[1.9] transition-colors duration-200 " +
                 (isActive
                   ? "text-foreground-primary-default drop-shadow-sm"
                   : "text-foreground-secondary-default group-hover/item:text-foreground-primary-default")
