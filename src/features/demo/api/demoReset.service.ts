@@ -105,6 +105,30 @@ const DEMO_SEED_POSTS: readonly Omit<SeedPost, "user_id">[] = [
     youtube_url: null,
   },
   {
+    id: "00000000-0000-4000-8000-000000000105",
+    text: ` /$$   /$$ /$$$$$$$$ /$$   /$$  /$$$$$$   /$$$$$$ 
+| $$  | $$| $$_____/| $$  / $$ /$$__  $$ /$$__  $$
+| $$  | $$| $$      |  $$/ $$/| $$  \\ $$| $$  \\ $$
+| $$$$$$$$| $$$$$    \\  $$$$/ | $$  | $$| $$  | $$
+| $$__  $$| $$__/     >$$  $$ | $$  | $$| $$  | $$
+| $$  | $$| $$       /$$/\\  $$| $$  | $$| $$  | $$
+| $$  | $$| $$$$$$$$| $$  \\ $$|  $$$$$$/|  $$$$$$/
+|__/  |__/|________/|__/  |__/ \\______/  \\______/ `,
+    image_url: null,
+    image_meta: null,
+    likes_count: 0,
+    comments_count: 0,
+    created_at: "2026-01-01T09:52:00.000Z",
+    updated_at: null,
+    is_nsfw: false,
+    is_pending: false,
+    is_edited: false,
+    status: "visible",
+    moderation_context: null,
+    device: "Demo seed",
+    youtube_url: null,
+  },
+  {
     id: "00000000-0000-4000-8000-000000000103",
     text: "The demo includes the same public workflows as the app: profiles, feed browsing, comments, reporting and moderation-friendly content states.",
     image_url: "/demo-seed/post-3.jpg",

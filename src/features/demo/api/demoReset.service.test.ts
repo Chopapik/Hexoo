@@ -111,7 +111,7 @@ describe("demoReset.service", () => {
 
     expect(summary.seed).toEqual({
       strategy: "seeded",
-      postsCreated: 4,
+      postsCreated: 5,
       commentsCreated: 4,
       reactionsCreated: 0,
       seedImagesLinked: 3,
@@ -136,17 +136,19 @@ describe("demoReset.service", () => {
       status: string;
     }>;
 
-    expect(posts).toHaveLength(4);
+    expect(posts).toHaveLength(5);
     expect(comments).toHaveLength(4);
     expect(posts.map((post) => post.id)).toEqual([
       "00000000-0000-4000-8000-000000000101",
       "00000000-0000-4000-8000-000000000102",
+      "00000000-0000-4000-8000-000000000105",
       "00000000-0000-4000-8000-000000000103",
       "00000000-0000-4000-8000-000000000104",
     ]);
     expect(posts.map((post) => post.image_url)).toEqual([
       "/demo-seed/post-1.jpg",
       "/demo-seed/post-2.jpg",
+      null,
       "/demo-seed/post-3.jpg",
       null,
     ]);
