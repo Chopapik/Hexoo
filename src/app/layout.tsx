@@ -9,6 +9,7 @@ import "@/styles/recaptcha.css";
 import QueryProvider from "@/lib/providers/QueryProvider";
 import RecaptchaProvider from "@/lib/providers/RecaptchaProvider";
 import ToastContainer from "@/lib/providers/ToastContainer";
+import SettingsInitializer from "@/lib/providers/SettingsInitializer";
 import ThemeScript from "@/features/shared/components/ThemeScript";
 import LanguageBootstrap from "@/i18n/LanguageBootstrap";
 import DemoNoticeModal from "@/features/demo/components/DemoNoticeModal";
@@ -37,6 +38,7 @@ export default function RootLayout({
         <RecaptchaProvider>
           <QueryProvider>
             <LanguageBootstrap />
+            <SettingsInitializer />
             {children}
             <DemoNoticeModal isDemo={isDemo} />
             <ToastContainer />
