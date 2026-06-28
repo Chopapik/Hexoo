@@ -31,15 +31,21 @@
   /* Inputs */
   --color-input-background-default: rgb(38 38 38 / 0.5);
   --color-input-background-hover: rgb(64 64 64 / 0.5);
+  --color-input-background-disabled: rgb(38 38 38 / 0.35);
   --color-input-border-default: #404040;
   --color-input-border-hover: #FFFFFF;
+  --color-input-border-disabled: rgb(64 64 64 / 0.35);
   --color-input-button-default: #737373;
   --color-input-button-disabled: rgb(115 115 115 / 0.35);
   --color-input-button-hover: #FFFFFF;
   --color-input-text-helper: #737373;
+  --color-input-text-helper-disabled: rgb(115 115 115 / 0.35);
   --color-input-text-label: #737373;
+  --color-input-text-label-disabled: rgb(115 115 115 / 0.35);
   --color-input-text-placeholder: rgb(115 115 115 / 0.5);
+  --color-input-text-placeholder-disabled: rgb(115 115 115 / 0.35);
   --color-input-text-value: #FFFFFF;
+  --color-input-text-value-disabled: rgb(255 255 255 / 0.35);
 
   /* Modal */
   --color-modal-chrome-background-default: rgb(11 11 13 / 0.66);
@@ -182,16 +188,20 @@
   --color-switch-track-unchecked-border-hover-to: #202020;
 
   /* Checkbox */
-  --color-checkbox-background-checked-default: #EF4444;
-  --color-checkbox-background-checked-disabled: rgb(239 68 68 / 0.35);
-  --color-checkbox-background-unchecked-default: #000000;
-  --color-checkbox-background-unchecked-disabled: rgb(0 0 0 / 0.35);
-  --color-checkbox-border-checked-default: #EF4444;
-  --color-checkbox-border-checked-disabled: rgb(239 68 68 / 0.35);
-  --color-checkbox-border-unchecked-default: #EF4444;
-  --color-checkbox-border-unchecked-disabled: rgb(239 68 68 / 0.35);
-  --color-checkbox-icon-default: #FFFFFF;
-  --color-checkbox-icon-disabled: rgb(255 255 255 / 0.45);
+  --color-checkbox-background-unchecked-default: rgb(38 38 38 / 0.5);
+  --color-checkbox-background-unchecked-hover: rgb(64 64 64 / 0.5);
+  --color-checkbox-background-unchecked-disabled: rgb(38 38 38 / 0.35);
+  --color-checkbox-background-checked-default: #FFFFFF;
+  --color-checkbox-background-checked-hover: #FFFFFF;
+  --color-checkbox-background-checked-disabled: rgb(255 255 255 / 0.35);
+  --color-checkbox-border-unchecked-default: #404040;
+  --color-checkbox-border-unchecked-hover: #FFFFFF;
+  --color-checkbox-border-unchecked-disabled: rgb(64 64 64 / 0.35);
+  --color-checkbox-border-checked-default: #FFFFFF;
+  --color-checkbox-border-checked-hover: #FFFFFF;
+  --color-checkbox-border-checked-disabled: rgb(255 255 255 / 0.35);
+  --color-checkbox-icon-default: #000000;
+  --color-checkbox-icon-disabled: rgb(0 0 0 / 0.45);
   --color-checkbox-label-default: #FFFFFF;
   --color-checkbox-label-disabled: rgb(255 255 255 / 0.35);
 
@@ -248,8 +258,18 @@
     /* Inputs */
     --color-input-background-default: rgb(255 255 255 / 0.5);
     --color-input-background-hover: rgb(212 212 212 / 0.5);
+    --color-input-background-disabled: rgb(255 255 255 / 0.35);
     --color-input-border-default: #D4D4D4;
+    --color-input-border-disabled: rgb(212 212 212 / 0.35);
     --color-input-text-value: #000000;
+    --color-input-text-value-disabled: rgb(0 0 0 / 0.35);
+
+    /* Checkbox */
+    --color-checkbox-background-unchecked-default: rgb(255 255 255 / 0.5);
+    --color-checkbox-background-unchecked-hover: rgb(212 212 212 / 0.5);
+    --color-checkbox-background-unchecked-disabled: rgb(255 255 255 / 0.35);
+    --color-checkbox-border-unchecked-default: #D4D4D4;
+    --color-checkbox-border-unchecked-disabled: rgb(212 212 212 / 0.35);
 
     /* Modal */
     --color-modal-chrome-background-default: rgb(255 255 255 / 0.72);

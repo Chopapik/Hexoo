@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import Button from "@/features/shared/components/ui/Button";
+import Checkbox from "@/features/shared/components/ui/Checkbox";
 import TextInput from "@/features/shared/components/ui/TextInput";
 import keyIconUrl from "@/features/shared/assets/icons/key.svg?url";
 import warningIconUrl from "@/features/shared/assets/icons/warning.svg?url";
@@ -114,6 +115,10 @@ export default function RegisterForm() {
     return [];
   }, [errors.password?.message, lang, t, watchedPassword]);
 
+  const termsErrorMessage = errors.terms
+    ? parseRegisterErrorMessages(errors.terms.message, lang)[0]?.text
+    : undefined;
+
   const onSubmit = async (data: RegisterData) => {
     await handleRegister(data);
   };
@@ -152,62 +157,19 @@ export default function RegisterForm() {
           {...register("password")}
           messages={passwordMessages}
         />
-        <div className="self-stretch w-full items-center flex flex-col">
-          <label className="flex items-center gap-3 cursor-pointer group">
-            <div className="relative flex items-center justify-center">
-              <input
-                type="checkbox"
-                {...register("terms")}
-                className="peer size-5 appearance-none rounded border-2 border-checkbox-border-unchecked-default bg-checkbox-background-unchecked-default transition-all duration-200 checked:border-checkbox-border-checked-default checked:bg-checkbox-background-checked-default focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fuchsia-border-default focus-visible:ring-offset-2 focus-visible:ring-offset-page-background-default disabled:border-checkbox-border-unchecked-disabled disabled:bg-checkbox-background-unchecked-disabled checked:disabled:border-checkbox-border-checked-disabled checked:disabled:bg-checkbox-background-checked-disabled"
-              />
-              <svg
-                className="pointer-events-none absolute h-3.5 w-3.5 text-checkbox-icon-default opacity-0 transition-opacity peer-checked:opacity-100 peer-disabled:text-checkbox-icon-disabled"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="4"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
-            </div>
-            <span className="inline-flex items-center gap-1 font-sans text-xs font-medium text-checkbox-label-default group-has-[:disabled]:text-checkbox-label-disabled md:text-sm">
-              <span>{t("auth.register.accept")}</span>
-              <span>
-                <Link
-                  href="/terms"
-                  className="underline transition-colors hover:text-foreground-primary-default"
-                >
-                  {t("auth.register.terms")}
-                </Link>
-              </span>
-              <span>{t("auth.register.service")}</span>
-            </span>
-          </label>
 
-          {errors.terms && (
-            <div className="flex items-center gap-2 mt-1 animate-in fade-in slide-in-from-top-1">
-              <div className="text-validation-error-icon">
-                <svg width="12" height="12" viewBox="0 0 13 13" fill="none">
-                  <path
-                    d="M13 1.30929L11.6907 0L6.5 5.19071L1.30929 0L0 1.30929L5.19071 6.5L0 11.6907L1.30929 13L6.5 7.80929L11.6907 13L13 11.6907L7.80929 6.5L13 1.30929Z"
-                    fill="currentColor"
-                  />
-                </svg>
-              </div>
-              <span className="font-sans text-xs font-normal text-validation-error-text">
-                {
-                  parseRegisterErrorMessages(errors.terms.message, lang)[0]
-                    ?.text
-                }
-              </span>
-            </div>
-          )}
-        </div>
+        <Checkbox {...register("terms")} error={termsErrorMessage}>
+          <span>{t("auth.register.accept")}</span>
+          <Link
+            href="/terms"
+            className="underline transition-colors hover:text-foreground-primary-default"
+          >
+            {t("auth.register.terms")}
+          </Link>
+          <span>{t("auth.register.service")}</span>
+        </Checkbox>
 
-        <div className="h-8 min-w-1 inline-flex flex-col justify-start items-start overflow-hidden">
+        <div className="inline-flex h-8 min-w-1 flex-col items-start justify-start overflow-hidden">
           {errors.root && (
             <div className="inline-flex min-w-48 items-center justify-center gap-2 overflow-hidden rounded-lg bg-validation-error-background px-4 py-2">
               <Image src={warningIconUrl} alt="warning!" />
