@@ -1,8 +1,5 @@
 import { supabaseAdmin } from "@/lib/supabaseServer";
-import {
-  applyCursorPagination,
-  throwDbError,
-} from "@/lib/supabaseRepository";
+import { applyCursorPagination, throwDbError } from "@/lib/supabaseRepository";
 import { ModerationStatus } from "@/features/shared/types/content.type";
 import { ReportDetails } from "@/features/shared/types/report.type";
 import type { CommentRepository } from "./comment.repository.interface";

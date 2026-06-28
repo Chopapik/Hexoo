@@ -12,10 +12,7 @@ export function ensureModeratorOrAdmin(
     });
   }
 
-  if (
-    session.role !== UserRole.Moderator &&
-    session.role !== UserRole.Admin
-  ) {
+  if (session.role !== UserRole.Moderator && session.role !== UserRole.Admin) {
     throw createAppError({
       code: "FORBIDDEN",
       message: "[userService] Missing moderator/admin role",

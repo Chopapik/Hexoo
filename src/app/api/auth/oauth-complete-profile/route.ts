@@ -3,6 +3,7 @@ import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import { createAppError } from "@/lib/AppError";
 import { NextRequest } from "next/server";
+import { assertAuthRegisterRateLimit } from "@/lib/rateLimit";
 
 /**
  * Completes OAuth onboarding by saving the username
@@ -11,6 +12,8 @@ import { NextRequest } from "next/server";
 export const POST = withErrorHandling(async (req: NextRequest) => {
   const body = await req.json();
   const { idToken, refreshToken, name } = body ?? {};
+
+  await assertAuthRegisterRateLimit(req);
 
   if (!idToken || typeof idToken !== "string") {
     throw createAppError({

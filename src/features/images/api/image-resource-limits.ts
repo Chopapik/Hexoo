@@ -30,7 +30,10 @@ const positiveInteger = (value: string | undefined, fallback: number) => {
 };
 
 export const IMAGE_RESOURCE_LIMITS: ImageResourceLimits = {
-  maxBytes: positiveInteger(process.env.IMAGE_UPLOAD_MAX_BYTES, IMAGE_UPLOAD_MAX_BYTES),
+  maxBytes: positiveInteger(
+    process.env.IMAGE_UPLOAD_MAX_BYTES,
+    IMAGE_UPLOAD_MAX_BYTES,
+  ),
   maxWidth: positiveInteger(process.env.IMAGE_UPLOAD_MAX_WIDTH, 8_192),
   maxHeight: positiveInteger(process.env.IMAGE_UPLOAD_MAX_HEIGHT, 8_192),
   maxPixels: positiveInteger(process.env.IMAGE_UPLOAD_MAX_PIXELS, 40_000_000),

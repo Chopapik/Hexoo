@@ -3,10 +3,13 @@ import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import { createAppError } from "@/lib/AppError";
 import { verifyRecaptchaToken } from "@/lib/recaptcha";
+import { assertAuthLoginRateLimit } from "@/lib/rateLimit";
 
 import { NextRequest } from "next/server";
 
 export const POST = withErrorHandling(async (req: NextRequest) => {
+  await assertAuthLoginRateLimit(req);
+
   const body = await req.json();
 
   const { idToken, refreshToken, recaptchaToken } = body;

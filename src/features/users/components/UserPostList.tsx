@@ -39,7 +39,7 @@ export function UserPostList({ userId }: { userId: string }) {
           fetchNextPage();
         }
       },
-      { threshold: 1.0 }
+      { threshold: 1.0 },
     );
 
     if (observerTarget.current) observer.observe(observerTarget.current);

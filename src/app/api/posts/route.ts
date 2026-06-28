@@ -10,10 +10,18 @@ import { CreatePostRequestDto } from "@/features/posts/types/post.dto";
 import { createPost, getPosts } from "@/features/posts/api/services";
 import { isFileLike } from "@/features/images/utils/isFileLike";
 import { assertImageUploadRequestSize } from "@/features/images/api/image-resource-limits";
+import {
+  assertCreatePostRateLimit,
+  assertImageUploadRateLimit,
+} from "@/lib/rateLimit";
+
 export const POST = withErrorHandling(async (req: NextRequest) => {
   const session = await getUserFromSession();
+  await assertCreatePostRateLimit(req, session.uid);
+
   const contentType = req.headers.get("content-type") || "";
   if (contentType.includes("multipart/form-data")) {
+    await assertImageUploadRateLimit(session.uid);
     assertImageUploadRequestSize(req.headers);
     const form = await req.formData();
     const text = String(form.get("text") || "");

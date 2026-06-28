@@ -6,10 +6,7 @@ import type { SessionData } from "@/features/me/me.type";
 import type { CommentRepository } from "../../repositories/comment.repository.interface";
 import { ReportCommentSchema } from "../../../types/comment.dto";
 
-import {
-  assertCommentExists,
-  requireSession,
-} from "../comment.guards";
+import { assertCommentExists, requireSession } from "../comment.guards";
 
 export class ReportCommentUseCase {
   constructor(

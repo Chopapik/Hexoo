@@ -100,8 +100,7 @@ export default function SessionWatcher() {
     };
   }, [user, handleSessionExpired]);
 
-  const isExpiredModalVisible =
-    isExpiredModalOpen && !isAuthPage(pathname);
+  const isExpiredModalVisible = isExpiredModalOpen && !isAuthPage(pathname);
 
   const footer = (
     <div className="flex justify-end w-full gap-2">

@@ -4,6 +4,7 @@ import { handleSuccess } from "@/lib/http/responseHelpers";
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { resolveImagePublicUrl } from "@/features/images/utils/resolveImagePublicUrl";
 import { getUsersByIds } from "@/features/users/api/services";
+import { assertPublicLookupRateLimit } from "@/lib/rateLimit";
 
 const MAX_UIDS = 40;
 
@@ -14,6 +15,8 @@ type PublicUserPreview = {
 };
 
 export const POST = withErrorHandling(async (request: NextRequest) => {
+  await assertPublicLookupRateLimit(request);
+
   const body = (await request.json()) as { uids?: unknown };
   const raw = body?.uids;
 

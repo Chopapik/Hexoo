@@ -6,9 +6,12 @@ import { getUserFromSession } from "@/features/auth/api/utils/session-user.servi
 import { ReviewCommentSchema } from "@/features/moderator/types/moderator.dto";
 import { createAppError } from "@/lib/AppError";
 import { formatZodErrorFlat } from "@/lib/zod";
+import { assertAdminModeratorRateLimit } from "@/lib/rateLimit";
 
 export const POST = withErrorHandling(async (req: NextRequest) => {
   const session = await getUserFromSession();
+  await assertAdminModeratorRateLimit(session.uid);
+
   const body = await req.json();
 
   const parsed = ReviewCommentSchema.safeParse(body);

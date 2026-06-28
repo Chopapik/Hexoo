@@ -3,10 +3,13 @@ import { AnyRouteContext, withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import { NextRequest } from "next/server";
 import { getAdminFromSession } from "@/features/auth/api/utils/session-user.service";
+import { assertAdminModeratorRateLimit } from "@/lib/rateLimit";
 
 export const PUT = withErrorHandling(
   async (req: NextRequest, context  : AnyRouteContext<{ uid: string }>) => {
     const session = await getAdminFromSession();
+    await assertAdminModeratorRateLimit(session.uid);
+
     const body = await req.json();
     const { uid } = await context.params;
     const { newPassword } = body;

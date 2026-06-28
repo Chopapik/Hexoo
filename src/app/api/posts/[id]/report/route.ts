@@ -6,11 +6,14 @@ import { getUserFromSession } from "@/features/auth/api/utils/session-user.servi
 import { ReportPostSchema } from "@/features/posts/types/post.dto";
 import { createAppError } from "@/lib/AppError";
 import { formatZodErrorFlat } from "@/lib/zod";
+import { assertReportPostRateLimit } from "@/lib/rateLimit";
 
 export const POST = withErrorHandling(
   async (req: NextRequest, context: AnyRouteContext<{ id: string }>) => {
     const { id } = await context.params;
     const session = await getUserFromSession();
+    await assertReportPostRateLimit(session.uid);
+
     const body = await req.json();
 
     const parsed = ReportPostSchema.safeParse(body);

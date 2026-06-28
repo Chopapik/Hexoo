@@ -1,8 +1,5 @@
 import { supabaseAdmin } from "@/lib/supabaseServer";
-import {
-  applyCursorPagination,
-  throwDbError,
-} from "@/lib/supabaseRepository";
+import { applyCursorPagination, throwDbError } from "@/lib/supabaseRepository";
 import { ReportDetails } from "@/features/shared/types/report.type";
 import type { PostRepository } from "./post.repository.interface";
 import type {
@@ -32,7 +29,10 @@ export class PostSupabaseRepository implements PostRepository {
     return inserted.id;
   }
 
-  async updatePost(postId: string, data: UpdatePostPayload): Promise<PostEntity> {
+  async updatePost(
+    postId: string,
+    data: UpdatePostPayload,
+  ): Promise<PostEntity> {
     const row = toUpdateRow(data);
     const { data: updated, error } = await supabaseAdmin
       .from(TABLE)

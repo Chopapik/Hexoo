@@ -491,14 +491,13 @@ async function listStorageFiles(
   const paths: string[] = [];
 
   while (true) {
-    const { data, error } = await supabaseAdmin.storage.from(bucket).list(
-      prefix,
-      {
+    const { data, error } = await supabaseAdmin.storage
+      .from(bucket)
+      .list(prefix, {
         limit,
         offset,
         sortBy: { column: "name", order: "asc" },
-      },
-    );
+      });
     if (error) {
       throw createAppError({
         code: "EXTERNAL_SERVICE",
@@ -621,7 +620,10 @@ export async function resetDemoData(): Promise<DemoResetSummary> {
   const demoUser = await ensureDemoAuthUser(env);
   const deleted = await deleteApplicationData();
   deleted.users = await deleteNonDemoPublicUsers(demoUser.uid);
-  const deletedAuthUsers = await deleteNonDemoAuthUsers(demoUser.uid, env.email);
+  const deletedAuthUsers = await deleteNonDemoAuthUsers(
+    demoUser.uid,
+    env.email,
+  );
   await ensureDemoAuthUser(env);
   await ensureDemoProfile(demoUser, env);
   const storage = await cleanDemoStorage();

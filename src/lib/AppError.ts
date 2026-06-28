@@ -19,7 +19,8 @@ export type ErrorCode =
   | "MODERATION_UNAVAILABLE"
   | "POLICY_VIOLATION"
   | "ACCOUNT_BANNED"
-  | "ACCOUNT_DELETED";
+  | "ACCOUNT_DELETED"
+  | "RATE_LIMITED";
 
 const ErrorStatusMap: Record<ErrorCode, number> = {
   AUTH_REQUIRED: 401,
@@ -43,6 +44,7 @@ const ErrorStatusMap: Record<ErrorCode, number> = {
   POLICY_VIOLATION: 422,
   ACCOUNT_BANNED: 403,
   ACCOUNT_DELETED: 403,
+  RATE_LIMITED: 429,
 };
 
 type AppErrorArgs = {

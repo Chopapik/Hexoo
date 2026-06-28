@@ -21,8 +21,7 @@ const defaultAccountDeletionExecutor: AccountDeletionExecutor = async (uid) => {
 export class AdminService implements IAdminService {
   constructor(
     private readonly session: SessionData | null,
-    private readonly deleteAccount: AccountDeletionExecutor =
-      defaultAccountDeletionExecutor,
+    private readonly deleteAccount: AccountDeletionExecutor = defaultAccountDeletionExecutor,
   ) {}
 
   private ensureAdmin() {
@@ -56,7 +55,9 @@ export class AdminService implements IAdminService {
     });
   }
 
-  private activeUnbannedAdmins(users: Awaited<ReturnType<typeof userRepository.getAllUsers>>) {
+  private activeUnbannedAdmins(
+    users: Awaited<ReturnType<typeof userRepository.getAllUsers>>,
+  ) {
     return users.filter(
       (user) =>
         user.role === UserRole.Admin &&
@@ -66,7 +67,9 @@ export class AdminService implements IAdminService {
   }
 
   private async ensureAdminWillRemain(targetUid: string): Promise<void> {
-    const admins = this.activeUnbannedAdmins(await userRepository.getAllUsers());
+    const admins = this.activeUnbannedAdmins(
+      await userRepository.getAllUsers(),
+    );
     const remainingAdmins = admins.filter((admin) => admin.uid !== targetUid);
 
     if (remainingAdmins.length === 0) {
@@ -78,7 +81,9 @@ export class AdminService implements IAdminService {
     }
   }
 
-  private async ensureTargetAdminCanBeRemoved(targetUid: string): Promise<void> {
+  private async ensureTargetAdminCanBeRemoved(
+    targetUid: string,
+  ): Promise<void> {
     const target = (await userRepository.getAllUsers()).find(
       (user) => user.uid === targetUid,
     );
@@ -321,11 +326,7 @@ export class AdminService implements IAdminService {
     });
 
     await logActivity(uid, "USER_BLOCKED", "User account banned by admin");
-    await logActivity(
-      this.session!.uid,
-      "USER_BLOCKED",
-      `Banned user ${uid}`,
-    );
+    await logActivity(this.session!.uid, "USER_BLOCKED", `Banned user ${uid}`);
 
     await authRepository.updateUser(uid, { disabled: true });
   }

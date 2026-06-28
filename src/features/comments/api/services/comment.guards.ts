@@ -34,7 +34,10 @@ export function assertCommentExists(
   }
 }
 
-export function assertCommentAuthor(comment: CommentEntity, userId: string): void {
+export function assertCommentAuthor(
+  comment: CommentEntity,
+  userId: string,
+): void {
   if (comment.userId !== userId) {
     throw createAppError({
       code: "FORBIDDEN",

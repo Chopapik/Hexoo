@@ -4,6 +4,7 @@ import { AnyRouteContext, withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import { NextRequest } from "next/server";
 import { createAppError } from "@/lib/AppError";
+import { assertAdminModeratorRateLimit } from "@/lib/rateLimit";
 
 async function readBlockBody(req: NextRequest): Promise<{ reason: string }> {
   try {
@@ -25,6 +26,8 @@ export const PUT = withErrorHandling(
   async (req: NextRequest, context: AnyRouteContext<{ uid: string }>) => {
     const { uid } = await context.params;
     const session = await getAdminFromSession();
+    await assertAdminModeratorRateLimit(session.uid);
+
     const { reason } = await readBlockBody(req);
 
     const result = await adminBlockUser(session, uid, reason);

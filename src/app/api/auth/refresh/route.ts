@@ -1,5 +1,7 @@
 import { restoreUserSession } from "@/features/auth/api/services";
 import { NextRequest, NextResponse } from "next/server";
+import { assertAuthSessionRateLimit } from "@/lib/rateLimit";
+import { withErrorHandling } from "@/lib/http/routeWrapper";
 
 /**
  * GET /api/auth/refresh
@@ -7,11 +9,13 @@ import { NextRequest, NextResponse } from "next/server";
  * Call this when session JWT is expired (e.g. redirect from layout).
  * Cookies can be set here (Route Handler context).
  */
-export async function GET(request: NextRequest) {
+export const GET = withErrorHandling(async (request: NextRequest) => {
+  await assertAuthSessionRateLimit(request);
+
   const user = await restoreUserSession();
   const base = new URL(request.url).origin;
   if (user) {
     return NextResponse.redirect(new URL("/", base));
   }
   return NextResponse.redirect(new URL("/login", base));
-}
+});

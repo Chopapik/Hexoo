@@ -10,14 +10,21 @@ import {
   getUserFromSession,
 } from "@/features/auth/api/utils/session-user.service";
 import { assertImageUploadRequestSize } from "@/features/images/api/image-resource-limits";
+import {
+  assertCreateCommentRateLimit,
+  assertImageUploadRateLimit,
+} from "@/lib/rateLimit";
 
 export const POST = withErrorHandling(
   async (req: NextRequest, context: AnyRouteContext<{ id: string }>) => {
     const { id } = await context.params;
     const session = await getUserFromSession();
+    await assertCreateCommentRateLimit(req, session.uid);
+
     const contentType = req.headers.get("content-type") || "";
 
     if (contentType.includes("multipart/form-data")) {
+      await assertImageUploadRateLimit(session.uid);
       assertImageUploadRequestSize(req.headers);
       const form = await req.formData();
       const text = String(form.get("text") || "");

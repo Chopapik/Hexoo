@@ -277,9 +277,7 @@ export class ModeratorService implements IModeratorService {
     if (await this.isReviewNoOp("posts", postId, action)) return;
 
     const commentImages =
-      action === "reject"
-        ? await this.collectPostCommentImages(postId)
-        : [];
+      action === "reject" ? await this.collectPostCommentImages(postId) : [];
 
     const { data: txResult, error } = await supabaseAdmin.rpc(
       "moderator_review_content_guarded_tx",

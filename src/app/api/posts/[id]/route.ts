@@ -13,6 +13,11 @@ import {
 } from "@/features/auth/api/utils/session-user.service";
 import { isFileLike } from "@/features/images/utils/isFileLike";
 import { assertImageUploadRequestSize } from "@/features/images/api/image-resource-limits";
+import {
+  assertDeletePostRateLimit,
+  assertImageUploadRateLimit,
+  assertUpdatePostRateLimit,
+} from "@/lib/rateLimit";
 
 export const GET = withErrorHandling(
   async (req: NextRequest, context: AnyRouteContext<{ id: string }>) => {
@@ -27,9 +32,12 @@ export const PUT = withErrorHandling(
   async (req: NextRequest, context: AnyRouteContext<{ id: string }>) => {
     const { id } = await context.params;
     const session = await getUserFromSession();
+    await assertUpdatePostRateLimit(session.uid);
+
     const contentType = req.headers.get("content-type") || "";
 
     if (contentType.includes("multipart/form-data")) {
+      await assertImageUploadRateLimit(session.uid);
       assertImageUploadRequestSize(req.headers);
       const form = await req.formData();
       const text = String(form.get("text") || "");
@@ -53,6 +61,8 @@ export const DELETE = withErrorHandling(
   async (_req: NextRequest, context: AnyRouteContext<{ id: string }>) => {
     const { id } = await context.params;
     const session = await getUserFromSession();
+    await assertDeletePostRateLimit(session.uid);
+
     await deletePost(session, id);
     return handleSuccess(undefined, 204);
   },

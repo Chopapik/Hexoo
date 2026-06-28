@@ -57,12 +57,12 @@ function mapRpcError(error: { message?: string } | null): never {
 }
 
 function safeErrorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : "Account deletion step failed";
+  return error instanceof Error
+    ? error.message
+    : "Account deletion step failed";
 }
 
-export class AccountDeletionSupabaseRepository
-  implements AccountDeletionRepository
-{
+export class AccountDeletionSupabaseRepository implements AccountDeletionRepository {
   async begin(userId: string): Promise<AccountDeletionJob> {
     const { data, error } = await supabaseAdmin.rpc("begin_account_deletion", {
       p_uid: userId,
@@ -88,11 +88,14 @@ export class AccountDeletionSupabaseRepository
     step: AccountDeletionStep | "progress",
     errorToRecord: unknown,
   ): Promise<void> {
-    const { error } = await supabaseAdmin.rpc("record_account_deletion_failure", {
-      p_uid: userId,
-      p_step: step,
-      p_error: safeErrorMessage(errorToRecord),
-    });
+    const { error } = await supabaseAdmin.rpc(
+      "record_account_deletion_failure",
+      {
+        p_uid: userId,
+        p_step: step,
+        p_error: safeErrorMessage(errorToRecord),
+      },
+    );
     if (error) mapRpcError(error);
   }
 }

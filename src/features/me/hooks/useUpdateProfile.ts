@@ -29,10 +29,7 @@ export default function useUpdateProfile(onError?: ErrorCallback) {
       if (data.name) formData.append("name", data.name);
       if (data.avatarFile) formData.append("avatarFile", data.avatarFile);
 
-      return await fetchClient.put<SessionData>(
-        `/me/profile`,
-        formData,
-      );
+      return await fetchClient.put<SessionData>(`/me/profile`, formData);
     },
     onSuccess: async (response) => {
       const updatedProfile = response;
@@ -91,7 +88,9 @@ export default function useUpdateProfile(onError?: ErrorCallback) {
             onError?.(errorCode, "root");
           }
         } else if (errorCode === "VALIDATION_ERROR") {
-          const details = errorData?.details as Record<string, string[]> | undefined;
+          const details = errorData?.details as
+            | Record<string, string[]>
+            | undefined;
           if (details) {
             Object.keys(details).forEach((field) => {
               const messages = details[field];

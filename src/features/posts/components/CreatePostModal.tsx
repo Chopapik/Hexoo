@@ -120,7 +120,9 @@ export default function CreatePostModal() {
       isOpen={isOpen}
       title={t("post.new")}
       placeholder={
-        user ? t("post.placeholder", { name: user.name }) : t("post.placeholderGuest")
+        user
+          ? t("post.placeholder", { name: user.name })
+          : t("post.placeholderGuest")
       }
       onClose={closeCreatePostModal}
       onSubmit={submit}

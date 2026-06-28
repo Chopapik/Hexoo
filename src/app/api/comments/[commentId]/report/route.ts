@@ -6,14 +6,14 @@ import { getUserFromSession } from "@/features/auth/api/utils/session-user.servi
 import { ReportCommentSchema } from "@/features/comments/types/comment.dto";
 import { createAppError } from "@/lib/AppError";
 import { formatZodErrorFlat } from "@/lib/zod";
+import { assertReportCommentRateLimit } from "@/lib/rateLimit";
 
 export const POST = withErrorHandling(
-  async (
-    req: NextRequest,
-    context: AnyRouteContext<{ commentId: string }>,
-  ) => {
+  async (req: NextRequest, context: AnyRouteContext<{ commentId: string }>) => {
     const { commentId } = await context.params;
     const session = await getUserFromSession();
+    await assertReportCommentRateLimit(session.uid);
+
     const body = await req.json();
 
     const parsed = ReportCommentSchema.safeParse(body);

@@ -163,8 +163,8 @@ function addModerationSignal(
     };
     evidence.score = Math.max(evidence.score, score);
     if (!evidence.sources.includes(source)) evidence.sources.push(source);
-    evidence.sources.sort((a, b) =>
-      ["text", "image"].indexOf(a) - ["text", "image"].indexOf(b),
+    evidence.sources.sort(
+      (a, b) => ["text", "image"].indexOf(a) - ["text", "image"].indexOf(b),
     );
     flags.evidenceByCategory[category] = evidence;
   }

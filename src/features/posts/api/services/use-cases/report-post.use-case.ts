@@ -8,11 +8,7 @@ import type { PostModerationWorkflow } from "../post.moderation-workflow";
 
 import { ReportPostSchema } from "../../../types/post.dto";
 
-import {
-  assertPostExists,
-  assertPostId,
-  requireSession,
-} from "../post.guards";
+import { assertPostExists, assertPostId, requireSession } from "../post.guards";
 
 export class ReportPostUseCase {
   constructor(

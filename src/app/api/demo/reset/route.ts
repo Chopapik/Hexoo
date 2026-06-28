@@ -4,6 +4,7 @@ import { NextRequest } from "next/server";
 import { resetDemoData } from "@/features/demo/api/demoReset.service";
 import { handleError, handleSuccess } from "@/lib/http/responseHelpers";
 import { withErrorHandling } from "@/lib/http/routeWrapper";
+import { assertDemoResetRateLimit } from "@/lib/rateLimit";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -25,6 +26,8 @@ function isAuthorized(req: NextRequest, secret: string): boolean {
 }
 
 async function handleDemoReset(req: NextRequest) {
+  await assertDemoResetRateLimit(req);
+
   if (process.env.IS_DEMO !== "true") {
     console.warn("[demoReset] Reset rejected because demo mode is disabled.");
     return handleError(

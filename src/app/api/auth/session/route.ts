@@ -3,6 +3,8 @@ import { restoreUserSession } from "@/features/auth/api/services";
 import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import { AppError, createAppError } from "@/lib/AppError";
+import type { NextRequest } from "next/server";
+import { assertAuthSessionRateLimit } from "@/lib/rateLimit";
 
 function isRefreshableSessionError(error: unknown) {
   return (
@@ -14,7 +16,9 @@ function isRefreshableSessionError(error: unknown) {
   );
 }
 
-export const GET = withErrorHandling(async () => {
+export const GET = withErrorHandling(async (req: NextRequest) => {
+  await assertAuthSessionRateLimit(req);
+
   try {
     const user = await getUserFromSession();
 

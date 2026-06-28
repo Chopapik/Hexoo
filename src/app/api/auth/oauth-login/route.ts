@@ -3,6 +3,7 @@ import { withErrorHandling } from "@/lib/http/routeWrapper";
 import { handleSuccess } from "@/lib/http/responseHelpers";
 import { createAppError } from "@/lib/AppError";
 import { NextRequest } from "next/server";
+import { assertAuthLoginRateLimit } from "@/lib/rateLimit";
 
 /**
  * POST /api/auth/oauth-login
@@ -14,6 +15,8 @@ import { NextRequest } from "next/server";
  *     `{ status: "NEEDS_USERNAME", uid, email }` otherwise.
  */
 export const POST = withErrorHandling(async (req: NextRequest) => {
+  await assertAuthLoginRateLimit(req);
+
   const body = await req.json();
   const { idToken, refreshToken } = body ?? {};
 

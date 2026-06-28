@@ -141,14 +141,17 @@ export class SupabaseAuthRepository implements AuthRepository {
         message: "Supabase URL or anon key missing for refresh.",
       });
     }
-    const res = await fetch(`${supabaseUrl}/auth/v1/token?grant_type=refresh_token`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        apikey: supabaseAnonKey,
+    const res = await fetch(
+      `${supabaseUrl}/auth/v1/token?grant_type=refresh_token`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          apikey: supabaseAnonKey,
+        },
+        body: JSON.stringify({ refresh_token: refreshToken }),
       },
-      body: JSON.stringify({ refresh_token: refreshToken }),
-    });
+    );
     if (!res.ok) {
       const errBody = await res.text();
       throw createAppError({
@@ -193,9 +196,7 @@ export class SupabaseAuthRepository implements AuthRepository {
       }
 
       const users = data?.users ?? [];
-      const found = users.find(
-        (u) => u.email?.toLowerCase() === normalized
-      );
+      const found = users.find((u) => u.email?.toLowerCase() === normalized);
 
       if (found) {
         return { uid: found.id, email: found.email ?? null };

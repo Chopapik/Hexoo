@@ -6,6 +6,10 @@ import {
   deleteComment,
 } from "@/features/comments/api/services";
 import { getUserFromSession } from "@/features/auth/api/utils/session-user.service";
+import {
+  assertDeleteCommentRateLimit,
+  assertUpdateCommentRateLimit,
+} from "@/lib/rateLimit";
 
 export const PUT = withErrorHandling(
   async (
@@ -14,6 +18,8 @@ export const PUT = withErrorHandling(
   ) => {
     const { commentId } = await context.params;
     const session = await getUserFromSession();
+    await assertUpdateCommentRateLimit(session.uid);
+
     const body = await req.json();
     const result = await updateComment(session, commentId, body);
     return handleSuccess(result);
@@ -27,6 +33,8 @@ export const DELETE = withErrorHandling(
   ) => {
     const { commentId } = await context.params;
     const session = await getUserFromSession();
+    await assertDeleteCommentRateLimit(session.uid);
+
     await deleteComment(session, commentId);
     return handleSuccess(undefined, 204);
   },

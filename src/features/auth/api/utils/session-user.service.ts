@@ -91,8 +91,7 @@ export async function getUserFromSession(): Promise<SessionData | never> {
     .verifyIdToken(sessionCookie.value)
     .catch(() => {
       throw createAppError({
-        message:
-          "[getUserFromSession] Invalid or expired session cookie",
+        message: "[getUserFromSession] Invalid or expired session cookie",
         code: "INVALID_SESSION",
       });
     });

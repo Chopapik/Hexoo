@@ -3,10 +3,13 @@ import { SESSION_COOKIE_NAME } from "@/features/auth/api/utils/session.cookies";
 import { getUserFromSession } from "@/features/auth/api/utils/session-user.service";
 import { touchLastOnline } from "@/features/users/api/services";
 import { withErrorHandling } from "@/lib/http/routeWrapper";
+import { assertAuthSessionRateLimit } from "@/lib/rateLimit";
 
 const MIN_LAST_ONLINE_INTERVAL_MS = 5 * 60 * 1000;
 
 export const POST = withErrorHandling(async (request: NextRequest) => {
+  await assertAuthSessionRateLimit(request);
+
   const sessionToken = request.cookies.get(SESSION_COOKIE_NAME)?.value;
 
   if (!sessionToken) {

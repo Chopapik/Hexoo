@@ -5,9 +5,12 @@ import { verifyRecaptchaToken } from "@/lib/recaptcha";
 import { createAppError } from "@/lib/AppError";
 import { NextRequest } from "next/server";
 import { getUserFromSession } from "@/features/auth/api/utils/session-user.service";
+import { assertSettingsUpdateRateLimit } from "@/lib/rateLimit";
 
 export const PUT = withErrorHandling(async (req: NextRequest) => {
   const session = await getUserFromSession();
+  await assertSettingsUpdateRateLimit(session.uid);
+
   const body = await req.json();
 
   const { recaptchaToken, ...newPasswordData } = body;

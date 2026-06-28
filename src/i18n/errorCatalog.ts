@@ -191,6 +191,12 @@ export const ERROR_CATALOG: Record<GlobalErrorCode, ErrorCatalogEntry> = {
       en: "This account has been deleted",
     },
   },
+  RATE_LIMITED: {
+    message: {
+      pl: "Zbyt wiele żądań. Spróbuj ponownie później.",
+      en: "Too many requests. Try again later.",
+    },
+  },
   // ===== CLIENT / ZOD validation =====
 
   // auth / login / register

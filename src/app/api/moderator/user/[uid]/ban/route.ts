@@ -9,10 +9,13 @@ import { handleSuccess } from "@/lib/http/responseHelpers";
 import { AnyRouteContext, withErrorHandling } from "@/lib/http/routeWrapper";
 import { formatZodErrorFlat } from "@/lib/zod";
 import { NextRequest } from "next/server";
+import { assertAdminModeratorRateLimit } from "@/lib/rateLimit";
 
 export const POST = withErrorHandling(
   async (req: NextRequest, context: AnyRouteContext<{ uid: string }>) => {
     const session = await getUserFromSession();
+    await assertAdminModeratorRateLimit(session.uid);
+
     const { uid } = await context.params;
     const body = await req.json().catch(() => null);
     const parsed = ModeratorBanUserSchema.safeParse(body);

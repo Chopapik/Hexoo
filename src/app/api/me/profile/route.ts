@@ -5,9 +5,15 @@ import { NextRequest } from "next/server";
 import { getUserFromSession } from "@/features/auth/api/utils/session-user.service";
 import type { UpdateProfileData } from "@/features/me/me.type";
 import { assertImageUploadRequestSize } from "@/features/images/api/image-resource-limits";
+import {
+  assertAvatarUploadRateLimit,
+  assertProfileUpdateRateLimit,
+} from "@/lib/rateLimit";
 
 export const PUT = withErrorHandling(async (req: NextRequest) => {
   const session = await getUserFromSession();
+  await assertProfileUpdateRateLimit(session.uid);
+
   assertImageUploadRequestSize(req.headers);
   const formData = await req.formData();
 
@@ -16,7 +22,10 @@ export const PUT = withErrorHandling(async (req: NextRequest) => {
 
   const data: UpdateProfileData = {};
   if (name) data.name = name;
-  if (avatarFile instanceof File) data.avatarFile = avatarFile;
+  if (avatarFile instanceof File) {
+    await assertAvatarUploadRateLimit(session.uid);
+    data.avatarFile = avatarFile;
+  }
 
   const updated = await updateProfile(session, data);
 
