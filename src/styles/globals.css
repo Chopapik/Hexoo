@@ -182,16 +182,16 @@
   --color-switch-track-unchecked-border-hover-to: #202020;
 
   /* Checkbox */
-  --color-checkbox-background-checked-default: #FFFFFF;
-  --color-checkbox-background-checked-disabled: rgb(255 255 255 / 0.35);
+  --color-checkbox-background-checked-default: #EF4444;
+  --color-checkbox-background-checked-disabled: rgb(239 68 68 / 0.35);
   --color-checkbox-background-unchecked-default: #000000;
   --color-checkbox-background-unchecked-disabled: rgb(0 0 0 / 0.35);
-  --color-checkbox-border-checked-default: #FFFFFF;
-  --color-checkbox-border-checked-disabled: #FFFFFF;
-  --color-checkbox-border-unchecked-default: #FFFFFF;
-  --color-checkbox-border-unchecked-disabled: rgb(255 255 255 / 0.35);
-  --color-checkbox-icon-default: #000000;
-  --color-checkbox-icon-disabled: rgb(0 0 0 / 0.45);
+  --color-checkbox-border-checked-default: #EF4444;
+  --color-checkbox-border-checked-disabled: rgb(239 68 68 / 0.35);
+  --color-checkbox-border-unchecked-default: #EF4444;
+  --color-checkbox-border-unchecked-disabled: rgb(239 68 68 / 0.35);
+  --color-checkbox-icon-default: #FFFFFF;
+  --color-checkbox-icon-disabled: rgb(255 255 255 / 0.45);
   --color-checkbox-label-default: #FFFFFF;
   --color-checkbox-label-disabled: rgb(255 255 255 / 0.35);
 
