@@ -142,7 +142,7 @@ export default function CreatePostButton({
               size="md"
               onClick={openCreatePostModal}
               className="h-10 max-h-10 min-w-10 rounded-3xl border-[0.75px] px-0 py-[0.75px] lg:px-[16.75px]"
-              icon={
+              leftIcon={
                 <>
                   <span className="relative shrink-0 size-5" aria-hidden>
                     <ImageIcon
@@ -165,7 +165,7 @@ export default function CreatePostButton({
               size="md"
               onClick={openCreatePostModal}
               className="h-10 max-h-10 min-w-10 px-0 py-[0.75px] lg:px-[16.75px]"
-              icon={
+              leftIcon={
                 <>
                   <span className="relative shrink-0 size-5" aria-hidden>
                     <PenLine

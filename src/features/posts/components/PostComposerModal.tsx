@@ -108,8 +108,10 @@ export default function PostComposerModal({
         <Button
           onClick={onImageSelect}
           icon={<PaperclipIcon className="w-5 h-5" />}
-          variant="transparent"
-          size="icon"
+          variant="ghost"
+          size="md"
+          iconOnly
+          aria-label={t("post.createImageAction")}
           className="text-foreground-secondary-default hover:text-foreground-primary-default"
           type="button"
         />
@@ -129,8 +131,10 @@ export default function PostComposerModal({
               className={`w-5 h-5 transition-colors ${showYouTubeInput || youtubeUrl ? "text-red-500" : ""}`}
             />
           }
-          variant="transparent"
-          size="icon"
+          variant="ghost"
+          size="md"
+          iconOnly
+          aria-label="YouTube"
           className="text-foreground-secondary-default hover:text-red-500"
           type="button"
         />
@@ -144,7 +148,9 @@ export default function PostComposerModal({
         isLoading={isPending}
         icon={<SendIcon className="w-5 h-5" />}
         variant="default"
-        size="icon"
+        size="md"
+        iconOnly
+        aria-label={t("post.createTextAction")}
         type="submit"
       />
     </div>

@@ -116,8 +116,10 @@ export const CommentForm = ({ postId }: CommentFormProps) => {
           <Button
             onClick={triggerPicker}
             icon={<PaperclipIcon className="w-5 h-5" />}
-            variant="transparent"
+            variant="ghost"
             size="md"
+            iconOnly
+            aria-label={t("post.createImageAction")}
             className="text-foreground-secondary-default hover:text-foreground-primary-default"
             type="button"
           />
@@ -129,7 +131,9 @@ export const CommentForm = ({ postId }: CommentFormProps) => {
           isLoading={isLoading}
           icon={<SendIcon className="w-5 h-5" />}
           variant="default"
-          size="icon"
+          size="md"
+          iconOnly
+          aria-label={t("comment.add")}
           disabled={isOverLimit || hasContentError || hasImageError}
         />
       </div>

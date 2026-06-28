@@ -9,8 +9,8 @@ interface ModalFooterProps {
   onConfirm: () => void;
   isPending?: boolean;
   confirmVariant?: "default" | "danger" | "secondary";
-  confirmSize?: "sm" | "md" | "lg";
-  cancelSize?: "sm" | "md" | "lg";
+  confirmSize?: "sm" | "md" | "xl";
+  cancelSize?: "sm" | "md" | "xl";
   disabled?: boolean;
   confirmDisabled?: boolean;
   className?: string;

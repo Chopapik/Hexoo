@@ -51,7 +51,11 @@ export const Header = ({ user }: { user: SessionData | null }) => {
           ) : (
             <Link href="/login" prefetch={false}>
               <span className="md:hidden">
-                <Button rightIcon={<LogIn className="size-4" />} />
+                <Button
+                  aria-label={t("header.login")}
+                  icon={<LogIn className="size-4" />}
+                  iconOnly
+                />
               </span>
               <span className="hidden md:block">
                 <Button

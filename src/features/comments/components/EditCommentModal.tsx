@@ -82,7 +82,9 @@ export default function EditCommentModal({
         isLoading={isPending}
         icon={<SendIcon className="w-5 h-5" />}
         variant="default"
-        size="icon"
+        size="md"
+        iconOnly
+        aria-label={t("comment.edit")}
         type="submit"
       />
     </div>

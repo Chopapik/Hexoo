@@ -54,7 +54,9 @@ export function BottomNav({ user }: BottomNavProps) {
         </div>
 
         <Button
-          size="icon"
+          size="md"
+          iconOnly
+          aria-label={t("nav.addPost")}
           icon={
             <span className="relative shrink-0 size-5">
               <Plus
@@ -64,7 +66,7 @@ export function BottomNav({ user }: BottomNavProps) {
               />
             </span>
           }
-          className="max-h-10 min-w-10 shrink-0 px-[16.75px] py-[0.75px]"
+          className="shrink-0"
           onClick={openCreatePostModal}
         />
       </div>

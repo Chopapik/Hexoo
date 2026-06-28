@@ -132,8 +132,10 @@ export default function AddCommentModal({
           <Button
             onClick={triggerPicker}
             icon={<PaperclipIcon className="w-5 h-5" />}
-            variant="transparent"
-            size="icon"
+            variant="ghost"
+            size="md"
+            iconOnly
+            aria-label={t("post.createImageAction")}
             className="text-foreground-secondary-default hover:text-foreground-primary-default"
             type="button"
           />

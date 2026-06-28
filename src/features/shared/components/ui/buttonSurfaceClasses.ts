@@ -17,7 +17,6 @@ type GradientButtonSurface =
   | "info";
 type FlatButtonSurface =
   | "glass-card"
-  | "transparent"
   | "outline"
   | "outline-fuchsia"
   | "ghost";
@@ -66,12 +65,6 @@ export const buttonFlatSurfaceClasses: Record<
       "border border-button-glass-card-border-default bg-button-glass-card-background-default text-button-text-default hover:border-button-glass-card-border-hover hover:bg-button-glass-card-background-hover",
     disabled:
       "border border-button-glass-card-border-disabled bg-button-glass-card-background-disabled text-button-text-disabled",
-  },
-  transparent: {
-    enabled:
-      "bg-button-transparent-background-default text-button-text-default hover:bg-button-transparent-background-hover",
-    disabled:
-      "bg-button-transparent-background-disabled text-button-text-disabled shadow-none",
   },
   outline: {
     enabled:

@@ -1,38 +1,34 @@
-import type { ButtonHTMLAttributes, MouseEventHandler, ReactNode } from "react";
+import type React from "react";
 
 export type ButtonVariant =
   | "default"
-  | "glass-card"
+  | "outline"
   | "danger"
   | "secondary"
-  | "transparent"
-  | "outline"
-  | "outline-fuchsia"
-  | "ghost"
   | "success"
   | "warning"
-  | "info";
-export type ButtonSize = "sm" | "md" | "lg" | "xl" | "icon" | "iconSm";
+  | "info"
+  | "ghost";
+export type ButtonSize = "sm" | "md" | "xl";
 
 export interface ButtonProps
-  extends Omit<
-    ButtonHTMLAttributes<HTMLButtonElement>,
-    "children" | "disabled" | "onClick" | "type"
-  > {
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   text?: string;
-  leftIconUrl?: string;
-  rightIconUrl?: string;
-  leftIcon?: ReactNode;
-  rightIcon?: ReactNode;
-  icon?: ReactNode;
-  iconOnly?: boolean;
   size?: ButtonSize;
   variant?: ButtonVariant;
-  className?: string;
-  onClick?: MouseEventHandler<HTMLButtonElement>;
-  leftIconClassName?: string;
-  rightIconClassName?: string;
-  type?: "submit" | "reset" | "button";
   disabled?: boolean;
   isLoading?: boolean;
+  iconOnly?: boolean;
+
+  leftIconUrl?: string;
+  rightIconUrl?: string;
+  iconUrl?: string;
+
+  leftIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
+  icon?: React.ReactNode;
+
+  leftIconClassName?: string;
+  rightIconClassName?: string;
+  iconClassName?: string;
 }

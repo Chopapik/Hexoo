@@ -25,7 +25,7 @@ export default function AdminPanel() {
               type="button"
               onClick={() => setActiveView("users")}
               size="sm"
-              variant={activeView === "users" ? "default" : "transparent"}
+              variant={activeView === "users" ? "default" : "ghost"}
               className={`px-4 ${
                 activeView !== "users"
                   ? "text-foreground-secondary-default hover:text-foreground-primary-default"
@@ -37,7 +37,7 @@ export default function AdminPanel() {
               type="button"
               onClick={() => setActiveView("activity")}
               size="sm"
-              variant={activeView === "activity" ? "default" : "transparent"}
+              variant={activeView === "activity" ? "default" : "ghost"}
               className={`px-4 ${
                 activeView !== "activity"
                   ? "text-foreground-secondary-default hover:text-foreground-primary-default"

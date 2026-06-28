@@ -56,7 +56,7 @@ export default function GlobalError({
           <Button
             onClick={() => reset()}
             text={t("error.global.retry")}
-            size="lg"
+            size="xl"
             variant="default"
             className="w-full"
           />
