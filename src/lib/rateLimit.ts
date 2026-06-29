@@ -27,7 +27,6 @@ type RateLimitName =
   | "adminModeratorUser"
   | "demoResetIp";
 
-const isProd = process.env.NODE_ENV === "production";
 const hasRedisEnv = Boolean(
   process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN,
 );
@@ -168,15 +167,27 @@ async function assertLimit(
   const limiter = limiters[limiterName];
 
   if (!limiter) {
-    if (!isProd) return;
-
-    throw createAppError({
-      code: "INTERNAL_ERROR",
-      message: "Server misconfiguration: Upstash Redis env vars are missing.",
+    console.error("[rateLimit] Limiter unavailable; allowing request.", {
+      limiterName,
+      hasRedisEnv,
+      nodeEnv: process.env.NODE_ENV,
     });
+
+    return;
   }
 
-  const result = await limiter.limit(identifier);
+  let result: Awaited<ReturnType<Ratelimit["limit"]>>;
+
+  try {
+    result = await limiter.limit(identifier);
+  } catch (error) {
+    console.error("[rateLimit] Redis check failed; allowing request.", {
+      limiterName,
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+
+    return;
+  }
 
   if (!result.success) {
     throw createAppError({
