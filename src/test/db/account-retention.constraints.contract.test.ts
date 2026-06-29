@@ -172,7 +172,21 @@ describe.skipIf(!supabaseUrl || !serviceRoleKey)(
         auth: { persistSession: false },
       });
       const uid = `batch7-admin-${randomUUID()}`;
+      const { data: existingAdmins } = await client
+        .from("users")
+        .select("uid, is_active")
+        .eq("role", "admin")
+        .is("deleted_at", null);
+      const existingAdminIds = (existingAdmins ?? []).map(({ uid }) => uid);
+
       try {
+        if (existingAdminIds.length > 0) {
+          await client
+            .from("users")
+            .update({ is_active: false })
+            .in("uid", existingAdminIds);
+        }
+
         const { error: insertError } = await client.from("users").insert({
           uid,
           display_name: "Batch Admin",
@@ -201,6 +215,11 @@ describe.skipIf(!supabaseUrl || !serviceRoleKey)(
       } finally {
         await client.from("account_deletion_jobs").delete().eq("user_id", uid);
         await client.from("users").delete().eq("uid", uid);
+        await Promise.all(
+          (existingAdmins ?? []).map(({ uid, is_active }) =>
+            client.from("users").update({ is_active }).eq("uid", uid),
+          ),
+        );
       }
     });
 
