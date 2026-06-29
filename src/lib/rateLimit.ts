@@ -146,10 +146,16 @@ const limiters: Record<RateLimitName, Ratelimit | null> = {
   ),
 };
 
+function firstHeaderIp(value: string | null) {
+  return value?.split(",")[0]?.trim() || null;
+}
+
 export function getClientIp(req: NextRequest) {
   return (
-    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-    req.headers.get("x-real-ip") ||
+    firstHeaderIp(req.headers.get("cf-connecting-ip")) ||
+    firstHeaderIp(req.headers.get("true-client-ip")) ||
+    firstHeaderIp(req.headers.get("x-real-ip")) ||
+    firstHeaderIp(req.headers.get("x-forwarded-for")) ||
     "unknown"
   );
 }
