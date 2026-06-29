@@ -10,8 +10,9 @@ function RightNavContent() {
 
   return (
     <div className="flex h-full min-h-[720px] w-full flex-col items-center justify-between pb-4">
-      <div className="flex h-[403px] w-full flex-col items-center justify-between overflow-hidden rounded-3xl bg-surface-chrome-background-default px-[17px] py-[22px] shadow-lg backdrop-blur-sm">
+      <div className="flex h-[403px] w-full flex-col items-center justify-between overflow-hidden rounded-[24px] bg-surface-chrome-background-default px-[17px] py-[22px] shadow-lg backdrop-blur-sm">
         <RightNavActiveUsers />
+
         <Button
           text={t("nav.addPost")}
           size="xl"
@@ -20,17 +21,18 @@ function RightNavContent() {
           onClick={openCreatePostModal}
         />
       </div>
-      <div className="flex min-h-[86px] w-full flex-col items-center justify-center overflow-hidden whitespace-nowrap text-center font-sans text-xs font-normal leading-tight text-foreground-muted-default">
+
+      <footer className="flex min-h-[86px] w-full flex-col items-center justify-center overflow-hidden whitespace-nowrap text-center font-sans text-xs font-normal leading-tight text-foreground-muted-default">
         <p>© 2025-2026 Hexoo Project.</p>
         <p>Created by CHOPAPIK.</p>
-      </div>
+      </footer>
     </div>
   );
 }
 
 export function RightNavSidebar() {
   return (
-    <div className="hidden h-[calc(100vh-76px)] min-h-[720px] w-[235px] self-start overflow-hidden rounded-xl drop-shadow-[0px_4px_6px_rgba(0,0,0,0.25)] md:flex">
+    <div className="flex h-full min-h-[720px] w-[235px] self-start overflow-hidden rounded-xl drop-shadow-[0px_4px_6px_rgba(0,0,0,0.25)]">
       <RightNavContent />
     </div>
   );
@@ -57,13 +59,13 @@ export function RightNavOverlay({
         <RightNavContent />
       </div>
 
-      {open && (
+      {open ? (
         <button
           aria-label={t("nav.closeRightSidebar")}
           onClick={onClose}
-          className="md:hidden fixed inset-0 bg-modal-overlay-background-default z-40"
+          className="fixed inset-0 z-40 bg-modal-overlay-background-default md:hidden"
         />
-      )}
+      ) : null}
     </>
   );
 }

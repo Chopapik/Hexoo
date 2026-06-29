@@ -1,11 +1,14 @@
 "use client";
 
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useState } from "react";
+import type { CSSProperties, ReactNode } from "react";
+
 import { Header } from "./Header";
 import { LeftNav } from "./LeftNav/LeftNav";
 import { BottomNav } from "./LeftNav/BottomNav";
 import { RightNavOverlay, RightNavSidebar } from "./RightNav/RightNav";
 import { RightNavGuestDisclaimer } from "./RightNav/RightNavGuestDisclaimer";
+
 import { useAppStore } from "@/lib/store/store";
 import CreatePostModal from "@/features/posts/components/CreatePostModal";
 import SessionWatcher from "@/features/auth/components/SessionWatcher";
@@ -13,36 +16,39 @@ import { PresenceSubscription } from "@/features/presence/components/PresenceSub
 import type { SessionData } from "@/features/me/me.type";
 import { Logo } from "@/features/shared/components/ui/Logo";
 
-const leftRailAsideClass =
-  "hidden md:flex sticky top-[76px] h-[calc(100dvh-76px)] w-[235px] shrink-0 justify-center";
-const rightRailAsideClass =
-  "hidden lg:flex sticky top-[76px] h-[calc(100dvh-76px)] w-[235px] shrink-0 justify-center";
-
-const subscribeToHydration = (onStoreChange: () => void) => {
-  queueMicrotask(onStoreChange);
-  return () => {};
+type LayoutProps = {
+  children: ReactNode;
+  initialUser: SessionData | null;
 };
 
-const getHydratedSnapshot = () => true;
-const getServerHydrationSnapshot = () => false;
+const SIDEBAR_TOP = "72px";
 
-export const Layout: React.FC<{
-  children: React.ReactNode;
-  initialUser: SessionData | null;
-}> = ({ children, initialUser }) => {
-  const isHydrated = useSyncExternalStore(
-    subscribeToHydration,
-    getHydratedSnapshot,
-    getServerHydrationSnapshot,
-  );
+const layoutVars = {
+  "--hexoo-sidebar-top": SIDEBAR_TOP,
+} as CSSProperties;
+
+const railClass = "hidden shrink-0 self-stretch w-[235px]";
+const stickyRailClass =
+  "sticky z-30 h-[calc(100dvh-var(--hexoo-sidebar-top))] min-h-[720px]";
+
+export const Layout = ({ children, initialUser }: LayoutProps) => {
+  const [mounted, setMounted] = useState(false);
   const [isRightNavOpen, setIsRightNavOpen] = useState(false);
-  const openRight = () => setIsRightNavOpen(true);
-  const closeRight = () => setIsRightNavOpen(false);
 
   const user = useAppStore((s) => s.auth.user);
   const setUser = useAppStore((s) => s.setUser);
   const language = useAppStore((s) => s.settings.language);
   const initializeLanguage = useAppStore((s) => s.initializeLanguage);
+
+  useEffect(() => {
+    const handle = window.requestAnimationFrame(() => {
+      setMounted(true);
+    });
+
+    return () => {
+      window.cancelAnimationFrame(handle);
+    };
+  }, []);
 
   useEffect(() => {
     setUser(initialUser);
@@ -56,52 +62,84 @@ export const Layout: React.FC<{
     document.documentElement.lang = language;
   }, [language]);
 
-  // Sliding session: re-set cookies in Route Handler so expiry extends 1 year from this visit
   useEffect(() => {
     if (!user) return;
-    fetch("/api/auth/slide", { credentials: "include" }).catch(() => {});
-    fetch("/api/auth/last-online", {
+
+    void fetch("/api/auth/slide", {
+      credentials: "include",
+    });
+
+    void fetch("/api/auth/last-online", {
       method: "POST",
       credentials: "include",
-    }).catch(() => {});
+    });
   }, [user]);
 
-  if (!isHydrated) {
+  if (!mounted) {
     return (
-      <div className="w-full min-h-screen bg-page-background-default flex items-center justify-center">
+      <div className="flex min-h-dvh w-full items-center justify-center bg-page-background-default">
         <Logo compactOnMobile={false} className="flex items-center" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen w-full bg-page-background-default">
+    <div
+      className="relative min-h-dvh w-full bg-page-background-default text-foreground-primary-default"
+      style={layoutVars}
+    >
       <PresenceSubscription />
       <SessionWatcher />
+
       <header className="fixed inset-x-0 top-0 z-50">
         <Header user={user} />
       </header>
-      <div className="mx-auto w-full max-w-[1440px] pt-[108px] md:pt-[76px]">
-        <div className="flex w-full items-start md:gap-4">
-          <aside className={leftRailAsideClass}>
-            <LeftNav onOpenRight={openRight} user={user} />
+
+      <div className="mx-auto w-full max-w-[1440px] pt-[108px] md:pt-[72px]">
+        <div className="flex w-full items-start gap-4">
+          <aside className={`${railClass} md:block`}>
+            <div
+              className={stickyRailClass}
+              style={{ top: "var(--hexoo-sidebar-top)" }}
+            >
+              <LeftNav
+                user={user}
+                onOpenRight={() => setIsRightNavOpen(true)}
+              />
+            </div>
           </aside>
-          <main className="min-w-0 flex-1 px-2 pb-[84px] md:px-0 md:pb-0">
+
+          <main className="min-w-0 flex-1 px-2 pb-[112px] md:px-0 md:pb-8">
             {children}
           </main>
-          <aside className={rightRailAsideClass}>
-            {user ? <RightNavSidebar /> : <RightNavGuestDisclaimer />}
+
+          <aside className={`${railClass} lg:block`}>
+            <div
+              className={stickyRailClass}
+              style={{ top: "var(--hexoo-sidebar-top)" }}
+            >
+              {user ? <RightNavSidebar /> : <RightNavGuestDisclaimer />}
+            </div>
           </aside>
         </div>
       </div>
-      {user ? (
-        <div className="pointer-events-none fixed bottom-[26px] left-[10px] right-[10px] z-40 flex justify-center px-8 md:hidden">
-          <BottomNav onOpenRight={openRight} user={user} />
-        </div>
-      ) : null}
-      {user ? (
-        <RightNavOverlay open={isRightNavOpen} onClose={closeRight} />
-      ) : null}
+
+      {user && (
+        <>
+          <div className="pointer-events-none fixed bottom-[26px] left-0 right-0 z-40 flex justify-center px-8 md:hidden">
+            <BottomNav
+              user={user}
+              onOpenRight={() => setIsRightNavOpen(true)}
+            />
+          </div>
+
+          <RightNavOverlay
+            open={isRightNavOpen}
+            onClose={() => setIsRightNavOpen(false)}
+          />
+        </>
+      )}
+
       <CreatePostModal />
     </div>
   );

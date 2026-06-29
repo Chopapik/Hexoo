@@ -4,7 +4,7 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LucideIcon } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 type NavItemVariant = "sidebar" | "bottom";
 
@@ -32,6 +32,7 @@ export function NavItem({
       ? pathname === "/"
       : pathname === to || pathname?.startsWith(`${to}/`);
   const isActive = active ?? isPathActive;
+  const isSidebar = variant === "sidebar";
 
   const iconClasses =
     "size-6 shrink-0 transition-colors duration-200 " +
@@ -39,11 +40,9 @@ export function NavItem({
       ? "text-foreground-primary-default"
       : "text-foreground-secondary-default group-hover/item:text-foreground-primary-default");
 
-  const isSidebar = variant === "sidebar";
-
   const linkClasses =
     "group/item relative inline-flex items-center rounded-xl transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fuchsia-border-default/60 " +
-    (isSidebar ? "h-12 w-fit justify-start" : "size-[30px] justify-center");
+    (isSidebar ? "h-12 w-[176px] justify-start" : "size-[30px] justify-center");
 
   return (
     <Link
@@ -67,10 +66,10 @@ export function NavItem({
         className={
           isSidebar
             ? "ml-[34px] flex items-center justify-start gap-2 overflow-hidden"
-            : "flex items-center justify-start gap-2 overflow-hidden"
+            : "flex items-center justify-center overflow-hidden"
         }
       >
-        <div className="relative inline-flex flex-col justify-start items-start overflow-hidden">
+        <div className="relative inline-flex flex-col items-start justify-start overflow-hidden">
           <div className="relative flex size-[30px] items-center justify-center overflow-hidden">
             {Icon ? (
               (() => {
@@ -90,7 +89,7 @@ export function NavItem({
             ) : (
               <div
                 className={
-                  "size-4 left-[4px] top-[3px] absolute " +
+                  "absolute left-[4px] top-[3px] size-4 " +
                   (isActive
                     ? "bg-foreground-primary-default"
                     : "bg-foreground-secondary-default group-hover/item:bg-foreground-primary-default")
@@ -99,25 +98,23 @@ export function NavItem({
             )}
           </div>
 
-          <div className="absolute left-[11px] top-0 size-2">
-            {hasNotification && (
-              <div className="size-2 left-0 top-0 absolute bg-yellow-500 rounded-full ring-2 ring-surface-chrome-background-default" />
-            )}
-          </div>
+          {hasNotification ? (
+            <div className="absolute left-[11px] top-0 size-2 rounded-full bg-yellow-500 ring-2 ring-surface-chrome-background-default" />
+          ) : null}
         </div>
 
         {isSidebar ? (
-          <div className="flex justify-start items-start overflow-hidden ">
-            <div
+          <div className="flex items-start justify-start overflow-hidden">
+            <span
               className={
-                "block font-sans text-lg font-semibold leading-[1.9] transition-colors duration-200 " +
+                "block whitespace-nowrap font-sans text-lg font-semibold leading-[1.2] transition-colors duration-200 " +
                 (isActive
                   ? "text-foreground-primary-default drop-shadow-sm"
                   : "text-foreground-secondary-default group-hover/item:text-foreground-primary-default")
               }
             >
               {label}
-            </div>
+            </span>
           </div>
         ) : (
           <span className="sr-only">{label}</span>
