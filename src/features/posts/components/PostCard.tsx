@@ -17,6 +17,32 @@ type PostCardProps = {
   onImageReadyChange?: (postId: string, isReady: boolean) => void;
 };
 
+export const PostCardSkeleton = () => (
+  <div className="inline-flex w-full animate-pulse flex-col items-start justify-start gap-4 rounded-xl border-t border-surface-card-border-default bg-surface-card-background-default p-3">
+    <div className="flex min-h-11 w-full items-start justify-between">
+      <div className="inline-flex min-h-10 items-center justify-start gap-2">
+        <div className="size-9 rounded-xl bg-button-glass-card-background-hover md:size-10" />
+        <div className="inline-flex self-stretch flex-col items-start justify-center gap-1.5">
+          <div className="h-4 w-32 rounded bg-button-glass-card-background-hover" />
+          <div className="h-3 w-20 rounded bg-button-glass-card-background-default" />
+        </div>
+      </div>
+
+      <div className="h-8 w-8 rounded-lg bg-button-glass-card-background-default" />
+    </div>
+
+    <div className="inline-flex w-full self-stretch flex-col items-center justify-center gap-3 overflow-hidden">
+      <div className="h-6 w-full rounded bg-button-glass-card-background-default md:h-5" />
+      <div className="h-6 w-2/3 self-start rounded bg-button-glass-card-background-default md:h-5" />
+    </div>
+
+    <div className="inline-flex h-5 w-full items-start justify-start gap-4 bg-transparent">
+      <div className="h-5 w-12 rounded bg-button-glass-card-background-default" />
+      <div className="h-5 w-12 rounded bg-button-glass-card-background-default" />
+    </div>
+  </div>
+);
+
 export const PostCard = ({
   post,
   revealNSFW,

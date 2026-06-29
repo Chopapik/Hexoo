@@ -2,30 +2,43 @@
 
 import React, { useEffect, useRef } from "react";
 import type { PublicPostResponseDto } from "../types/post.dto";
-import { PostCard } from "./PostCard";
-import usePosts from "../hooks/usePosts";
+import { PostCard, PostCardSkeleton } from "./PostCard";
 import { AppLoader } from "@/features/shared/components/ui/AppLoader";
-import { useI18n } from "@/i18n/useI18n";
 
 type PostListProps = {
+  data?: { pages: PublicPostResponseDto[][] } | null;
+  isLoading: boolean;
+  isError?: boolean;
+  isFetchingNextPage: boolean;
+  hasNextPage: boolean;
+  fetchNextPage: () => void;
   className?: string;
+  loadingCount?: number;
+  errorMessage?: string;
+  emptyMessage?: string;
+  endMessage?: string;
+  as?: "div" | "main";
 };
 
 const joinClassNames = (className?: string) =>
   ["w-full", className].filter(Boolean).join(" ");
 
-export default function PostList({ className = "" }: PostListProps) {
-  const { t } = useI18n();
-  const {
-    data,
-    isLoading,
-    isError,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = usePosts();
-
+export function PostList({
+  data,
+  isLoading,
+  isError = false,
+  isFetchingNextPage,
+  hasNextPage,
+  fetchNextPage,
+  className = "",
+  loadingCount = 3,
+  errorMessage,
+  emptyMessage,
+  endMessage,
+  as: Component = "div",
+}: PostListProps) {
   const observerTarget = useRef<HTMLDivElement>(null);
+  const hasPosts = data?.pages.some((group) => group.length > 0) ?? false;
 
   useEffect(() => {
     const target = observerTarget.current;
@@ -51,39 +64,26 @@ export default function PostList({ className = "" }: PostListProps) {
 
   if (isLoading) {
     return (
-      <main className={joinClassNames(className)}>
+      <Component className={joinClassNames(className)}>
         <div className="space-y-2">
-          {[1, 2, 3].map((i) => (
-            <div
-              key={i}
-              className="flex w-full animate-pulse flex-col gap-4 rounded-xl border-t-2 border-surface-card-border-default bg-surface-card-background-default p-3"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-button-glass-card-background-hover" />
-                <div className="flex flex-col gap-2">
-                  <div className="w-32 h-3 bg-button-glass-card-background-hover rounded" />
-                  <div className="w-20 h-2 bg-button-glass-card-background-default rounded" />
-                </div>
-              </div>
-              <div className="w-full h-4 bg-button-glass-card-background-default rounded" />
-              <div className="w-2/3 h-4 bg-button-glass-card-background-default rounded" />
-            </div>
+          {Array.from({ length: loadingCount }, (_, i) => (
+            <PostCardSkeleton key={i} />
           ))}
         </div>
-      </main>
+      </Component>
     );
   }
 
-  if (isError) {
+  if (isError && errorMessage) {
     return (
       <div className="w-full text-center py-10 text-validation-error-text font-sans">
-        {t("post.loadError")}
+        {errorMessage}
       </div>
     );
   }
 
   return (
-    <main className={joinClassNames(className)}>
+    <Component className={joinClassNames(className)}>
       <div className="space-y-2">
         {data?.pages.map((group, i) => (
           <React.Fragment key={i}>
@@ -98,16 +98,25 @@ export default function PostList({ className = "" }: PostListProps) {
           className="h-4 w-full flex justify-center py-4"
         >
           {isFetchingNextPage && (
-            <AppLoader size="lg" className="text-foreground-secondary-default" />
+            <AppLoader
+              size="lg"
+              className="text-foreground-secondary-default"
+            />
           )}
         </div>
 
-        {!hasNextPage && data && data.pages.length > 0 && (
+        {!hasNextPage && data && hasPosts && endMessage && (
           <div className="text-center text-foreground-secondary-default text-sm py-8 font-sans opacity-50">
-            {t("post.end")}
+            {endMessage}
+          </div>
+        )}
+
+        {data && !hasPosts && emptyMessage && (
+          <div className="text-center py-10 text-foreground-secondary-default font-sans">
+            {emptyMessage}
           </div>
         )}
       </div>
-    </main>
+    </Component>
   );
 }

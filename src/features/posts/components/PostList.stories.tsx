@@ -1,15 +1,15 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { expect } from "storybook/test";
 
-import PostList from "./PostList";
+import HomePostList from "./HomePostList";
 
 const meta = {
-  component: PostList,
+  component: HomePostList,
   tags: ["ai-generated"],
   args: {
     className: "max-w-[920px]",
   },
-} satisfies Meta<typeof PostList>;
+} satisfies Meta<typeof HomePostList>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
