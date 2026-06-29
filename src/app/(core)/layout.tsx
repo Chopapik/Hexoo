@@ -44,19 +44,5 @@ export default async function RootLayout({
     redirect("/api/auth/refresh");
   }
 
-  const serializedSession = JSON.stringify({
-    sessionUser: sessionUserData,
-  }).replace(/</g, "\\u003c");
-
-  return (
-    <>
-      <script
-        id="__hexoo-bootstrap__"
-        dangerouslySetInnerHTML={{
-          __html: `window.__HEXOO_BOOTSTRAP__ = ${serializedSession};`,
-        }}
-      />
-      <Layout initialUser={sessionUserData}>{children}</Layout>
-    </>
-  );
+  return <Layout initialUser={sessionUserData}>{children}</Layout>;
 }

@@ -48,11 +48,11 @@ export function LeftNav({ user }: LeftNavProps) {
                 to={`/profile/${encodeURIComponent(user.uid)}`}
                 icon={ProfileIcon}
               />
-              <NavItem
+              {/* <NavItem
                 label={t("nav.messages")}
                 to="/messages"
                 icon={MessagesIcon}
-              />
+              /> */}
               <NavItem
                 label={t("nav.settings")}
                 to="/settings"

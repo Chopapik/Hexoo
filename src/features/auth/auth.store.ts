@@ -13,15 +13,9 @@ export interface AuthSlice {
   setReady: (ready: boolean) => void;
 }
 
-const readBootstrapUser = (): SessionData | null => {
-  if (typeof window === "undefined") return null;
-
-  return window.__HEXOO_BOOTSTRAP__?.sessionUser ?? null;
-};
-
 export const createAuthSlice: StoreSlice<AuthSlice> = (set) => ({
   auth: {
-    user: readBootstrapUser(),
+    user: null,
     ready: true,
   },
 

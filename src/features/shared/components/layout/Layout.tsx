@@ -14,7 +14,6 @@ import CreatePostModal from "@/features/posts/components/CreatePostModal";
 import SessionWatcher from "@/features/auth/components/SessionWatcher";
 import { PresenceSubscription } from "@/features/presence/components/PresenceSubscription";
 import type { SessionData } from "@/features/me/me.type";
-import { Logo } from "@/features/shared/components/ui/Logo";
 
 type LayoutProps = {
   children: ReactNode;
@@ -32,26 +31,20 @@ const stickyRailClass =
   "sticky z-30 h-[calc(100dvh-var(--hexoo-sidebar-top))] min-h-[720px]";
 
 export const Layout = ({ children, initialUser }: LayoutProps) => {
-  const [mounted, setMounted] = useState(false);
   const [isRightNavOpen, setIsRightNavOpen] = useState(false);
+  const [initialUserSynced, setInitialUserSynced] = useState(false);
 
-  const user = useAppStore((s) => s.auth.user);
+  const storeUser = useAppStore((s) => s.auth.user);
   const setUser = useAppStore((s) => s.setUser);
   const language = useAppStore((s) => s.settings.language);
   const initializeLanguage = useAppStore((s) => s.initializeLanguage);
-
-  useEffect(() => {
-    const handle = window.requestAnimationFrame(() => {
-      setMounted(true);
-    });
-
-    return () => {
-      window.cancelAnimationFrame(handle);
-    };
-  }, []);
+  const user = initialUserSynced ? storeUser : initialUser;
 
   useEffect(() => {
     setUser(initialUser);
+    queueMicrotask(() => {
+      setInitialUserSynced(true);
+    });
   }, [initialUser, setUser]);
 
   useEffect(() => {
@@ -74,14 +67,6 @@ export const Layout = ({ children, initialUser }: LayoutProps) => {
       credentials: "include",
     });
   }, [user]);
-
-  if (!mounted) {
-    return (
-      <div className="flex min-h-dvh w-full items-center justify-center bg-page-background-default">
-        <Logo compactOnMobile={false} className="flex items-center" />
-      </div>
-    );
-  }
 
   return (
     <div
