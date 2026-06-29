@@ -63,6 +63,7 @@ The interface is designed in Figma and includes application screens, reusable co
 - TypeScript
 - Supabase
 - PostgreSQL
+- Upstash Redis
 - Tailwind CSS
 - TanStack Query
 - Zustand
