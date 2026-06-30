@@ -158,6 +158,7 @@ describe("TOOLING-CLEAN-INSTALL-001 clean install static contract", () => {
     const envSample = readFileSync(envSamplePath, "utf8");
     const requiredKeys = [
       "NEXT_PUBLIC_API_URL",
+      "NEXT_PUBLIC_SITE_URL",
       "NEXT_PUBLIC_SUPABASE_URL",
       "NEXT_PUBLIC_SUPABASE_ANON_KEY",
       "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",

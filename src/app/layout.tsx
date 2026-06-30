@@ -14,8 +14,53 @@ import ThemeScript from "@/features/shared/components/ThemeScript";
 import LanguageBootstrap from "@/i18n/LanguageBootstrap";
 import DemoNoticeModal from "@/features/demo/components/DemoNoticeModal";
 
+const fallbackSiteUrl = "https://hexoo.eu";
+
+function resolveSiteUrl(): string {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim() || fallbackSiteUrl;
+
+  try {
+    return new URL(siteUrl).origin;
+  } catch {
+    return fallbackSiteUrl;
+  }
+}
+
+const siteUrl = resolveSiteUrl();
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "Hexoo",
+  description: "Low-pressure social posting app",
+  applicationName: "Hexoo",
+  keywords: [
+    "Hexoo",
+    "Next.js",
+    "React",
+    "TypeScript",
+    "Supabase",
+    "PostgreSQL",
+    "social app",
+    "portfolio project",
+  ],
+  creator: "Chopapik",
+  authors: [{ name: "Chopapik" }],
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "Hexoo",
+    description: "Low-pressure social posting app",
+    url: siteUrl,
+    siteName: "Hexoo",
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Hexoo",
+    description: "Low-pressure social posting app",
+  },
 };
 
 export default function RootLayout({
