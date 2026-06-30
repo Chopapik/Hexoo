@@ -58,18 +58,104 @@ The interface is designed in Figma and includes application screens, reusable co
 
 ## Tech stack
 
-- Next.js
-- React
-- TypeScript
-- Supabase
-- PostgreSQL
-- Upstash Redis
-- Tailwind CSS
-- TanStack Query
-- Zustand
-- Zod
-- OpenAI API
-- reCAPTCHA
+<table>
+  <tr>
+    <td align="center" width="120">
+      <img src="https://nextjs.org/_next/static/immutable/media/nextjs-logotype-dark.3h4a2z2v_dkod.svg" height="40" alt="Next.js" />
+      <br />
+      <sub>Next.js</sub>
+    </td>
+    <td align="center" width="120">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg" height="40" alt="React" />
+      <br />
+      <sub>React</sub>
+    </td>
+<td align="center" width="120">
+  <img
+    src="https://upload.wikimedia.org/wikipedia/commons/4/4c/Typescript_logo_2020.svg"
+    height="40"
+    alt="TypeScript"
+  />
+  <br />
+  <sub>TypeScript</sub>
+</td>
+    <td align="center" width="120">
+      <img src="https://tailwindcss.com/_next/static/media/tailwindcss-mark.0~s.iziag2xd..svg" height="40" alt="Tailwind CSS" />
+      <br />
+      <sub>Tailwind CSS</sub>
+    </td>
+  </tr>
+
+  <tr>
+    <td align="center" width="140">
+      <img
+        src="https://supabase.com/dashboard/img/supabase-dark.svg"
+        height="40"
+        alt="Supabase"
+      />
+      <br />
+      <sub>Supabase</sub>
+    </td>
+    <td align="center" width="120">
+      <img src="https://wiki.postgresql.org/images/a/a4/PostgreSQL_logo.3colors.svg" height="40" alt="PostgreSQL" />
+      <br />
+      <sub>PostgreSQL</sub>
+    </td>
+    <td align="center" width="120">
+      <img src="https://upstash.com/logo/redis-icon.svg" height="40" alt="Upstash Redis" />
+      <br />
+      <sub>Upstash Redis</sub>
+    </td>
+<td align="center" width="140">
+  <img
+    src="https://cdn.simpleicons.org/vercel/white"
+    height="40"
+    alt="Vercel"
+  />
+  <br />
+  <sub>Vercel</sub>
+</td>
+  </tr>
+
+  <tr>
+    <td align="center" width="120">
+      <img src="https://tanstack.com/images/logos/logo-black.svg" height="40" alt="TanStack Query" />
+      <br />
+      <sub>TanStack Query</sub>
+    </td>
+    <td align="center" width="120">
+      <img
+        src="https://user-images.githubusercontent.com/958486/218346783-72be5ae3-b953-4dd7-b239-788a882fdad6.svg"
+        alt="Zustand"
+        height="40"
+      />
+      <br />
+      <sub>Zustand</sub>
+    </td>
+    <td align="center" width="120">
+      <img src="https://raw.githubusercontent.com/colinhacks/zod/main/logo.svg" height="40" alt="Zod" />
+      <br />
+      <sub>Zod</sub>
+    </td>
+    <td align="center" width="120">
+      <img src="https://www.gstatic.com/recaptcha/api2/logo_48.png" height="40" alt="reCAPTCHA" />
+      <br />
+      <sub>reCAPTCHA</sub>
+    </td>
+  </tr>
+
+  <tr>
+    <td align="center" width="170">
+  <img
+        src="./docs/assets/openai-wordmark-white.svg" height="40"
+    alt="OpenAI"
+
+<br />
+<sub>omni-moderation-latest</sub>
+
+</td>
+  </tr>
+</table>
 
 ## Engineering scope
 
