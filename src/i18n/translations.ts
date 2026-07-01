@@ -79,39 +79,50 @@ const PL = {
   "auth.emailAvailable": "Email jest dostępny",
   "auth.passwordValid": "Hasło jest poprawne",
   "auth.completeProfile.title": "Ustaw nazwę",
-  "auth.completeProfile.subtitle": "Dokończ rejestrację, aby korzystać z Hexoo.",
+  "auth.completeProfile.subtitle":
+    "Dokończ rejestrację, aby korzystać z Hexoo.",
   "auth.completeProfile.placeholder": "podaj nazwę",
   "auth.completeProfile.submit": "Dokończ rejestrację",
   "auth.verify.title": "Sprawdź swoją skrzynkę",
-  "auth.verify.copy": "Sprawdź swoją skrzynkę pocztową. Jeśli rejestracja dla podanego adresu jest możliwa, otrzymasz wiadomość z linkiem potwierdzającym.",
-  "auth.verify.help": "Jeśli nie widzisz wiadomości, sprawdź folder Spam lub inne filtry poczty.",
+  "auth.verify.copy":
+    "Sprawdź swoją skrzynkę pocztową. Jeśli rejestracja dla podanego adresu jest możliwa, otrzymasz wiadomość z linkiem potwierdzającym.",
+  "auth.verify.help":
+    "Jeśli nie widzisz wiadomości, sprawdź folder Spam lub inne filtry poczty.",
   "auth.verify.resend": "Wyślij ponownie",
   "auth.verify.emailRequired": "Wpisz email, żeby wysłać link ponownie.",
   "auth.verify.resendError": "Nie udało się wysłać maila ponownie.",
   "auth.verify.resendSuccess": "Link aktywacyjny został wysłany ponownie.",
   "auth.confirm.pending": "Potwierdzamy Twój email...",
   "auth.confirm.invalidLink": "Link aktywacyjny jest nieprawidłowy.",
-  "auth.confirm.failed": "Nie udało się potwierdzić emaila. Link mógł wygasnąć.",
-  "auth.confirm.missingData": "Brakuje danych konta. Spróbuj zarejestrować się ponownie.",
+  "auth.confirm.failed":
+    "Nie udało się potwierdzić emaila. Link mógł wygasnąć.",
+  "auth.confirm.missingData":
+    "Brakuje danych konta. Spróbuj zarejestrować się ponownie.",
   "auth.confirm.confirmed": "Email potwierdzony.",
   "auth.confirm.activated": "Konto aktywowane.",
   "auth.confirm.activationError": "Wystąpił błąd podczas aktywacji konta.",
   "auth.confirm.title": "Aktywacja konta",
   "auth.oauth.callbackTitle": "Logowanie przez Google…",
   "auth.oauth.callbackCopy": "Za chwilę przekierujemy Cię dalej.",
-  "auth.oauth.sessionFetchError": "Nie udało się pobrać sesji Google. Spróbuj ponownie.",
+  "auth.oauth.sessionFetchError":
+    "Nie udało się pobrać sesji Google. Spróbuj ponownie.",
   "auth.oauth.finalizeError": "Wystąpił błąd przy finalizacji logowania.",
-  "auth.oauth.expired": "Sesja OAuth wygasła, zaloguj się ponownie przez Google.",
-  "auth.oauth.googleExpired": "Sesja Google wygasła. Zaloguj się ponownie przez Google.",
+  "auth.oauth.expired":
+    "Sesja OAuth wygasła, zaloguj się ponownie przez Google.",
+  "auth.oauth.googleExpired":
+    "Sesja Google wygasła. Zaloguj się ponownie przez Google.",
   "auth.oauth.googleLoginError": "Nie udało się zalogować przez Google.",
-  "auth.oauth.googleUnknownError": "Wystąpił nieznany błąd podczas logowania przez Google.",
+  "auth.oauth.googleUnknownError":
+    "Wystąpił nieznany błąd podczas logowania przez Google.",
   "auth.login.error": "Błąd logowania.",
   "auth.login.noToken": "Brak tokena sesji.",
   "auth.register.error": "Błąd rejestracji.",
   "auth.register.unknownError": "Wystąpił nieznany błąd podczas rejestracji.",
-  "auth.logout.partialError": "Wylogowano lokalnie, ale nie udało się potwierdzić wylogowania na serwerze. Odśwież stronę, jeśli problem wróci.",
+  "auth.logout.partialError":
+    "Wylogowano lokalnie, ale nie udało się potwierdzić wylogowania na serwerze. Odśwież stronę, jeśli problem wróci.",
   "auth.session.expiredTitle": "Sesja wygasła",
-  "auth.session.expiredCopy": "Twoja sesja wygasła. Zaloguj się ponownie, aby kontynuować.",
+  "auth.session.expiredCopy":
+    "Twoja sesja wygasła. Zaloguj się ponownie, aby kontynuować.",
 
   "post.new": "Nowy post",
   "post.edit": "Edytuj post",
@@ -124,12 +135,14 @@ const PL = {
   "post.youtubePlaceholder": "Wklej link do YouTube...",
   "post.delete.confirm": "Tak, usuń post",
   "post.delete.title": "Czy na pewno chcesz usunąć post?",
-  "post.delete.body": "Ta operacja jest nieodwracalna. Post zostanie trwale usunięty.",
+  "post.delete.body":
+    "Ta operacja jest nieodwracalna. Post zostanie trwale usunięty.",
   "post.nsfw.title": "Treść NSFW",
   "post.nsfw.body": "Ten post zawiera treści dla dorosłych.",
   "post.showComments": "Pokaż komentarze",
   "post.backToPost": "Wróć do posta",
-  "post.hiddenNsfw": "Część treści dla dorosłych jest ukryta zgodnie z ustawieniami.",
+  "post.hiddenNsfw":
+    "Część treści dla dorosłych jest ukryta zgodnie z ustawieniami.",
   "post.edited": "edytowano",
   "post.imageAlt": "Treść obrazkowa posta",
   "post.imageUnavailable": "Obraz niedostępny",
@@ -146,7 +159,8 @@ const PL = {
   "post.createTextAction": "napisz coś uwa",
   "post.toast.created": "Post dodany!",
   "post.toast.pending": "Post dodany i czeka na weryfikację moderacji.",
-  "post.toast.nsfw": "Post dodany jako NSFW. W feedzie będzie oznaczony jako treść dla dorosłych.",
+  "post.toast.nsfw":
+    "Post dodany jako NSFW. W feedzie będzie oznaczony jako treść dla dorosłych.",
   "post.toast.updated": "Post został zaktualizowany!",
   "post.toast.deleted": "Post został usunięty.",
   "post.toast.deleteError": "Nie udało się usunąć posta.",
@@ -163,20 +177,22 @@ const PL = {
   "comment.add": "Dodaj komentarz",
   "comment.addTitle": "Skomentuj post użytkownika: {name}",
   "comment.anonymous": "Anonim",
-  "comment.replyingTo": "Odpisujesz na: \"{text}...\"",
+  "comment.replyingTo": 'Odpisujesz na: "{text}..."',
   "comment.writePlaceholder": "Wpisz swój komentarz...",
   "comment.edit": "Edytuj komentarz",
   "comment.editPlaceholder": "Edytuj komentarz...",
   "comment.delete.confirm": "Tak, usuń komentarz",
   "comment.delete.title": "Czy na pewno chcesz usunąć komentarz?",
-  "comment.delete.body": "Ta operacja jest nieodwracalna. Komentarz zostanie trwale usunięty.",
+  "comment.delete.body":
+    "Ta operacja jest nieodwracalna. Komentarz zostanie trwale usunięty.",
   "comment.options.edit": "Edytuj",
   "comment.options.delete": "Usuń",
   "comment.options.report": "Zgłoś naruszenie",
   "comment.options.deleteNow": "Usuń natychmiast",
   "comment.toast.added": "Komentarz dodany!",
   "comment.toast.pending": "Komentarz dodany i czeka na weryfikację moderacji.",
-  "comment.toast.nsfw": "Komentarz dodany jako NSFW. Nie będzie widoczny na liście komentarzy przy obecnych ustawieniach.",
+  "comment.toast.nsfw":
+    "Komentarz dodany jako NSFW. Nie będzie widoczny na liście komentarzy przy obecnych ustawieniach.",
   "comment.toast.updated": "Komentarz został zaktualizowany!",
   "comment.toast.updateError": "Nie udało się zaktualizować komentarza.",
   "comment.toast.deleted": "Komentarz został usunięty.",
@@ -187,8 +203,10 @@ const PL = {
   "report.title": "Zgłoś naruszenie",
   "report.postConfirm": "Zgłoś post",
   "report.commentConfirm": "Zgłoś komentarz",
-  "report.postDescription": "Pomóż nam zrozumieć, co jest nie tak z tym postem. Jeśli post narusza zasady, zostanie usunięty.",
-  "report.commentDescription": "Pomóż nam zrozumieć, co jest nie tak z tym komentarzem. Jeśli komentarz narusza zasady, zostanie usunięty.",
+  "report.postDescription":
+    "Pomóż nam zrozumieć, co jest nie tak z tym postem. Jeśli post narusza zasady, zostanie usunięty.",
+  "report.commentDescription":
+    "Pomóż nam zrozumieć, co jest nie tak z tym komentarzem. Jeśli komentarz narusza zasady, zostanie usunięty.",
   "report.detailsLabel": "Opisz powód zgłoszenia",
   "report.detailsPlaceholder": "Opisz problem...",
   "report.reason.spam": "To jest spam",
@@ -206,14 +224,21 @@ const PL = {
   "moderation.deleteBanComment": "Usuń komentarz i zbanuj autora",
   "moderation.deleteAndBan": "Usuń i zbanuj",
   "moderation.quarantine": "Kwarantanna",
-  "moderation.quarantinePostDescription": "Post zostanie ukryty dla innych użytkowników do czasu ponownego przeglądu. Podaj powód tej decyzji — zostanie zapisany w bazie danych.",
-  "moderation.quarantineCommentDescription": "Komentarz pozostanie w trybie oczekującym. Podaj powód tej decyzji — zostanie zapisany w bazie danych.",
-  "moderation.deletePostDescription": "Post zostanie trwale usunięty. Podaj powód usunięcia — zostanie zapisany w bazie danych jako uzasadnienie dla tej decyzji.",
-  "moderation.deleteCommentDescription": "Komentarz zostanie trwale usunięty. Podaj powód usunięcia — zostanie zapisany w bazie danych jako uzasadnienie dla tej decyzji.",
-  "moderation.deleteBanPostDescription": "Post zostanie trwale usunięty, a konto autora zablokowane. Podaj powód — zostanie zapisany w bazie danych.",
-  "moderation.deleteBanCommentDescription": "Komentarz zostanie trwale usunięty, a konto autora zablokowane. Podaj powód — zostanie zapisany w bazie danych.",
+  "moderation.quarantinePostDescription":
+    "Post zostanie ukryty dla innych użytkowników do czasu ponownego przeglądu. Podaj powód tej decyzji — zostanie zapisany w bazie danych.",
+  "moderation.quarantineCommentDescription":
+    "Komentarz pozostanie w trybie oczekującym. Podaj powód tej decyzji — zostanie zapisany w bazie danych.",
+  "moderation.deletePostDescription":
+    "Post zostanie trwale usunięty. Podaj powód usunięcia — zostanie zapisany w bazie danych jako uzasadnienie dla tej decyzji.",
+  "moderation.deleteCommentDescription":
+    "Komentarz zostanie trwale usunięty. Podaj powód usunięcia — zostanie zapisany w bazie danych jako uzasadnienie dla tej decyzji.",
+  "moderation.deleteBanPostDescription":
+    "Post zostanie trwale usunięty, a konto autora zablokowane. Podaj powód — zostanie zapisany w bazie danych.",
+  "moderation.deleteBanCommentDescription":
+    "Komentarz zostanie trwale usunięty, a konto autora zablokowane. Podaj powód — zostanie zapisany w bazie danych.",
   "moderation.reasonLabel": "Powód / Uzasadnienie",
-  "moderation.reasonPlaceholder": "Wpisz uzasadnienie decyzji lub wybierz z listy...",
+  "moderation.reasonPlaceholder":
+    "Wpisz uzasadnienie decyzji lub wybierz z listy...",
   "moderation.reason.spam": "Spam / Niechciane treści",
   "moderation.reason.hate": "Mowa nienawiści / Przemoc",
   "moderation.reason.nudity": "Nagość / Treści seksualne",
@@ -225,8 +250,10 @@ const PL = {
   "moderation.dashboard.reportedPosts": "Zgłoszone posty",
   "moderation.dashboard.reportedComments": "Zgłoszone komentarze",
   "moderation.dashboard.queue": "Kolejka oczekujących",
-  "moderation.dashboard.postsSubtitle": "Posty oflagowane przez AI lub zgłoszone przez użytkowników.",
-  "moderation.dashboard.commentsSubtitle": "Komentarze oczekujące na moderację (np. flagi lub zgłoszenia).",
+  "moderation.dashboard.postsSubtitle":
+    "Posty oflagowane przez AI lub zgłoszone przez użytkowników.",
+  "moderation.dashboard.commentsSubtitle":
+    "Komentarze oczekujące na moderację (np. flagi lub zgłoszenia).",
   "moderation.dashboard.loaded": "Załadowano",
   "moderation.dashboard.emptyPosts": "Brak postów wymagających uwagi.",
   "moderation.dashboard.emptyComments": "Brak komentarzy wymagających uwagi.",
@@ -238,7 +265,8 @@ const PL = {
   "moderation.queue.banAuthorDeletePost": "Banuj Autora & Usuń",
   "moderation.queue.approvePost": "Zatwierdź post",
   "moderation.queue.approveComment": "Zatwierdź komentarz",
-  "moderation.queue.thread": "Wątek zgłoszenia · post (kontekst) → komentarz (zgłoszenie)",
+  "moderation.queue.thread":
+    "Wątek zgłoszenia · post (kontekst) → komentarz (zgłoszenie)",
   "moderation.queue.parentPost": "Post nadrzędny · kontekst",
   "moderation.queue.noPostText": "(post bez treści tekstowej)",
   "moderation.queue.parentMissing": "Nie znaleziono posta nadrzędnego w bazie.",
@@ -257,12 +285,15 @@ const PL = {
   "settings.language.copy": "Wybierz język interfejsu aplikacji.",
   "settings.content.title": "Treści",
   "settings.content.nsfwPosts": "Pokaż treść NSFW w postach",
-  "settings.content.nsfwPostsCopy": "Włącz, aby automatycznie pokazywać posty oznaczone jako NSFW.",
+  "settings.content.nsfwPostsCopy":
+    "Włącz, aby automatycznie pokazywać posty oznaczone jako NSFW.",
   "settings.content.nsfwComments": "Pokaż treść NSFW w komentarzach",
-  "settings.content.nsfwCommentsCopy": "Włącz, aby pokazywać komentarze oznaczone jako NSFW.",
+  "settings.content.nsfwCommentsCopy":
+    "Włącz, aby pokazywać komentarze oznaczone jako NSFW.",
   "settings.account.title": "Konto",
   "settings.account.passwordTitle": "Zmiana hasła",
-  "settings.account.passwordCopy": "Zaktualizuj swoje hasło, aby zwiększyć bezpieczeństwo konta.",
+  "settings.account.passwordCopy":
+    "Zaktualizuj swoje hasło, aby zwiększyć bezpieczeństwo konta.",
   "settings.account.changePassword": "Zmień hasło",
   "settings.account.currentPassword": "Aktualne hasło",
   "settings.account.currentPasswordPlaceholder": "Wpisz swoje aktualne hasło",
@@ -270,40 +301,59 @@ const PL = {
   "settings.account.newPasswordPlaceholder": "Minimum 8 znaków",
   "settings.account.repeatPassword": "Powtórz nowe hasło",
   "settings.account.repeatPasswordPlaceholder": "Potwierdź nowe hasło",
-  "settings.account.passwordChangedRelogin": "Hasło zmienione. Zaloguj się ponownie.",
+  "settings.account.passwordChangedRelogin":
+    "Hasło zmienione. Zaloguj się ponownie.",
   "settings.account.passwordChanged": "Hasło zmienione pomyślnie!",
-  "settings.account.missingEmail": "Błąd: Brak adresu email użytkownika. Zaloguj się aby wykonać akcję.",
+  "settings.account.missingEmail":
+    "Błąd: Brak adresu email użytkownika. Zaloguj się aby wykonać akcję.",
   "settings.account.tooManyAttempts": "Zbyt wiele prób. Spróbuj później.",
-  "settings.account.verifyOldPasswordError": "Nie udało się zweryfikować starego hasła.",
+  "settings.account.verifyOldPasswordError":
+    "Nie udało się zweryfikować starego hasła.",
   "settings.danger.title": "Strefa niebezpieczna",
   "settings.danger.logout": "Wyloguj się",
   "settings.danger.logoutCopy": "Zakończ obecną sesję na tym urządzeniu.",
   "settings.danger.deleteAccount": "Usuń konto",
-  "settings.danger.deleteCopy": "Trwałe usunięcie konta i wszystkich powiązanych z nim danych. Tej akcji nie można cofnąć.",
+  "settings.danger.deleteCopy":
+    "Trwałe usunięcie konta i wszystkich powiązanych z nim danych. Tej akcji nie można cofnąć.",
   "settings.danger.deleteConfirm": "Tak, usuń konto",
   "settings.danger.deleteTitle": "Czy na pewno chcesz usunąć konto?",
-  "settings.danger.deleteBody": "Ta operacja jest nieodwracalna. Wszystkie Twoje dane, w tym posty, komentarze i ustawienia, zostaną trwale usunięte.",
-  "settings.danger.deleteError": "Nie udało się usunąć konta. Spróbuj ponownie.",
+  "settings.danger.deleteBody":
+    "Ta operacja jest nieodwracalna. Wszystkie Twoje dane, w tym posty, komentarze i ustawienia, zostaną trwale usunięte.",
+  "settings.danger.deleteError":
+    "Nie udało się usunąć konta. Spróbuj ponownie.",
   "settings.dithering.title": "Dithering postów",
   "settings.dithering.enable": "Włącz dithering",
-  "settings.dithering.copy": "Ustawienia wpływają na wygląd obrazków w postach i w podglądzie.",
+  "settings.dithering.copy":
+    "Ustawienia wpływają na wygląd obrazków w postach i w podglądzie.",
   "settings.dithering.summaryTitle": "Aktualna konfiguracja",
-  "settings.dithering.offSummary": "Wyłączony - obrazy są wyświetlane bez przeróbki",
+  "settings.dithering.offSummary":
+    "Wyłączony - obrazy są wyświetlane bez przeróbki",
   "settings.dithering.colorsSummary": "{count} kolorów, {palette}, {image}",
   "settings.dithering.modalTitle": "Ustawienia ditheringu postów",
-  "settings.dithering.instantSave": "Zmiany działają od razu i zapisują się lokalnie.",
-  "settings.dithering.disableCopy": "Wyłącz, aby używać oryginalnych obrazów bez przetwarzania.",
+  "settings.dithering.instantSave":
+    "Zmiany działają od razu i zapisują się lokalnie.",
+  "settings.dithering.disableCopy":
+    "Wyłącz, aby używać oryginalnych obrazów bez przetwarzania.",
   "settings.dithering.paletteSize": "Liczba kolorów (palette size)",
   "settings.dithering.paletteSizeDescription": "Ile kolorów ma finalna paleta.",
-  "settings.dithering.processingWidth": "Szerokość przetwarzania (processing width)",
-  "settings.dithering.processingWidthDescription": "Rozdzielczość robocza przed końcowym skalowaniem.",
-  "settings.dithering.baseWidth": "Bazowa szerokość ditheru (dither base width)",
-  "settings.dithering.baseWidthDescription": "Szerokość mikrosiatki, która buduje pikselowy efekt.",
-  "settings.dithering.paletteQuantizationDescription": "Algorytm budowania palety kolorów.",
-  "settings.dithering.colorDistanceDescription": "Metryka porównywania podobieństwa kolorów.",
-  "settings.dithering.imageQuantizationDescription": "Sposób mapowania pikseli obrazu do palety.",
-  "settings.dithering.errorDiffusionDescription": "Tryb propagacji błędu dla algorytmów diffusion.",
-  "settings.dithering.disabledHint": "Dla wybranego trybu image quantization ta opcja nie wpływa na wynik.",
+  "settings.dithering.processingWidth":
+    "Szerokość przetwarzania (processing width)",
+  "settings.dithering.processingWidthDescription":
+    "Rozdzielczość robocza przed końcowym skalowaniem.",
+  "settings.dithering.baseWidth":
+    "Bazowa szerokość ditheru (dither base width)",
+  "settings.dithering.baseWidthDescription":
+    "Szerokość mikrosiatki, która buduje pikselowy efekt.",
+  "settings.dithering.paletteQuantizationDescription":
+    "Algorytm budowania palety kolorów.",
+  "settings.dithering.colorDistanceDescription":
+    "Metryka porównywania podobieństwa kolorów.",
+  "settings.dithering.imageQuantizationDescription":
+    "Sposób mapowania pikseli obrazu do palety.",
+  "settings.dithering.errorDiffusionDescription":
+    "Tryb propagacji błędu dla algorytmów diffusion.",
+  "settings.dithering.disabledHint":
+    "Dla wybranego trybu image quantization ta opcja nie wpływa na wynik.",
   "settings.dithering.reset": "Przywróć domyślne",
   "settings.dithering.previewMissing": "Dodaj plik preview tutaj:",
   "settings.dithering.original": "Oryginał",
@@ -311,14 +361,17 @@ const PL = {
   "settings.dithering.originalAlt": "Podgląd oryginalnego obrazu",
   "settings.dithering.afterAlt": "Podgląd obrazu po ditheringu",
   "settings.dithering.processing": "Przetwarzanie preview...",
-  "settings.dithering.processingError": "Przetwarzanie preview nie powiodło się. Pokazano obraz bez modyfikacji.",
-  "settings.dithering.preset": "Aktualny preset: {enabled}, paleta {palette}, processing {processing}px, base {base}px.",
+  "settings.dithering.processingError":
+    "Przetwarzanie preview nie powiodło się. Pokazano obraz bez modyfikacji.",
+  "settings.dithering.preset":
+    "Aktualny preset: {enabled}, paleta {palette}, processing {processing}px, base {base}px.",
   "settings.dithering.enabled": "włączony",
   "settings.dithering.disabled": "wyłączony",
   "settings.dithering.defaults": "Domyślne: {palette} / {image}.",
   "settings.appearance.title": "Wygląd",
   "settings.appearance.theme": "Motyw aplikacji",
-  "settings.appearance.copy": "Dostosuj wygląd interfejsu do swoich preferencji (Jasny / Ciemny).",
+  "settings.appearance.copy":
+    "Dostosuj wygląd interfejsu do swoich preferencji (Jasny / Ciemny).",
 
   "profile.edit": "edytuj profil",
   "profile.joined": "dołączył",
@@ -338,7 +391,8 @@ const PL = {
   "profile.changeAvatarHelp": "Kliknij, aby zmienić zdjęcie profilowe",
   "profile.username": "Nazwa użytkownika",
   "profile.usernamePlaceholder": "Twoja publiczna nazwa",
-  "profile.usernameHelp": "Ta nazwa będzie widoczna publicznie — możesz użyć nicku lub imienia.",
+  "profile.usernameHelp":
+    "Ta nazwa będzie widoczna publicznie — możesz użyć nicku lub imienia.",
   "profile.chars": "{count} / 30 znaków",
   "profile.updated": "Profil został zaktualizowany!",
 
@@ -374,11 +428,13 @@ const PL = {
   "admin.selectRole": "— Wybierz rolę —",
   "admin.security": "Bezpieczeństwo",
   "admin.setNewPassword": "Ustaw nowe hasło",
-  "admin.passwordHelp": "Pozostaw puste, jeśli nie chcesz zmieniać hasła użytkownika.",
+  "admin.passwordHelp":
+    "Pozostaw puste, jeśli nie chcesz zmieniać hasła użytkownika.",
   "admin.changePassword": "Zmień hasło",
   "admin.newUser": "Nowy użytkownik",
   "admin.createAccount": "Utwórz konto",
-  "admin.createCopy": "Utwórz konto i skonfiguruj dostęp dla nowego użytkownika.",
+  "admin.createCopy":
+    "Utwórz konto i skonfiguruj dostęp dla nowego użytkownika.",
   "admin.passwordPlaceholder": "Wpisz hasło...",
   "admin.activityLog": "Log aktywności",
   "admin.latestEvents": "Ostatnie zdarzenia w systemie",
@@ -397,11 +453,13 @@ const PL = {
   "error.404.title": "Błąd 404",
   "error.404.copy": "Zasób nie został znaleziony.",
   "error.global.title": "Krytyczny Błąd",
-  "error.global.copy": "Nie udało się załadować aplikacji. Prawdopodobnie wystąpił problem po naszej stronie.",
+  "error.global.copy":
+    "Nie udało się załadować aplikacji. Prawdopodobnie wystąpił problem po naszej stronie.",
   "error.global.retry": "Spróbuj ponownie",
   "error.global.reload": "Odśwież całą stronę",
   "recaptcha.error": "Błąd łączenia z usługą reCAPTCHA",
-  "recaptcha.notReady": "System zabezpieczeń nie jest gotowy. Spróbuj odświeżyć stronę.",
+  "recaptcha.notReady":
+    "System zabezpieczeń nie jest gotowy. Spróbuj odświeżyć stronę.",
   "recaptcha.verifyError": "Błąd weryfikacji. Spróbuj ponownie.",
   "ui.showPassword": "Pokaż hasło",
   "ui.hidePassword": "Ukryj hasło",
@@ -416,17 +474,22 @@ const PL = {
 
   "about.hero.titleStart": "po prostu",
   "about.hero.titleAccent": "sieć.",
-  "about.hero.copy": "niech ktoś przeczyta to, co napisałeś. albo niech nie czyta — tobie i tak ulży.",
-  "about.hero.note": "(tak, to jest stronka shitpostowa. zrobiona na poważnie.)",
+  "about.hero.copy":
+    "niech ktoś przeczyta to, co napisałeś. albo niech nie czyta — tobie i tak ulży.",
+  "about.hero.note":
+    "(tak, to jest stronka shitpostowa. zrobiona na poważnie.)",
   "about.hero.cta": "a moze by tak dodać post głubcze?",
   "about.what.eyebrow": "czym to jest?",
   "about.what.card1Strong": "hexoo to drobne miejsce w internecie.",
-  "about.what.card1": "piszesz post, ktoś go polubi (albo i nie), ktoś coś skomentuje (albo i nie). tyle.",
-  "about.what.card2": "bez algorytmu, bez reklam, bez misji ratującej świat. zwykła sieć, zaprojektowana z czułością dla",
+  "about.what.card1":
+    "piszesz post, ktoś go polubi (albo i nie), ktoś coś skomentuje (albo i nie). tyle.",
+  "about.what.card2":
+    "bez algorytmu, bez reklam, bez misji ratującej świat. zwykła sieć, zaprojektowana z czułością dla",
   "about.what.shitposts": "shitpostów",
   "about.what.card2End": "krótkich myśli i internetowych głupot.",
   "about.what.card3": "zbudowane na",
-  "about.what.card3End": "bo na czymś musi. moderowane lekko (openai gdzieś tam siedzi). działa zaskakująco dobrze.",
+  "about.what.card3End":
+    "bo na czymś musi. moderowane lekko (openai gdzieś tam siedzi). działa zaskakująco dobrze.",
   "about.features.eyebrow": "co tu jest",
   "about.features.title": "sześć rzeczy.",
   "about.features.titleMuted": "koniec listy.",
@@ -542,7 +605,7 @@ export const TRANSLATIONS = {
     "auth.completeProfile.submit": "Complete registration",
     "auth.verify.title": "Check your inbox",
     "auth.verify.copy":
-    "Check your inbox. If registration is available for the provided address, you will receive a confirmation link.",
+      "Check your inbox. If registration is available for the provided address, you will receive a confirmation link.",
     "auth.verify.help":
       "If you do not see the message, check Spam or other email filters.",
     "auth.verify.resend": "Send again",
@@ -613,7 +676,7 @@ export const TRANSLATIONS = {
     "post.options.deleteNow": "Delete immediately",
     "post.createButton": "What do you want to post today?",
     "post.createImageAction": "add image",
-    "post.createTextAction": "write something uwa",
+    "post.createTextAction": "write something",
     "post.toast.created": "Post added!",
     "post.toast.pending": "Post added and waiting for moderation review.",
     "post.toast.nsfw":
