@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type KeyboardEvent, type MouseEvent } from "react";
 import { ImageIcon, PenLine } from "lucide-react";
 import { useI18n } from "@/i18n/useI18n";
 import { useAppStore } from "@/lib/store/store";
@@ -123,8 +123,31 @@ export default function CreatePostButton({
     .filter(Boolean)
     .join(" ");
 
+  const openDefaultComposer = () => openCreatePostModal();
+  const openImageComposer = (event: MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    openCreatePostModal("image");
+  };
+  const openTextComposer = (event: MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    openCreatePostModal("text");
+  };
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.target !== event.currentTarget) return;
+    if (event.key !== "Enter" && event.key !== " ") return;
+
+    event.preventDefault();
+    openDefaultComposer();
+  };
+
   return (
-    <div className={buttonClassName}>
+    <div
+      className={buttonClassName}
+      role="button"
+      tabIndex={0}
+      onClick={openDefaultComposer}
+      onKeyDown={handleKeyDown}
+    >
       <canvas
         ref={canvasRef}
         className="absolute inset-0 w-full h-full pointer-events-none opacity-40 group-hover:opacity-100 transition-opacity duration-700"
@@ -140,7 +163,7 @@ export default function CreatePostButton({
               type="button"
               variant="outline"
               size="md"
-              onClick={openCreatePostModal}
+              onClick={openImageComposer}
               className="h-10 max-h-10 min-w-10 rounded-3xl border-[0.75px] px-0 py-[0.75px] lg:px-[16.75px]"
               leftIcon={
                 <>
@@ -163,7 +186,7 @@ export default function CreatePostButton({
               type="button"
               variant="outline"
               size="md"
-              onClick={openCreatePostModal}
+              onClick={openTextComposer}
               className="h-10 max-h-10 min-w-10 px-0 py-[0.75px] lg:px-[16.75px]"
               leftIcon={
                 <>

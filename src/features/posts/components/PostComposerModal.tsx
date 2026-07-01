@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import type { UseFormRegisterReturn } from "react-hook-form";
 import { PaperclipIcon } from "../icons/PaperclipIcon";
 import { SendIcon } from "../icons/SendIcon";
@@ -10,6 +10,7 @@ import Button from "@/features/shared/components/ui/Button";
 import RemoveImageButton from "@/features/shared/components/ui/RemoveImageButton";
 import { POST_MAX_CHARS } from "../types/post.dto";
 import { useI18n } from "@/i18n/useI18n";
+import type { CreatePostModalInitialFocus } from "../createPostModal.store";
 
 interface PostComposerModalProps {
   isOpen: boolean;
@@ -29,6 +30,7 @@ interface PostComposerModalProps {
   isPending: boolean;
   isOverLimit: boolean;
   isSubmitDisabled?: boolean;
+  initialFocus?: CreatePostModalInitialFocus;
   showRemoveImageButton?: boolean;
   acceptedImageTypes?: string;
   alert?: React.ReactNode;
@@ -57,6 +59,7 @@ export default function PostComposerModal({
   isPending,
   isOverLimit,
   isSubmitDisabled = isOverLimit,
+  initialFocus = "text",
   showRemoveImageButton = !!imagePreview,
   acceptedImageTypes = "image/png, image/jpeg, image/webp",
   alert,
@@ -72,7 +75,29 @@ export default function PostComposerModal({
 
   const [showYouTubeInput, setShowYouTubeInput] = useState(false);
   const [youtubeInputValue, setYoutubeInputValue] = useState("");
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const youtubeInputRef = useRef<HTMLInputElement>(null);
+  const handledInitialFocusRef = useRef(false);
+  const { ref: registerTextRef, ...textRegistrationProps } = textRegistration;
+
+  useEffect(() => {
+    if (!isOpen) {
+      handledInitialFocusRef.current = false;
+      return;
+    }
+
+    if (handledInitialFocusRef.current) return;
+    handledInitialFocusRef.current = true;
+
+    if (initialFocus === "text") {
+      requestAnimationFrame(() => textareaRef.current?.focus());
+      return;
+    }
+
+    if (initialFocus === "image") {
+      requestAnimationFrame(() => onImageSelect());
+    }
+  }, [initialFocus, isOpen, onImageSelect]);
 
   const handleYouTubeConfirm = async () => {
     const trimmed = youtubeInputValue.trim();
@@ -249,13 +274,17 @@ export default function PostComposerModal({
 
           <div className="relative w-full">
             <textarea
-              {...textRegistration}
+              {...textRegistrationProps}
+              ref={(element) => {
+                textareaRef.current = element;
+                registerTextRef(element);
+              }}
               onKeyDown={onTextKeyDown}
               placeholder={placeholder}
               className={`w-full bg-transparent text-foreground-primary-default placeholder:text-foreground-secondary-default/50 text-base resize-none outline-none leading-relaxed pb-6 transition-all duration-300 ${
                 imagePreview ? "min-h-[120px] sm:min-h-[140px]" : "min-h-[min(320px,48dvh)] sm:min-h-[min(425px,55dvh)]"
               }`}
-              autoFocus
+              autoFocus={initialFocus === "text"}
             />
 
             <div

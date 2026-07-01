@@ -64,7 +64,7 @@ export function BottomNav({ user }: BottomNavProps) {
             </span>
           }
           className="shrink-0"
-          onClick={openCreatePostModal}
+          onClick={() => openCreatePostModal()}
         />
       </div>
     </nav>

@@ -17,6 +17,9 @@ export default function CreatePostModal() {
   const isCreatePostModalOpen = useAppStore(
     (state) => state.createPostModal.isOpen,
   );
+  const initialFocus = useAppStore(
+    (state) => state.createPostModal.initialFocus,
+  );
   const closeCreatePostModal = useAppStore(
     (state) => state.closeCreatePostModal,
   );
@@ -138,6 +141,7 @@ export default function CreatePostModal() {
       isPending={isPending}
       isOverLimit={isOverLimit}
       isSubmitDisabled={isOverLimit || !!clientError}
+      initialFocus={initialFocus}
       acceptedImageTypes="image/png, image/jpeg, image/webp, image/gif"
       onYouTubeConfirm={handleYouTubeConfirm}
       onYouTubeDraftChange={() => clearErrors("youtubeUrl")}
