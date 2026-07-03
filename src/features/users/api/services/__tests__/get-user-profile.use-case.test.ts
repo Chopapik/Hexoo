@@ -12,11 +12,13 @@ vi.mock("@/features/images/utils/resolveImagePublicUrl", () => ({
 
 describe("GetUserProfileUseCase", () => {
   let repository: ReturnType<typeof createMockUserRepository>;
+  let profileMapper: UserProfileMapper;
   let useCase: GetUserProfileUseCase;
 
   beforeEach(() => {
     repository = createMockUserRepository();
-    useCase = new GetUserProfileUseCase(repository, new UserProfileMapper());
+    profileMapper = new UserProfileMapper();
+    useCase = new GetUserProfileUseCase(repository, profileMapper);
   });
 
   it("returns null for empty uid", async () => {
@@ -36,6 +38,30 @@ describe("GetUserProfileUseCase", () => {
     expect(repository.getUserByUid).toHaveBeenCalledWith("unknown");
   });
 
+  it("returns null when user is deleted", async () => {
+    vi.mocked(repository.getUserByUid).mockResolvedValue(
+      createMockUser({
+        uid: "deleted-user",
+        deletedAt: new Date("2024-02-01T00:00:00Z"),
+      }),
+    );
+
+    expect(await useCase.execute("deleted-user")).toBeNull();
+  });
+
+  it("does not map deleted users into public profile responses", async () => {
+    const mapperSpy = vi.spyOn(profileMapper, "toProfileResponse");
+    vi.mocked(repository.getUserByUid).mockResolvedValue(
+      createMockUser({
+        uid: "deleted-user",
+        deletedAt: new Date("2024-02-01T00:00:00Z"),
+      }),
+    );
+
+    expect(await useCase.execute("deleted-user")).toBeNull();
+    expect(mapperSpy).not.toHaveBeenCalled();
+  });
+
   it("returns mapped profile when user exists", async () => {
     const user = createMockUser({ uid: "u1", name: "Bob" });
     vi.mocked(repository.getUserByUid).mockResolvedValue(user);
@@ -52,5 +78,11 @@ describe("GetUserProfileUseCase", () => {
         createdAt: user.createdAt,
       },
     });
+  });
+
+  it("propagates repository errors", async () => {
+    vi.mocked(repository.getUserByUid).mockRejectedValue(new Error("db down"));
+
+    await expect(useCase.execute("u1")).rejects.toThrow("db down");
   });
 });
