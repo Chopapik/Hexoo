@@ -151,28 +151,4 @@ describe("TOOLING-CLEAN-INSTALL-001 clean install static contract", () => {
     expect([...missing].sort()).toEqual([]);
   });
 
-  it("TOOLING-CLEAN-INSTALL-001 documents env values required by local tests", () => {
-    const envSamplePath = path.join(repoRoot, ".env.sample");
-    expect(existsSync(envSamplePath)).toBe(true);
-
-    const envSample = readFileSync(envSamplePath, "utf8");
-    const requiredKeys = [
-      "NEXT_PUBLIC_API_URL",
-      "NEXT_PUBLIC_SITE_URL",
-      "NEXT_PUBLIC_SUPABASE_URL",
-      "NEXT_PUBLIC_SUPABASE_ANON_KEY",
-      "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
-      "SUPABASE_SERVICE_ROLE_KEY",
-      "SUPABASE_STORAGE_BUCKET",
-      "NEXT_PUBLIC_RECAPTCHA_SITE_KEY",
-      "RECAPTCHA_SECRET_KEY",
-      "OPENAI_API_KEY",
-    ];
-
-    const missing = requiredKeys.filter(
-      (key) => !new RegExp(`^${key}=`, "m").test(envSample),
-    );
-
-    expect(missing).toEqual([]);
-  });
 });

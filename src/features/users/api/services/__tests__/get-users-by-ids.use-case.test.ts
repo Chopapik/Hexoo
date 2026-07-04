@@ -37,6 +37,18 @@ describe("GetUsersByIdsUseCase", () => {
     expect(repository.getUsersByIds).toHaveBeenCalledWith(["u1", "u2"]);
   });
 
+  it("passes duplicate ids through unchanged because dedupe is repository-owned", async () => {
+    const map = {
+      u1: { name: "Alice", avatarMeta: null },
+    };
+    vi.mocked(repository.getUsersByIds).mockResolvedValue(map);
+
+    const result = await useCase.execute(["u1", "u1", "u2"]);
+
+    expect(result).toBe(map);
+    expect(repository.getUsersByIds).toHaveBeenCalledWith(["u1", "u1", "u2"]);
+  });
+
   it("throws DB_ERROR when repository fails", async () => {
     vi.mocked(repository.getUsersByIds).mockRejectedValue(
       new Error("connection lost"),
