@@ -30,8 +30,15 @@ type RateLimitName =
 const hasRedisEnv = Boolean(
   process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN,
 );
+const rateLimitsEnabled =
+  process.env.NODE_ENV === "production" ||
+  process.env.ENABLE_RATE_LIMITS === "true";
 
 function createRedisClient() {
+  if (!rateLimitsEnabled) {
+    return null;
+  }
+
   if (!hasRedisEnv) {
     return null;
   }
@@ -164,6 +171,10 @@ async function assertLimit(
   identifier: string,
   message: string,
 ) {
+  if (!rateLimitsEnabled) {
+    return;
+  }
+
   const limiter = limiters[limiterName];
 
   if (!limiter) {
@@ -171,6 +182,7 @@ async function assertLimit(
       limiterName,
       hasRedisEnv,
       nodeEnv: process.env.NODE_ENV,
+      enableRateLimits: process.env.ENABLE_RATE_LIMITS,
     });
 
     return;
