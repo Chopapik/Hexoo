@@ -170,6 +170,15 @@ describe("comment.supabase.mapper", () => {
       } as UpdateCommentPayload);
 
       expect(row).toEqual({});
+      expect(Object.keys(row)).toEqual([]);
+      expect(row).not.toHaveProperty("text");
+      expect(row).not.toHaveProperty("is_nsfw");
+      expect(row).not.toHaveProperty("is_pending");
+      expect(row).not.toHaveProperty("status");
+      expect(row).not.toHaveProperty("moderation_context");
+      expect(row).not.toHaveProperty("is_edited");
+      expect(row).not.toHaveProperty("image_meta");
+      expect(row).not.toHaveProperty("updated_at");
     });
 
     it("maps update fields and preserves explicit null clearing values", () => {
