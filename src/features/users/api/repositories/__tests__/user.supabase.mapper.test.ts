@@ -103,6 +103,31 @@ describe("user.supabase.mapper", () => {
       expect(entity.lastOnline).toEqual(new Date("2026-06-04T13:18:33.000Z"));
     });
 
+    it("maps non-null deleted_at to deletedAt with its own timestamp", () => {
+      const deletedAt = "2026-06-07T16:21:36.000Z";
+      const entity = mapUserRow(
+        userRow({
+          created_at: "2026-06-01T10:15:30.000Z",
+          updated_at: "2026-06-02T11:16:31.000Z",
+          session_invalidated_at: "2026-06-03T12:17:32.000Z",
+          last_online: "2026-06-04T13:18:33.000Z",
+          banned_at: "2026-06-05T14:19:34.000Z",
+          restricted_at: "2026-06-06T15:20:35.000Z",
+          deleted_at: deletedAt,
+        }),
+      );
+
+      expect(entity.deletedAt).toEqual(new Date(deletedAt));
+      expect([
+        entity.createdAt.toISOString(),
+        entity.updatedAt?.toISOString(),
+        entity.sessionInvalidatedAt?.toISOString(),
+        entity.lastOnline.toISOString(),
+        entity.bannedAt?.toISOString(),
+        entity.restrictedAt?.toISOString(),
+      ]).not.toContain(entity.deletedAt?.toISOString());
+    });
+
     it.each([
       ["non-empty display name", "  Ada  ", true],
       ["blank display name", "   ", false],

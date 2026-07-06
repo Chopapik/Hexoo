@@ -15,6 +15,7 @@ describe("youtubeUtils", () => {
       ["short URL", `https://youtu.be/${videoId}`],
       ["shorts URL", `https://youtube.com/shorts/${videoId}`],
       ["embed URL", `https://www.youtube.com/embed/${videoId}`],
+      ["protocol-less watch URL", `youtube.com/watch?v=${videoId}`],
     ])("accepts %s", (_caseName, url) => {
       expect(isValidYouTubeUrl(url)).toBe(true);
     });
@@ -22,6 +23,13 @@ describe("youtubeUtils", () => {
     it.each([
       ["non-YouTube URL", "https://example.com/watch?v=dQw4w9WgXcQ"],
       ["random text", "this is not a video URL"],
+      [
+        "YouTube URL embedded inside another URL",
+        `https://example.com/redirect?next=https://www.youtube.com/watch?v=${videoId}`,
+      ],
+      ["spoofed hostname", `https://youtube.com.evil.example/watch?v=${videoId}`],
+      ["prefixed hostname", `https://notyoutube.com/watch?v=${videoId}`],
+      ["overlong video ID", `https://www.youtube.com/watch?v=${videoId}X`],
     ])("rejects %s", (_caseName, value) => {
       expect(isValidYouTubeUrl(value)).toBe(false);
     });
@@ -95,6 +103,14 @@ Line two`);
       const text = "Read https://example.com/watch?v=dQw4w9WgXcQ instead";
 
       expect(stripYouTubeUrls(text)).toBe(text);
+    });
+
+    it("preserves text around punctuation-adjacent YouTube URLs", () => {
+      const result = stripYouTubeUrls(
+        `Watch this: https://youtu.be/${videoId}, then reply.`,
+      );
+
+      expect(result).toBe("Watch this: , then reply.");
     });
   });
 });
